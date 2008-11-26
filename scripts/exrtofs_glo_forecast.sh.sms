@@ -1,0 +1,291 @@
+#!/bin/sho
+###############################################################################
+####  UNIX Script Documentation Block                                         #
+#                                                                             #
+# Script name:         exrtofs_glo_forecast.sh.sms                              #
+# Script description:                                                         #
+#                                                                             #
+# Author:        Dan Iredell       Org: NP23         Date: 2005-06-14         #
+#                                                                             #
+# Abstract: This script generates the forecast field and creates the initial  #
+#           condition for the RTOFS_GLO Ocean model                             #
+#                                                                             #
+# Sub-scripts called:                                                         #
+#    seasforce.sh : create the forcing field                                 #
+#                                                                             #
+# Script history log:                                                         #
+# 2005-06-14  Dan Iredell                                                     #
+#                                                                             #
+###############################################################################
+set -xa
+
+export PS4='$SECONDS + '
+
+cd $DATA
+
+msg="RTOFS_GLO Forecast has begun on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+# --------------------------------------------------------------------------- #
+# 0.  Preparations
+# --------------------------------------------------------------------------- #
+
+export mode=fcst
+# 0.a date and time stuff
+
+  export srtdate=`echo $PDY | cut -c1-8`
+  export enddate=${forecast_end:-$PDYp5}
+  export inputgrid=${inputgrid:-navy_coarse}
+
+# --------------------------------------------------------------------------- #
+# 1  Set up the start time and end time for the forecast
+  sday=`sh $utilscript/date_normal2hycom.sh $srtdate$cyc`
+  eday=`sh $utilscript/date_normal2hycom.sh $enddate$cyc`
+  echo "  $sday $eday false false  " > limits
+
+# 2. Copy the necessary input files for the model forecast
+
+# 2.a Get topography (depth, grid and mask)
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.regional.depth.a regional.depth.a
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.regional.depth.b regional.depth.b 
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.regional.grid.a regional.grid.a
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.regional.grid.b regional.grid.b
+
+
+  # Check to make sure all the topography files are copied:
+  for fil in depth grid
+  do
+     for type in a b
+     do
+        if [ -s regional.$fil.$type ]
+        then
+           echo "regional.${fil}.${type} copied" 
+        else
+           msg1="Missing Topography files"
+           msg2="ABNORMAL EXIT FORECAST: NO FILE for regional.${fil}.${type}"
+           postmsg "$jlogfile" "$msg1" "$msg2"
+           err=2;
+           export err;err_chk
+        fi
+     done
+  done
+
+# 2.b Get relax files
+
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.relax_int.a relax.intf.a
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.relax_int.b relax.intf.b
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.relax_tem.a relax.temp.a
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.relax_tem.b relax.temp.b
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.relax_sal.a relax.saln.a
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.relax_sal.b relax.saln.b
+  filreq='intf  temp saln'
+  for fil in $filreq
+  do
+     for type in a b
+     do
+        if [ -s relax.${fil}.${type} ]
+        then
+           echo "relax.${fil}.${type} copied" 
+        else
+           msg1="Missing Relaxation File"
+           msg2="ABNORMAL EXIT FORECAST: NO FILE for relax.${fil}.${type}"
+           postmsg "$jlogfile" "$msg1" "$msg2"
+           err=2;
+           export err;err_chk
+        fi
+     done
+  done
+
+# 2.c Get drift files
+
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.tbaric.a tbaric.a
+  ln -s -f $FIXrtofs/rtofs_${modID}.${inputgrid}.tbaric.b tbaric.b
+  for type in a b
+  do
+     if [ -s tbaric.${type} ]
+     then
+        echo "tbaric.${type} copied" 
+     else
+        msg1="Missing Drift File"
+        msg2="ABNORMAL EXIT FORECAST: NO FILE for tbaric.${type}"
+        postmsg "$jlogfile" "$msg1" "$msg2"
+        err=2;
+        export err;err_chk
+     fi
+  done
+  
+# 2.d Get initialization files 
+  cp $PARMrtofs/rtofs_${modID}.fcst.blkdat.input blkdat.input
+  cp $PARMrtofs/rtofs_${modID}.${inputgrid}.ports.input ports.input
+  cp $PARMrtofs/rtofs_${modID}.${inputgrid}.tracer.input tracer.input
+  cp $PARMrtofs/rtofs_${modID}.${inputgrid}.patch.input patch.input
+##  cp $PARMrtofs/rtofs_${modID}.tidalports_p.input tidalports_p.input
+##  cp $PARMrtofs/rtofs_${modID}.tidalports_vel.input tidalports_vel.input
+  filreq='blkdat ports tracer patch'
+
+  for fil in $filreq
+  do
+     if [ -s ${fil}.input ]
+     then
+        echo "${fil}.input copied" 
+     else
+        msg1="Missing Initialization File"
+        msg2="ABNORMAL EXIT FORECAST: NO FILE for ${fil}.input"
+        postmsg "$jlogfile" "$msg1" "$msg2"
+        err=2;
+        export err;err_chk
+     fi
+  done
+
+# 2.e Get initial conditions (restart files)
+  rm -rf restart_in.a restart_in.b
+
+  if [ $RESTART = YES ]
+  then
+     fcst_hour=`${utilexec}/nhour ${enddate}${cyc} ${PDY}${cyc}`
+     while [ $fcst_hour -ge 0 ]
+     do       
+       if [ -s $GESdir/rtofs_${modID}.t00z.restart_f${fcst_hour}.b ]
+       then
+         # find most recent forecast restart
+         ln -s -f $GESdir/rtofs_${modID}.t00z.restart_f${fcst_hour}.b restart_in.b
+         ln -s -f $GESdir/rtofs_${modID}.t00z.restart_f${fcst_hour}.a restart_in.a
+
+       # replace limits file
+         sday=`sh $utilscript/date_normal2hycom.sh \` ${utilexec}/ndate +$fcst_hour ${PDY}${cyc} \` `
+         echo "  $sday $eday false false  " > limits
+         break
+
+       fi
+
+       fcst_hour=`expr $fcst_hour - 1`
+     done
+     if [ $fcst_hour -lt 0 ]
+     then
+        msg1="Missing Restart File"
+        msg2="ABNORMAL EXIT FORECAST: NO FILE for restart_in.[ab]"
+        postmsg "$jlogfile" "$msg1" "$msg2"
+        err=2;
+        export err;err_chk
+     fi 
+
+  else 
+     if [ $mode = anal ]
+     then
+        restart_dir=$COMINm1
+     else
+        restart_dir=$COMIN
+     fi
+
+     ln -s -f $restart_dir/rtofs_${modID}.t${cyc}z.next_restart.a restart_in.a
+     ln -s -f $restart_dir/rtofs_${modID}.t${cyc}z.next_restart.b restart_in.b
+  
+  fi
+
+  if [ -s restart_in.a -a restart_in.b ]
+  then
+      echo "Initial restart files copied"
+  else
+      msg1="Missing Restart File"
+      msg2="ABNORMAL EXIT FORECAST: FATAL ERROR--NO RESTART FILE"
+      postmsg "$jlogfile" "$msg1" "$msg2"
+      err=911;
+      export err;err_chk
+  fi
+
+# 2.e copy interpolator data
+  cp $PARMrtofs/rtofs_${modID}.intp_pars.dat intp_pars.dat
+
+  if [[ -s intp_pars.dat ]]
+  then
+      echo "interpolator data copied"
+  else
+      msg1="Missing Interpolator Data"
+      msg2="ABNORMAL EXIT FORECAST: NO FILE for intp_pars.dat"
+      postmsg "$jlogfile" "$msg1" "$msg2"
+      err=2;
+      export err;err_chk
+  fi
+
+# 3. Create Forcing files
+
+# 3.a call gfs2rtofs to get the forcing files 
+
+  intvl=3
+  $USHrtofs/rtofs_gfs2rtofs.sh $srtdate$cyc $enddate$cyc $intvl 
+
+# 3.b correct air temperature over ice.
+   
+  # Ilya dbgz: the correction is done now in intp.f. 
+  # Anyhow, correct_forcing.f90 should be debugged!!!
+  #$USHrtofs/rtofs_correct_forcing.sh 
+
+
+#dbgz
+#exit
+
+# 4. Prepare for the forecast run
+
+  export OMP_NUM_THREADS=${OMP_NUM_THREADS:-0}
+  export XLSMPOPTS=${XLSMPOPTS:-"stack=32000000"}
+  
+  touch ok
+  rm -f ok
+  date >> TRACK
+
+  cmdtype='poe'
+
+  export MP_LABELIO=YES
+#  export MP_INFOLEVEL=3
+  export MP_STDOUTMODE=ordered
+
+  export MEMORY_AFFINITY=MCM
+  export TARGET_CPU_LIST=-1
+  poe /usrx/local/mpi_trace/utils/launch.x $EXECrtofs/rtofs_forecast -procs $NPROCS >> $pgmout 2>errfile
+
+##white  poe $EXECrtofs/rtofs_forecast -procs $NPROCS >> $pgmout 2>errfile
+  export err=$?; err_chk
+
+  date >> TRACK
+
+# --------------------------------------------------------------------------- #
+# 5.c  Check for errors
+
+  if [ -e ok ]; then
+    modelstatus=0
+
+      # Copy archives to /com
+       for prb in `ls probe_out_*`
+       do
+         if [ -s $COMOUT/${RUN}_${modID}.t${cyc}z.${prb} ]
+         then
+            cat $prb >> $COMOUT/${RUN}_${modID}.t${cyc}z.${prb}
+         else
+            cp -p $prb $COMOUT/${RUN}_${modID}.t${cyc}z.${prb}
+         fi
+       done
+
+      # Copy probes to /com
+       for prb in `ls probe_out_*`
+       do
+         if [ -s $COMOUT/${RUN}_${modID}.t${cyc}z.${prb} ]
+         then
+            cat $prb >> $COMOUT/${RUN}_${modID}.t${cyc}z.${prb}
+         else
+            cp -p $prb $COMOUT/${RUN}_${modID}.t${cyc}z.${prb}
+         fi
+       done
+
+      # copy lowfreq.out to /com
+       cp -p lowfreq.out $COMOUT/${RUN}_${modID}.t${cyc}z.fcst.lowfreq.out
+
+    echo "done" >$COMOUT/${RUN}_${modID}.t${cyc}z.fcst.log
+  else
+    modelstatus=1
+  fi
+#################################################
+msg='THE RTOFS_GLO_FORECAST JOB HAS ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################
+

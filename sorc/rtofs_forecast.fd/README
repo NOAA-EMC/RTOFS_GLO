@@ -1,0 +1,13 @@
+Compiling:
+
+ARCH=sp4 
+TYPE=mpi
+
+
+for TYPE=esmf additional environment variables:
+    setenv BEI_HOME /site/BEI
+    setenv ESMF_DIR ${BEI_HOME}/esmf/2.2.2r
+    breaksw
+
+To compile:
+make hycom ARCH=sp4 TYPE=mpi

@@ -1,0 +1,15 @@
+README.src.hycom2p2
+
+Major changes since version 2.1.03:
+ 
+a) Support for orthogonal curvilinear grids.
+
+Major changes since version 2.1.34:
+
+m) bugfix to FCT2 tsadvc
+
+n) incremental updating (data assimilation)
+
+o) Initial support for ESMF
+
+

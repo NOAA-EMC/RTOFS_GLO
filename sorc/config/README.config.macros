@@ -1,0 +1,41 @@
+Macros that may be used in config/$(ARCH)_$(TYPE)
+
+ALPHA		Compaq Alpha (Linux or OSF)
+AIX		IBM AIX
+ARCTIC		Fully global domain with Arctic dipole patch
+DEBUG_ALL	Sets all DEBUG_* macros
+DEBUG_TIMER	Printout every time the timer is called for a user routine
+ENDIAN_IO	Explicitly swap endian-ness as part of array I/O
+IA32		IA32 Linux (Intel Pentium or AMD Opteron)
+IA64		IA64 Linux (Intel Itanium)
+MPI		MPI message passing (see MPISR, NOMPIR8, *_IO, SSEND)
+MPISR		Use MPI_SENDRECV (vs non-blocking pt2pt calls)
+NOMPIR8		This MPI does not implement mpi_real8
+REAL4		REAL is REAL*4
+REAL8		REAL is REAL*8
+RINGB		Use local syncronization for SHMEM
+SERIAL_IO	Serialize array I/O (MPI, SHMEM)
+SHMEM		SHMEM put/get version (see RINGB, SERIAL_IO)
+SGI		SGI IRIX64
+SSEND		Use MPI_SSEND and MPI_ISSEND (vs MPI_SEND and MPI_ISEND)
+SUN		SUN Solaris
+TIMER		Turn on the subroutine-level wall clock timer
+TIMER_ALLOUT	Turn on the subroutine-level wall clock timer, print all tasks
+T3E		Cray T3E
+XT3		Cray XT3
+YMP		Cray YMP/C90/T90/SV1
+
+Macros set and used internally:
+
+BARRIER		Set a barrier (need HEADER in same routine)
+HEADER		Include a header file of constants (MPI)
+MPI_ISEND	MPI,   either mpi_isend or mpi_issend (SSEND)
+MPI_SEND	MPI,   either mpi_send  or mpi_ssend  (SSEND)
+MTYPED		MPI,   type for double precision
+MTYPEI		MPI,   type for integer
+MTYPER		MPI,   type for real
+SHMEM_GETD	SHMEM, get d.p.    variables
+SHMEM_GETI	SHMEM, get integer variables
+SHMEM_GETR	SHMEM, get real    variables
+SHMEM_MYPE	SHMEM, return number of this PE (0...npes-1)
+SHMEM_NPES	SHMEM, return number of PEs

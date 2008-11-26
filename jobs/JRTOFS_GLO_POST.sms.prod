@@ -1,0 +1,183 @@
+#!/bin/sh
+
+##temporary stuff
+export NET=rtofs
+export RUN=rtofs
+export modID=glo
+export job="${RUN}_${modID}_post_${cyc}"
+
+
+###############################################################
+# The RUN_ENVIR should be defined in the upper-level SMS script
+###############################################################
+export RUN_ENVIR=${RUN_ENVIR:-dev}
+export PATH=$PATH:.
+
+#####################################################################################
+# A message to be sent to the SMS indicating the start of the job in the Load Levelor
+#####################################################################################
+if [ $RUN_ENVIR != dev ]
+then
+  $SMSBIN/smsinit $LOADL_STEP_ID 
+fi
+
+set -xa
+
+# ##############################
+# SET SHELL PROCESSING VARIABLES
+# ##############################
+export PS4='$SECONDS + '
+date
+
+##########################################################
+# obtain unique process id (pid) and make temp directories
+##########################################################
+export pid=$$
+if [ $RUN_ENVIR = dev ]
+then
+  tmpdir=${tmpdir:-/ptmp/$LOGNAME/${runID}}
+  export DATA=$tmpdir/${job}_${envir}
+else
+  tmpdir=tmpnwprd
+  export DATA=$tmpdir/${job}.${pid}
+fi
+export DATA=$tmpdir/${job}.${pid}
+
+test -d $DATA && rm -rf $DATA
+mkdir -p $DATA
+cd $DATA
+
+##############################################
+# temporary analysis and forecast directories
+##############################################
+export ANAL_DATA=$tmpdir/${RUN}_${modID}_glo_anal_${cyc}_${envir}
+export FCST_DATA=$tmpdir/${RUN}_${modID}_forecast_${cyc}_${envir}
+
+export cycle=t${cyc}z
+
+####################################
+# File To Log Msgs
+####################################
+if [ $RUN_ENVIR = dev ]
+then
+  export jlogfile=$tmpdir/jlogfile
+else
+  if [ $envir = prod ]
+  then
+     export jlogfile=/com/logs/jlogfile
+  else
+    export jlogfile=/com/logs/${envir}/jlogfile
+  fi
+fi
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=rtofs
+export RUN=rtofs
+export modID=glo
+
+#################################################
+# SAVEGES - Copy Files from TPNDIR to $GESdir
+# SENDSMS - Flag events on SMS
+# SENDCOM - Copy files from TMPDIR to $COMOUT
+# SENDDBN - Issue DBNet Client Calls
+# RERUN   - Rerun fcst from beginning (default no)
+##################################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-NO}
+export SENDSMS=${SENDSMS:-NO}
+export RERUN=${RERUN:-NO}
+
+####################################
+# Specify Execution Areas
+####################################
+if [ $RUN_ENVIR = dev ]
+then
+  export HOMErtofs=/marine/save/wx20ir/hycom_glo/${runID}
+else
+  export HOMErtofs=/nw${envir}
+fi
+export EXECrtofs=${HOMErtofs}/exec
+export PARMrtofs=${HOMErtofs}/parm
+export FIXrtofs=${HOMErtofs}/fix
+export USHrtofs=${HOMErtofs}/ush
+
+#############################
+# Set up the UTILITIES
+##############################
+export utilscript=/nwprod/util/ush
+export utilexec=/nwprod/util/exec
+
+#################################################################
+# Run setup to initialize working directory and utility scripts
+#################################################################
+sh $utilscript/setup.sh
+
+#########################################################
+# For any retrospective run, set the PDY in the SMS script
+##########################################################
+export PDY=${PDY:-}
+# Run setpdy and initialize PDY variables
+sh $utilscript/setpdy.sh
+. PDY
+
+#############################################
+# Define the Input/Output/Restart directories
+#############################################
+if [ $RUN_ENVIR = dev ]
+then
+  export COMIN=${COMIN:-/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}/${RUN}.${PDY}}
+  export COMINm1=${COMINm1:-/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}/${RUN}.${PDYm1}}
+  export COMOUT=${COMOUT:-/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}/${RUN}.${PDY}}
+  export COMOUTp1=${COMOUTp1:-/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}/${RUN}.${PDYp1}}
+  export COMFLX=${COMFLX:-/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}}
+else
+  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
+  export COMINm1=/com/${NET}/${envir}/${RUN}.${PDYm1}
+  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
+  export COMFLX=/com/gfs/prod/gfs.${PDY}  
+fi
+if [ ! -d $GESdir ]
+then
+    mkdir -p $GESdir
+fi
+
+mkdir -m 775 -p $COMOUT
+
+env
+
+################################################################
+# Send a message to the jlogfile indicating the start of the job
+################################################################
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+#############################################################
+# execute the script
+#############################################################
+sh ${HOMErtofs}/scripts/exrtofs_glo_post.sh.sms
+
+cat $pgmout
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.post.`basename $pgmout`
+
+msg="JOB $job HAS COMPLETED NORMALLY." 
+postmsg "$jlogfile" "$msg"
+
+
+cd $tmpdir
+### rm -rf $DATA
+
+date
+
+if [ $RUN_ENVIR != dev ]
+then
+  $SMSBIN/smscomplete
+fi

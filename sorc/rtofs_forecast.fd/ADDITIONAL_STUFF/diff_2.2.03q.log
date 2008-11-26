@@ -1,0 +1,4222 @@
+foreach f ( READ* Makefile Make.com *.h *.f *.F *.c )
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.MICOMvsHYCOM ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.OpenMP ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.changes ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.changes_1p0 ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.changes_2p0 ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.cice ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.esmf ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.hycom2p1 ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.hycom2p2 ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.make ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.mod_xc ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.mod_za ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.newmachine ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.newregion ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw README.src.test ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw Makefile ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw Make.com ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw common_blocks.h ../../GLBa0.08/src_2.2.03q_32_mpi
+560d559
+< c --- 'facdf4' =       speed-dependent biharmonic viscosity factor
+571a571
+> c --- 'h1'     = depth interval used in lateral weighting of hor.pres.grad.
+616d615
+< c --- 'momtyp' = momentum advection type (2=2nd order, 4=4th order)
+645c644
+<      &               visco2,visco4,veldf2,veldf4,facdf4,
+---
+>      &               visco2,visco4,veldf2,veldf4,
+647c646
+<      &               tofset,sofset,dtrate,slip,cb,cbar,drglim,drgscl,
+---
+>      &               tofset,sofset,dtrate,h1,slip,cb,cbar,drglim,drgscl,
+656c655
+<      &               visco2,visco4,veldf2,veldf4,facdf4,
+---
+>      &               visco2,visco4,veldf2,veldf4,
+658c657
+<      &               tofset,sofset,dtrate,slip,cb,cbar,drglim,drgscl,
+---
+>      &               tofset,sofset,dtrate,h1,slip,cb,cbar,drglim,drgscl,
+668c667
+<      &               hybflg,advflg,advtyp,momtyp,
+---
+>      &               hybflg,advflg,advtyp,
+676c675
+<      &               hybflg,advflg,advtyp,momtyp,
+---
+>      &               hybflg,advflg,advtyp,
+764d762
+< c> Jun  2007 - added momtyp and facdf4.
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw dimensions.h ../../GLBa0.08/src_2.2.03q_32_mpi
+9c9
+<       parameter (itdm= 500,jtdm= 382,kdm=32)  ! GLBt0.72
+---
+>       parameter (itdm=4500,jtdm=3298,kdm=32)  ! GLBa0.08
+14c14
+<       parameter (iqr=10,jqr=10)  ! multiple tiles (TYPE=ompi or mpi or shmem)
+---
+>       parameter (iqr=36,jqr=36)  ! multiple tiles (TYPE=ompi or mpi or shmem)
+20c20,21
+<       parameter (idm= 125,jdm=  96)  ! NMPI=16,24,32,40,47,64
+---
+> *     parameter (idm= 250,jdm= 107)  ! NMPI=758,781,806,834,858,879
+>       parameter (idm= 300,jdm= 184)  ! NMPI=378
+34c35
+<       parameter (kkmy25=kdm)  ! must be -1 or kdm
+---
+>       parameter (kkmy25= -1)  ! must be -1 or kdm
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_xc_mp.h ../../GLBa0.08/src_2.2.03q_32_mpi
+289d288
+< c        =-1; first node in each row returns that row
+386d384
+<       if     (mnflg.eq.-1) then
+388,398d385
+< c       we are essentially done.
+< c
+<         if (mproc.eq.mpe_1(nproc)) then
+<           do j= 1,jj
+<             do i= 1,itdm
+<               aa(i,j+j0) = al4(i,j)
+<             enddo
+<           enddo  
+<         endif  
+<       else !mnflg.ne.-1
+< c
+459d445
+<       endif !mnflg.eq.-1:else                                              
+609d594
+< c        =-1; first node in each row contains that row
+657c642
+<       if     (mnflg.gt.0) then
+---
+>       if     (mnflg.ne.0) then
+704,718c689,691
+<           call SHMEM_GET4(aa(1,j0+1),
+<      &                    aa(1,j0+1),itdm*jj,idproc1(mnflg))
+<         endif
+<         BARRIER
+< #endif
+<       elseif (mnflg.eq.-1) then
+< c       "broadcast" row sections of aa to all processors in the row.
+< #if defined(MPI)
+<         if     (mproc.eq.mpe_1(nproc)) then
+<           i = 0
+<           do mp= mpe_1(nproc)+1,mpe_e(nproc)
+<             i = i + 1
+<             call MPI_ISEND(aa(1,j0+1),itdm*jj,MTYPE4,
+<      &                    idproc(mp,nproc), 9952,
+<      &                    mpi_comm_hycom, mpireqb(i), mpierr)
+---
+>           do j= 1,jj
+>             call SHMEM_GET4(aa(1,j0+j),
+>      &                      aa(1,j0+j),itdm,idproc1(mnflg))
+720,724d692
+<           call mpi_waitall( i, mpireqb, mpistat, mpierr)
+<         else
+<           call MPI_RECV(aa(1,j0+1),itdm*jj,MTYPE4,
+<      &                  idproc(mpe_1(nproc),nproc), 9952,
+<      &                  mpi_comm_hycom, mpistat, mpierr)
+726,727d693
+< #elif defined(SHMEM)
+< c       assume aa is in common.
+729,734d694
+<         if     (mproc.ne.mpe_1(nproc)) then
+<           call SHMEM_GET4(aa(1,j0+1),
+<      &                    aa(1,j0+1),itdm*jj,
+<      &                    idproc(mpe_1(nproc),nproc))
+<         endif
+<         BARRIER
+736,737c696
+<       endif !mnflg.gt.0:mnflg.eq.-1
+< c     
+---
+>       endif
+1889c1848
+< c  2) data structures (public):
+---
+> c  2) data structures:
+1896,1900c1855,1858
+< c      mp_1st  - 1st node in this row of 2-D nodes,        mpe_1(nproc)
+< c      i0      - 1st dimension offset for this tile, i0_pe(mproc,nproc)
+< c      ii      - 1st dimension extent for this tile, ii_pe(mproc,nproc)
+< c      j0      - 2nd dimension offset for this tile, j0_pe(mproc,nproc)
+< c      jj      - 2nd dimension extent for this tile, jj_pe(mproc,nproc)
+---
+> c      i0      -     i0_pe(mproc,nproc)
+> c      ii      -     ii_pe(mproc,nproc)
+> c      j0      -     j0_pe(mproc,nproc)
+> c      jj      -     jj_pe(mproc,nproc)
+1904,1905d1861
+< c
+< c  3) data structures (private):
+1932c1888
+< c  4) all data structures are based on the processor number and
+---
+> c  3) all data structures are based on the processor number and
+2198,2212d2153
+< c
+<       mp_1st = mpe_1(nproc)  !1st node in this row (public)
+< c
+< c     mpi-2 i/o group (public), see mod_za.
+< c
+<       if     (mproc.eq.mp_1st) then
+<         i = 1
+<         call mpi_comm_split(mpi_comm_hycom, i,0,
+<      &                      group_1st_in_row, mpierr)
+<       else
+<         i = 0
+<         call mpi_comm_split(mpi_comm_hycom, i,0,
+<      &                      group_1st_in_row, mpierr)
+<         call mpi_comm_free( group_1st_in_row, mpierr)
+<       endif
+2257,2258d2197
+< c
+<       mp_1st = mpe_1(nproc)  !1st node in this row (public)
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_xc_sm.h ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_za_mp.h ../../GLBa0.08/src_2.2.03q_32_mpi
+1,7d0
+< 
+< #if defined(NOMPIR8) /* LAM does not support mpi_real[48] */
+< # define MTYPE4 mpi_real
+< #else /* most MPI's allow mpi_real[48] */
+< # define MTYPE4 mpi_real4
+< #endif
+< 
+12c5
+< c     MPI-2 I/O version, with I/O from first processor in each row.
+---
+> c     message passing version, with I/O from multiple processors.
+19,60d11
+<       subroutine zagetc(cline,ios, iunit)
+<       implicit none
+< c
+<       character*80, intent(out)   :: cline
+<       integer,      intent(out)   :: ios
+<       integer,      intent(in)    :: iunit
+< c
+< c**********
+< c*
+< c  1) machine specific routine for reading one text line from a file.
+< c
+< c  2) The read is performed on the first processor only.
+< c*
+< c**********
+< c
+<       integer        iline,ibuf
+<       common/czgetc/ iline(81,0:1),ibuf
+<       save  /czgetc/
+< c
+<       integer i
+< c
+< c --- I/O from first processor only
+< c
+<       ibuf = mod(ibuf+1,2)
+< c
+<       if     (mnproc.eq.1) then
+<         read(iunit,'(a)',iostat=ios) cline
+<         do i= 1,80
+<           iline(i,ibuf) = ichar(cline(i:i))
+<         enddo
+<         iline(81,ibuf) = ios
+<       endif
+< c
+< c     broadcast to all other processors
+< c
+<       call xcgetc(iline(:,ibuf))
+<       do i= 1,80
+<         cline(i:i) = char(iline(i,ibuf))
+<       enddo
+<       ios = iline(81,ibuf)  ! iostat value
+<       return
+<       end subroutine zagetc
+62,1403c13
+<       subroutine zaiopn(cstat, iaunit)
+<       implicit none
+< c
+<       integer,       intent(in)    :: iaunit
+<       character*(*), intent(in)    :: cstat
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for opening a file for array i/o.
+< c
+< c     must call zaiost before first call to zaiopn.
+< c     see also 'zaiope' and 'zaiopf'.
+< c
+< c  2) the filename is taken from the environment variable FORxxxA,
+< c       where xxx = iaunit, with default fort.xxxa.
+< c
+< c     array i/o is mpi-2 i/o.
+< c
+< c  3) iaunit+uaoff is the i/o unit used for arrays.  array i/o might not
+< c      use fortran i/o units, but, for compatability, assume that
+< c      iaunit+uaoff refers to a fortran i/o unit anyway.
+< c     cstat indicates the file type, it can be 'scratch', 'old', or
+< c      'new'.
+< c     all i/o to iaunit must be performed by zaiord and zaiowr.
+< c     the file should be closed using zaiocl.
+< c*
+< c**********
+< c
+< c --- spval  = data void marker, 2^100 or about 1.2676506e30
+< c --- n2drec = size of output 2-d array, multiple of 4096
+<       real*4     spval
+<       parameter (spval=2.0**100)
+<       integer    n2drec
+<       parameter (n2drec=((itdm*jtdm+4095)/4096)*4096)
+< c
+<       include 'mpif.h'
+<       integer        mpierr,mpireq,mpistat
+<       common/xcmpii/ mpierr,mpireq(4),
+<      &               mpistat(mpi_status_size,4*iqr)
+<       save  /xcmpii/
+< c
+<       real*4         w,wminy,wmaxy
+<       common/czioxw/ w(n2drec),wminy(jtdm),wmaxy(jtdm)
+<       save  /czioxw/
+< c
+<       integer(kind=mpi_offset_kind) disp
+<       integer                       iamode,iahint
+<       character                     cfile*256,cenv*7
+< #if defined(TIMER)
+< c
+<       call xctmr0(16)
+< #endif
+< c
+< c     test file state.
+< c
+<       if     (iarec(iaunit).ne.-1) then
+<         write(lp,9000) iaunit
+<         call xcstop('(zaiopn)')
+<                stop '(zaiopn)'
+<       endif
+< c
+<       iarec(iaunit) = 0
+< c
+< c --- I/O from first processor in each row.
+< c
+<       if     (mproc.eq.mp_1st) then
+< *
+< *     if     (mnproc.eq.1) then
+< *     write(lp,*) 'zaiopn - iaunit = ',iaunit
+< *     call flush(lp)
+< *     endif
+< c
+< c     get filename.
+< c
+<       write(cenv,"('FOR',i3.3,'A')") iaunit
+<       cfile = ' '
+<       call getenv(cenv,cfile)
+<       if     (cfile.eq.' ') then
+<         write(cfile,"('fort.',i3.3,'a')") iaunit
+<       endif
+< c
+< c     open file.
+< c
+<       if     (cstat.eq.'OLD' .or.
+<      &        cstat.eq.'old'     ) then
+<         iamode = MPI_MODE_RDONLY +
+<      &           MPI_MODE_UNIQUE_OPEN
+<         iahint = file_info_zaiord  !see zaiost
+<         file_count_zaiord = file_count_zaiord + 1
+<       elseif (cstat.eq.'NEW' .or.
+<      &        cstat.eq.'new'     ) then
+<         iamode = MPI_MODE_WRONLY +
+<      &           MPI_MODE_CREATE +
+<      &           MPI_MODE_EXCL   +
+<      &           MPI_MODE_UNIQUE_OPEN
+<         iahint = file_info_zaiowr  !see zaiost
+<         file_count_zaiowr = file_count_zaiowr + 1
+<       else !scratch file
+<         iamode = MPI_MODE_RDWR            +
+<      &           MPI_MODE_DELETE_ON_CLOSE +
+<      &           MPI_MODE_UNIQUE_OPEN
+<         iahint = file_info_zaiowr  !see zaiost
+<         file_count_zaiowr = file_count_zaiowr + 1
+<       endif
+<       call mpi_file_open(group_1st_in_row,
+<      &                   trim(cfile),
+<      &                   iamode,
+<      &                   iahint,
+<      &                   iahand(iaunit),
+<      &                   mpierr)
+<       if     (mpierr.ne.0) then
+<         write(lp,9100) iaunit
+<         write(lp,*) 'mpi_file_open - mpierr = ',mpierr
+<         call flush(lp)
+<         call xchalt('(zaiopn)')
+<                stop '(zaiopn)'
+<       endif !mpierr
+<       disp = 0
+<       call mpi_file_set_view(iahand(iaunit),
+<      &                       disp,
+<      &                       MTYPE4,
+<      &                       MTYPE4,
+<      &                       "native",  !"external32" may not be available.
+<      &                       iahint,
+<      &                       mpierr)
+<       if     (mpierr.ne.0) then
+<         write(lp,9100) iaunit
+<         write(lp,*) 'mpi_file_set_view - mpierr = ',mpierr
+<         call flush(lp)
+<         call xchalt('(zaiopn)')
+<                stop '(zaiopn)'
+<       endif !mpierr
+< c
+<       endif  ! I/O from first processor in each row
+<       call xcsync(no_flush)
+< #if defined(TIMER)
+< c
+<       call xctmr1(16)
+< #endif
+<       return
+< c
+<  9000 format(/ /10x,'error in zaiopn -  array I/O unit ',
+<      &   i3,' is not marked as available.'/ /)
+<  9100 format(/ /10x,'error in zaiopn -  can''t open unit ',i3,
+<      &   ', for array I/O.'/ /)
+<       end subroutine zaiopn
+< 
+<       subroutine zaiope(cenv,cstat, iaunit)
+<       implicit none
+< c
+<       integer,       intent(in)    :: iaunit
+<       character*(*), intent(in)    :: cenv,cstat
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for opening a file for array i/o.
+< c
+< c     must call zaiost before first call to zaiope.
+< c     see also 'zaiopn' and 'zaiopf'.
+< c
+< c  2) the filename is taken from environment variable 'cenv'.
+< c
+< c     array i/o is mpi-2 i/o.
+< c
+< c  3) iaunit+uaoff is the i/o unit used for arrays.  array i/o might not
+< c      use fortran i/o units, but, for compatability, assume that
+< c      iaunit+uaoff refers to a fortran i/o unit anyway.
+< c     cstat indicates the file type, it can be 'scratch', 'old', or
+< c      'new'.
+< c     all i/o to iaunit must be performed by zaiord and zaiowr.
+< c      arrays passed to these routines must conform to 'h'.
+< c     the file should be closed using zaiocl.
+< c*
+< c**********
+< c
+< c --- spval  = data void marker, 2^100 or about 1.2676506e30
+< c --- n2drec = size of output 2-d array, multiple of 4096
+<       real*4     spval
+<       parameter (spval=2.0**100)
+<       integer    n2drec
+<       parameter (n2drec=((itdm*jtdm+4095)/4096)*4096)
+< c
+<       include 'mpif.h'
+<       integer        mpierr,mpireq,mpistat
+<       common/xcmpii/ mpierr,mpireq(4),
+<      &               mpistat(mpi_status_size,4*iqr)
+<       save  /xcmpii/
+< c
+<       real*4         w,wminy,wmaxy
+<       common/czioxw/ w(n2drec),wminy(jtdm),wmaxy(jtdm)
+<       save  /czioxw/
+< c
+<       integer(kind=mpi_offset_kind) disp
+<       integer                       iamode,iahint
+<       character                     cfile*256
+< c
+< #if defined(TIMER)
+< c
+<       call xctmr0(16)
+< #endif
+< c
+< c     test file state.
+< c
+<       if     (iarec(iaunit).ne.-1) then
+<         write(lp,9000) iaunit
+<         call xcstop('(zaiope)')
+<                stop '(zaiope)'
+<       endif
+< c
+<       iarec(iaunit) = 0
+< c
+< c --- I/O from first processor in each row.
+< c
+<       if     (mproc.eq.mp_1st) then
+< *
+< *     if     (mnproc.eq.1) then
+< *     write(lp,*) 'zaiope - iaunit = ',iaunit
+< *     call flush(lp)
+< *     endif
+< c
+< c     get filename.
+< c
+<       cfile = ' '
+<       call getenv(cenv,cfile)
+<       if     (cfile.eq.' ') then
+<         write(lp,9300) trim(cenv)
+<         write(lp,*) 'iaunit = ',iaunit
+<         call flush(lp)
+<         call xchalt('(zaiope)')
+<                stop '(zaiope)'
+<       endif
+< c
+< c     open file.
+< c
+<       if     (cstat.eq.'OLD' .or.
+<      &        cstat.eq.'old'     ) then
+<         iamode = MPI_MODE_RDONLY +
+<      &           MPI_MODE_UNIQUE_OPEN
+<         iahint = file_info_zaiord  !see zaiost
+<         file_count_zaiord = file_count_zaiord + 1
+<       elseif (cstat.eq.'NEW' .or.
+<      &        cstat.eq.'new'     ) then
+<         iamode = MPI_MODE_WRONLY +
+<      &           MPI_MODE_CREATE +
+<      &           MPI_MODE_EXCL   +
+<      &           MPI_MODE_UNIQUE_OPEN
+<         iahint = file_info_zaiowr  !see zaiost
+<         file_count_zaiowr = file_count_zaiowr + 1
+<       else !scratch file
+<         iamode = MPI_MODE_RDWR            +
+<      &           MPI_MODE_DELETE_ON_CLOSE +
+<      &           MPI_MODE_UNIQUE_OPEN
+<         iahint = file_info_zaiowr  !see zaiost
+<         file_count_zaiowr = file_count_zaiowr + 1
+<       endif
+<       call mpi_file_open(group_1st_in_row,
+<      &                   trim(cfile),
+<      &                   iamode,
+<      &                   iahint,
+<      &                   iahand(iaunit),
+<      &                   mpierr)
+<       if     (mpierr.ne.0) then
+<         write(lp,9100) iaunit,trim(cfile)
+<         write(lp,*) 'mpi_file_open - mpierr = ',mpierr
+<         write(lp,*) 'cenv = ',trim(cenv)
+<         call flush(lp)
+<         call xchalt('(zaiope)')
+<                stop '(zaiope)'
+<       endif !mpierr
+<       disp = 0
+<       call mpi_file_set_view(iahand(iaunit),
+<      &                       disp,
+<      &                       MTYPE4,
+<      &                       MTYPE4,
+<      &                       "native",  !"external32" may not be available.
+<      &                       iahint,
+<      &                       mpierr)
+<       if     (mpierr.ne.0) then
+<         write(lp,9100) iaunit,trim(cfile)
+<         write(lp,*) 'mpi_file_set_view - mpierr = ',mpierr
+<         write(lp,*) 'cenv = ',trim(cenv)
+<         call flush(lp)
+<         call xchalt('(zaiope)')
+<                stop '(zaiope)'
+<       endif !mpierr
+< c
+<       endif  ! I/O from first processor in each row
+<       call xcsync(no_flush)
+< #if defined(TIMER)
+< c
+<       call xctmr1(16)
+< #endif
+<       return
+< c
+<  9000 format(/ /10x,'error in zaiope -  array I/O unit ',
+<      &   i3,' is not marked as available.'/ /)
+<  9100 format(/ /10x,'error in zaiope -  can''t open unit ',i3,
+<      &   ', for array I/O.' /
+<      &   10x,'cfile = ',a/ /)
+<  9300 format(/ /10x,'error in zaiope -  environment variable ',a,
+<      &   ' not defined'/ /)
+<       end subroutine zaiope
+< 
+<       subroutine zaiopf(cfile,cstat, iaunit)
+<       implicit none
+< c
+<       integer,       intent(in)    :: iaunit
+<       character*(*), intent(in)    :: cfile,cstat
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for opening a file for array i/o.
+< c
+< c     must call zaiost before first call to zaiopf.
+< c     see also 'zaiopn' and 'zaiope'.
+< c
+< c  2) the filename is taken from 'cfile'.
+< c
+< c     array i/o is mpi-2 i/o.
+< c
+< c  3) iaunit+uaoff is the i/o unit used for arrays.  array i/o might not
+< c      use fortran i/o units, but, for compatability, assume that
+< c      iaunit+uaoff refers to a fortran i/o unit anyway.
+< c     cstat indicates the file type, it can be 'scratch', 'old', or
+< c      'new'.
+< c     all i/o to iaunit must be performed by zaiord and zaiowr.
+< c      arrays passed to these routines must conform to 'h'.
+< c     the file should be closed using zaiocl.
+< c*
+< c**********
+< c
+< c --- spval  = data void marker, 2^100 or about 1.2676506e30
+< c --- n2drec = size of output 2-d array, multiple of 4096
+<       real*4     spval
+<       parameter (spval=2.0**100)
+<       integer    n2drec
+<       parameter (n2drec=((itdm*jtdm+4095)/4096)*4096)
+< c
+<       include 'mpif.h'
+<       integer        mpierr,mpireq,mpistat
+<       common/xcmpii/ mpierr,mpireq(4),
+<      &               mpistat(mpi_status_size,4*iqr)
+<       save  /xcmpii/
+< c
+<       real*4         w,wminy,wmaxy
+<       common/czioxw/ w(n2drec),wminy(jtdm),wmaxy(jtdm)
+<       save  /czioxw/
+< c
+<       integer(kind=mpi_offset_kind) disp
+<       integer                       iamode,iahint
+<       logical                       lphint
+< #if defined(TIMER)
+< c
+<       call xctmr0(16)
+< #endif
+< c
+< c     test file state.
+< c
+<       if     (iarec(iaunit).ne.-1) then
+<         write(lp,9000) iaunit
+<         call xcstop('(zaiopf)')
+<                stop '(zaiopf)'
+<       endif
+< c
+<       iarec(iaunit) = 0
+< c
+< c --- I/O from first processor in each row.
+< c
+<       if     (mproc.eq.mp_1st) then
+< *
+< *     if     (mnproc.eq.1) then
+< *     write(lp,*) 'zaiopf - iaunit = ',iaunit
+< *     call flush(lp)
+< *     endif
+< c
+< c     open file.
+< c
+<       if     (cstat.eq.'OLD' .or.
+<      &        cstat.eq.'old'     ) then
+<         iamode = MPI_MODE_RDONLY +
+<      &           MPI_MODE_UNIQUE_OPEN
+<         iahint = file_info_zaiord  !see zaiost
+<         file_count_zaiord = file_count_zaiord + 1
+<         lphint = file_count_zaiord .eq. 1
+<       elseif (cstat.eq.'NEW' .or.
+<      &        cstat.eq.'new'     ) then
+<         iamode = MPI_MODE_WRONLY +
+<      &           MPI_MODE_CREATE +
+<      &           MPI_MODE_EXCL   +
+<      &           MPI_MODE_UNIQUE_OPEN
+<         iahint = file_info_zaiowr  !see zaiost
+<         file_count_zaiowr = file_count_zaiowr + 1
+<         lphint = file_count_zaiowr .eq. 1
+<       else !scratch file
+<         iamode = MPI_MODE_RDWR            +
+<      &           MPI_MODE_DELETE_ON_CLOSE +
+<      &           MPI_MODE_UNIQUE_OPEN
+<         iahint = file_info_zaiowr  !see zaiost
+<         file_count_zaiowr = file_count_zaiowr + 1
+<         lphint = .true.
+<       endif
+<       call mpi_file_open(group_1st_in_row,
+<      &                   trim(cfile),
+<      &                   iamode,
+<      &                   iahint,
+<      &                   iahand(iaunit),
+<      &                   mpierr)
+<       if     (mpierr.ne.0) then
+<         write(lp,9100) iaunit,trim(cfile)
+<         write(lp,*) 'mpi_file_open - mpierr = ',mpierr
+<         call flush(lp)
+<         call xchalt('(zaiopf)')
+<                stop '(zaiopf)'
+<       endif !mpierr
+<       disp = 0
+<       call mpi_file_set_view(iahand(iaunit),
+<      &                       disp,
+<      &                       MTYPE4,
+<      &                       MTYPE4,
+<      &                       "native",  !"external32" may not be available.
+<      &                       iahint,
+<      &                       mpierr)
+<       if     (mpierr.ne.0) then
+<         write(lp,9100) iaunit,trim(cfile)
+<         write(lp,*) 'mpi_file_set_view - mpierr = ',mpierr
+<         call flush(lp)
+<         call xchalt('(zaiopf)')
+<                stop '(zaiopf)'
+<       endif !mpierr
+<       if     (lphint .and. mnproc.eq.1) then
+<         call zaio_hints(iahand(iaunit))
+<       endif
+< c
+<       endif  ! I/O from first processor in each row
+<       call xcsync(no_flush)
+< #if defined(TIMER)
+< c
+<       call xctmr1(16)
+< #endif
+<       return
+< c
+<  9000 format(/ /10x,'error in zaiopf -  array I/O unit ',
+<      &   i3,' is not marked as available.'/ /)
+<  9100 format(/ /10x,'error in zaiopf -  can''t open unit ',i3,
+<      &   ', for array I/O.' /
+<      &   10x,'cfile = ',a/ /)
+<       end subroutine zaiopf
+< 
+<       subroutine zaio_hints(file_handle)
+<       implicit none
+< c
+<       integer, intent(in) :: file_handle
+< c
+< c**********
+< c*
+< c  1) prints current hints.
+< c*
+< c**********
+< c
+<       logical       flag
+<       integer       hints,i,mpierr,nkeys
+<       character*256 key,value
+< c
+<       call MPI_File_get_info(file_handle, hints, mpierr)
+<       call MPI_Info_get_nkeys(hints, nkeys, mpierr)
+< c
+<       write(6,"(/a)") 'zaio_hints:'
+<       do i= 0,nkeys-1
+<         call MPI_Info_get_nthkey(hints, i, key, mpierr)
+<         call MPI_Info_get(hints, key, 256, value, flag, mpierr)
+<         write(6,"(4a)")
+<      &    '    key=',trim(key),
+<      &    '  value=',trim(value)
+<       enddo
+<       write(6,*)
+<       return
+<       end subroutine zaio_hints
+< 
+<       subroutine zaiopi(lopen, iaunit)
+<       implicit none
+< c
+<       logical, intent(out)   :: lopen
+<       integer, intent(in)    :: iaunit
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) is an array i/o unit open?
+< c
+< c  2) must call zaiost before first call to zaiopi.
+< c*
+< c**********
+< c
+<       lopen = iarec(iaunit).ne.-1
+<       return
+<       end subroutine zaiopi
+< 
+<       subroutine zaiost
+<       implicit none
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for initializing array i/o.
+< c
+< c  2) see also zaiopn, zaiord, zaiowr, and zaiocl.
+< c*
+< c**********
+< c
+<       include 'mpif.h'
+<       integer        mpierr,mpireq,mpistat
+<       common/xcmpii/ mpierr,mpireq(4),
+<      &               mpistat(mpi_status_size,4*iqr)
+<       save  /xcmpii/
+< c
+<       integer       i
+<       character*256 value
+< c
+< c     mpi-2 hints for array i/o
+< c
+<       file_count_zaiord = 0
+<       file_count_zaiowr = 0
+<       call mpi_info_create(file_info_zaiord,
+<      &                     mpierr)
+<       call mpi_info_create(file_info_zaiowr,
+<      &                     mpierr)
+< #if defined(AIX)
+<       call mpi_info_set(file_info_zaiord,
+<      &                  'IBM_largeblock_io',  !read on calling task
+<      &                  'true',
+<      &                  mpierr)
+<       write(value,'(i10)') (((itdm*jtdm+4095)/4096)*4096)*4
+<       call mpi_info_set(file_info_zaiowr,
+<      &                  'IBM_io_buffer_size',
+<      &                  trim(value),          !write from a single task
+<      &                  mpierr)
+< #else
+<       call mpi_info_free(file_info_zaiord,  !set to mpi_info_null
+<      &                   mpierr)
+<       call mpi_info_free(file_info_zaiowr,  !set to mpi_info_null
+<      &                   mpierr)
+< #endif
+< c
+<       if     (mnproc.eq.1) then
+<         write(lp,'(/a/)')
+<      &    'zaiost - Array I/O is MPI-2 I/O from one task per row'
+<       endif
+< c
+<       do i= 1,999
+<         iarec(i) = -1
+<       enddo
+< #if defined(TIMER)
+< c
+< c     initialize timers.
+< c
+<       call xctmrn(16,'zaio**')
+<       call xctmrn(17,'zaiord')
+<       call xctmrn(18,'zaiowr')
+< #endif
+<       return
+<       end subroutine zaiost
+< 
+<       subroutine zaiocl(iaunit)
+<       implicit none
+< c
+<       integer, intent(in)    :: iaunit
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for array i/o file closing.
+< c
+< c     must call zaiopn for this array unit before calling zaiocl.
+< c
+< c  2) array i/o is mpi-2 i/o.
+< c*
+< c**********
+< c
+<       include 'mpif.h'
+<       integer        mpierr,mpireq,mpistat
+<       common/xcmpii/ mpierr,mpireq(4),
+<      &               mpistat(mpi_status_size,4*iqr)
+<       save  /xcmpii/
+< #if defined(TIMER)
+< c
+<       call xctmr0(16)
+< #endif
+< c
+<       if     (iarec(iaunit).lt.0) then
+<         write(lp,9000) iaunit
+<         call xcstop('(zaiocl)')
+<                stop '(zaiocl)'
+<       endif
+< c
+<       iarec(iaunit) = -1
+< c
+< c --- I/O from first processor in each row
+< c
+<       if     (mproc.eq.mp_1st) then
+< *
+< *     if     (mnproc.eq.1) then
+< *     write(lp,*) 'zaiocl - iaunit = ',iaunit
+< *     call flush(lp)
+< *     endif
+< c
+<       call mpi_file_close(iahand(iaunit),mpierr)
+< c
+<       endif  ! I/O from first processor in each row
+<       call xcsync(no_flush)
+< #if defined(TIMER)
+< c
+<       call xctmr1(16)
+< #endif
+<       return
+< c
+<  9000 format(/ /10x,'error in zaiocl -  array I/O unit ',
+<      &   i3,' is not marked as open.'/ /)
+<       end subroutine zaiocl
+< 
+<       subroutine zaiofl(iaunit)
+<       implicit none
+< c
+<       integer, intent(in)    :: iaunit
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for array i/o buffer flushing.
+< c
+< c     must call zaiopn for this array unit before calling zaiocl.
+< c
+< c  2) array i/o is mpi-2 i/o.
+< c*
+< c**********
+< c
+<       include 'mpif.h'
+<       integer        mpierr,mpireq,mpistat
+<       common/xcmpii/ mpierr,mpireq(4),
+<      &               mpistat(mpi_status_size,4*iqr)
+<       save  /xcmpii/
+< #if defined(TIMER)
+< c
+<       call xctmr0(16)
+< #endif
+< c
+<       if     (iarec(iaunit).lt.0) then
+<         write(lp,9000) iaunit
+<         call xcstop('(zaiofl)')
+<                stop '(zaiofl)'
+<       endif
+< c
+< c --- I/O from first processor in each row
+< c
+<       if     (mproc.eq.mp_1st) then
+<         call mpi_file_sync(iahand(iaunit),mpierr)
+<       endif  ! I/O from first processor in each row
+<       call xcsync(no_flush)
+< #if defined(TIMER)
+< c
+<       call xctmr1(16)
+< #endif
+<       return
+< c
+<  9000 format(/ /10x,'error in zaiofl -  array I/O unit ',
+<      &   i3,' is not marked as open.'/ /)
+<       end subroutine zaiofl
+< 
+<       subroutine zaioiq(iaunit, irec)
+<       implicit none
+< c
+<       integer, intent(in)    :: iaunit
+<       integer, intent(out)   :: irec
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for array i/o inquiry.
+< c
+< c  2) returns the number of records processed, or -1 for a closed file.
+< c*
+< c**********
+< c
+<       irec = iarec(iaunit)
+<       return
+<       end subroutine zaioiq
+< 
+<       subroutine zaiorw(iaunit)
+<       implicit none
+< c
+<       integer, intent(in)    :: iaunit
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for array i/o file rewinding.
+< c
+< c     must call zaiopn for this array unit before calling zaiocl.
+< c
+< c  2) array i/o is mpi-2 i/o.
+< c*
+< c**********
+< #if defined(TIMER)
+< c
+<       call xctmr0(16)
+< #endif
+< c
+<       if     (iarec(iaunit).lt.0) then
+<         write(lp,9000) iaunit
+<         call xcstop('(zaiorw)')
+<                stop '(zaiorw)'
+<       endif
+< c
+<       iarec(iaunit) = 0
+< *
+< *     if     (mnproc.eq.1) then
+< *     write(lp,*) 'zaiorw - iaunit,rec = ',iaunit,iarec(iaunit)
+< *     call flush(lp)
+< *     endif
+<       call xcsync(no_flush)
+< #if defined(TIMER)
+< c
+<       call xctmr1(16)
+< #endif
+<       return
+< c
+<  9000 format(/ /10x,'error in zaiorw -  array I/O unit ',
+<      &   i3,' is not marked as open.'/ /)
+<       end subroutine zaiorw
+< 
+<       subroutine zaiord3(h, l, mask,lmask, hmin,hmax,  iaunit)
+<       implicit none
+< c
+<       logical, intent(in)    :: lmask
+<       integer, intent(in)    :: l,iaunit
+<       integer, dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy),
+<      &         intent(in)    :: mask
+< #if defined(REAL4)
+<       real*4,  intent(out)   :: hmin(l),hmax(l)
+<       real*4,  dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy,l),
+<      &         intent(out)   :: h
+< #else
+<       real,    intent(out)   :: hmin(l),hmax(l)
+<       real,    dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy,l),
+<      &         intent(out)   :: h
+< #endif
+< c
+< c**********
+< c*
+< c  1) machine specific routine for 3-d array reading.
+< c
+< c     must call zaiopn for this array unit before calling zaiord.
+< c
+< c  2) array i/o is mpi-2 i/o.
+< c
+< c  3) iaunit+uaoff is the i/o unit used for arrays.  array i/o might not
+< c      use fortran i/o units, but, for compatability, assume that
+< c      iaunit+uaoff refers to a fortran i/o unit anyway.
+< c     the array, 'h',  must conform to that passed in the associated
+< c      call to zaiopn.
+< c
+< c  4) hmin,hmax are returned as the minimum and maximum value in the
+< c     array, ignoring array elements set to 2.0**100.
+< c     if lmask==.true. the range is calculated only where mask.ne.0,
+< c     with all other values unchanged in h on exit.  It is then an
+< c     error if mask.ne.0 anywhere the input is 2.0**100.
+< c*
+< c**********
+< c
+< c     this version just calls zaiord l times.
+< c
+<       integer k
+< c
+<       do k= 1,l
+<         call zaiord(h(1-nbdy,1-nbdy,k), mask,lmask,
+<      &              hmin(k),hmax(k), iaunit)
+<       enddo
+< c
+<       return
+<       end subroutine zaiord3
+< 
+<       subroutine zaiord(h, mask,lmask, hmin,hmax,  iaunit)
+<       implicit none
+< c
+<       logical, intent(in)    :: lmask
+<       integer, intent(in)    :: iaunit
+<       integer, dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy),
+<      &         intent(in)    :: mask
+< #if defined(REAL4)
+<       real*4,  intent(out)   :: hmin,hmax
+<       real*4,  dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy),
+<      &         intent(out)   :: h
+< #else
+<       real,    intent(out)   :: hmin,hmax
+<       real,    dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy),
+<      &         intent(out)   :: h
+< #endif
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for array reading.
+< c
+< c     must call zaiopn for this array unit before calling zaiord.
+< c
+< c  2) array i/o is mpi-2 i/o.
+< c
+< c  3) iaunit+uaoff is the i/o unit used for arrays.  array i/o might not
+< c      use fortran i/o units, but, for compatability, assume that
+< c      iaunit+uaoff refers to a fortran i/o unit anyway.
+< c     the array, 'h',  must conform to that passed in the associated
+< c      call to zaiopn.
+< c
+< c  4) hmin,hmax are returned as the minimum and maximum value in the
+< c     array, ignoring array elements set to 2.0**100.
+< c     if lmask==.true. the range is calculated only where mask.ne.0,
+< c     with all other values unchanged in h on exit.  It is then an
+< c     error if mask.ne.0 anywhere the input is 2.0**100.
+< c*
+< c**********
+< c
+< c --- spval  = data void marker, 2^100 or about 1.2676506e30
+< c --- n2drec = size of output 2-d array, multiple of 4096
+<       real*4     spval
+<       parameter (spval=2.0**100)
+<       integer    n2drec
+<       parameter (n2drec=((itdm*jtdm+4095)/4096)*4096)
+< c
+<       include 'mpif.h'
+<       integer        mpierr,mpireq,mpistat
+<       common/xcmpii/ mpierr,mpireq(4),
+<      &               mpistat(mpi_status_size,4*iqr)
+<       save  /xcmpii/
+< c
+<       real*4         w,wminy,wmaxy
+<       common/czioxw/ w(n2drec),wminy(jtdm),wmaxy(jtdm)
+<       save  /czioxw/
+< c
+<       real*4         awtmp(itdm,jtdm)
+<       equivalence   (w(1),awtmp(1,1))  !saves a data copy
+< c
+<       real*4         htmp
+<       common/czioxr/ htmp(idm*jdm)
+<       save  /czioxr/
+< c
+<       integer(kind=mpi_offset_kind) disp
+<       integer                        i,j
+<       real*4                         wmin,wmax
+<       real                           rmin(1),rmax(1),vsave
+< #if defined(TIMER)
+< c
+<       call xctmr0(17)
+< #endif
+< c
+<       if     (iarec(iaunit).lt.0) then
+<         write(lp,9000) iaunit
+<         call xcstop('(zaiord)')
+<                stop '(zaiord)'
+<       endif
+< c
+<       iarec(iaunit) = iarec(iaunit) + 1
+< c
+<       wmin =  spval
+<       wmax = -spval
+< c
+< c --- I/O from first processor in each row
+< c
+<       if     (mproc.eq.mp_1st) then
+< *
+< *     if     (mnproc.eq.1) then
+< *     write(lp,*) 'zaiord - iaunit,rec = ',iaunit,iarec(iaunit)
+< *     write(lp,*) 'zaiord - mask.1,1    = ',amsk(1,1)
+< *     write(lp,*) 'zaiord - h.1,1       = ',atmp(1,1)
+< *     call flush(lp)
+< *     endif
+< c
+<       disp = n2drec
+<       disp = (iarec(iaunit)-1)*disp + itdm*j0
+<       call mpi_file_read_at(iahand(iaunit),
+<      &                      disp,
+<      &                      w(1+j0*itdm),
+<      &                      itdm*jj,
+<      &                      MTYPE4,
+<      &                      mpistat(1,1),
+<      &                      mpierr)
+<       if     (mpierr.ne.0) then
+<         write(lp,9100) iarec(iaunit),iaunit
+<         write(lp,*) 'mpierr = ',mpierr
+<         call flush(lp)
+<         call xchalt('(zaiord)')
+<                stop '(zaiord)'
+<       endif !mpierr
+< #if defined(ENDIAN_IO)
+<       call zaio_endian(w(1+j0*itdm),itdm*jj) !swap to big-endian
+<                                              !"external32" often not available
+< #endif
+<       if     (.not.lmask) then
+< c       Get min and max of input array section.
+< c       must be done here because tiles need not cover the full domain.
+< !$OMP   PARALLEL DO PRIVATE(j,i)
+< !$OMP&           SCHEDULE(STATIC,jblk)
+<         do j= j0+1,j0+jj
+<           wminy(j) =  spval
+<           wmaxy(j) = -spval
+<           do i= 1,itdm
+<             if     (w(i+(j-1)*itdm).ne.spval) then
+<               wminy(j) = min( wminy(j), w(i+(j-1)*itdm) )
+<               wmaxy(j) = max( wmaxy(j), w(i+(j-1)*itdm) )
+<             endif
+<           enddo !i
+<         enddo !j
+<         wmin = minval(wminy(j0+1:j0+jj))
+<         wmax = maxval(wmaxy(j0+1:j0+jj))
+<       endif !Not Lmask
+< c
+<       endif !I/O from first processor in each row
+< c
+< c --- put field from 1st in row to all tiles
+<       call xcaput4(awtmp,htmp, -1)
+< c
+< c --- Each processor loads h from htmp (where mask = 1)
+< c --- Each processor does local min max if lmask is true
+< c
+<       if     (lmask) then
+< !$OMP   PARALLEL DO PRIVATE(j,i)
+< !$OMP&           SCHEDULE(STATIC,jblk)
+<         do j= 1,jj
+<           wminy(j) =  spval
+<           wmaxy(j) = -spval
+<           do i= 1,ii
+<             if     (mask(i,j).ne.0) then
+<               h(i,j) =                  htmp(i+(j-1)*ii)
+<               wminy(j) = min( wminy(j), htmp(i+(j-1)*ii) )
+<               wmaxy(j) = max( wmaxy(j), htmp(i+(j-1)*ii) )
+<             endif
+<           enddo !i
+<         enddo !j
+<         wmin = minval(wminy(1:jj))
+<         wmax = maxval(wmaxy(1:jj))
+<       else
+< !$OMP   PARALLEL DO PRIVATE(j,i)
+< !$OMP&           SCHEDULE(STATIC,jblk)
+<         do j= 1,jj
+<           do i= 1,ii
+<             h(i,j) = htmp(i+(j-1)*ii)
+<           enddo !i
+<         enddo !j
+<       endif !lmask:else
+< c
+< c --- Min/Max broadcast/gather
+< c
+<       rmin(1) = wmin
+<       rmax(1) = wmax
+<       call xcminr(rmin)
+<       call xcmaxr(rmax)
+<       hmin = rmin(1)
+<       hmax = rmax(1)
+< c
+<       if     (lmask .and. hmax.eq.spval) then
+<         if     (mnproc.eq.1) then
+<         write(lp,9200) iarec(iaunit),iaunit
+<         call flush(lp)
+< *       cfile = ' '
+< *       inquire(unit=iaunit+uaoff,name=cfile)
+< *       write(lp,'(3a)') 'FILENAME="',trim(cfile),'"'
+< *       call flush(lp)
+<         endif !master
+<         call xcstop('(zaiord)')
+<                stop '(zaiord)'
+<       endif
+< #if defined(TIMER)
+< c
+<       call xctmr1(17)
+< #endif
+<       return
+< c
+<  9000 format(/ /10x,'error in zaiord -  array I/O unit ',
+<      &   i3,' is not marked as open.'/ /)
+<  9100 format(/ /10x,'error in zaiord -  can''t read record',
+<      &   i4,' on array I/O unit ',i3,'.'/ /)
+<  9200 format(/ /10x,'error in zaiord -  record',
+<      &   i4,' on array I/O unit ',i3,
+<      &   ' has 2.0**100 outside masked region.'/ /)
+<       end subroutine zaiord
+< 
+<       subroutine zaiosk(iaunit)
+<       implicit none
+< c
+<       integer, intent(in)    :: iaunit
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for skipping an array read.
+< c
+< c     must call zaiopn for this array unit before calling zaiosk.
+< c
+< c  2) array i/o is mpi-2 i/o.
+< c
+< c  3) iaunit+uaoff is the i/o unit used for arrays.  array i/o might not
+< c      use fortran i/o units, but, for compatability, assume that
+< c      iaunit+uaoff refers to a fortran i/o unit anyway.
+< c     the array, 'h',  must conform to that passed in the associated
+< c      call to zaiopn.
+< c*
+< c**********
+< #if defined(TIMER)
+< c
+<       call xctmr0(16)
+< #endif
+< c
+<       if     (iarec(iaunit).lt.0) then
+<         write(lp,9000) iaunit
+<         call xcstop('(zaiosk)')
+<                stop '(zaiosk)'
+<       endif
+< c
+<       iarec(iaunit) = iarec(iaunit) + 1
+< c
+< *     if     (mnproc.eq.1) then
+< *     write(lp,*) 'zaiosk - iaunit,rec = ',iaunit,iarec(iaunit)
+< *     call flush(lp)
+< *     endif
+<       call xcsync(no_flush)
+< #if defined(TIMER)
+< c
+<       call xctmr1(16)
+< #endif
+<       return
+< c
+<  9000 format(/ /10x,'error in zaiosk -  array I/O unit ',
+<      &   i3,' is not marked as open.'/ /)
+<       end subroutine zaiosk
+< 
+<       subroutine zaiowr3(h, l, mask,lmask, hmin,hmax, iaunit, lreal4)
+<       implicit none
+< c
+<       logical, intent(in)    :: lmask,lreal4
+<       integer, intent(in)    :: l,iaunit
+<       integer, dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy),
+<      &         intent(in)    :: mask
+< #if defined(REAL4)
+<       real*4,  intent(out)   :: hmin(l),hmax(l)
+<       real*4,  dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy,l),
+<      &         intent(inout) :: h
+< #else
+<       real,    intent(out)   :: hmin(l),hmax(l)
+<       real,    dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy,l),
+<      &         intent(inout) :: h
+< #endif
+< c
+< c**********
+< c*
+< c  1) machine specific routine for 3-d array writing.
+< c
+< c     must call zaiopn for this array unit before calling zaiord.
+< c
+< c  2) array i/o is mpi-2 i/o.
+< c
+< c  3) iaunit+uaoff is the i/o unit used for arrays.  array i/o might not
+< c      use fortran i/o units, but, for compatability, assume that
+< c      iaunit+uaoff refers to a fortran i/o unit anyway.
+< c     the array, 'h',  must conform to that passed in the associated
+< c      call to zaiopn.
+< c
+< c  4) hmin,hmax are returned as the minimum and maximum value in the array.
+< c     if lmask==.true. the range is only where mask.ne.0, with all other
+< c     values output as 2.0**100.
+< c
+< c  5) If lreal4==.true. then h is overwritten on exit with real*4 version
+< c     of the same array.  This is typically used for reproducability on
+< c     restart.
+< c*
+< c**********
+< c
+< c     this version just calls zaiowr l times.
+< c
+<       integer k
+< c
+<       do k= 1,l
+<         call zaiowr(h(1-nbdy,1-nbdy,k), mask,lmask,
+<      &              hmin(k),hmax(k), iaunit, lreal4)
+<       enddo
+<       return
+<       end subroutine zaiowr3
+< 
+<       subroutine zaiowr(h, mask,lmask, hmin,hmax,  iaunit, lreal4)
+<       implicit none
+< c
+<       logical, intent(in)    :: lmask,lreal4
+<       integer, intent(in)    :: iaunit
+<       integer, dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy),
+<      &         intent(in)    :: mask
+< #if defined(REAL4)
+<       real*4,  intent(out)   :: hmin,hmax
+<       real*4,  dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy),
+<      &         intent(inout) :: h
+< #else
+<       real,    intent(out)   :: hmin,hmax
+<       real,    dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy),
+<      &         intent(inout) :: h
+< #endif
+< c
+<       integer        iarec,iahand
+<       common/czioxx/ iarec(999),iahand(999)
+<       save  /czioxx/
+< c
+< c**********
+< c*
+< c  1) machine specific routine for array writing.
+< c
+< c     must call zaiopn for this array unit before calling zaiord.
+< c
+< c  2) array i/o is mpi-2 i/o.
+< c
+< c  3) iaunit+uaoff is the i/o unit used for arrays.  array i/o might not
+< c      use fortran i/o units, but, for compatability, assume that
+< c      iaunit+uaoff refers to a fortran i/o unit anyway.
+< c     the array, 'h',  must conform to that passed in the associated
+< c      call to zaiopn.
+< c
+< c  4) hmin,hmax are returned as the minimum and maximum value in the array.
+< c     if lmask==.true. the range is only where mask.ne.0, with all other
+< c     values output as 2.0**100.
+< c
+< c  5) If lreal4==.true. then h is overwritten on exit with real*4 version
+< c     of the same array.  This is typically used for reproducability on
+< c     restart.
+< c*
+< c**********
+< c
+< c --- spval  = data void marker, 2^100 or about 1.2676506e30
+< c --- n2drec = size of output 2-d array, multiple of 4096
+<       real*4     spval
+<       parameter (spval=2.0**100)
+<       integer    n2drec
+<       parameter (n2drec=((itdm*jtdm+4095)/4096)*4096)
+< c
+<       include 'mpif.h'
+<       integer        mpierr,mpireq,mpistat
+<       common/xcmpii/ mpierr,mpireq(4),
+<      &               mpistat(mpi_status_size,4*iqr)
+<       save  /xcmpii/
+< c
+<       real*4         w,wminy,wmaxy
+<       common/czioxw/ w(n2drec),wminy(jtdm),wmaxy(jtdm)
+<       save  /czioxw/
+< c
+<       real*4         awtmp(itdm,jtdm)
+<       equivalence   (w(1),awtmp(1,1))  !saves a data copy
+< c
+<       real*4         htmp
+<       common/czioxr/ htmp(idm*jdm)
+<       save  /czioxr/
+< c
+<       integer(kind=mpi_offset_kind) disp
+<       integer                       i,j,lrec
+<       real                          rmin(1),rmax(1),vsave
+< #if defined(TIMER)
+< c
+<       call xctmr0(18)
+< #endif
+< c
+<       if     (iarec(iaunit).lt.0) then
+<         write(lp,9000) iaunit
+<         call xcstop('(zaiowr)')
+<                stop '(zaiowr)'
+<       endif
+< c
+<       iarec(iaunit) = iarec(iaunit) + 1
+< c
+< c --- Copy into real*4 buffer, and find Min,Max
+< c
+<       if     (lreal4) then
+<         if     (lmask) then
+< !$OMP     PARALLEL DO PRIVATE(j,i)
+< !$OMP&             SCHEDULE(STATIC,jblk)
+<           do j= 1,jj
+<             wminy(j)= spval
+<             wmaxy(j)=-spval
+<             do i= 1,ii
+<               if     (mask(i,j).ne.0) then
+<                 htmp(i+(j-1)*ii) = h(i,j)
+<                 wminy(j)=min(wminy(j),htmp(i+(j-1)*ii))
+<                 wmaxy(j)=max(wmaxy(j),htmp(i+(j-1)*ii))
+<               else
+<                 htmp(i+(j-1)*ii) = spval
+<               endif
+< #if defined(REAL4)
+< ! ---         h(i,j) = htmp(i+(j-1)*ii)  ! h is already real*4
+< #else
+<               h(i,j) = htmp(i+(j-1)*ii)  ! h is not real*4, so update it
+< #endif
+<             enddo !i
+<           enddo !j
+<         else !.not.lmask
+< !$OMP     PARALLEL DO PRIVATE(j,i)
+< !$OMP&             SCHEDULE(STATIC,jblk)
+<           do j= 1,jj
+<             wminy(j)= spval
+<             wmaxy(j)=-spval
+<             do i= 1,ii
+<               htmp(i+(j-1)*ii) = h(i,j)
+<               if     (htmp(i+(j-1)*ii).ne.spval) then
+<                 wminy(j)=min(wminy(j),htmp(i+(j-1)*ii))
+<                 wmaxy(j)=max(wmaxy(j),htmp(i+(j-1)*ii))
+<               endif
+< #if defined(REAL4)
+< ! ---         h(i,j) = htmp(i+(j-1)*ii)  ! h is already real*4
+< #else
+<               h(i,j) = htmp(i+(j-1)*ii)  ! h is not real*4, so update it
+< #endif
+<             enddo !i
+<           enddo !j
+<         endif !lmask:else
+<       else !.not.lreal4
+<         if     (lmask) then
+< !$OMP     PARALLEL DO PRIVATE(j,i)
+< !$OMP&             SCHEDULE(STATIC,jblk)
+<           do j= 1,jj
+<             wminy(j)= spval
+<             wmaxy(j)=-spval
+<             do i= 1,ii
+<               if     (mask(i,j).ne.0) then
+<                 htmp(i+(j-1)*ii) = h(i,j)
+<                 wminy(j)=min(wminy(j),htmp(i+(j-1)*ii))
+<                 wmaxy(j)=max(wmaxy(j),htmp(i+(j-1)*ii))
+<               else
+<                 htmp(i+(j-1)*ii) = spval
+<               endif
+<             enddo !i
+<           enddo !j
+<         else !.not.lmask
+< !$OMP     PARALLEL DO PRIVATE(j,i)
+< !$OMP&             SCHEDULE(STATIC,jblk)
+<           do j= 1,jj
+<             wminy(j)= spval
+<             wmaxy(j)=-spval
+<             do i= 1,ii
+<               htmp(i+(j-1)*ii) = h(i,j)
+<               if     (htmp(i+(j-1)*ii).ne.spval) then
+<                 wminy(j)=min(wminy(j),htmp(i+(j-1)*ii))
+<                 wmaxy(j)=max(wmaxy(j),htmp(i+(j-1)*ii))
+<               endif
+<             enddo !i
+<           enddo !j
+<         endif !lmask:else
+<       endif !lreal4:else
+< c
+<       rmin(1) = minval(wminy(1:jj))
+<       rmax(1) = maxval(wmaxy(1:jj))
+<       call xcminr(rmin)
+<       call xcmaxr(rmax)
+<       hmin = rmin(1)
+<       hmax = rmax(1)
+< c
+< c --- I/O from first processor in each row.
+< c
+<       vsave = vland
+<       vland = spval
+<       call xcaget4(awtmp,htmp, -1)  !htmp to w (awtmp) for each row.
+<       vland = vsave
+< c
+<       if     (mproc.eq.mp_1st) then
+<         if     (nproc.eq.jpr) then
+<           do i= itdm*jtdm+1,n2drec
+<             w(i) = spval
+<           enddo
+<           lrec = n2drec - itdm*j0
+<         else
+<           lrec = itdm*jj
+<         endif
+< c
+<         disp = n2drec
+<         disp = (iarec(iaunit)-1)*disp + itdm*j0
+< #if defined(ENDIAN_IO)
+<         call zaio_endian(w(1+itdm*j0),lrec) !swap to big-endian
+<                                             !"external32" often not available
+< #endif
+< *       call mpi_file_write_at(iahand(iaunit),
+<         call mpi_file_write_at_all(iahand(iaunit),
+<      &                         disp,
+<      &                         w(1+itdm*j0),
+<      &                         lrec,
+<      &                         MTYPE4,
+<      &                         mpistat(1,1),
+<      &                         mpierr)
+<         if     (mpierr.ne.0) then
+<           write(lp,9100) iarec(iaunit),iaunit
+<           write(lp,*) 'mpierr = ',mpierr
+<           call flush(lp)
+<           call xchalt('(zaiowr)')
+<                  stop '(zaiowr)'
+<         endif !mpierr
+<       endif !I/O from first processor in each row
+< c
+< #if defined(TIMER)
+< c
+<       call xctmr1(18)
+< #endif
+<       return
+< c
+<  9000 format(/ /10x,'error in zaiowr -  array I/O unit ',
+<      &   i3,' is not marked as open.'/ /)
+<  9100 format(/ /10x,'error in zaiowr -  can''t write record',
+<      &   i4,' on array I/O unit ',i3,'.'/ /)
+<       end subroutine zaiowr
+---
+> ********** NOT YET IMPLEMENTED **********
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_za_mp1.h ../../GLBa0.08/src_2.2.03q_32_mpi
+592a593,595
+>       call xctmrn(20,'zaiopf')
+>       call xctmrn(21,'zaiocl')
+>       call xctmrn(22,'zgmnmx')
+917a921,922
+> c    Min Max intialize, all processors
+> c
+931a937
+> c     Task #1 - Processor #1 reads in new w() field
+950a957,960
+> #if defined(TIMER)
+> c
+>       call xctmr0(22)
+> #endif
+952,954c962,963
+< c        Get global min and max on first processor.
+< c        must be done here because tiles need not cover the full domain.
+< !$OMP    PARALLEL DO PRIVATE(j,i)
+---
+> c        Get global min and max on processor #1.
+> !$OMP&   PARALLEL DO PRIVATE(j,i)
+959a969
+> c            atmp(i,j) = w(i+(j-1)*itdm)
+968a979
+> #if defined(TIMER)
+969a981,982
+>       call xctmr1(22)
+> #endif
+972c985,987
+< c --- put field from 1st processor to all tiles
+---
+> c-------------------------------------------------------------------
+> c     Task #2 - Processor one puts field onto all tiles
+> c
+973a989,991
+> c+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> c     Task #3 - Each processor loads h from htmp (where mask = 1)
+> c     Task #4 - Each processor does local min max if lmask is true
+975,977d992
+< c --- Each processor loads h from htmp (where mask = 1)
+< c --- Each processor does local min max if lmask is true
+< c
+995,996d1009
+< !$OMP   PARALLEL DO PRIVATE(j,i)
+< !$OMP&           SCHEDULE(STATIC,jblk)
+1004c1017
+< c --- Min/Max broadcast/gather
+---
+> c---------------------------------Min/Max  broadcast/gather
+1024a1038,1039
+> c===================================================================
+> c
+1264c1279
+< c --- Copy into real*4 buffer, and find Min,Max
+---
+> c --- I/O from first processor only
+1268,1269d1282
+< !$OMP     PARALLEL DO PRIVATE(j,i)
+< !$OMP&             SCHEDULE(STATIC,jblk)
+1289,1290d1301
+< !$OMP     PARALLEL DO PRIVATE(j,i)
+< !$OMP&             SCHEDULE(STATIC,jblk)
+1310,1311d1320
+< !$OMP     PARALLEL DO PRIVATE(j,i)
+< !$OMP&             SCHEDULE(STATIC,jblk)
+1326,1327d1334
+< !$OMP     PARALLEL DO PRIVATE(j,i)
+< !$OMP&             SCHEDULE(STATIC,jblk)
+1340a1348,1351
+>       vsave = vland
+>       vland = spval
+>       call xcaget4(awtmp,htmp, 1)  !htmp to w (awtmp) on 1st processor
+>       vland = vsave
+1348,1354d1358
+< c
+< c --- I/O from first processor only
+< c
+<       vsave = vland
+<       vland = spval
+<       call xcaget4(awtmp,htmp, 1)  !htmp to w (awtmp) on 1st processor
+<       vland = vsave
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_za_sm.h ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw stmt_fns.h ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw unit_offset.h ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw archiv.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw barotp.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw bigrid.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw cnuity.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw convec.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw diapfl.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw dpthuv.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw dpudpv.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw forfun.f ../../GLBa0.08/src_2.2.03q_32_mpi
+942,948d941
+< c --- initialize all rmu fields to zero
+< c
+<       rmu(   :,:) = 0.0  !needed for thermf
+<       rmutra(:,:) = 0.0
+<       rmunp( :,:) = 0.0
+<       rmunv( :,:) = 0.0  !needed for thermf
+< c
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw hybgen.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw icloan.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw inicon.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw inigiss.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw inikpp.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw inimy.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw latbdy.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw matinv.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw momtum.f ../../GLBa0.08/src_2.2.03q_32_mpi
+11,14d10
+< c --- -----------------------------------------
+< c --- hydrostatic equation (and surface stress)
+< c --- -----------------------------------------
+< c
+19,20c15,16
+<      &                 stress,stresx,stresy,dpmx,thkbop,oneta,
+<      &                 vis2u,vis4u,vis2v,vis4v,vort,
+---
+>      &                 stress,stresx,stresy,dpmx,thkbop,
+>      &                 vis2u,vis4u,vis2v,vis4v,vort,oneta,
+22,25c18,20
+<      &                 dl2u,dl2uja,dl2ujb,dl2v,dl2via,dl2vib,
+<      &                 tclmn,tclpn  !see momtum4
+<       common/momtumr4/ stress,stresx,stresy,dpmx,thkbop,oneta,
+<      &                 vis2u,vis4u,vis2v,vis4v,vort,
+---
+>      &                 dl2u,dl2uja,dl2ujb,dl2v,dl2via,dl2vib
+>       common/momtumr4/ stress,stresx,stresy,dpmx,thkbop,
+>      &                 vis2u,vis4u,vis2v,vis4v,vort,oneta,
+27,28c22
+<      &                 dl2u,dl2uja,dl2ujb,dl2v,dl2via,dl2vib,
+<      &                 tclmn,tclpn  !see momtum4
+---
+>      &                 dl2u,dl2uja,dl2ujb,dl2v,dl2via,dl2vib
+31c25
+<       real    dpdn,dpup,q,simo,uimo,vimo,dpsur,psur,usur,vsur
+---
+>       real    dpdn,dpup,q,simo,uimo,vimo
+60a55
+> c --- -----------------------------------------
+61a57
+> c --- -----------------------------------------
+217c213
+< !$OMP   PARALLEL DO PRIVATE(j,l,i,k,dpsur,psur,usur,vsur,uimo,vimo,simo)
+---
+> !$OMP   PARALLEL DO PRIVATE(j,l,k,i,uimo,vimo,simo)
+238,254d233
+< c ---           average currents over top 10m
+<                 usur = 0.0
+<                 vsur = 0.0
+<                 psur = 0.0
+<                 do k= 1,kk
+<                   dpsur = min( dp(i,j,k,n), max( 0.0, tenm - psur ) )
+<                   usur  = usur + dpsur*(u(i,j,k,n)+u(i+1,j,k,n))
+<                   vsur  = vsur + dpsur*(v(i,j,k,n)+v(i,j+1,k,n))
+<                   psur  = psur + dpsur
+<                   if     (dpsur.eq.0.0) then
+<                     exit
+<                   endif
+<                 enddo !k
+<                 usur  = 0.5*( usur/psur + ubavg(i,  j,n) +
+<      &                                    ubavg(i+1,j,n)  )
+<                 vsur  = 0.5*( vsur/psur + vbavg(i,j,  n) +
+<      &                                    vbavg(i,j+1,n)  )
+256,257c235,238
+<                 uimo = si_u(i,j) - usur
+<                 vimo = si_v(i,j) - vsur
+---
+>                 uimo = si_u(i,j) - 0.5*(u(i,  j,1,n)+ubavg(i,  j,n)+
+>      &                                  u(i+1,j,1,n)+ubavg(i+1,j,n) )
+>                 vimo = si_v(i,j) - 0.5*(v(i,j,  1,n)+ubavg(i,j,  n)+
+>      &                                  v(i,j+1,1,n)+ubavg(i,j+1,n) )
+285,295d265
+< c --- ------------------------------------------------------
+< c --- momentum equations (2nd order version)
+< c
+< c --- Enstrophy conserving advection scheme (Sadourney, 1975)
+< c
+< c --- diffusion is Laplacian and/or biharmonic, both with
+< c --- "constant" and deformation dependent coefficients.
+< c
+< c --- hydrostatic equation and surface stress via momtum_hs
+< c --- ------------------------------------------------------
+< c
+299,300c269,270
+<      &                 stress,stresx,stresy,dpmx,thkbop,oneta,
+<      &                 vis2u,vis4u,vis2v,vis4v,vort,
+---
+>      &                 stress,stresx,stresy,dpmx,thkbop,
+>      &                 vis2u,vis4u,vis2v,vis4v,vort,oneta,
+302,305c272,274
+<      &                 dl2u,dl2uja,dl2ujb,dl2v,dl2via,dl2vib,
+<      &                 tclmn,tclpn  !see momtum4
+<       common/momtumr4/ stress,stresx,stresy,dpmx,thkbop,oneta,
+<      &                 vis2u,vis4u,vis2v,vis4v,vort,
+---
+>      &                 dl2u,dl2uja,dl2ujb,dl2v,dl2via,dl2vib
+>       common/momtumr4/ stress,stresx,stresy,dpmx,thkbop,
+>      &                 vis2u,vis4u,vis2v,vis4v,vort,oneta,
+307,308c276
+<      &                 dl2u,dl2uja,dl2ujb,dl2v,dl2via,dl2vib,
+<      &                 tclmn,tclpn  !see momtum4
+---
+>      &                 dl2u,dl2uja,dl2ujb,dl2v,dl2via,dl2vib
+316c284
+<      &     dpxy,ptopl,pbotl,cutoff,h1,q,deform,aspy2,aspx2,
+---
+>      &     dpxy,ptopl,pbotl,cutoff,q,deform,aspy2,aspx2,
+497d464
+<       h1    =    tenm  !used in lateral weighting of hor.pres.grad.
+1652,1655d1618
+<       subroutine momtum4(m,n)
+<       use mod_xc    ! HYCOM communication interface
+<       use mod_pipe  ! HYCOM debugging interface
+<       implicit none
+1657,3353d1619
+<       include 'common_blocks.h'
+< c
+<       integer m,n
+< c
+< c --- ------------------------------------------------------
+< c --- momentum equations (4th order version)
+< c
+< c --- Wither, N.G., Y.G. Morel, G. Evensen (2006)
+< c --- Efficiency of high order numerical schemes
+< c --- for momentum advection.
+< c --- Ocean Modeling (submitted).
+< c
+< c --- diffusion is biharmonic with speed dependent and
+< c --- deformation dependent coefficients.
+< c
+< c --- hydrostatic equation and surface stress via momtum_hs
+< c --- ------------------------------------------------------
+< c
+<       logical, parameter :: lpipe_momtum=.false.  !usually .false.
+< c
+<       real, dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy) ::
+<      &                 stress,stresx,stresy,dpmx,thkbop,oneta,
+<      &                 visc,
+<      &                 uwkn,uwkm,advu,diffu,
+<      &                 vwkn,vwkm,advv,diffv,
+<      &                 tdun,tdum,tdvn,tdvm,
+<      &                 tclmm,tclpm,tclmn,tclpn
+<       common/momtumr4/ stress,stresx,stresy,dpmx,thkbop,oneta,
+<      &                 visc,
+<      &                 uwkn,uwkm,advu,diffu,
+<      &                 vwkn,vwkm,advv,diffv,
+<      &                 tdun,tdum,tdvn,tdvm,
+<      &                 tclmm,tclpm,tclmn,tclpn
+<       save  /momtumr4/
+< c
+<       integer, parameter :: ijmax=max(idm,jdm)
+< c
+<       real, save, dimension (1-nbdy:ijmax+nbdy) ::
+<      &       dun,dum,dvn,dvm
+<       real, save, dimension (1-nbdy:idm+nbdy,kk+1,2) ::
+<      &       p1
+< c
+<       integer i,ia,ib,im1,im2,ip1,ip2,
+<      &        j,ja,jb,jm1,jm2,jp1,jp2,k,ka,l,mbdy
+< c
+<       real    vmag,dall,ptopl,pbotl,cutoff,h1,q,
+<      &        dt1inv,phi,plo,pbop,pthkbl,ubot,vbot,pstres,
+<      &        dmontg,dthstr,dragu,dragv,qdpu,qdpv
+< c
+<       real    clpn,clmn,crpn,crmn,clpm,crmm
+<       real    velmodul,defortot
+<       real    invcutoff,ulimmax,hmindiff
+<       real    coefdiv2,coefdiv3,duadvjp1
+<       real    dvadvjp1
+< c
+< *     real*8    wtime
+< *     external  wtime
+< *     real*8    wtime1(10),wtime2(20,kdm),wtimes
+< c
+<       character text*12
+<       integer, save, dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy) ::
+<      & mask
+< c
+<       integer ifirst
+<       save    ifirst
+< c
+<       real hfharm,a,b
+<       include 'stmt_fns.h'
+< c
+< c --- harmonic mean divided by 2
+<       hfharm(a,b)=a*b/(a+b)
+< c
+<       data ifirst / 0 /
+< c
+<       mbdy = 6
+< c
+<       call xctilr(u(      1-nbdy,1-nbdy,1,1),1,2*kk, 6,6, halo_uv)
+<       call xctilr(v(      1-nbdy,1-nbdy,1,1),1,2*kk, 6,6, halo_vv)
+<       call xctilr(ubavg(  1-nbdy,1-nbdy,1  ),1,   3, 6,6, halo_uv)
+<       call xctilr(vbavg(  1-nbdy,1-nbdy,1  ),1,   3, 6,6, halo_vv)
+< c
+<       if     (ifirst.eq.0) then
+<         ifirst=1
+< c ---   setup zero fill.
+<         margin = mbdy
+< c
+< c
+< !$OMP PARALLEL DO PRIVATE(j,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<         do j=1-margin,jj+margin
+<           do i=1-margin,ii+margin
+<             pu(i,j,1) =0.0
+<             pv(i,j,1) =0.0
+<           enddo
+<         enddo
+<       endif !ifirst
+< c
+< c ---------------------------------
+< c     First initialize fields
+< c ---------------------------------
+< c
+<       coefdiv2=1.0/(32.0*baclin)
+<       coefdiv3=1.0/ 12.0
+<       hmindiff=    tenm
+<       h1      =0.5*onem  !used in lateral weighting of hor.pres.grad.
+<       cutoff  =0.5*onem
+< c
+< c --- ---------------------------------------
+< c --- hydrostatic equation and surface stress
+< c --- ---------------------------------------
+< c
+<       call momtum_hs(m,n)
+< c
+< c +++ ++++++++++++++++++
+< c +++ momentum equations
+< c +++ ++++++++++++++++++
+< c
+< *        wtime1( 4) = wtime()
+< c
+< c --- rhs: p, u.n+, v.n+, ubavg.n+, vbavg.n+, depthv+, pvtrop+
+< c --- rhs: dpmixl.m+, taux+, dpu, depthu+, dpv, tauy+
+< c --- lhs: util1, util2, drag, ubrhs, stresx, vbrhs, stresy
+< c
+<       dt1inv = 1./delt1
+< c
+<       margin = mbdy - 1
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,k,
+< !$OMP&                    phi,plo,pbop,ubot,vbot,vmag,dall,pstres)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+< c     
+<         do l=1,isp(j)
+<           do i=max(1-margin,ifp(j,l)),min(ii+margin,ilp(j,l))
+< c         
+< c ---       bottom drag (standard bulk formula)
+< c ---       bottom stress is applied over thickness dp00 for the kpp bottom
+< c ---       b.l. just as for the surface b.l. otherwise, bottom stress is
+< c ---       applied over thickness thkbot
+< c
+<             if (mxlkpp .and. bblkpp) then
+<               thkbop(i,j)=dp00         !bottom stress applied over this thknss
+<             else
+<               thkbop(i,j)=thkbot*onem  !bottom stress applied over this thknss
+<             endif
+< c             
+< c --- the bottom stress term is estimated using velocity averaged over the
+< c --- bottom boundary layer. this thickness is dpbbl for the kpp boundary
+< c --- layer; otherwise, it is thkbop
+<             ubot=0.0
+<             vbot=0.0
+<             if (mxlkpp .and. bblkpp) then
+<               pthkbl=max(dpbbl(i,j),thkbop(i,j))  !thknss of bot. b.l.
+<             else
+<               pthkbl=thkbop(i,j)                  !thknss of bot. b.l.
+<             endif
+<             pbop=p(i,j,kk+1)-pthkbl               !top of bot. b.l.
+<             phi =max(p(i,j,1),pbop)
+<             do k=1,kk
+<               plo =phi  ! max(p(i,j,k),pbop)
+<               phi =max(p(i,j,k+1),pbop)
+<               ubot=ubot + (u(i,j,k,n)+u(i+1,j,k,n))*(phi-plo)
+<               vbot=vbot + (v(i,j,k,n)+v(i,j+1,k,n))*(phi-plo)
+<             enddo !k
+<             ubot=ubot/min(pthkbl,p(i,j,kk+1))
+<      &            + (ubavg(i,j,n)+ubavg(i+1,j,n))
+<             vbot=vbot/min(pthkbl,p(i,j,kk+1))
+<      &            + (vbavg(i,j,n)+vbavg(i,j+1,n))
+<             vmag=0.5*sqrt(ubot**2+vbot**2)
+<             dall=cb*(vmag+cbar)+dragrh(i,j)
+<             drag(i,j)=dall/min(thkbop(i,j)*qonem,depths(i,j))
+<             if (mxlkpp .and. bblkpp) then
+<               ustarb(i,j)=sqrt(dall*vmag)
+<             endif
+<           enddo !i
+<         enddo !l
+< c         
+< c ---   store r.h.s. of barotropic u/v eqn. in -ubrhs,vbrhs-
+< c ---   time-interpolate wind stress
+< c
+<         do l=1,isu(j)
+<           do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             ubrhs(i,j)=
+<      &        (vbavg(i  ,j,  m)*depthv(i  ,j)
+<      &        +vbavg(i  ,j+1,m)*depthv(i  ,j+1)
+<      &        +vbavg(i-1,j,  m)*depthv(i-1,j)
+<      &        +vbavg(i-1,j+1,m)*depthv(i-1,j+1))
+<      &        *(pvtrop(i,j)+pvtrop(i,j+1))*.125
+< c    
+<             if     (windf) then
+<               if(hybrid .and. mxlkrt) then
+<                 pstres=0.5*(dpmixl(i,j,m)+dpmixl(i-1,j,m))
+<               else
+<                 pstres=dpu(i,j,1,m)
+<               endif
+< c ---         units of surtx are N/m^2 (i.e. Pa)
+<               stresx(i,j)=(surtx(i,j)+surtx(i-1,j))*0.5*g
+<      &                    /(pstres*thref)
+<             else  ! no taux
+<               stresx(i,j)=0.
+<             endif !windf:else
+<           enddo !i
+<         enddo !l
+<         do l=1,isv(j)
+<           do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             vbrhs(i,j)=
+<      &      -(ubavg(i,  j  ,m)*depthu(i,j  )
+<      &       +ubavg(i+1,j  ,m)*depthu(i+1,j  )
+<      &       +ubavg(i,  j-1,m)*depthu(i,j-1)
+<      &       +ubavg(i+1,j-1,m)*depthu(i+1,j-1))
+<      &       *(pvtrop(i,j)+pvtrop(i+1,j))*.125
+< c    
+<             if     (windf) then
+<               if(hybrid .and. mxlkrt) then
+<                 pstres=0.5*(dpmixl(i,j,m)+dpmixl(i,j-1,m))
+<               else
+<                 pstres=dpv(i,j,1,m)
+<               endif
+< c ---         units of surty are N/m^2 (i.e. Pa)
+<               stresy(i,j)=(surty(i,j)+surty(i,j-1))*0.5*g
+<      &                    /(pstres*thref)
+<             else  ! no tauy
+<               stresy(i,j)=0.
+<             endif !windf:else
+<           enddo !i
+<         enddo !l
+<       enddo !j
+< !$OMP END PARALLEL DO
+< c
+<       if     (lpipe .and. lpipe_momtum) then
+< c ---   compare two model runs.
+<         write (text,'(a9,i3)') 'uba.n  n=',n
+<         call pipe_compare(ubavg(1-nbdy,1-nbdy,n),iu,text)
+<         write (text,'(a9,i3)') 'vba.n  n=',n
+<         call pipe_compare(vbavg(1-nbdy,1-nbdy,n),iv,text)
+<         write (text,'(a9,i3)') 'drag   k=',0
+<         call pipe_compare(drag,ip,text)
+<       endif
+< c
+< c --- the old  momeq2.f  starts here
+< c
+< c --- rhs: 0.0
+< c --- lhs: util1, util2
+< c
+< *     margin = mbdy - 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do i=1-margin,ii+margin
+< c ---   spatial weighting function for pressure gradient calculation:
+<           util1(i,j)=0.0
+<           util2(i,j)=0.0
+<         enddo !i
+<       enddo !j
+< c
+<       do 9 k=1,kk
+< c
+< c --- store total (barotropic plus baroclinic) flow at old and mid time in
+< c --- -utotn,vtotn- and -utotm,vtotm- respectively. store minimum thickness
+< c --- values for use in pot.vort. calculation in -dpmx-.
+< c
+< *         wtime2( 1,k) = wtime()
+< c
+< c --- rhs: dpmx, dp.m+
+< c --- lhs: dpmx
+< c
+< *     margin = mbdy - 2
+< c
+<       do i=1-margin,ii+margin
+<         dpmx(i,1)=2.*cutoff
+<       enddo !i
+< !$OMP PARALLEL DO PRIVATE(j,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do i=1-margin,ii+margin
+<           dpmx(i,j+1)=2.*cutoff
+<         enddo !i
+<         do l=1,isu(j)
+<           do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             dpmx(i,j+1)=max(dpmx(i,j+1),dp(i,j,k,m)+dp(i-1,j,k,m))
+<           enddo !i
+<         enddo !l
+<       enddo !j
+< c       
+< *         wtime2( 2,k) = wtime()
+< c
+< c --- rhs: ubavg.m, ubavg.n, dp.m+, dpu
+< c --- lhs: utotm, utotn, uflux, dpmx, pu
+< c
+< *     margin = mbdy - 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do l=1,isu(j)
+< c       
+<           i=ifu(j,l)-1
+<           if (i.ge.1-margin) then
+<             if     (iuopn(i,j).ne.0) then
+<               utotm(i,j)=u(i+1,j,k,m)+ubavg(i,j,m)
+<               utotn(i,j)=u(i+1,j,k,n)+ubavg(i,j,n)
+<               uflux(i,j)=utotm(i,j)*max(dp(i,j,k,m),cutoff)
+<             endif
+< *           if     (iuopn(i,j).eq.2) then
+< *             utotm(i,j)=u(i+1,j,k,m)+ubavg(i,j,m)
+< *             utotn(i,j)=u(i+1,j,k,n)+ubavg(i,j,n)
+< *             uflux(i,j)=utotm(i,j)*max(dp(i,j,k,m),cutoff)
+< *           elseif (iuopn(i,j).eq.1) then
+< *             utotm(i,j)=unest(i,j,k,1)+ubavg(i,j,m)
+< *             utotn(i,j)=unest(i,j,k,1)+ubavg(i,j,n)
+< *             uflux(i,j)=utotm(i,j)*max(dp(i,j,k,m),cutoff)
+< *           endif
+<           endif
+<           i=ilu(j,l)+1
+<           if (i.le.ii+margin) then
+<             if     (iuopn(i,j).ne.0) then
+<               utotm(i,j)=u(i-1,j,k,m)+ubavg(i,j,m)
+<               utotn(i,j)=u(i-1,j,k,n)+ubavg(i,j,n)
+<               uflux(i,j)=utotm(i,j)*max(dp(i-1,j,k,m),cutoff)
+<             endif
+< *           if     (iuopn(i,j).eq.2) then
+< *             utotm(i,j)=u(i-1,j,k,m)+ubavg(i,j,m)
+< *             utotn(i,j)=u(i-1,j,k,n)+ubavg(i,j,n)
+< *             uflux(i,j)=utotm(i,j)*max(dp(i-1,j,k,m),cutoff)
+< *           elseif (iuopn(i,j).eq.1) then
+< *             utotm(i,j)=unest(i,j,k,1)+ubavg(i,j,m)
+< *             utotn(i,j)=unest(i,j,k,1)+ubavg(i,j,n)
+< *             uflux(i,j)=utotm(i,j)*max(dp(i-1,j,k,m),cutoff)
+< *           endif
+<           endif
+< c           
+<           do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             dpmx(i,j)=max(dpmx(i,j),dp(i,j,k,m)+dp(i-1,j,k,m))
+<             utotm(i,j)=u(i,j,k,m)+ubavg(i,j,m)
+<             utotn(i,j)=u(i,j,k,n)+ubavg(i,j,n)
+<             uflux(i,j)=utotm(i,j)*max(dpu(i,j,k,m),cutoff)
+<             pu(i,j,k+1)=pu(i,j,k)+dpu(i,j,k,m)
+<           enddo !i
+<         enddo !l
+<       enddo !j
+< !$OMP END PARALLEL DO
+< c     
+< *         wtime2( 3,k) = wtime()
+< c
+< c --- rhs: vbavg.m, vbavg.n, dp.m+, dpv
+< c --- lhs: vtotm, vtotn, vflux, dpmx, pv
+< c
+< *     margin = mbdy - 2
+< c
+<       do i=1-margin,ii+margin
+<         do l=1,jsv(i)
+<           j=jfv(i,l)-1
+<           if (j.ge.1-margin) then
+<             if      (ivopn(i,j).ne.0) then
+<               vtotm(i,j)=v(i,j+1,k,m)+vbavg(i,j,m)
+<               vtotn(i,j)=v(i,j+1,k,n)+vbavg(i,j,n)
+<               vflux(i,j)=vtotm(i,j)*max(dp(i,j,k,m),cutoff)
+<             endif
+< *           if      (ivopn(i,j).eq.2) then
+< *             vtotm(i,j)=v(i,j+1,k,m)+vbavg(i,j,m)
+< *             vtotn(i,j)=v(i,j+1,k,n)+vbavg(i,j,n)
+< *             vflux(i,j)=vtotm(i,j)*max(dp(i,j,k,m),cutoff)
+< *           elseif  (ivopn(i,j).eq.1) then
+< *             vtotm(i,j)=vnest(i,j,k,1)+vbavg(i,j,m)
+< *             vtotn(i,j)=vnest(i,j,k,1)+vbavg(i,j,n)
+< *             vflux(i,j)=vtotm(i,j)*max(dp(i,j,k,m),cutoff)
+< *           endif
+<           endif
+<           j=jlv(i,l)+1
+<           if (j.le.jj+margin) then
+<             if      (ivopn(i,j).ne.0) then
+<               vtotm(i,j)=v(i,j-1,k,m)+vbavg(i,j,m)
+<               vtotn(i,j)=v(i,j-1,k,n)+vbavg(i,j,n)
+<               vflux(i,j)=vtotm(i,j)*max(dp(i,j-1,k,m),cutoff)
+<             endif
+< *           if      (ivopn(i,j).eq.2) then
+< *             vtotm(i,j)=v(i,j-1,k,m)+vbavg(i,j,m)
+< *             vtotn(i,j)=v(i,j-1,k,n)+vbavg(i,j,n)
+< *             vflux(i,j)=vtotm(i,j)*max(dp(i,j-1,k,m),cutoff)
+< *           elseif  (ivopn(i,j).eq.1) then
+< *             vtotm(i,j)=vnest(i,j,k,1)+vbavg(i,j,m)
+< *             vtotn(i,j)=vnest(i,j,k,1)+vbavg(i,j,n)
+< *             vflux(i,j)=vtotm(i,j)*max(dp(i,j,k,m),cutoff)
+< *           endif
+<           endif
+<         enddo !l
+<       enddo !i
+< c       
+< *         wtime2( 4,k) = wtime()
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do l=1,isv(j)
+<           do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             dpmx(i  ,j)=max(dpmx(i  ,j),dp(i,j,k,m)+dp(i,j-1,k,m))
+<             dpmx(i+1,j)=max(dpmx(i+1,j),dp(i,j,k,m)+dp(i,j-1,k,m))
+<             vtotm(i,j)=v(i,j,k,m)+vbavg(i,j,m)
+<             vtotn(i,j)=v(i,j,k,n)+vbavg(i,j,n)
+<             vflux(i,j)=vtotm(i,j)*max(dpv(i,j,k,m),cutoff)
+<             pv(i,j,k+1)=pv(i,j,k)+dpv(i,j,k,m)
+<           enddo !i
+<         enddo !l
+<       enddo !j
+< c
+< c --- rhs: corio+, dp.m+, dpmx+
+< c --- lhs: potvor
+< c
+< *     margin = mbdy - 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,ja,jb,l,i,ia,ib)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+< c ---   assume margin<nblk
+<         ja=j-1
+<         jb=j+1
+< c
+< c --- pot.vort., at lateral boundary points
+<         do l=1,isv(j)
+<           i=ifv(j,l)
+<           if     (i.ge. 1-margin) then
+< c
+< c input de vorticite aux limites ouvertes - a tester - frontiere ouest
+< c
+<             potvor(i  ,j)=corio(i  ,j) * 8.0
+<      &                     /max(8.0*cutoff,
+<      &                          4.0*(dp(i,j,k,m)+dp(i,ja ,k,m)),
+<      &                          dpmx(i,j),
+<      &                          dpmx(i+1,j))
+<           endif
+<           i=ilv(j,l)
+<           if     (i.le.ii+margin) then
+< c
+< c input de vorticite aux limites ouvertes - a tester - frontiere est
+< c
+<             potvor(i+1,j)=corio(i+1,j) * 8.0
+<      &                     /max(8.0*cutoff,
+<      &                          4.0*(dp(i,j,k,m)+dp(i,ja ,k,m)),
+<      &                          dpmx(i,j),
+<      &                          dpmx(i+1,j))
+<           endif
+<         enddo !l
+<       enddo !j
+< !$OMP END PARALLEL DO
+< c
+< c
+< c --- pot.vort., at lateral boundary points
+< c
+< c --- rhs: corio+, dp.m+, dpmx+
+< c --- lhs: potvor
+< c
+< *     margin = mbdy - 2
+< c
+<       do i=1-margin,ii+margin
+< c ---   assume margin<nblk
+<         ia=i-1
+<         do l=1,jsu(i)
+<           j=jfu(i,l)
+< c
+< c input de vorticite aux limites ouvertes - a tester - frontiere sud
+< c
+<           if     (j.ge. 1-margin) then
+<             potvor(i,j  )=corio(i,j  ) * 8.0
+<      &                     /max(8.0*cutoff,
+<      &                          4.0*(dp(i,j,k,m)+dp(ia ,j,k,m)),
+<      &                          dpmx(i,j),
+<      &                          dpmx(i,j+1))
+<           endif
+<           j=jlu(i,l)
+< c
+< c input de vorticite aux limites ouvertes - a tester - frontiere nord
+< c
+<           if     (j.le.jj+margin) then
+<             potvor(i,j+1)=corio(i,j+1) * 8.0
+<      &                     /max(8.0*cutoff,
+<      &                          4.0*(dp(i,j,k,m)+dp(ia ,j,k,m)),
+<      &                          dpmx(i,j),
+<      &                          dpmx(i,j+1))
+<           endif
+<         enddo !l
+<       enddo !i
+< c
+< c --- pot.vort., at interior points (incl. promontories)
+< c
+< c --- rhs: corio, dp.m+, dpmx+
+< c --- lhs: potvor
+< c
+< *     margin = mbdy - 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do l=1,isq(j)
+<           do i=max(1-margin,ifq(j,l)),min(ii+margin,ilq(j,l))
+<             potvor(i,j)=corio(i,j) * 8.0
+<      &         /max(8.0*cutoff,
+<      &              2.0*(dp(i,j  ,k,m)+dp(i-1,j  ,k,m)+
+<      &                   dp(i,j-1,k,m)+dp(i-1,j-1,k,m) ),
+<      &              dpmx(i,j),dpmx(i-1,j),dpmx(i+1,j),
+<      &                        dpmx(i,j-1),dpmx(i,j+1)    )
+<           enddo !i
+<         enddo !l
+<       enddo !j
+< c
+<       if     (lpipe .and. lpipe_momtum .and. k.eq.1) then
+< c ---   compare two model runs.
+<         do j=1,jj
+<           do i=1,ii
+<             mask(i,j)=min(1,iq(i,j)+iu(i,j  )+iv(i,j  )
+<      &                             +iu(i,j-1)+iv(i-1,j))
+<           enddo
+<         enddo
+<         write (text,'(a9,i3)') 'potvor k=',k
+<         call pipe_compare(potvor,mask,text)
+<       endif
+< c
+< c ----------------------------------------
+< c --- initialize fields for QUICK SCHEME
+< c ----------------------------------------
+< c
+<       margin = mbdy - 1
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do i=1-margin,ii+margin
+<           uwkm( i,j)=0.0
+<           uwkn( i,j)=0.0
+<           advu( i,j)=0.0
+<           diffu(i,j)=0.0
+<           vwkm( i,j)=0.0
+<           vwkn( i,j)=0.0
+<           advv( i,j)=0.0
+<           diffv(i,j)=0.0
+<         enddo !i
+<       enddo !j
+< !$OMP END PARALLEL DO
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do l=1,isu(j)
+<           do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             uwkm(i,j)=utotm(i,j)
+<             uwkn(i,j)=utotn(i,j)
+<           enddo
+<           i=ifu(j,l)-1
+<           if (i.ge.1-margin.and.iuopn(i,j).ne.0) then
+<               uwkm(i,j)=utotm(i,j)
+<               uwkn(i,j)=utotn(i,j)
+<           endif
+<           i=ilu(j,l)+1
+<           if (i.le.ii+margin .and. iuopn(i,j).ne.0) then
+<               uwkm(i,j)=utotm(i,j)
+<               uwkn(i,j)=utotn(i,j)
+<           endif
+<         enddo !l
+<       enddo !j
+< !$OMP END PARALLEL DO
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do l=1,isv(j)
+<           do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             vwkm(i,j)=vtotm(i,j)
+<             vwkn(i,j)=vtotn(i,j)
+<           enddo !i
+<         enddo !l
+<       enddo !j
+< !$OMP END PARALLEL DO
+<       do i=1-margin,ii+margin
+<         do l=1,jsv(i)
+<           j=jfv(i,l)-1
+<           if (j.ge.1-margin  .and. ivopn(i,j).ne.0) then
+<             vwkm(i,j)=vtotm(i,j)
+<             vwkn(i,j)=vtotn(i,j)
+<           endif
+<           j=jlv(i,l)+1
+<           if (j.le.jj+margin .and. ivopn(i,j).ne.0) then
+<             vwkm(i,j)=vtotm(i,j)
+<             vwkn(i,j)=vtotn(i,j)
+<           endif
+<         enddo !l
+<       enddo !i
+< c
+< c ------------------------------------------------------
+< c --- deformation-dependent eddy viscosity coefficient
+< c --- defor. at interior points (incl. promontories)
+< c --- defor takes into account CLOSE BOUND COND
+< c ------------------------------------------------------
+< c
+< c
+<       margin = 3
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 809 j=1-margin,jj+margin
+<         do 809 l=1,isp(j)
+<           do 809 i=max(1-margin,ifp(j,l)),min(ii+margin,ilp(j,l))
+<             defor1(i,j)=((uwkn(i+1,j)-uwkn(i,j))
+<      &                  -(vwkn(i,j+1)-vwkn(i,j)))**2
+<  809  continue
+< !$OMP END PARALLEL DO
+< c
+<       margin = 3
+< c
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 810 j=1-margin,jj+margin
+<         do 810 l=1,isq(j)
+<           do 810 i=max(1-margin,ifq(j,l)),min(ii+margin,ilq(j,l))
+< c
+<             defor2(i,j)=(vwkn(i-1,j)-vwkn(i,j)
+<      &                  +uwkn(i,j-1)-uwkn(i,j))**2
+<  810  continue
+< !$OMP END PARALLEL DO
+< c
+< c --- ----------
+< c --- u equation
+< c --- ----------
+< c
+< c --------------------------------------------------------
+< c --- START QUICK ADVECTION SCHEME HERE
+< c --------------------------------------------------------
+< c
+< c -------------------------------------
+< c First compute advection along X
+< c -------------------------------------
+< c
+< c
+<       margin = 1
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,dum,dun,
+< !$OMP&               velmodul,defortot,clpm,crmm,
+< !$OMP&               clpn,clmn,crpn,crmn,im1,im2,ip1,ip2)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+< c
+<       do 16 j=1-margin,jj+margin
+<         do 16 l=1,isu(j)
+< c
+< c ---     modify uwk for boundary conditions : begin
+<           uwkn(ifu(j,l)-1,j)=0.0
+<           uwkn(ifu(j,l)-2,j)=-uwkn(ifu(j,l),j)
+<           uwkn(ilu(j,l)+1,j)=0.0
+<           uwkn(ilu(j,l)+2,j)=-uwkn(ilu(j,l),j)
+< c
+<           uwkm(ifu(j,l)-1,j)=0.0
+<           uwkm(ifu(j,l)-2,j)=-uwkm(ifu(j,l),j)
+<           uwkm(ilu(j,l)+1,j)=0.0
+<           uwkm(ilu(j,l)+2,j)=-uwkm(ilu(j,l),j)
+< c
+< c ---     Open Boundary Conditions
+< c
+<           i = ifu(j,l)-1
+<           if (iuopn(i,j).eq.1) then
+<              uwkn(ifu(j,l)-1,j)=uwkn(ifu(j,l),j)
+<              uwkn(ifu(j,l)-2,j)=uwkn(ifu(j,l),j)
+<              uwkm(ifu(j,l)-1,j)=uwkm(ifu(j,l),j)
+<              uwkm(ifu(j,l)-2,j)=uwkm(ifu(j,l),j)
+<           endif
+< c
+<           i = ilu(j,l)+1
+<           if (iuopn(i,j).eq.1) then
+<              uwkn(ilu(j,l)+1,j)=uwkn(ilu(j,l),j)
+<              uwkn(ilu(j,l)+2,j)=uwkn(ilu(j,l),j)
+<              uwkm(ilu(j,l)+1,j)=uwkm(ilu(j,l),j)
+<              uwkm(ilu(j,l)+2,j)=uwkm(ilu(j,l),j)
+<           endif
+< c ---     modify uwk for boundary conditions : end
+< c
+<            do 161 i=max(1-margin,ifu(j,l)-1),min(ii+margin,ilu(j,l)+2)
+<              dum(i)=uwkm(i,j)-uwkm(i-1,j)
+<              dun(i)=uwkn(i,j)-uwkn(i-1,j)
+<  161       continue
+< c
+< c ---     eddy viscosity coefficient
+< c
+<            do 163 i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+< c
+<              velmodul=sqrt( (uwkn(i,j)**2+uwkn(i-1,j)**2)/2.0 +
+<      &                      (iv(i-1,j+1)*vwkn(i-1,j+1)**2 +
+<      &                       iv(i-1,j)  *vwkn(i-1,j  )**2  )
+<      &                         /max(1,iv(i-1,j+1)+iv(i-1,j))   )
+< c
+<              defortot=sqrt( defor1(i-1,j)+
+<      &                      (defor2(i,j)    *iq(i,j)+
+<      &                       defor2(i-1,j)  *iq(i-1,j)+
+<      &                       defor2(i,j+1)  *iq(i,j+1)+
+<      &                       defor2(i-1,j+1)*iq(i-1,j+1) )
+<      &                  /max(1,iq(i,j)+iq(i-1,j)+iq(i,j+1)+iq(i-1,j+1))
+<      &                    )
+< c
+<              visc(i,j)=max(veldf4,velmodul*facdf4,visco4*defortot)
+<              visc(i,j)=min(scux(i,j)*coefdiv2,visc(i,j))
+<  163       continue
+< c
+<            visc(ilu(j,l)+1,j)=visc(ilu(j,l),j)
+< c
+< c
+<            do 164 i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<              clpm=dum(i)-dum(i-1)
+<              crmm=dum(i+2)-dum(i+1)
+<              clpn=dun(i)-dun(i-1)
+<              clmn=dun(i+1)-dun(i)
+<              crpn=clmn
+<              crmn=dun(i+2)-dun(i+1)
+< c
+< c ---        calcul de U dxU et de la diffusion biLap
+<              advu(i,j)=uwkm(i,j)*(0.5*(uwkm(i+1,j)-uwkm(i-1,j)) -
+<      &                            coefdiv3*(crmm-clpm)            )*
+<      &                 scuxi(i,j)
+< c
+<              diffu(i,j)=
+<      &        (visc(i+1,j)*(crpn-crmn)*max(hmindiff,dp(i,  j,k,m)) -
+<      &         visc(i  ,j)*(clpn-clmn)*max(hmindiff,dp(i-1,j,k,m))  )
+<      &           *scuxi(i,j)/max(hmindiff,dpu(i,j,k,m))
+<  164       continue
+< c
+< c ---     restitution de uwk pour conditions aux limites: begin
+<           im1=ifu(j,l)-1
+<           im2=ifu(j,l)-2
+<           ip1=ilu(j,l)+1
+<           ip2=ilu(j,l)+2
+< 
+<           uwkn(im1,j)=utotn(im1,j)
+<           uwkn(im2,j)=utotn(im2,j)
+<           uwkn(ip1,j)=utotn(ip1,j)
+<           uwkn(ip2,j)=utotn(ip2,j)
+< 
+<           uwkm(im1,j)=utotm(im1,j)
+<           uwkm(im2,j)=utotm(im2,j)
+<           uwkm(ip1,j)=utotm(ip1,j)
+<           uwkm(ip2,j)=utotm(ip2,j)
+< c ---     restitution de uwk pour conditions aux limites: end
+<    16 continue
+< !$OMP END PARALLEL DO
+< c
+< c
+< c -------------------------------------
+< c Now compute advection along Y
+< c -------------------------------------
+< c
+<       margin = 4
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 180 j=1-margin,jj+margin
+<         do 180 l=1,isu(j)
+<           do 180 i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+< c
+<             if(iu(i,j-1).ne.0) then
+<               tdum(i,j)=uwkm(i,j)-uwkm(i,j-1)
+<               tdun(i,j)=uwkn(i,j)-uwkn(i,j-1)
+<             endif
+<   180 continue
+< !$OMP END PARALLEL DO
+< c
+<       margin = 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,ja,l,i,ia,velmodul,defortot)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 183 j=1-margin,jj+margin
+<         ja=j-1
+<         do 183 l=1,isu(j)
+<           do 183 i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<           ia=i-1
+<           velmodul=sqrt( (vwkn(i,j)**2+vwkn(i-1,j)**2)/2.0 +
+<      &                   (iu(i,j) *uwkn(i,j)  **2 +
+<      &                    iu(i,ja)*uwkn(i,j-1)**2  )
+<      &                     /max(1,iu(i,j)+iu(i,ja))          )
+< c
+<           defortot=sqrt( defor2(i,j)+
+<      &                   (defor1(i,j)  *ip(i,j)  +
+<      &                    defor1(ia,j) *ip(ia,j) +
+<      &                    defor1(i,ja) *ip(i,ja) +
+<      &                    defor1(ia,ja)*ip(ia,ja) )
+<      &                     /max(1,ip(i,j)+ip(ia,j)+ip(i,ja)+ip(ia,ja))
+<      &                 )
+< c
+<           visc(i,j)=max(veldf4,velmodul*facdf4,visco4*defortot)
+<           visc(i,j)=min(scuy(i,j)*coefdiv2,visc(i,j))
+<   183 continue
+< !$OMP END PARALLEL DO
+< c
+<       margin = 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 1841 j=1-margin,jj+margin
+<         do 1841 l=1,isu(j)
+<           do 1841 i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             if((iu(i,j-2).ne.0).and.(iu(i,j-1).ne.0)) then
+<               tclpm(i,j)=tdum(i,j)-tdum(i,j-1)
+<               tclpn(i,j)=tdun(i,j)-tdun(i,j-1)
+<             endif
+<  1841 continue
+< !$OMP END PARALLEL DO
+< c
+<       margin = 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+< c
+<       do 1842 j=1-margin,jj+margin
+<         do 1842 l=1,isu(j)
+<           do 1842 i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             if((iu(i,j-1).ne.0).and.(iu(i,j+1).ne.0)) then
+<               tclmm(i,j)=tdum(i,j+1)-tdum(i,j)
+<               tclmn(i,j)=tdun(i,j+1)-tdun(i,j)
+<             endif
+<  1842 continue
+< !$OMP END PARALLEL DO
+< c
+<       margin = 1
+< c
+< !$OMP PARALLEL DO PRIVATE(j,jm1,jp1,l,i,duadvjp1,
+< !$OMP&                    clpm,crmm,clpn,clmn,crpn,crmn)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 185 j=1-margin,jj+margin
+<         jm1=j-1
+<         do 185 l=1,isu(j)
+<           do 185 i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             duadvjp1=0.5*(uwkm(i,j+1)-uwkm(i,j-1))
+<             clpm=tclpm(i,j)
+<             crmm=tclmm(i,j+1)
+<             clpn=tclpn(i,j)
+<             clmn=tclmn(i,j)
+<             crpn=tclpn(i,j+1)
+<             crmn=tclmn(i,j+1)
+<             if     ((j.eq.1).or.(iu(i,j-1).eq.0)) then
+<               duadvjp1=uwkm(i,j+1)-uwkm(i,j) 
+<               clpm=0.0
+<               clpn=0.0
+<               clmn=0.0
+<               crpn=0.0
+<             elseif (iu(i,j-2).eq.0) then
+<               clpm=0.0
+<               clpn=0.0
+<             endif
+< c
+<             if     (iu(i,j+1).eq.0) then
+<               duadvjp1=uwkm(i,j)-uwkm(i,j-1)
+<               crmm=0.0
+<               clmn=0.0
+<               crpn=0.0
+<               crmn=0.0
+<             elseif(iu(i,j+2).eq.0) then
+<               crmm=0.0
+<               crmn=0.0
+<             endif
+< c
+<             if (iu(i,j+1).eq.0 .and. iu(i,j-1).eq.0) then
+<               duadvjp1=0.0
+<             endif
+< c 
+<             if     (ivopn(i,  j-1).ne.0 .or.
+<      &              ivopn(i-1,j-1).ne.0 .or. 
+<      &              ivopn(i,  j+2).ne.0 .or.
+<      &              ivopn(i-1,j+2).ne.0     ) then
+<               advu(i,j)=advu(i,j)+
+<      &         0.25*(vwkm(i-1,j)+vwkm(i-1,j+1)+vwkm(i,j)+vwkm(i,j+1))
+<      &             *scuxi(i,j)* duadvjp1
+<             elseif (ivopn(i,  j)  .eq.0 .and.
+<      &              ivopn(i-1,j)  .eq.0 .and.
+<      &              ivopn(i,  j+1).eq.0 .and.
+<      &              ivopn(i-1,j+1).eq.0      ) then
+<               advu(i,j)=advu(i,j)+
+<      &         0.25*(vwkm(i-1,j)+vwkm(i-1,j+1)+vwkm(i,j)+vwkm(i,j+1))
+<      &             *scuxi(i,j)*(duadvjp1-coefdiv3*(crmm-clpm))
+<             endif
+< c
+<             jp1=j+1
+<             if(iu(i,j+1).eq.0) then
+<               jp1=j
+<             else
+<               jp1=j+1
+<             endif
+<             diffu(i,j)=diffu(i,j)+
+<      &       ( visc(i,jp1)*(crpn-crmn)*
+<      &         max(hmindiff,0.5*(dpu(i,jp1,k,m)+dpu(i,j,k,m)))
+<      &        -visc(i,j)*(clpn-clmn)*
+<      &         max(hmindiff,0.5*(dpu(i,j,k,m)+dpu(i,jm1,k,m)))
+<      &       )*scuxi(i,j)/max(hmindiff,dpu(i,j,k,m))
+< c
+<   185 continue
+< !$OMP END PARALLEL DO
+< c
+< c ------------------------------------------------------
+< c --- ----------
+< c --- v equation
+< c --- ----------
+< c ------------------------------------------------------
+< c
+< c --------------------------------------------------------
+< c --- START QUICK ADVECTION SCHEME HERE
+< c --------------------------------------------------------
+< c
+< c -------------------------------------
+< c First compute advection along X
+< c -------------------------------------
+< c
+< c
+<       margin = 1
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,dvm,dvn,
+< !$OMP&             ia,ja,velmodul,defortot,clpm,crmm,
+< !$OMP&             clpn,clmn,crpn,crmn,im1,im2,ip1,ip2)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 17 j=1-margin,jj+margin
+<         do 17 l=1,isv(j)
+< c
+< c ---     modification de vwk pour conditions aux limites: begin
+<           if     (ifv(j,l)-2 .gt. 1-nbdy) then
+<             vwkn(ifv(j,l)-1,j)=2.0*vwkn(ifv(j,l),  j)-vwkn(ifv(j,l)+1,j)
+<             vwkn(ifv(j,l)-2,j)=2.0*vwkn(ifv(j,l)-1,j)-vwkn(ifv(j,l),  j)
+<             vwkm(ifv(j,l)-1,j)=2.0*vwkm(ifv(j,l),  j)-vwkm(ifv(j,l)+1,j)
+<             vwkm(ifv(j,l)-2,j)=2.0*vwkm(ifv(j,l)-1,j)-vwkm(ifv(j,l),  j)
+< c
+< c ---       Open Boundary Conditions
+< c
+<             if     ( iuopn(ifv(j,l),j  ).ne.0 .or.
+<      &               iuopn(ifv(j,l),j-1).ne.0     ) then
+<               vwkn(ifv(j,l)-1,j)=vwkn(ifv(j,l),j)
+<               vwkn(ifv(j,l)-2,j)=vwkn(ifv(j,l)-1,j)
+<               vwkm(ifv(j,l)-1,j)=vwkm(ifv(j,l),j)
+<               vwkm(ifv(j,l)-2,j)=vwkm(ifv(j,l)-1,j)
+<             endif 
+<           endif 
+< c
+<           if(ilv(j,l)+2 .lt. idm+nbdy) then
+<             vwkn(ilv(j,l)+1,j)=2.0*vwkn(ilv(j,l),  j)-vwkn(ilv(j,l)-1,j)
+<             vwkn(ilv(j,l)+2,j)=2.0*vwkn(ilv(j,l)+1,j)-vwkn(ilv(j,l),  j)
+<             vwkm(ilv(j,l)+1,j)=2.0*vwkm(ilv(j,l),  j)-vwkm(ilv(j,l)-1,j)
+<             vwkm(ilv(j,l)+2,j)=2.0*vwkm(ilv(j,l)+1,j)-vwkm(ilv(j,l),  j)
+< c
+< c ---       Open Boundary Conditions
+< c
+<             if     (iuopn(ilv(j,l)+1,j  ).ne.0 .or.
+<      &              iuopn(ilv(j,l)+1,j-1).ne.0     ) then
+<               vwkn(ilv(j,l)+1,j)=vwkn(ilv(j,l),  j)
+<               vwkn(ilv(j,l)+2,j)=vwkn(ilv(j,l)+1,j)
+<               vwkm(ilv(j,l)+1,j)=vwkm(ilv(j,l),  j)
+<               vwkm(ilv(j,l)+2,j)=vwkm(ilv(j,l)+1,j)
+<             endif 
+<           endif 
+< c ---     modification de vwk pour conditions aux limites: end
+< c
+<           do 171 i=max(1-margin,ifv(j,l)-1),min(ii+margin,ilv(j,l)+2)
+<             dvm(i)=vwkm(i,j)-vwkm(i-1,j)
+<             dvn(i)=vwkn(i,j)-vwkn(i-1,j)
+<  171      continue
+< c
+< c ---     eddy viscosity coefficient
+< c
+<           do 173 i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             ia=i-1
+<             ja=j-1
+<             velmodul=sqrt( (vwkn(i,j)**2+vwkn(i-1,j)**2)/2.0 +
+<      &                     (iu(i,j) *uwkn(i,j)  **2 +
+<      &                      iu(i,ja)*uwkn(i,j-1)**2  )
+<      &                       /max(1,iu(i,j)+iu(i,ja))          )
+< c
+<             defortot=sqrt( defor2(i,j)+
+<      &                     (defor1(i,j)  *ip(i,j)  +
+<      &                      defor1(ia,j) *ip(ia,j) +
+<      &                      defor1(i,ja) *ip(i,ja) +
+<      &                      defor1(ia,ja)*ip(ia,ja) )
+<      &                       /max(1,ip(i,j)+ip(ia,j)+ip(i,ja)+ip(ia,ja))
+<      &                   )
+< c
+<             visc(i,j)=max(velmodul*facdf4,visco4*defortot)
+<             visc(i,j)=min(scvx(i,j)*coefdiv2,visc(i,j))
+<  173      continue
+<           visc(ilv(j,l)+1,j)=visc(ilv(j,l),j)
+< c
+<           do 174 i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             im1=i-1
+<             ip1=i+1
+< c
+<             clpm=dvm(i)-dvm(i-1)
+<             crmm=dvm(i+2)-dvm(i+1)
+< c
+<             clpn=dvn(i)-dvn(i-1)
+<             clmn=dvn(i+1)-dvn(i)
+<             crpn=clmn
+<             crmn=dvn(i+2)-dvn(i+1)
+< c
+< c ---       calcul de U dxV et de la diffusion biLap
+<             advv(i,j)=
+<      &      0.25*(uwkm(i,j)+uwkm(i+1,j)+uwkm(i,j-1)+uwkm(i+1,j-1))*
+<      &                (0.5*(vwkm(i+1,j)-vwkm(i-1,j))-
+<      &                 coefdiv3*(crmm-clpm))*scvyi(i,j)
+< c 
+<             if(iuopn(i,  j).ne.0 .or. iuopn(i,  j-1).ne.0 .or.
+<      &         iuopn(i+1,j).ne.0 .or. iuopn(i+1,j-1).ne.0     ) then
+<               advv(i,j)=0.0
+<             endif
+< c
+<             if( iuopn(i-1,j).ne.0 .or. iuopn(i-1,j-1).ne.0 .or. 
+<      &          iuopn(i+2,j).ne.0 .or. iuopn(i+2,j-1).ne.0     ) then
+<               advv(i,j)=
+<      &        0.25*(uwkm(i,j)+uwkm(i+1,j)+uwkm(i,j-1)+uwkm(i+1,j-1))*
+<      &                  (0.5*(vwkm(i+1,j)-vwkm(i-1,j)))*scvyi(i,j)
+<             endif
+< c
+<             diffv(i,j)=
+<      &      ( visc(i+1,j)*(crpn-crmn)*
+<      &        max(hmindiff,0.5*(dpv(ip1,j,k,m)+dpv(i,  j,k,m))) -
+<      &        visc(i,  j)*(clpn-clmn)*
+<      &        max(hmindiff,0.5*(dpv(i,  j,k,m)+dpv(im1,j,k,m)))  )
+<      &         *scvyi(i,j)/max(hmindiff,dpv(i,j,k,m))
+<   174     continue
+< c
+< c ---     restitution de vwk pour conditions aux limites: begin
+<           im1=ifv(j,l)-1
+<           im2=ifv(j,l)-2
+<           ip1=ilv(j,l)+1
+<           ip2=ilv(j,l)+2
+< 
+<           vwkn(im1,j)=vtotn(im1,j)
+<           vwkn(im2,j)=vtotn(im2,j)
+<           vwkn(ip1,j)=vtotn(ip1,j)
+<           vwkn(ip2,j)=vtotn(ip2,j)
+< 
+<           vwkm(im1,j)=vtotm(im1,j)
+<           vwkm(im2,j)=vtotm(im2,j)
+<           vwkm(ip1,j)=vtotm(ip1,j)
+<           vwkm(ip2,j)=vtotm(ip2,j)
+< c ---     restitution de vwk pour conditions aux limites: end
+<    17 continue
+< !$OMP END PARALLEL DO
+< c
+< c -------------------------------------
+< c Now compute advection along Y
+< c -------------------------------------
+< c
+<       margin = 3
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 190 j=1-margin,jj+margin
+<         do 190 l=1,isv(j)
+<           do 190 i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             tdvm(i,j)=vwkm(i,j)-vwkm(i,j-1)
+<             tdvn(i,j)=vwkn(i,j)-vwkn(i,j-1)
+<  190   continue
+< !$OMP END PARALLEL DO
+< c
+<       margin = 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,velmodul,defortot)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+< c
+<       do 193 j=1-margin,jj+margin
+<         do 193 l=1,isv(j)
+<           do 193 i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             velmodul=sqrt( (vwkn(i,j)**2+vwkn(i,j-1)**2)/2.0 +
+<      &                     (iu(i,  j-1)*uwkn(i,  j-1)**2 +
+<      &                      iu(i+1,j-1)*uwkn(i+1,j-1)**2  )
+<      &                       /max(1,iu(i,j-1)+iu(i+1,j-1))    )
+< c
+<             defortot=sqrt( defor1(i,j-1)+
+<      &                     (defor2(i,  j)  *iq(i,  j)   +
+<      &                      defor2(i+1,j)  *iq(i+1,j)   +
+<      &                      defor2(i,  j-1)*iq(i,  j-1) +
+<      &                      defor2(i+1,j-1)*iq(i+1,j-1)  )
+<      &                /max(1,iq(i,j)+iq(i+1,j)+iq(i,j-1)+iq(i+1,j-1))
+<      &                   )
+< c
+<             visc(i,j)=max(velmodul*facdf4,visco4*defortot)
+<             visc(i,j)=min(scvy(i,j)*coefdiv2,visc(i,j))
+<   193 continue
+< !$OMP END PARALLEL DO
+< c
+<       margin = 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 1941 j=1-margin,jj+margin
+<         do 1941 l=1,isv(j)
+<           do 1941 i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             if(iv(i,j-1).ne.0) then
+<               tclpm(i,j)=tdvm(i,j)-tdvm(i,j-1)
+<               tclpn(i,j)=tdvn(i,j)-tdvn(i,j-1)
+<             endif
+<  1941 continue
+< c
+<       margin = 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 1942 j=1-margin,jj+margin
+<         do 1942 l=1,isv(j)
+<           do 1942 i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             if(iv(i,j+1).ne.0) then
+<               tclmm(i,j)=tdvm(i,j+1)-tdvm(i,j)
+<               tclmn(i,j)=tdvn(i,j+1)-tdvn(i,j)
+<             endif
+<  1942 continue
+< c
+<       margin = 1
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,jp1,dvadvjp1,
+< !$OMP&     clpm,crmm,clpn,clmn,crpn,crmn)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 195 j=1-margin,jj+margin
+<         do 195 l=1,isv(j)
+<           do 195 i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             dvadvjp1=0.5*(vwkm(i,j+1)-vwkm(i,j-1))
+< c
+<             clpm=tclpm(i,j)
+<             crmm=tclmm(i,j+1)
+< c
+<             clpn=tclpn(i,j)
+<             clmn=tclmn(i,j)
+<             crpn=tclpn(i,j+1)
+<             crmn=tclmn(i,j+1)
+< c
+< c ---       Closed Boundary Conditions
+< c
+<             if(iv(i,j-1).eq.0) then
+<               clpm=0.0
+<               clpn=0.0
+<             endif
+< c
+<             if     (iv(i,j+1).eq.0) then
+<               crmm=0.0
+<               crmn=0.0
+<               clmn=-vwkn(i,j)-tdvn(i,j)
+<               crpn=clmn
+<             elseif (iv(i,j+2).eq.0) then
+<               crmm=-vwkm(i,j+1)-tdvm(i,j+1)
+<               crmn=-vwkn(i,j+1)-tdvn(i,j+1)
+<             endif
+< c
+< c ---       Open Boundary Conditions
+< c
+<             if(ivopn(i,j-1).ne.0) then
+<               clpm=0.0
+<               clpn=0.0
+<             endif
+< c
+<             if(ivopn(i,j+1).ne.0) then
+<               crmm=0.0
+<               crmn=0.0
+<               clmn=-tdvn(i,j)
+<               crpn=clmn
+<             elseif(ivopn(i,j+2).ne.0) then
+<               crmm=-tdvm(i,j+1)
+<               crmn=-tdvn(i,j+1)
+<             endif
+< c
+<             advv(i,j)= advv(i,j)+
+<      &                  vwkm(i,j)*
+<      &                  (dvadvjp1-coefdiv3*(crmm-clpm))*
+<      &                  scvyi(i,j)
+< c
+<             jp1=j+1
+<             if(iv(i,j+1).eq.0) then
+<               jp1=j
+<             else
+<               jp1=j+1
+<             endif
+<             diffv(i,j)=diffv(i,j)+
+<      &      ( visc(i,jp1)*(crpn-crmn)*max(hmindiff,dp(i,j,k,m))
+<      &       -visc(i,j)*(clpn-clmn)*max(hmindiff,dp(i,j-1,k,m)) )*
+<      &      scvyi(i,j)/max(hmindiff,dpv(i,j,k,m))
+< c
+<   195 continue
+< !$OMP END PARALLEL DO
+< c
+<       margin = mbdy - 1
+< c
+< c --- ---------------------------------------
+< c --- ---------------------------------------
+< c --- ----------
+< c --- u equation
+< c --- ----------
+< c --- ---------------------------------------
+< c --- ---------------------------------------
+< c
+< c
+< c --- pressure force in x direction
+< c --- ('scheme 2' from appendix -a- in bleck-smith paper)
+< c
+< c --- rhs: depthu, pu, montg+, thstar+, p+, dp.m+
+< c --- lhs: util1, pgfx
+< c
+< *     margin = mbdy - 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,dmontg,dthstr,q)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do l=1,isu(j)
+<           do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             util1(i,j)=max(0.0,min(depthu(i,j)-pu(i,j,k),h1))
+< c
+<             if     (kapref.ne.-1) then
+<               dmontg=montg( i,j,k,1)-montg( i-1,j,k,1)
+<               dthstr=thstar(i,j,k,1)-thstar(i-1,j,k,1)
+<             else !2 thermobaric reference states
+<               q=0.5*(skap(i,j)+skap(i-1,j))
+<               dmontg=     q *(montg( i,j,k,1)-montg( i-1,j,k,1))+
+<      &               (1.0-q)*(montg( i,j,k,2)-montg( i-1,j,k,2))
+<               dthstr=     q *(thstar(i,j,k,1)-thstar(i-1,j,k,1))+
+<      &               (1.0-q)*(thstar(i,j,k,2)-thstar(i-1,j,k,2))
+<             endif
+<             pgfx(i,j)=util1(i,j)*
+<      &       ( advu(i,j)  -
+<      &         diffu(i,j) -
+<      &         0.125*(vflux(i  ,j)+vflux(i  ,j+1)+
+<      &                vflux(i-1,j)+vflux(i-1,j+1) )
+<      &              *(potvor(i,j)+potvor(i,j+1))    +
+<      &         scuxi(i,j)*(dmontg+
+<      &                     dthstr*(p(i,j,k+1)*p(i-1,j,k+1)-
+<      &                             p(i,j,k  )*p(i-1,j,k  ))*thref**2
+<      &                        /(dp(i,j,k,m)+dp(i-1,j,k,m)+epsil)    )
+<      &       )
+<           enddo
+<         enddo
+<       enddo
+< c
+<       if     (lpipe .and. lpipe_momtum .and. k.eq.1) then
+< c ---   compare two model runs.
+<         write (text,'(a9,i3)') 'pu     k=',k
+<         call pipe_compare(pu(1-nbdy,1-nbdy,k),iu,text)
+<         write (text,'(a9,i3)') 'depthu k=',k
+<         call pipe_compare(depthu,iu,text)
+<         write (text,'(a9,i3)') 'util1  k=',k
+<         call pipe_compare(util1, iu,text)
+<         util4(1:ii,1:jj) = montg( 1:ii,1:jj,k,1)-montg( 0:ii-1,1:jj,k,1)
+<         write (text,'(a9,i3)') 'montgX k=',k
+<         call pipe_compare(util4, iu,text)
+<         util4(1:ii,1:jj) = thstar(1:ii,1:jj,k,1)-thstar(0:ii-1,1:jj,k,1)
+<         write (text,'(a9,i3)') 'thstaX k=',k
+<         call pipe_compare(util4, iu,text)
+<         util4(1:ii,1:jj) = p(1:ii,1:jj,k)*p(0:ii-1,1:jj,k)
+<         write (text,'(a9,i3)') 'pSQ    k=',k
+<         call pipe_compare(util4, iu,text)
+<         util4(1:ii,1:jj) = p(1:ii,1:jj,k+1)*p(0:ii-1,1:jj,k+1)
+<         write (text,'(a9,i3)') 'pSQ    k=',k+1
+<         call pipe_compare(util4, iu,text)
+<         util4(1:ii,1:jj) = dp(1:ii,1:jj,k,m)+dp(0:ii-1,1:jj,k,m)+epsil
+<         write (text,'(a9,i3)') 'dp.m+  k=',k
+<         call pipe_compare(util4, iu,text)
+<         write (text,'(a9,i3)') 'pgfx   k=',k
+<         call pipe_compare(pgfx,  iu,text)
+<       endif
+< c
+< c
+< c --- rhs: pgfx+, util1+, p+, dpmixl.m+, dpu.m, utotn, drag+
+< c --- rhs: stresx, u.m, u.n, dpu.n, gradx, utotm+, vtotm+,
+< c --- rhs: vflux+, potvor+, uflux1+, uflux2, uflux3
+< c --- lhs: gradx, stress, u.m, u.n
+< c
+< *     margin = mbdy - 2
+< c
+< !$OMP PARALLEL DO PRIVATE(j,ja,jb,l,i,
+< !$OMP&                    ptopl,pbotl,pstres,pbop,qdpu,dragu)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         ja=j-1
+<         jb=j+1
+<         do l=1,isu(j)
+<           do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+< c
+<             gradx(i,j)=(pgfx(i,j)+(h1-util1(i,j))*
+<      &        (pgfx (i-1,j)+pgfx (i+1,j)+pgfx (i,ja)+pgfx (i,jb))/
+<      &        (util1(i-1,j)+util1(i+1,j)+util1(i,ja)+util1(i,jb)+
+<      &          epsil))/h1
+< c
+<             ptopl=min(depthu(i,j),0.5*(p(i,j,k  )+p(i-1,j,k  )))
+<             pbotl=min(depthu(i,j),0.5*(p(i,j,k+1)+p(i-1,j,k+1)))
+<             if(hybrid .and. mxlkrt) then
+<               pstres=0.5*(dpmixl(i,j,m)+dpmixl(i-1,j,m))
+<             else
+<               pstres=dpu(i,j,1,m)
+<             endif
+< c             
+< c ---       top and bottom boundary layer stress
+<             pbop=depthu(i,j)-0.5*(thkbop(i,j)+thkbop(i-1,j)) !top of bot. b.l.
+<             qdpu=1.0/max(dpu(i,j,k,m),onemm)
+<             dragu=0.5*(drag(i,j)+drag(i-1,j))*
+<      &                ( max(pbop,    pbotl)
+<      &                 -max(pbop,min(ptopl,pbotl-onemm)))*qdpu
+<             if     (drglim.gt.0.0) then
+< c             explicit drag: u.t+1 - u.t-1 = - 2dt*dragu*u.t-1
+< c                   limiter: 2dt*dragu <= drglim
+<               stress(i,j)=-utotn(i,j)*min(dragu,drglim*dt1inv) +
+<      &             (stresx(i,j)*thref*(min(pstres,pbotl+onemm)
+<      &                                -min(pstres,ptopl      )))*qdpu
+<             else
+< c             implicit drag: u.t+1 - u.t-1 = - 2dt*dragu*u.t+1
+< c                                          = - 2dt*dragu / (1+2dt*dragu) * u.t+1
+<               stress(i,j)=-utotn(i,j)*dragu/(1.0+delt1*dragu) +
+<      &             (stresx(i,j)*thref*(min(pstres,pbotl+onemm)
+<      &                                -min(pstres,ptopl      )))*qdpu
+<             endif
+< c
+< c ---       time smoothing of -u- field  (part 1)
+<             u(i,j,k,m)=u(i,j,k,m)*(wuv1*dpu(i,j,k,m)+onemm)
+<      &                +u(i,j,k,n)* wuv2*dpu(i,j,k,n)
+< c
+<             u(i,j,k,n)=u(i,j,k,n)+delt1*(-gradx(i,j)
+<      &                                   -ubrhs(i,j)
+<      &                                   +stress(i,j) )
+<           enddo !i
+<         enddo !l
+<       enddo !j
+< c
+<       if     (lpipe .and. lpipe_momtum .and. k.eq.1) then
+< c ---   compare two model runs.
+<         write (text,'(a9,i3)') 'vtotm  k=',k
+<         call pipe_compare(vtotm, iv,text)
+<         write (text,'(a9,i3)') 'utotm  k=',k
+<         call pipe_compare(utotm, iu,text)
+<         write (text,'(a9,i3)') 'gradx  k=',k
+<         call pipe_compare(gradx, iu,text)
+<         write (text,'(a9,i3)') 'ubrhs  k=',k
+<         call pipe_compare(ubrhs, iu,text)
+<         write (text,'(a9,i3)') 'stress k=',k
+<         call pipe_compare(stress,iu,text)
+<         write (text,'(a9,i3)') 'u.n    k=',k
+<         call pipe_compare(u(1-nbdy,1-nbdy,k,n),iu,text)
+<       endif
+< c
+<  100    format(i9,8x,'uold    unew   gradp  nonlin   corio',
+<      &3x,'ubrhs  stress    fric')
+< c
+< c --- ----------
+< c --- v equation
+< c --- ----------
+< c
+< c --- pressure force in y direction
+< c --- ('scheme 2' from appendix -a- in bleck-smith paper)
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,dmontg,dthstr,q)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do l=1,isv(j)
+<           do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             util2(i,j)=max(0.,min(depthv(i,j)-pv(i,j,k),h1))
+<             if     (kapref.ne.-1) then
+<               dmontg=montg( i,j,k,1)-montg( i,j-1,k,1)
+<               dthstr=thstar(i,j,k,1)-thstar(i,j-1,k,1)
+<             else !2 thermobaric reference states
+<               q=0.5*(skap(i,j)+skap(i,j-1))
+<               dmontg=     q *(montg( i,j,k,1)-montg( i,j-1,k,1))+
+<      &               (1.0-q)*(montg( i,j,k,2)-montg( i,j-1,k,2))
+<               dthstr=     q *(thstar(i,j,k,1)-thstar(i,j-1,k,1))+
+<      &               (1.0-q)*(thstar(i,j,k,2)-thstar(i,j-1,k,2))
+<             endif
+<             pgfy(i,j)=util2(i,j)*
+<      &       ( advv(i,j)  -
+<      &         diffv(i,j) +
+<      &         0.125*(uflux(i,j  )+uflux(i+1,j  )+
+<      &                uflux(i,j-1)+uflux(i+1,j-1) )
+<      &              *(potvor(i,j)+potvor(i+1,j))    +
+<      &         scvyi(i,j)*(dmontg+
+<      &                     dthstr*(p(i,j,k+1)*p(i,j-1,k+1)-
+<      &                             p(i,j,k  )*p(i,j-1,k  ))*thref**2
+<      &                      /(dp(i,j,k,m)+dp(i,j-1,k,m)+epsil)      )
+<      &       )
+<           enddo
+<         enddo
+<       enddo
+< c
+<       if     (lpipe .and. lpipe_momtum .and. k.eq.1) then
+< c ---   compare two model runs.
+<         write (text,'(a9,i3)') 'pv     k=',k
+<         call pipe_compare(pv(1-nbdy,1-nbdy,k),iv,text)
+<         write (text,'(a9,i3)') 'depthv k=',k
+<         call pipe_compare(depthv,iv,text)
+<         write (text,'(a9,i3)') 'util2  k=',k
+<         call pipe_compare(util2, iv,text)
+<         util4(1:ii,1:jj) = montg( 1:ii,1:jj,k,1)-montg( 1:ii,0:jj-1,k,1)
+<         write (text,'(a9,i3)') 'montgY k=',k
+<         call pipe_compare(util4, iv,text)
+<         util4(1:ii,1:jj) = thstar(1:ii,1:jj,k,1)-thstar(1:ii,0:jj-1,k,1)
+<         write (text,'(a9,i3)') 'thstaY k=',k
+<         call pipe_compare(util4, iv,text)
+<         util4(1:ii,1:jj) = p(1:ii,1:jj,k)  *p(1:ii,0:jj-1,k)
+<         write (text,'(a9,i3)') 'pSQ    k=',k
+<         call pipe_compare(util4, iv,text)
+<         util4(1:ii,1:jj) = p(1:ii,1:jj,k+1)*p(1:ii,0:jj-1,k+1)
+<         write (text,'(a9,i3)') 'pSQ    k=',k+1
+<         call pipe_compare(util4, iv,text)
+<         util4(1:ii,1:jj) = dp(1:ii,1:jj,k,m)+dp(1:ii,0:jj-1,k,m)+epsil
+<         write (text,'(a9,i3)') 'dp.m+  k=',k
+<         call pipe_compare(util4, iv,text)
+<         write (text,'(a9,i3)') 'pgfy   k=',k
+<         call pipe_compare(pgfy,  iv,text)
+<       endif
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,ia,ib)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do l=1,isv(j)
+<           do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             ia=i-1
+<             ib=i+1
+< c
+<             grady(i,j)=(pgfy(i,j)+(h1-util2(i,j))*
+<      &        (pgfy (ia ,j)+pgfy (ib ,j)
+<      &        +pgfy (i,j-1)+pgfy (i,j+1))/
+<      &        (util2(ia ,j)+util2(ib ,j)
+<      &        +util2(i,j-1)+util2(i,j+1)+epsil))/h1
+<           enddo
+<         enddo
+<       enddo
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,
+< !$OMP&                    ptopl,pbotl,pstres,pbop,qdpv,dragv)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do j=1-margin,jj+margin
+<         do l=1,isv(j)
+<           do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+< c
+<             ptopl=min(depthv(i,j),0.5*(p(i,j,k  )+p(i,j-1,k  )))
+<             pbotl=min(depthv(i,j),0.5*(p(i,j,k+1)+p(i,j-1,k+1)))
+<             if(hybrid .and. mxlkrt) then
+<               pstres=0.5*(dpmixl(i,j,m)+dpmixl(i,j-1,m))
+<             else
+<               pstres=dpv(i,j,1,m)
+<             endif
+< c
+< c ---       top and bottom boundary layer stress
+<             pbop=depthv(i,j)-0.5*(thkbop(i,j)+thkbop(i,j-1))  !top of bot. b.l.
+<             qdpv=1.0/max(dpv(i,j,k,m),onemm)
+<             dragv=0.5*(drag(i,j)+drag(i,j-1))*
+<      &                ( max(pbop,    pbotl)
+<      &                 -max(pbop,min(ptopl,pbotl-onemm)))*qdpv
+<             if     (drglim.gt.0.0) then
+<               stress(i,j)=-vtotn(i,j)*min(dragv,drglim*dt1inv) +
+<      &             (stresy(i,j)*thref*(min(pstres,pbotl+onemm)
+<      &                                -min(pstres,ptopl      )))*qdpv
+<             else
+<               stress(i,j)=-vtotn(i,j)*dragv/(1.0+delt1*dragv) +
+<      &             (stresy(i,j)*thref*(min(pstres,pbotl+onemm)
+<      &                                -min(pstres,ptopl      )))*qdpv
+<             endif
+< c
+< c ---       time smoothing of -v- field  (part 1)
+<             v(i,j,k,m)=v(i,j,k,m)*(wuv1*dpv(i,j,k,m)+onemm)
+<      &                +v(i,j,k,n)* wuv2*dpv(i,j,k,n)
+< c
+<             v(i,j,k,n)=v(i,j,k,n)+delt1*(-grady(i,j)
+<      &                                   -vbrhs(i,j)
+<      &                                   +stress(i,j) )
+<           enddo
+<         enddo
+<       enddo
+< c
+< *     if     (lpipe .and. lpipe_momtum .and. k.eq.1) then
+<       if     (lpipe .and. lpipe_momtum) then
+< c ---   compare two model runs.
+<         util4(1:ii,1:jj) =  vtotm(1:ii,  2:jj+1)**2
+<      &                     +utotm(1:ii,  1:jj  )**2
+<      &                     +utotm(2:ii+1,1:jj  )**2
+<      &                     -vtotm(1:ii,  0:jj-1)**2
+<      &                     -utotm(1:ii,  0:jj-1)**2
+<      &                     -utotm(2:ii+1,0:jj-1)**2
+<         write (text,'(a9,i3)') 'totm   k=',k
+<         call pipe_compare(util4, iv,text)
+<         write (text,'(a9,i3)') 'grady  k=',k
+<         call pipe_compare(grady, iv,text)
+<         write (text,'(a9,i3)') 'vbrhs  k=',k
+<         call pipe_compare(vbrhs, iv,text)
+<         if     (k.eq.kk) then
+<           write (text,'(a9,i3)') 'p      k=',k-1
+<           call pipe_compare(p(1-nbdy,1-nbdy,k-1),ip,text)
+<           write (text,'(a9,i3)') 'p      k=',k
+<           call pipe_compare(p(1-nbdy,1-nbdy,k)  ,ip,text)
+<           write (text,'(a9,i3)') 'drag   k=',k
+<           call pipe_compare(drag,ip,text)
+<         endif
+<         write (text,'(a9,i3)') 'stress k=',k
+<         call pipe_compare(stress,iv,text)
+<         util4(1:ii,1:jj) =  uflux(1:ii,  1:jj  )
+<      &                     +uflux(2:ii+1,1:jj  )
+<      &                     +uflux(1:ii,  0:jj-1)
+<      &                     +uflux(2:ii+1,0:jj-1)
+<         write (text,'(a9,i3)') 'uflux  k=',k
+<         call pipe_compare(util4, iv,text)
+<         util4(1:ii,1:jj) =  potvor(1:ii,  1:jj  )
+<      &                     +potvor(2:ii+1,1:jj  )
+<         write (text,'(a9,i3)') 'potvor k=',k
+<         call pipe_compare(util4, iv,text)
+<         util4(1:ii,1:jj) =  vflux1(1:ii,  1:jj  )
+<      &                     -vflux1(1:ii,  0:jj-1)
+<      &                     +vflux3(1:ii,  1:jj  )
+<      &                     -vflux2(1:ii,  1:jj  )
+<         write (text,'(a9,i3)') 'vflux  k=',k
+<         call pipe_compare(util4, iv,text)
+<         write (text,'(a9,i3)') 'v.n    k=',k
+<         call pipe_compare(v(1-nbdy,1-nbdy,k,n),iv,text)
+<       endif
+< c
+< cdiag if (k.eq.1) then
+< cdiag write (lp,101) nstep
+< cdiag do j=jtest-1,jtest+1
+< cdiag do i=itest-1,itest+1
+< cdiag write (lp,'(2i5,i3,8f8.3)') i,j,k,
+< cdiag&  util4(i,j),v(i,j,k,n),-delt1*grady(i,j)*scvyi(i,j),
+< cdiag&  -delt1*
+< cdiag& 0.25*(vtotm(i,j+1)**2+utotm(i,j  )**2+utotm(i+1,j  )**2
+< cdiag&      -vtotm(i,j-1)**2-utotm(i,j-1)**2-utotm(i+1,j-1)**2)*
+< cdiag&       scvyi(i,j),
+< cdiag&  -delt1*(uflux(i,j  )+uflux(i+1,j  )+uflux(i,j-1)+uflux(i+1,j-1))
+< cdiag&        *(potvor(i,j)+potvor(i+1,j))*0.125,
+< cdiag&  -delt1*vbrhs(i,j),delt1*stress(i,j),
+< cdiag&  -delt1*(vflux1(i,j)-vflux1(i,j-1)
+< cdiag&         +vflux3(i,j)-vflux2(i,j))/
+< cdiag&         (scv2(i,j)*max(dpv(i,j,k,m),onemm))
+< cdiag enddo
+< cdiag enddo
+< cdiag endif
+<  101    format(i9,8x,'vold    vnew   gradp  nonlin   corio',
+<      &3x,'vbrhs  stress    fric')
+< c
+<  9    continue  ! k=1,kk
+< c
+< C --- -----------------------------------------------------
+< C --- DEAL WITH VANISHING LAYERS AND TIME SMOOTHING
+< C --- -----------------------------------------------------
+< C
+<       margin = 1
+< c
+< *        wtime1( 6) = wtime()
+< !$OMP PARALLEL DO PRIVATE(j,k,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 14 j=1-margin,jj+margin
+<         do k=1,kk
+<           do l=1,isp(j)
+<             do i=max(1-margin,ifp(j,l)),min(ii+margin,ilp(j,l))
+<               p(i,j,k+1)=p(i,j,k)+dp(i,j,k,n)
+<             enddo !i
+<           enddo !l
+< c           
+< c ---     compute new -dpu,dpv- field. save old -dpu,dpv- values in -pu,pv-.
+< c
+<           do l=1,isu(j)
+<             do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<               pu(i,j,k+1)=dpu(i,j,k,n)
+<             enddo !i
+<           enddo !l
+< c           
+<           do l=1,isv(j)
+<             do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<               pv(i,j,k+1)=dpv(i,j,k,n)
+<             enddo !i
+<           enddo !l
+<         enddo !k
+<  14   continue !j
+< !$OMP END PARALLEL DO
+< c
+< *        wtime1( 7) = wtime()
+<       call dpudpv(dpu(1-nbdy,1-nbdy,1,n),
+<      &            dpv(1-nbdy,1-nbdy,1,n),
+<      &            p,depthu,depthv, max(0,margin-1))
+< *        wtime1( 8) = wtime()
+< c 
+<       margin = 0
+< c    
+< c --- substitute depth-weighted averages for (u,v) at massless grid points.
+< c --- (scan layers in top-down direction to save time.)
+< c --- extract barotropic velocities generated during most recent baroclinic
+< c --- time step and use them to force barotropic flow field.
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i,k,ka,q)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 30 j=1-margin,jj+margin
+<         do l=1,isu(j)
+<           do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             utotn(i,j)=0.
+<           enddo !i
+<           do k=1,kk
+<             ka=max(1,k-1)
+<             do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<               q=min(dpu(i,j,k,m),dpu(i,j,k,n),cutoff)
+<               u(i,j,k,n)=(u(i,j,k,n)*q+u(i,j,ka,n)*(cutoff-q))/cutoff
+<               utotn(i,j)=utotn(i,j)+u(i,j,k,n)*dpu(i,j,k,n)
+<             enddo !i
+<           enddo !k
+<           do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             utotn(i,j)=utotn(i,j)/depthu(i,j)
+<           enddo !i
+<         enddo !l
+< c         
+<         do l=1,isv(j)
+<           do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             vtotn(i,j)=0.
+<           enddo !i
+<           do k=1,kk
+<             ka=max(1,k-1)
+<             do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<               q=min(dpv(i,j,k,m),dpv(i,j,k,n),cutoff)
+<               v(i,j,k,n)=(v(i,j,k,n)*q+v(i,j,ka,n)*(cutoff-q))/cutoff
+<               vtotn(i,j)=vtotn(i,j)+v(i,j,k,n)*dpv(i,j,k,n)
+<             enddo !i
+<           enddo !k
+<           do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             vtotn(i,j)=vtotn(i,j)/depthv(i,j)
+<           enddo !i
+<         enddo !l
+<  30   continue !j
+< !$OMP END PARALLEL DO
+< c
+<       if     (lpipe .and. lpipe_momtum) then
+< c ---   compare two model runs.
+<         do k= 1,kk
+<           write (text,'(a9,i3)') 'dpv.m  k=',k
+<           call pipe_compare(dpv(1-nbdy,1-nbdy,k,m),iv,text)
+<           write (text,'(a9,i3)') 'dpv.n  k=',k
+<           call pipe_compare(dpv(1-nbdy,1-nbdy,k,n),iv,text)
+<           write (text,'(a9,i3)') 'v.n(2) k=',k
+<           call pipe_compare(  v(1-nbdy,1-nbdy,k,n),iv,text)
+<         enddo !k
+<         write (text,'(a9,i3)') 'vtotn  k=',kk
+<         call pipe_compare(vtotn, iv,text)
+<       endif
+< c
+< c --- time smoothing of -u,v- fields  (part 2)
+< c
+< *        wtime1( 9) = wtime()
+< !$OMP PARALLEL DO PRIVATE(j,k,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 22 j=1-margin,jj+margin
+<         do k=1,kk
+<           do l=1,isu(j)
+<             do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<               u(i,j,k,n)=u(i,j,k,n)-utotn(i,j)
+<               u(i,j,k,m)=(u(i,j,k,m)+u(i,j,k,n)*wuv2*dpu(i,j,k,n))/
+<      &         (wuv1*dpu(i,j,k,m)+onemm+wuv2*(pu(i,j,k+1)+dpu(i,j,k,n)))
+<             enddo !i
+<           enddo !l
+< c           
+<           do l=1,isv(j)
+<             do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<               v(i,j,k,n)=v(i,j,k,n)-vtotn(i,j)
+<               v(i,j,k,m)=(v(i,j,k,m)+v(i,j,k,n)*wuv2*dpv(i,j,k,n))/
+<      &         (wuv1*dpv(i,j,k,m)+onemm+wuv2*(pv(i,j,k+1)+dpv(i,j,k,n)))
+<             enddo !i
+<           enddo !l
+<         enddo !k
+<  22   continue !j
+< !$OMP END PARALLEL DO
+< c
+< c
+< !$OMP PARALLEL DO PRIVATE(j,l,i)
+< !$OMP&         SCHEDULE(STATIC,jblk)
+<       do 867 j=1-margin,jj+margin
+<         do l=1,isu(j)
+<           do i=max(1-margin,ifu(j,l)),min(ii+margin,ilu(j,l))
+<             utotn(i,j)=utotn(i,j)*dt1inv
+<           enddo !i
+<         enddo !l
+<         do l=1,isv(j)
+<           do i=max(1-margin,ifv(j,l)),min(ii+margin,ilv(j,l))
+<             vtotn(i,j)=vtotn(i,j)*dt1inv
+<           enddo !i
+<         enddo !l
+<  867  continue !j
+< !$OMP END PARALLEL DO
+< c
+< *        wtime1(10) = wtime()
+< *        if     (mod(nstep,100).eq.0) then
+< * ---      timer printout.
+< *          do i= 2,10
+< *            write(lp,'(4x,a,i3,a,f9.5,a)')
+< *    &        'momtum   section',i,' time =',
+< *    &        wtime1(i) - wtime1(i-1),' seconds'
+< *          enddo
+< *          do i= 2,20
+< *            wtimes=0.0
+< *            do k=1,kk
+< *              wtimes = wtimes + (wtime2(i,k)-wtime2(i-1,k))
+< *            enddo
+< *            write(lp,'(4x,a,i3,a,f9.5,a)')
+< *    &        'momtum k section',i,' time =',
+< *    &        wtimes,' seconds'
+< *          enddo
+< *          call flush(lp)
+< *        endif
+< c
+<       if     (lpipe .and. lpipe_momtum) then
+< c ---   compare two model runs.
+<         write (text,'(a9,i3)') 'v.n(3) k=',1
+<         call pipe_compare(v(1-nbdy,1-nbdy,1,n),iv,text)
+<       endif
+< c
+<       return
+<       end
+< c
+< c
+3381d1646
+< c> Jun. 2007 - added momtum4
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mxkprf.f ../../GLBa0.08/src_2.2.03q_32_mpi
+584c584
+<      &     beta_b,beta_r,frac_b,frac_r,swfbqp,
+---
+>      &     beta_b,beta_r,frac_b,frac_r,
+652,663d651
+< c --- evenly re-distribute the flux below the bottom
+<       k = klist(i,j)
+<       if     (-pij(k+1)*beta_r.gt.-10.0) then
+<         swfbqp=frac_r*exp(-pij(k+1)*beta_r)+
+<      &         frac_b*exp(-pij(k+1)*beta_b)
+<       elseif (-pij(k+1)*beta_b.gt.-10.0) then
+<         swfbqp=frac_b*exp(-pij(k+1)*beta_b)
+<       else
+<         swfbqp=0.0
+<       endif
+<       swfbqp = swfbqp/pij(k+1)
+< c
+681d668
+<           swfrac(k+1)=swfrac(k+1)-swfbqp*pij(k+1)  !spread out bottom frac
+693a681
+>             if(k.ne.klist(i,j)) then
+695a684,687
+>             else
+>               dtemp= swfrac(k)             *sswflx(i,j)*
+>      &               delt1*g*qspcifh*qdpmm(k)
+>             endif
+844d835
+<           swfrac(k)=swfrac(k)-swfbqp*zgrid(i,j,k)*onem  !spread out bottom frac
+1104d1094
+<         swfrml=swfrml-swfbqp*hbl*onem  !spread out bottom frac
+1141d1130
+<         swfrml=swfrml-swfbqp*hbl*onem  !spread out bottom frac
+1174c1163
+<         ka=nint(case)*(nbl-1)+(1-nint(case))*nbl
+---
+>         ka=ifix(case+epsil)*(nbl-1)+(1-ifix(case+epsil))*nbl
+1542c1531
+<         ka=nint(case)*(nbbl+1)+(1-nint(case))*nbbl
+---
+>         ka=ifix(case+epsil)*(nbbl+1)+(1-ifix(case+epsil))*nbbl
+1815c1804
+<      &     beta_b,beta_r,frac_b,frac_r,swfbqp
+---
+>      &     beta_b,beta_r,frac_b,frac_r
+2200,2211d2188
+< c --- evenly re-distribute the flux below the bottom
+<       k = klist(i,j)
+<       if     (-pij(k+1)*beta_r.gt.-10.0) then
+<         swfbqp=frac_r*exp(-pij(k+1)*beta_r)+
+<      &         frac_b*exp(-pij(k+1)*beta_b)
+<       elseif (-pij(k+1)*beta_b.gt.-10.0) then
+<         swfbqp=frac_b*exp(-pij(k+1)*beta_b)
+<       else
+<         swfbqp=0.0
+<       endif
+<       swfbqp = swfbqp/pij(k+1)
+< c
+2222d2198
+<           swfrac(k+1)=swfrac(k+1)-swfbqp*pij(k+1)  !spread out bottom frac
+2234a2211
+>             if(k.ne.khy1) then
+2236a2214,2217
+>             else
+>               dtemp= swfrac(k)             *sswflx(i,j)*
+>      &               delt1*g*qspcifh*qdpmm(k)
+>             endif
+2262d2242
+<       swfrml=swfrml-swfbqp*dpbl(i,j)  !spread out bottom frac
+2374c2354
+<      &     beta_b,beta_r,frac_b,frac_r,qspcifh,hbl,swfbqp,
+---
+>      &     beta_b,beta_r,frac_b,frac_r,qspcifh,hbl,
+2452,2463d2431
+< c --- evenly re-distribute the flux below the bottom
+<       k = klist(i,j)
+<       if     (-pij(k+1)*beta_r.gt.-10.0) then
+<         swfbqp=frac_r*exp(-pij(k+1)*beta_r)+
+<      &         frac_b*exp(-pij(k+1)*beta_b)
+<       elseif (-pij(k+1)*beta_b.gt.-10.0) then
+<         swfbqp=frac_b*exp(-pij(k+1)*beta_b)
+<       else
+<         swfbqp=0.0
+<       endif
+<       swfbqp = swfbqp/pij(k+1)
+< c
+2479d2446
+<           swfrac(k+1)=swfrac(k+1)-swfbqp*pij(k+1)  !spread out bottom frac
+2491a2459
+>             if(k.ne.klist(i,j)) then
+2493a2462,2465
+>             else
+>               dtemp= swfrac(k)             *sswflx(i,j)*
+>      &               delt1*g*qspcifh*qdpmm(k)
+>             endif
+2525d2496
+<       swfrml=swfrml-swfbqp*hbl  !spread out bottom frac
+3275c3246
+<       real, parameter :: difriv =   60.0e-4  !river diffusion
+---
+>       real, parameter :: difriv =   50.0e-4  !river diffusion
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mxkrt.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mxkrtm.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mxpwp.f ../../GLBa0.08/src_2.2.03q_32_mpi
+255c255
+<      &     beta_b,beta_r,frac_b,frac_r,swfbqp
+---
+>      &     beta_b,beta_r,frac_b,frac_r
+257c257
+<       integer k,k1,k2,k3,k10,kmax,kmlb,kmlb1,kintf,ktr,iter,jrlv
+---
+>       integer k,k1,k2,k3,k10,kmax,kmlb,kmlb1,kmask,kintf,ktr,iter,jrlv
+279,281c279,284
+<       do k=kk,1,-1
+<         if (dp1d(k).gt.tencm) then
+<           exit
+---
+>       kmax=0
+>       kmask=0
+> c
+>       do k=1,kk
+>         if (dp1d(k).lt.tencm) then
+>           kmask=1
+282a286,288
+>         if (p1d(k).le.p1d(kk+1)-tencm.and.kmask.eq.0) then
+>           kmax=k
+>         endif
+284d289
+<       kmax=max(k,2)  !always consider at least 2 layers
+308,319d312
+< c --- evenly re-distribute the flux below the bottom
+<       k = kk
+<       if     (-p1d(k+1)*beta_r.gt.-10.0) then
+<         swfbqp=frac_r*exp(-p1d(k+1)*beta_r)+
+<      &         frac_b*exp(-p1d(k+1)*beta_b)
+<       elseif (-p1d(k+1)*beta_b.gt.-10.0) then
+<         swfbqp=frac_b*exp(-p1d(k+1)*beta_b)
+<       else
+<         swfbqp=0.0
+<       endif
+<       swfbqp = swfbqp/p1d(k+1)
+< c
+331d323
+<             swfrac(k+1)=swfrac(k+1)-swfbqp*p1d(k+1)  !spread out bottom frac
+353a346
+>               if(k.ne.kmax) then
+355a349,352
+>               else
+>                 dtemp= swfrac(k)             *sswflx(i,j)*delt1*g/
+>      &                (spcifh*max(onemm,dp1d(k)))
+>               endif
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw overtn.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw poflat.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw prtmsk.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw psmoo.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw restart.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw thermf.f ../../GLBa0.08/src_2.2.03q_32_mpi
+86c86
+<       real    pwl,q,utotij,vtotij
+---
+>       real    pwl,q
+205c205
+<           endif  !iv.eq.1 .and. rmunv.ne.0.0
+---
+>           endif  !iu.eq.1 .and. rmunv.ne.0.0
+348,350c348,350
+< c --- ---------------------------------------------------------
+< c --- Update dpu,dpv, and rebalance velocity, if dp has changed
+< c --- ---------------------------------------------------------
+---
+> c --- --------------------------------
+> c --- Update dpu,dpv if dp has changed
+> c --- --------------------------------
+356a357
+>       endif
+358,391d358
+< !$OMP   PARALLEL DO PRIVATE(j,i,k,utotij,vtotij)
+< !$OMP&           SCHEDULE(STATIC,jblk)
+<         do j=1-margin,jj+margin
+<           do i=1-margin,ii+margin
+<             if (iu(i,j).eq.1 .and.
+<      &          max(rmunv(i,j),rmunv(i-1,j),
+<      &              rmu(  i,j),rmu(  i-1,j) ).ne.0.0) then
+<               utotij = 0.0                                     
+<               do k=1,kk                                        
+<                 utotij = utotij + u(i,j,k,n)*dpu(i,j,k,n)
+<               enddo ! k
+<               utotij=utotij/depthu(i,j)
+<               do k=1,kk
+<                 u(i,j,k,n) = u(i,j,k,n) - utotij
+<               enddo ! k
+<             endif  !rebalance u
+< c
+<             if (iv(i,j).eq.1 .and.
+<      &          max(rmunv(i,j),rmunv(i,j-1),
+<      &              rmu(  i,j),rmu(  i,j-1) ).ne.0.0) then
+<               vtotij = 0.0
+<               do k=1,kk
+<                 vtotij = vtotij + v(i,j,k,n)*dpv(i,j,k,n)
+<               enddo ! k
+<               vtotij=vtotij/depthv(i,j)
+<               do k=1,kk
+<                 v(i,j,k,n) = v(i,j,k,n) - vtotij
+<               enddo ! k
+<             endif  !rebalance v
+<           enddo  !i
+<         enddo  !j
+< !$OMP   END PARALLEL DO
+<       endif !update dpu,dpv and rebalance u,v
+< c
+983d949
+< c> Jun  2007 - rebalance velocity after sidewall and nestwall relaxation
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw trcupd.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw tsadvc.f ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw blkdat.F ../../GLBa0.08/src_2.2.03q_32_mpi
+558c558
+< *         write(lp,*) 'old baclin = ',baclin
+---
+>           write(lp,*) 'old baclin = ',baclin
+560c560
+< *         write(lp,*) 'new baclin = ',baclin
+---
+>           write(lp,*) 'new baclin = ',baclin
+572c572
+< *         write(lp,*) 'old baclin = ',baclin
+---
+>           write(lp,*) 'old baclin = ',baclin
+574c574
+< *         write(lp,*) 'new baclin = ',baclin
+---
+>           write(lp,*) 'new baclin = ',baclin
+587c587
+< *       write(lp,*) 'old batrop = ',batrop
+---
+>         write(lp,*) 'old batrop = ',batrop
+589c589
+< *       write(lp,*) 'new batrop = ',batrop
+---
+>         write(lp,*) 'new batrop = ',batrop
+664d663
+< c --- 'momtyp' = momentum advection type (2=2nd order, 4=4th order)
+668d666
+< c --- 'facdf4' =       speed-dependent biharmonic viscosity factor
+694d691
+<       call blkini(momtyp,'momtyp')
+699d695
+<       call blkinr(facdf4,'facdf4','(a6," =",f10.4," ")')
+772,802d767
+<       if (momtyp.ne.2 .and. momtyp.ne.4) then
+<         if (mnproc.eq.1) then
+<         write(lp,'(/ a /)') 
+<      &   'error - montyp must be 2 or 4'
+<         call flush(lp)
+<         endif !1st tile
+<         call xcstop('(blkdat)')
+<                stop '(blkdat)'
+<       endif
+<       if (momtyp.eq.2) then
+<         if (facdf4.ne.0.0) then
+<           if (mnproc.eq.1) then
+<           write(lp,'(/ a /)') 
+<      &     'error - facdf4 must be 0.0 for montyp==2'
+<           call flush(lp)
+<           endif !1st tile
+<           call xcstop('(blkdat)')
+<                  stop '(blkdat)'
+<         endif
+<       endif
+<       if (momtyp.eq.4) then
+<         if (visco2.ne.0.0 .or. veldf2.ne.0.0) then
+<           if (mnproc.eq.1) then
+<           write(lp,'(/ a /)') 
+<      &     'error - visco2 and veldf2 must be 0.0 for montyp==4'
+<           call flush(lp)
+<           endif !1st tile
+<           call xcstop('(blkdat)')
+<                  stop '(blkdat)'
+<         endif
+<       endif
+839a805
+> c --- 'h1'     = depth interval used in lateral weighting of hor.pres.grad.
+848a815
+>       h1     = tenm
+857,859c824
+< c --- 'iceflg' = sea ice model flag (0=none,1=energy loan,1>coupled/esmf)
+< c ---             2=2-way,3=no IO stress, 4=3+no ocean currents
+< c ---             also, icmflg=3 for ENLN relaxed to coupler ice concentration
+---
+> c --- 'iceflg' = sea ice model flag (0=none,1=energy loan,2=coupled/esmf)
+874c839
+<       if (iceflg.lt.0 .or. iceflg.gt.4) then
+---
+>       if (iceflg.lt.0 .or. iceflg.gt.2) then
+877c842
+<      &    'error - iceflg must be between 0 and 4'
+---
+>      &    'error - iceflg must be between 0 and 2'
+1480,1482c1445,1446
+<         ticegr = 2.0 !surtmp not needed for ice temperature
+<       elseif (iceflg.ge.2) then
+<         icegln = icmflg.eq.3  !ENLN plus relax to coupler ice concentration
+---
+>       elseif (iceflg.eq.2) then
+>         icegln = icmflg.eq.3  !ENLN plus relax to coupler ice thickness
+1501c1465
+<       elseif (icmflg.eq.3 .and. iceflg.eq.1) then
+---
+>       elseif (icmflg.eq.3 .and. iceflg.ne.2) then
+1873,1874d1836
+< c> Jun  2007 - moved h1 to momtum
+< c> Jun  2007 - added momtyp and facdf4
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw geopar.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw hycom.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw hycom_cice.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw isnan.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw machine.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_OICPL.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_dimensions.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_floats.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_hycom.F ../../GLBa0.08/src_2.2.03q_32_mpi
+142c142
+<       real, save, dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy) ::
+---
+>       real, dimension (1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy) ::
+154d153
+<      &,      ocn_mask   !Ocean Currents Mask
+156,158d154
+<       logical, save ::
+<      &       ocn_mask_init
+< 
+484,485d479
+<       ocn_mask_init = .true.  !still need to initialize ocn_mask
+< c
+503,528d496
+<       margin = 0
+< c
+<       if     (ocn_mask_init) then  !very 1st call to this routine
+<         ocn_mask_init = .false.
+< c
+<         if     (iceflg.eq.4) then
+<           ocn_mask(:,:) = 0.0  !export ocean currents nowhere
+<         elseif (nestfq.ne.0.0) then
+< c         export ocean currents away from open boundaries
+<           do j= 1,jj
+<             do i= 1,ii
+<               if     (rmunv(i,j).ne.0.0) then
+<                 ocn_mask(i,j) = 0.0
+<               else
+<                 ocn_mask(i,j) = 1.0
+<               endif
+<             enddo !i
+<           enddo !j
+<           do i= 1,10
+<             call psmooth(ocn_mask,0)  !not efficient, but only done once
+<           enddo !i
+<         else
+<           ocn_mask(:,:) = 1.0  !export ocean currents everywhere
+<         endif
+<       endif !ocn_mask_init
+< c
+531a500,501
+>       margin = 0
+> c
+576,577c546,547
+<             expData(3)%p(i,j) = umxl*ocn_mask(i,j)
+<             expData(4)%p(i,j) = vmxl*ocn_mask(i,j)
+---
+>             expData(3)%p(i,j) = umxl
+>             expData(4)%p(i,j) = vmxl
+614c584
+<             if     (iceflg.ge.2 .and. icmflg.ne.3) then
+---
+>             if     (iceflg.eq.2 .and. icmflg.ne.3) then
+640c610
+<             elseif (iceflg.ge.2 .and. icmflg.eq.3) then
+---
+>             elseif (iceflg.eq.2 .and. icmflg.eq.3) then
+657c627
+<             endif !iceflg>=2 (icmflg)
+---
+>             endif !iceflg==2 (icmflg)
+792a763,768
+>           if     (ip(i,j).eq.1) then
+>             util3(i,j) = ( taux(i,j,l0)*w0+taux(i,j,l1)*w1
+>      &                    +taux(i,j,l2)*w2+taux(i,j,l3)*w3)
+>             util4(i,j) = ( tauy(i,j,l0)*w0+tauy(i,j,l1)*w1
+>      &                    +tauy(i,j,l2)*w2+tauy(i,j,l3)*w3)
+>           endif !ip
+795,796c771,772
+<       cname = 'surtx   '
+<       call zaiowr(surtx,ip,.true.,
+---
+>       cname = 'taux    '
+>       call zaiowr(util3,ip,.true.,
+802,803c778,779
+<       cname = 'surty   '
+<       call zaiowr(surty,ip,.true.,
+---
+>       cname = 'tauy    '
+>       call zaiowr(util4,ip,.true.,
+2044d2019
+<       if     (momtyp.eq.2) then
+2046,2048d2020
+<       else   !momtyp.eq.4
+<         call momtum4(m,n)
+<       endif
+2075c2047
+<          call thermf_oi(m,n)
+---
+>          call thermf_oi
+2078c2050
+<       elseif (iceflg.ge.2) then
+---
+>       elseif (iceflg.eq.2) then
+2080c2052
+<          call thermf_oi(m,n)
+---
+>          call thermf_oi
+2085c2057
+<          call thermf_oi(m,n)
+---
+>          call thermf_oi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_incupd.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_mean.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_pipe.F ../../GLBa0.08/src_2.2.03q_32_mpi
+383d382
+<             call flush(lpunit)
+887d885
+<           if     (mnproc.eq.1) then
+889,890d886
+<           endif
+<           call xcsync(flush_lp)
+912d907
+<         if     (mnproc.eq.1) then
+914,915d908
+<         endif
+<         call xcsync(flush_lp)
+922d914
+<         if     (mnproc.eq.1) then
+924,925d915
+<         endif
+<         call xcsync(flush_lp)
+973d962
+<         if     (mnproc.eq.1) then
+975,976d963
+<         endif
+<         call xcsync(flush_lp)
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_tides.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_xc.F ../../GLBa0.08/src_2.2.03q_32_mpi
+12,18c12
+<      &                              mproc,nproc,mnproc,
+<      &                              mp_1st
+< #if defined(MPI)
+< c
+< c --- needed for some versions of mod_za
+<       integer, public, save      :: group_1st_in_row
+< #endif
+---
+>      &                              mproc,nproc,mnproc
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw mod_za.F ../../GLBa0.08/src_2.2.03q_32_mpi
+10,14d9
+< #if defined(MPI) && ! defined(SERIAL_IO)
+<       integer, save, private ::
+<      &  file_info_zaiord,file_count_zaiord,
+<      &  file_info_zaiowr,file_count_zaiowr
+< #else
+16d10
+< #endif
+30c24
+< #if defined(ENDIAN_IO_F90)  /* see mach_i.c for new C version */
+---
+> #if defined(ENDIAN_IO)
+65c59
+< #endif /* ENDIAN_IO_F90 */
+---
+> #endif /* ENDIAN_IO */
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw wtime.F ../../GLBa0.08/src_2.2.03q_32_mpi
+end
+echo *****     *****     *****     *****     *****     *****     *****
+*****     *****     *****     *****     *****     *****     *****
+diff -ibw machi_c.c ../../GLBa0.08/src_2.2.03q_32_mpi
+44,69d43
+< #if defined(ENDIAN_IO)
+< /* 
+<  --- Fortran-callable routine ZAIO_ENDIAN to swap the endian-ness of an array
+<  --- Brent Anderson, ASC MSRC, July 2007.
+< */
+< #include <inttypes.h>
+< void zaio_endian_(uint32_t *, uint32_t *);
+< 
+< #define swap4bytes(data) \
+<  ( (((data) >> 24) & 0x000000FF) | \
+<    (((data) >>  8) & 0x0000FF00) | \
+<    (((data) <<  8) & 0x00FF0000) | \
+<    (((data) << 24) & 0xFF000000) )
+< 
+< /** Swaps the byte-order in a 32-bit word from
+<     big- to little-endianness or vice-versa. */
+< 
+< void zaio_endian_(uint32_t aa[], uint32_t *nn) {
+<     uint32_t ii;
+<     for( ii=0; ii<*nn; ii++ ) {
+<         aa[ii] = swap4bytes ( aa[ii] );
+<     }
+<     return;
+< }
+< #endif /* ENDIAN_IO */
+< 
+end
