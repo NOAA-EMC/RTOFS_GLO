@@ -525,6 +525,7 @@ c
 c
       real            time,delt1,dlt,
      &                w0, w1, w2, w3,  ! wind  interp. scale factors
+     &                w0_e,w1_e,w2_e,w3_e,  ! NCEP-ilya: for two-clock option
      &                wk0,wk1,wk2,wk3, ! kpar  interp. scale factors
      &                wr0,wr1,wr2,wr3, ! river interp. scale factors
      &                wc0,wc1,wc2,wc3, ! clim. interp. scale factors
@@ -532,6 +533,7 @@ c
      &                wb0,wb1          ! baro. interp. scale factors
       common/varblsr/ time,delt1,dlt,
      &                w0, w1, w2, w3, wk0,wk1,wk2,wk3,
+     &                w0_e,w1_e,w2_e,w3_e,  ! NCEP-ilya for two-clock option
      &                wr0,wr1,wr2,wr3,wc0,wc1,wc2,wc3,
      &                wn0,wn1,wb0,wb1
       save  /varblsr/

@@ -1623,13 +1623,29 @@ c ---   only two fields are used (linear interpolation in time).
           w1=-99.0
           w2=0.0
           w3=0.0
-          call forfunh(dtime0)
+cNCEP-ilya for two-clock option
+c         call forfunh(dtime0)
+          call forfunh_d(dtime0)
         else
           w0=0.0
           w1=0.0
           w2=0.0
           w3=0.0
         endif
+cNCEP-ilya begin for two-clock option
+        if (windf) then
+          w0_e=-99.9
+          w1_e=-99.0
+          w2_e=0.0
+          w3_e=0.0
+          call forfunh_e(dtime0)
+        else
+          w0_e=0.0
+          w1_e=0.0
+          w2_e=0.0
+          w3_e=0.0
+        endif
+cNCEP-ilya end  for two-clock option
       endif
 c
       if (jerlv0.eq.0) then
@@ -1901,6 +1917,12 @@ c ---     newest set of forcing functions overwrites set no longer needed
         w2=x *(1.+x1*(1.-1.5*x1))
         w0=-.5*x *x1*x1
         w3=-.5*x1*x *x
+c NCEP-ilya begin for two-clock option
+        w0_e=w0
+        w1_e=w1
+        w2_e=w2
+        w3_e=w3
+c NCEP-ilya end for two-clock option
 cdiag   if (mnproc.eq.1) then
 cdiag   write (lp,'(i9,'' atmos time interpolation: months'',4i3,
 cdiag.    '',  weights '',4f6.3)') nstep,l0,l1,l2,l3,w0,w1,w2,w3
@@ -1909,7 +1931,11 @@ cdiag   endif !1st tile
 c
 c ---   set weights and fields for high frequency atmospheric forcing.
 c ---   only two fields are used (linear interpolation in time).
-        call forfunh(dtime)
+
+cNCEP-ilya for two-clock option
+c       call forfun(hdtime)
+        call forfunh_d(dtime)
+        call forfunh_e(dtime)
       endif
 c
 c --- set weights for quasi-hermite time interpolation for kpar.
@@ -2401,14 +2427,9 @@ c
           smr= d3  /area
           if (mnproc.eq.1) then
           write (lp, '(i9,a,
-c NCEP ilya dbgz 20080414 begin
-     &        '' mean HFLUX (w/m^2):'',e13.6,
-     &                       '' sst:'',e13.6,
-     &                       ''  ml:'',e13.6)')
-c    &        '' mean HFLUX (w/m^2):'',f8.2,
-c    &                       '' sst:'',f8.2,
-c    &                       ''  ml:'',f8.2)')
-c NCEP ilya dbgz 20080414 end
+     &        '' mean HFLUX (w/m^2):'',f8.2,
+     &                       '' sst:'',f8.2,
+     &                       ''  ml:'',f8.2)')
      &      nstep,c_ydh,
      &      sum,smr,smt
           call flush(lp)

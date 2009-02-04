@@ -140,7 +140,7 @@ do
        flxpdy=`echo $COMFLX |awk -F"." '{print $2}'`
 
        flxfile=flxf${hh}.${flxpdy}t${tt}z
-       cp $COMFLX/${tf[${rcyc}]}  $flxfile
+       cp -p $COMFLX/${tf[${rcyc}]}  $flxfile
        ${utilexec}/grbindex $flxfile $flxfile.idx
        
        #add atmospheric pressure
@@ -187,7 +187,7 @@ do
        esac
        if [ $flxhh -lt 10 ]; then flxhh=0$flxhh; fi
        flxfile=flxf${flxhh}.${flxpdy}t${ftt}z
-       cp $COMFLX/gfs.t${ftt}z.sfluxgrbf${flxhh}  $flxfile
+       cp -p $COMFLX/gfs.t${ftt}z.sfluxgrbf${flxhh}  $flxfile
        ${utilexec}/grbindex $flxfile $flxfile.idx
 
        #add atmospheric pressure

@@ -59,7 +59,7 @@ export RESTART=NO
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMErtofs=/marine/save/$LOGNAME/hycom_glo/${runID}
+export HOMErtofs=$HOMEDIR
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix

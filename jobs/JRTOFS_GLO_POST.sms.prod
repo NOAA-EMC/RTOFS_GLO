@@ -101,7 +101,7 @@ export RERUN=${RERUN:-NO}
 ####################################
 if [ $RUN_ENVIR = dev ]
 then
-  export HOMErtofs=/marine/save/wx20ir/hycom_glo/${runID}
+  export HOMErtofs=$HOMEDIR
 else
   export HOMErtofs=/nw${envir}
 fi

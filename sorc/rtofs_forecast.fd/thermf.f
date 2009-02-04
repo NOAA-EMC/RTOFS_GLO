@@ -677,13 +677,15 @@ c ---   wind = wind speed (m/s)
      &      +wndspd(i,j,l2)*w2+wndspd(i,j,l3)*w3
 c ---   radfl= net       radiative thermal flux (W/m^2) +ve into ocean/ice
 c ---        = Qsw+Qlw across the atmosphere to ocean or sea-ice interface
-        radfl=radflx(i,j,l0)*w0+radflx(i,j,l1)*w1
-     &       +radflx(i,j,l2)*w2+radflx(i,j,l3)*w3
+cNCEP-ilya for two-clock option
+        radfl=radflx(i,j,l0)*w0_e+radflx(i,j,l1)*w1_e
+     &       +radflx(i,j,l2)*w2_e+radflx(i,j,l3)*w3_e
 c ---   swfl = shortwave radiative thermal flux (W/m^2) +ve into ocean/ice
 c ---          Qsw includes the atmos. model's surface albedo,
 c ---          i.e. it already allows for sea-ice&snow where it is observed.
-        swfl =swflx (i,j,l0)*w0+swflx (i,j,l1)*w1
-     &       +swflx (i,j,l2)*w2+swflx (i,j,l3)*w3
+cNCEP-ilya for two-clock option
+        swfl =swflx (i,j,l0)*w0_e+swflx (i,j,l1)*w1_e
+     &       +swflx (i,j,l2)*w2_e+swflx (i,j,l3)*w3_e
         if     (lwflag.gt.0) then
 c ---     over-ocean longwave correction to radfl (Qsw+Qlw).
           tsur = temp(i,j,1,n)
@@ -706,8 +708,9 @@ c ---     over-ocean longwave correction to radfl (Qsw+Qlw).
         if     (pcipf) then
 c ---     prcp = precipitation (m/sec; positive into ocean)
 c ---     note that if empflg==3, this is actually P-E
-          prcp=precip(i,j,l0)*w0+precip(i,j,l1)*w1
-     &        +precip(i,j,l2)*w2+precip(i,j,l3)*w3
+cNCEP-ilya for two-clock option
+          prcp=precip(i,j,l0)*w0_e+precip(i,j,l1)*w1_e
+     &        +precip(i,j,l2)*w2_e+precip(i,j,l3)*w3_e
         endif
         if     (flxflg.ne.3) then
 c ---     airt = air temperature (C)

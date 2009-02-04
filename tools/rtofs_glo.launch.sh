@@ -21,7 +21,7 @@ export SECONDS=0
 export cyc='00'     
 export prev_cyc='12'
 export envir='prod'
-export HOMEDIR=/marine/save/$USER/hycom_glo/port
+export HOMEDIR=/marine/save/$USER/hycom_glo/projects/port
 export SMSBIN=/nwprod/sms/bin
 export PATH="$PATH":/nwprod/sms/bin:/nwprod/util/ush
 #

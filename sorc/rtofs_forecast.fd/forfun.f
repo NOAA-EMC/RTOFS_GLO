@@ -752,6 +752,579 @@ c --- linear interpolation in time.
       end
 c
 c
+c NCEP-ilya new subroutine for two-clock option
+      subroutine forfunh_d(dtime)
+      use mod_xc  ! HYCOM communication interface
+      use mod_za  ! HYCOM I/O interface
+      implicit none
+      include 'common_blocks.h'
+c
+      real*8    dtime
+c
+c --- high frequency atmospheric forcing field processing.
+c
+c --- units of tau_x  are N/m^2  (positive eastwards  w.r.t. the grid)
+c --- units of tau_y  are N/m^2  (positive northwards w.r.t. the grid)
+c --- units of wndspd are m/s
+c --- units of ustar  are m/s
+c --- units of airtmp are degC
+c --- units of surtmp are degC
+c --- units of seatmp are degC
+c --- units of vapmix are kg/kg
+c --- units of offlux are w/m^2  (positive into ocean)
+c
+c --- tau_x and tau_y are either on u&v grids or both on the p grid,
+c --- depending on the value of blkdat input parameter "wndflg".
+c --- in any case, they are always oriented along the local grid
+c --- which need not be east-west and north-south.
+c --- all other fields, including wndspd and ustar, are always on the p grid.
+c
+c --- I/O and array I/O units 900-910 are reserved for the entire run.
+c
+c --- all input fields much be defined at all grid points
+c
+      real*8    dtime0,dtime1
+      save      dtime0,dtime1
+c
+      character preambl(5)*79,cline*80
+      real      pcmax
+      integer   i,ios,iunit,j,lgth,nrec
+c
+c --- w0 negative on first call only.
+      if     (w0.lt.-1.0) then
+c
+c ---   initialize forcing fields
+c
+        if      (.not.windf) then
+          if     (mnproc.eq.1) then
+          write(lp,*)
+          write(lp,*) 'error in forfunh_d - windf must be .true.'
+          write(lp,*)
+          endif !1st tile
+          call xcstop('(forfunh_d)')
+                 stop '(forfunh_d)'
+        elseif (.not.thermo) then
+          if     (mnproc.eq.1) then
+          write(lp,*)
+          write(lp,*) 'error in forfunh_d - thermo must be .true.'
+          write(lp,*)
+          endif !1st tile
+          call xcstop('(forfunh_d)')
+                 stop '(forfunh_d)'
+        endif
+c
+c ---   linear interpolation in time, so slots 3 and 4 are zero.
+!$OMP   PARALLEL DO PRIVATE(j,i)
+!$OMP&           SCHEDULE(STATIC,jblk)
+        do j=1-nbdy,jj+nbdy
+          do i=1-nbdy,ii+nbdy
+              taux(i,j,3) = 0.0
+              taux(i,j,4) = 0.0
+              tauy(i,j,3) = 0.0
+              tauy(i,j,4) = 0.0
+            wndspd(i,j,3) = 0.0
+            wndspd(i,j,4) = 0.0
+            airtmp(i,j,3) = 0.0
+            airtmp(i,j,4) = 0.0
+            vapmix(i,j,3) = 0.0
+            vapmix(i,j,4) = 0.0
+            surtmp(i,j,3) = 0.0
+            surtmp(i,j,4) = 0.0
+            seatmp(i,j,3) = 0.0
+            seatmp(i,j,4) = 0.0
+          enddo
+        enddo
+c
+c ---   open all forcing files.
+        if     (mnproc.eq.1) then
+        write (lp,*) ' now initializing forcing fields (1st set) ...'
+        endif !1st tile
+        call xcsync(flush_lp)
+c
+        lgth = len_trim(flnmfor)
+c
+        call zaiopf(flnmfor(1:lgth)//'forcing.tauewd.a', 'old', 901)
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+        open (unit=uoff+901,file=flnmfor(1:lgth)//'forcing.tauewd.b',
+     &        status='old', action='read')
+        read (uoff+901,'(a79)') preambl
+        endif !1st tile
+        call preambl_print(preambl)
+c
+        call zaiopf(flnmfor(1:lgth)//'forcing.taunwd.a', 'old', 902)
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+        open (unit=uoff+902,file=flnmfor(1:lgth)//'forcing.taunwd.b',
+     &     status='old', action='read')
+        read (uoff+902,'(a79)') preambl
+        endif !1st tile
+        call preambl_print(preambl)
+c
+        if     (ustflg.eq.3) then
+        call zaiopf(flnmfor(1:lgth)//'forcing.ustar.a', 'old', 900)
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+        open (unit=uoff+900,file=flnmfor(1:lgth)//'forcing.ustar.b',
+     &     status='old', action='read')
+        read (uoff+900,'(a79)') preambl
+        endif !1st tile
+        call preambl_print(preambl)
+        endif !ustflg.eq.3
+c
+        if (wndflg.ne.3) then
+        call zaiopf(flnmfor(1:lgth)//'forcing.wndspd.a', 'old', 903)
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+        open (unit=uoff+903,file=flnmfor(1:lgth)//'forcing.wndspd.b',
+     &     status='old', action='read')
+        read (uoff+903,'(a79)') preambl
+        endif !1st tile
+        call preambl_print(preambl)
+        endif !wndflg.ne.3
+c
+        call zaiopf(flnmfor(1:lgth)//'forcing.airtmp.a', 'old', 904)
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+        open (unit=uoff+904,file=flnmfor(1:lgth)//'forcing.airtmp.b',
+     &     status='old', action='read')
+        read (uoff+904,'(a79)') preambl
+        endif !1st tile
+        call preambl_print(preambl)
+c
+        call zaiopf(flnmfor(1:lgth)//'forcing.vapmix.a', 'old', 905)
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+        open (unit=uoff+905,file=flnmfor(1:lgth)//'forcing.vapmix.b',
+     &     status='old', action='read')
+        read (uoff+905,'(a79)') preambl
+        endif !1st tile
+        call preambl_print(preambl)
+c
+        if     (lwflag.eq.2 .or. sstflg.eq.2   .or.
+     &          icmflg.eq.2 .or. ticegr.eq.0.0     ) then
+          call zaiopf(flnmfor(1:lgth)//'forcing.surtmp.a', 'old', 909)
+          if     (mnproc.eq.1) then  ! .b file from 1st tile only
+          open (unit=uoff+909,file=flnmfor(1:lgth)//'forcing.surtmp.b',
+     &       status='old', action='read')
+          read (uoff+909,'(a79)') preambl
+          endif !1st tile
+          call preambl_print(preambl)
+        endif !surtmp
+c
+        if     (sstflg.eq.3) then
+          call zaiopf(flnmfor(1:lgth)//'forcing.seatmp.a', 'old', 910)
+          if     (mnproc.eq.1) then  ! .b file from 1st tile only
+          open (unit=uoff+910,file=flnmfor(1:lgth)//'forcing.seatmp.b',
+     &       status='old', action='read')
+          read (uoff+910,'(a79)') preambl
+          endif !1st tile
+          call preambl_print(preambl)
+        endif
+c
+        if     (flxoff) then
+          call zaiopf(flnmfor(1:lgth)//'forcing.offlux.a', 'old', 916)
+          if     (mnproc.eq.1) then  ! .b file from 1st tile only
+          open (unit=uoff+916,file=flnmfor(1:lgth)//'forcing.offlux.b',
+     &       status='old', action='read')
+          read (uoff+916,'(a79)') preambl
+          endif !1st tile
+          call preambl_print(preambl)
+          call rdmonth(offlux, 916)
+          if     (mnproc.eq.1) then  ! .b file from 1st tile only
+          close( unit=uoff+916)
+          endif
+          call zaiocl(916)
+        else
+!$OMP     PARALLEL DO PRIVATE(j,i)
+!$OMP&             SCHEDULE(STATIC,jblk)
+          do j=1-nbdy,jj+nbdy
+            do i=1-nbdy,ii+nbdy
+              offlux(i,j)=0.0
+            enddo !i
+          enddo !j
+        endif !flxoff:else
+c
+c ---   skip ahead to the start time.
+        nrec   = 0
+        dtime1 = huge
+        do  ! infinate loop, with exit at end
+          dtime0 = dtime1
+          nrec   = nrec + 1
+          call zagetc(cline,ios, uoff+901)
+          if     (ios.ne.0) then
+            if     (mnproc.eq.1) then
+              write(lp,*)
+              write(lp,*) 'error in forfunh_d - hit end of input'
+              write(lp,*) 'dtime0,dtime1 = ',dtime0,dtime1
+              write(lp,*) 'dtime = ',dtime
+              write(lp,*)
+            endif !1st tile
+            call xcstop('(forfunh_d)')
+                   stop '(forfunh_d)'
+          endif
+          i = index(cline,'=')
+          read (cline(i+1:),*) dtime1
+          if     (yrflag.eq.2) then
+            if     (nrec.eq.1 .and. abs(dtime1-1096.0d0).gt.0.01) then
+c
+c ---         climatology must start on wind day 1096.0, 01/01/1904.
+              if     (mnproc.eq.1) then
+              write(lp,'(a)')  cline
+              write(lp,'(/ a,a / a,g15.6 /)')
+     &          'error in forfunh_d - forcing climatology',
+     &          ' must start on wind day 1096',
+     &          'dtime1 = ',dtime1
+              endif !1st tile
+              call xcstop('(forfunh_d)')
+                     stop '(forfunh_d)'
+            endif
+            dtime1 = (dtime1 - 1096.0d0) + 
+     &               366.0d0*int((dtime+0.00001d0)/366.0d0)
+            if     (nrec.ne.1 .and. dtime1.lt.dtime0) then
+              dtime1 = dtime1 + 366.0d0
+            endif
+          elseif (nrec.eq.1 .and. dtime1.lt.1462.0d0) then
+c
+c ---       otherwise, must start after wind day 1462.0, 01/01/1905.
+            if     (mnproc.eq.1) then
+            write(lp,'(a)')  cline
+            write(lp,'(/ a,a / a,g15.6 /)')
+     &        'error in forfunh_d - actual forcing',
+     &        ' must start after wind day 1462',
+     &        'dtime1 = ',dtime1
+            endif !1st tile
+            call xcstop('(forfunh_d)')
+                   stop '(forfunh_d)'
+          endif
+          if     (dtime0.le.dtime .and. dtime1.gt.dtime) then
+            exit
+          endif
+        enddo   ! infinate loop, with exit above
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+          rewind(unit=uoff+901)
+          read (uoff+901,'(a79)') preambl
+        endif
+c
+        do iunit= 901,905
+          do i= 1,nrec-2
+            call skmonth(iunit)
+          enddo
+        enddo
+        if     (lwflag.eq.2 .or. sstflg.eq.2   .or.
+     &          icmflg.eq.2 .or. ticegr.eq.0.0     ) then
+          do i= 1,nrec-2
+            call skmonth(909)
+          enddo
+        endif !surtmp
+        if     (sstflg.eq.3) then
+          do i= 1,nrec-2
+            call skmonth(910)
+          enddo
+        endif
+        dtime1 = huge
+        call rdpall_d(dtime0,dtime1)
+        if     (yrflag.eq.2) then
+          dtime1 = (dtime1 - 1096.0d0) + 
+     &             366.0d0*int((dtime+0.00001d0)/366.0d0)
+        endif
+        call rdpall_d(dtime0,dtime1)
+        if     (yrflag.eq.2) then
+          dtime1 = (dtime1 - 1096.0d0) + 
+     &             366.0d0*int((dtime+0.00001d0)/366.0d0)
+          if     (dtime1.lt.dtime0) then
+            dtime1 = dtime1 + 366.0d0
+          endif
+        endif
+c
+        if     (mnproc.eq.1) then
+        write (lp,*) 
+        write (lp,*) ' dtime,dtime0,dtime1 = ',dtime,dtime0,dtime1
+        write (lp,*) 
+        write (lp,*) ' ..finished initializing forcing fields (1st set)'
+        endif !1st tile
+        call xcsync(flush_lp)
+      endif  ! initialization
+c
+      if     (dtime.gt.dtime1) then
+c
+c ---   get the next set of fields.
+*           if     (mnproc.eq.1) then
+*           write(lp,*) 'enter rdpall_d - ',dtime,dtime0,dtime1
+*           endif !1st tile
+*           call xcsync(flush_lp)
+        call rdpall_d(dtime0,dtime1)
+        if     (yrflag.eq.2) then
+          dtime1 = (dtime1 - 1096.0d0) + 
+     &             366.0d0*int((dtime+0.00001d0)/366.0d0)
+          if     (dtime1.lt.dtime0) then
+            dtime1 = dtime1 + 366.0d0
+          endif
+        endif
+*           if     (mnproc.eq.1) then
+*           write(lp,*) ' exit rdpall_d - ',dtime,dtime0,dtime1
+*           endif !1st tile
+*           call xcsync(flush_lp)
+      endif
+c
+c --- linear interpolation in time.
+      w0 = (dtime1-dtime)/(dtime1-dtime0)
+      w1 = 1.0 - w0
+*           if     (mnproc.eq.1) then
+*           write(lp,*) 'rdpall_d - dtime,w0,w1 = ',dtime,w0,w1
+*           endif !1st tile
+*           call xcsync(flush_lp)
+      return
+      end
+c
+c
+c NCEP-ilya new subroutine for two-clock option
+      subroutine forfunh_e(dtime)
+      use mod_xc  ! HYCOM communication interface
+      use mod_za  ! HYCOM I/O interface
+      implicit none
+      include 'common_blocks.h'
+c
+      real*8    dtime
+c
+c --- high frequency atmospheric forcing field processing.
+c
+c --- units of precip are m/s    (positive into ocean)
+c --- units of radflx are w/m^2  (positive into ocean)
+c --- units of swflx  are w/m^2  (positive into ocean)
+c
+c --- all are always on the p grid.
+c
+c --- I/O and array I/O units 900-910 are reserved for the entire run.
+c
+c --- all input fields much be defined at all grid points
+c
+      real*8    dtime0,dtime1
+      save      dtime0,dtime1
+c
+      character preambl(5)*79,cline*80
+      real      pcmax
+      integer   i,ios,iunit,j,lgth,nrec
+c
+c --- w0_e negative on first call only
+      if     (w0_e.lt.-1.0) then
+c
+c ---   initialize forcing fields
+c
+        if      (.not.windf) then
+          if     (mnproc.eq.1) then
+          write(lp,*)
+          write(lp,*) 'error in forfunh_e - windf must be .true.'
+          write(lp,*)
+          endif !1st tile
+          call xcstop('(forfunh_e)')
+                 stop '(forfunh_e)'
+        elseif (.not.thermo) then
+          if     (mnproc.eq.1) then
+          write(lp,*)
+          write(lp,*) 'error in forfunh_e - thermo must be .true.'
+          write(lp,*)
+          endif !1st tile
+          call xcstop('(forfunh_e)')
+                 stop '(forfunh_e)'
+        endif
+c
+c ---   linear interpolation in time, so slots 3 and 4 are zero.
+!$OMP   PARALLEL DO PRIVATE(j,i)
+!$OMP&           SCHEDULE(STATIC,jblk)
+        do j=1-nbdy,jj+nbdy
+          do i=1-nbdy,ii+nbdy
+            precip(i,j,3) = 0.0
+            precip(i,j,4) = 0.0
+            radflx(i,j,3) = 0.0
+            radflx(i,j,4) = 0.0
+             swflx(i,j,3) = 0.0
+             swflx(i,j,4) = 0.0
+          enddo
+        enddo
+c
+c ---   open all forcing files.
+        if     (mnproc.eq.1) then
+        write (lp,*) ' now initializing forcing fields (2nd set) ...'
+        endif !1st tile
+        call xcsync(flush_lp)
+c
+        lgth = len_trim(flnmfor)
+c
+        call zaiopf(flnmfor(1:lgth)//'forcing.precip.a', 'old', 906)
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+        open (unit=uoff+906,file=flnmfor(1:lgth)//'forcing.precip.b',
+     &     status='old', action='read')
+        read (uoff+906,'(a79)') preambl
+        endif !1st tile
+        call preambl_print(preambl)
+c
+        call zaiopf(flnmfor(1:lgth)//'forcing.radflx.a', 'old', 907)
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+        open (unit=uoff+907,file=flnmfor(1:lgth)//'forcing.radflx.b',
+     &     status='old', action='read')
+        read (uoff+907,'(a79)') preambl
+        endif !1st tile
+        call preambl_print(preambl)
+c
+        call zaiopf(flnmfor(1:lgth)//'forcing.shwflx.a', 'old', 908)
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+        open (unit=uoff+908,file=flnmfor(1:lgth)//'forcing.shwflx.b',
+     &     status='old', action='read')
+        read (uoff+908,'(a79)') preambl
+        endif !1st tile
+        call preambl_print(preambl)
+c
+c ---   skip ahead to the start time.
+        nrec   = 0
+        dtime1 = huge
+        do  ! infinate loop, with exit at end
+          dtime0 = dtime1
+          nrec   = nrec + 1
+          call zagetc(cline,ios, uoff+906)
+          if     (ios.ne.0) then
+            if     (mnproc.eq.1) then
+              write(lp,*)
+              write(lp,*) 'error in forfunh_e - hit end of input'
+              write(lp,*) 'dtime0,dtime1 = ',dtime0,dtime1
+              write(lp,*) 'dtime = ',dtime
+              write(lp,*)
+            endif !1st tile
+            call xcstop('(forfunh_e)')
+                   stop '(forfunh_e)'
+          endif
+          i = index(cline,'=')
+          read (cline(i+1:),*) dtime1
+          if     (yrflag.eq.2) then
+            if     (nrec.eq.1 .and. abs(dtime1-1096.0d0).gt.0.01) then
+c
+c ---         climatology must start on wind day 1096.0, 01/01/1904.
+              if     (mnproc.eq.1) then
+              write(lp,'(a)')  cline
+              write(lp,'(/ a,a / a,g15.6 /)')
+     &          'error in forfunh - forcing climatology',
+     &          ' must start on wind day 1096',
+     &          'dtime1 = ',dtime1
+              endif !1st tile
+              call xcstop('(forfunh_e)')
+                     stop '(forfunh_e)'
+            endif
+            dtime1 = (dtime1 - 1096.0d0) + 
+     &               366.0d0*int((dtime+0.00001d0)/366.0d0)
+            if     (nrec.ne.1 .and. dtime1.lt.dtime0) then
+              dtime1 = dtime1 + 366.0d0
+            endif
+          elseif (nrec.eq.1 .and. dtime1.lt.1462.0d0) then
+c
+c ---       otherwise, must start after wind day 1462.0, 01/01/1905.
+            if     (mnproc.eq.1) then
+            write(lp,'(a)')  cline
+            write(lp,'(/ a,a / a,g15.6 /)')
+     &        'error in forfunh - actual forcing',
+     &        ' must start after wind day 1462',
+     &        'dtime1 = ',dtime1
+            endif !1st tile
+            call xcstop('(forfunh_e)')
+                   stop '(forfunh_e)'
+          endif
+          if     (dtime0.le.dtime .and. dtime1.gt.dtime) then
+            exit
+          endif
+        enddo   ! infinate loop, with exit above
+        if     (mnproc.eq.1) then  ! .b file from 1st tile only
+          rewind(unit=uoff+906)
+          read (uoff+906,'(a79)') preambl
+        endif
+c
+        do iunit= 906,908
+          do i= 1,nrec-2
+            call skmonth(iunit)
+          enddo
+        enddo
+        dtime1 = huge
+        call rdpall_e(dtime0,dtime1)
+        if     (yrflag.eq.2) then
+          dtime1 = (dtime1 - 1096.0d0) + 
+     &             366.0d0*int((dtime+0.00001d0)/366.0d0)
+        endif
+        call rdpall_e(dtime0,dtime1)
+        if     (yrflag.eq.2) then
+          dtime1 = (dtime1 - 1096.0d0) + 
+     &             366.0d0*int((dtime+0.00001d0)/366.0d0)
+          if     (dtime1.lt.dtime0) then
+            dtime1 = dtime1 + 366.0d0
+          endif
+        endif
+c
+c ---   zero precip field implies no surface salinity flux
+        if     (pcipf) then
+          pcmax = -huge
+          do j=1,jj
+            do i=1,ii
+              pcmax = max(pcmax,precip(i,j,1),precip(i,j,2))
+            enddo
+          enddo
+          call xcmaxr(pcmax)
+          pcipf = pcmax.ne.0.0
+          if     (.not.pcipf) then
+            if     (mnproc.eq.1) then
+            write (lp,*)
+            write (lp,*) '***** no surface salinity flux *****'
+            write (lp,*)
+            endif !1st tile
+            call xcsync(flush_lp)
+          endif  !pcipf actually .false.
+        endif  !pcipf initially .true.
+c
+        if     (jerlv0.ne.0) then
+c ---     calculate jerlov water type,
+c ---     which governs the penetration depth of shortwave radiation.
+c ---     set jerlv0=0 to use an input annual/monthly kpar field instead.
+!$OMP     PARALLEL DO PRIVATE(j,i)
+!$OMP&             SCHEDULE(STATIC,jblk)
+          do j=1-nbdy,jj+nbdy
+            do i=1-nbdy,ii+nbdy
+c ---         map shallow depths to high jerlov numbers
+              jerlov(i,j)=6-max(1,min(5,int(depths(i,j)/15.0)))
+              jerlov(i,j)=max(jerlv0,jerlov(i,j))
+            enddo
+          enddo
+        endif
+        if     (mnproc.eq.1) then
+        write (lp,*) 
+        write (lp,*) ' dtime,dtime0,dtime1 = ',dtime,dtime0,dtime1
+        write (lp,*) 
+        write (lp,*) ' ..finished initializing forcing fields (2nd set)'
+        endif !1st tile
+        call xcsync(flush_lp)
+      endif  ! initialization
+c
+      if     (dtime.gt.dtime1) then
+c
+c ---   get the next set of fields.
+*           if     (mnproc.eq.1) then
+*           write(lp,*) 'enter rdpall_e - ',dtime,dtime0,dtime1
+*           endif !1st tile
+*           call xcsync(flush_lp)
+        call rdpall_e(dtime0,dtime1)
+        if     (yrflag.eq.2) then
+          dtime1 = (dtime1 - 1096.0d0) + 
+     &             366.0d0*int((dtime+0.00001d0)/366.0d0)
+          if     (dtime1.lt.dtime0) then
+            dtime1 = dtime1 + 366.0d0
+          endif
+        endif
+*           if     (mnproc.eq.1) then
+*           write(lp,*) ' exit rdpall_e - ',dtime,dtime0,dtime1
+*           endif !1st tile
+*           call xcsync(flush_lp)
+      endif
+c
+c --- linear interpolation in time.
+      w0_e = (dtime1-dtime)/(dtime1-dtime0)
+      w1_e = 1.0 - w0_e
+*           if     (mnproc.eq.1) then
+*           write(lp,*) 'rdpall_e - dtime,w0_e,w1_e = ',dtime,w0_e,w1_e
+*           endif !1st tile
+*           call xcsync(flush_lp)
+      return
+      end
+c
+c
       subroutine forfunk
       use mod_xc  ! HYCOM communication interface
       use mod_za  ! HYCOM I/O interface
@@ -1708,6 +2281,157 @@ c --- check the input times.
           endif !1st tile
           call xcstop('(rdpall)')
                  stop '(rdpall)'
+        endif
+      enddo
+      return
+      end
+c
+c
+c NCEP-ilya new subroutine for two-clock option
+c
+      subroutine rdpall_d(dtime0,dtime1)
+      use mod_xc  ! HYCOM communication interface
+      implicit none
+      include 'common_blocks.h'
+c
+      real*8  dtime0,dtime1
+c
+c --- copy slot 2 into slot 1, and 
+c --- read a set of high frequency forcing fields into slot 2.
+c --- on exit, dtime0 and dtime1 are the associated times (wind days).
+c
+      integer i,j,k
+      real*8  dtime(900:910)
+c
+      integer, save :: icall = -1
+c
+      real, parameter :: sstmin = -1.8
+      real, parameter :: sstmax = 35.0
+c
+      icall = icall + 1
+c
+      call rdpall1(  taux,dtime(901),901,mod(icall,3).eq.0)
+      call rdpall1(  tauy,dtime(902),902,mod(icall,3).eq.0)
+      if     (ustflg.eq.3) then
+        call rdpall1(ustara,dtime(900),900,mod(icall,3).eq.0)
+      else
+        dtime(900) = dtime(901)
+      endif
+      if     (wndflg.ne.3) then
+        call rdpall1(wndspd,dtime(903),903,mod(icall,3).eq.0)
+      else
+        dtime(903) = dtime(902)
+!$OMP   PARALLEL DO PRIVATE(j,i)
+!$OMP&           SCHEDULE(STATIC,jblk)
+        do j= 1-nbdy,jj+nbdy
+          do i= 1-nbdy,ii+nbdy
+            wndspd(i,j,1) = wndspd(i,j,2)
+          enddo
+        enddo
+        call str2spd(wndspd(1-nbdy,1-nbdy,2),
+     &                 taux(1-nbdy,1-nbdy,2),
+     &                 tauy(1-nbdy,1-nbdy,2) )
+      endif !wndspd
+      call rdpall1(airtmp,dtime(904),904,mod(icall,3).eq.1)
+      call rdpall1(vapmix,dtime(905),905,mod(icall,3).eq.1)
+      if     (lwflag.eq.2 .or. sstflg.eq.2   .or.
+     &        icmflg.eq.2 .or. ticegr.eq.0.0     ) then
+         call rdpall1(surtmp,dtime(909),909,mod(icall,3).eq.1)
+        if     (sstflg.ne.3) then  !use atmos. sst as "truth"
+          do j= 1-nbdy,jj+nbdy
+            do i= 1-nbdy,ii+nbdy
+              seatmp(i,j,1) = max( sstmin, min(surtmp(i,j,1), sstmax ) )
+              seatmp(i,j,2) = max( sstmin, min(surtmp(i,j,2), sstmax ) )
+            enddo
+          enddo
+        endif
+      else
+        dtime(909) = dtime(905)
+      endif !surtmp:else
+      if     (sstflg.eq.3) then
+        call rdpall1(seatmp,dtime(910),910,mod(icall,3).eq.2)
+      else
+        dtime(910) = dtime(905)
+      endif
+c
+      dtime0 = dtime1
+      dtime1 = dtime(901)
+c
+c --- check the input times.
+      do k= 902,905
+        if     (dtime(k).ne.dtime1) then
+          if     (mnproc.eq.1) then
+          write(lp,*)
+          write(lp,*) 'error in rdpall_d - inconsistent forcing times 1'
+          write(lp,*) 'dtime0,dtime1 = ',dtime0,dtime1
+          write(lp,*) 'dtime = ',dtime
+          write(lp,*)
+          endif !1st tile
+          call xcstop('(rdpall_d)')
+                 stop '(rdpall_d)'
+        endif
+      enddo
+      do k= 909,910
+        if     (dtime(k).ne.dtime1) then
+          if     (mnproc.eq.1) then
+          write(lp,*)
+          write(lp,*) 'error in rdpall_d - inconsistent forcing times 2'
+          write(lp,*) 'dtime0,dtime1 = ',dtime0,dtime1
+          write(lp,*) 'dtime = ',dtime
+          write(lp,*)
+          endif !1st tile
+          call xcstop('(rdpall_d)')
+                 stop '(rdpall_d)'
+        endif
+      enddo
+      return
+      end
+c
+c NCEP-ilya new subroutine for two-clock option
+      subroutine rdpall_e(dtime0,dtime1)
+      use mod_xc  ! HYCOM communication interface
+      implicit none
+      include 'common_blocks.h'
+c
+      real*8  dtime0,dtime1
+c
+c --- copy slot 2 into slot 1, and 
+c --- read a set of high frequency forcing fields into slot 2.
+c --- on exit, dtime0 and dtime1 are the associated times (wind days).
+c
+      integer i,j,k
+      real*8  dtime(906:908)
+c
+      integer, save :: icall = -1
+c
+      real, parameter :: sstmin = -1.8
+      real, parameter :: sstmax = 35.0
+c
+      icall = icall + 1
+c
+      if     (pcipf) then
+        call rdpall1(precip,dtime(906),906,mod(icall,3).eq.1)
+      else
+        dtime(906) = dtime(908)
+      endif
+      call rdpall1(radflx,dtime(907),907,mod(icall,3).eq.2)
+      call rdpall1( swflx,dtime(908),908,mod(icall,3).eq.2)
+c
+      dtime0 = dtime1
+      dtime1 = dtime(908)
+c
+c --- check the input times.
+      do k= 906,907
+        if     (dtime(k).ne.dtime1) then
+          if     (mnproc.eq.1) then
+          write(lp,*)
+          write(lp,*) 'error in rdpall_e - inconsistent forcing times'
+          write(lp,*) 'dtime0,dtime1 = ',dtime0,dtime1
+          write(lp,*) 'dtime = ',dtime
+          write(lp,*)
+          endif !1st tile
+          call xcstop('(rdpall_e)')
+                 stop '(rdpall_e)'
         endif
       enddo
       return
