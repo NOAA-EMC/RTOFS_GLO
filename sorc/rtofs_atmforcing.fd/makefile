@@ -28,7 +28,7 @@ SHELL=/usr/bin/ksh
 # parameter.  The new modules are not limited to fortran, but may be C, YACC,
 # LEX, or CAL.  An explicit rule will need to be added for PASCAL modules.
 #
-SRCS=   constants.f90 mod_flags.f90 mod_geom.f90 intp.f90 cd.f90
+SRCS=   constants.f90 mod_flags.f90 mod_geom.f90 atmforcing.f90 cd.f90
         
 
 OBJS=	${SRCS:.f90=.o}
@@ -47,7 +47,7 @@ INC1   = ../../lib/rtofs_serial_mods_4
 INC2   = ../../lib/rtofs_hycomiot_mods_4
 LIBS  = -L/nwprod/lib -lw3_4 -lbacio_4 \
         -L../../lib -lrtofs_serial_mods_4 -lrtofs_hycomiot_4
-CMD   =		rtofs_gfs2rtofs
+CMD   =		rtofs_atmforcing
 PROFLIB =	-lprof
 
 # To perform the default compilation, use the first line

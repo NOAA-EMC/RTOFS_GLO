@@ -23,7 +23,7 @@ export PS4='$SECONDS + '
 
 cd $DATA
 
-msg="RTOFS_GLO Forecast has begun on `hostname` at `date`"
+msg="RTOFS_GLO_FORECAST JOB has begun on `hostname` at `date`"
 postmsg "$jlogfile" "$msg"
 
 # --------------------------------------------------------------------------- #
@@ -33,13 +33,13 @@ postmsg "$jlogfile" "$msg"
 export mode=fcst
 # 0.a date and time stuff
 
-  export srtdate=`echo $PDY | cut -c1-8`
+  export startdate=`echo $PDY | cut -c1-8`
   export enddate=${forecast_end:-$PDYp5}
   export inputgrid=${inputgrid:-navy_coarse}
 
 # --------------------------------------------------------------------------- #
 # 1  Set up the start time and end time for the forecast
-  sday=`sh $utilscript/date_normal2hycom.sh $srtdate$cyc`
+  sday=`sh $utilscript/date_normal2hycom.sh $startdate$cyc`
   eday=`sh $utilscript/date_normal2hycom.sh $enddate$cyc`
   echo "  $sday $eday false false  " > limits
 
@@ -209,20 +209,16 @@ export mode=fcst
 
 # 3. Create Forcing files
 
-# 3.a call gfs2rtofs to get the forcing files 
+# 3.a call atmforcing to get the forcing files 
 
   intvl=3
-  $USHrtofs/rtofs_gfs2rtofs.sh $srtdate$cyc $enddate$cyc $intvl 
+  $USHrtofs/rtofs_atmforcing.sh $startdate$cyc $enddate$cyc $intvl 
 
 # 3.b correct air temperature over ice.
    
   # Ilya dbgz: the correction is done now in intp.f. 
-  # Anyhow, correct_forcing.f90 should be debugged!!!
-  #$USHrtofs/rtofs_correct_forcing.sh 
-
-
-#dbgz
-#exit
+  # Anyhow, atmforcing_correct.f90 should be debugged!!!
+  #$USHrtofs/rtofs_atmforcing_correct.sh
 
 # 4. Prepare for the forecast run
 
@@ -241,9 +237,8 @@ export mode=fcst
 
   export MEMORY_AFFINITY=MCM
   export TARGET_CPU_LIST=-1
-  poe /usrx/local/mpi_trace/utils/launch.x $EXECrtofs/rtofs_forecast -procs $NPROCS >> $pgmout 2>errfile
-
-##white  poe $EXECrtofs/rtofs_forecast -procs $NPROCS >> $pgmout 2>errfile
+  poe $EXECrtofs/rtofs_forecast -procs $NPROCS >> $pgmout 2>errfile
+## p5 launch  poe /usrx/local/mpi_trace/utils/launch.x $EXECrtofs/rtofs_forecast -procs $NPROCS >> $pgmout 2>errfile
   export err=$?; err_chk
 
   date >> TRACK

@@ -18,8 +18,8 @@ FCFLAGS= -c -qfixed -qstrict -qspillsize=32000 -qwarn64 -I$(INC1) -I$(INC2)
 LDFLAGS=-O3 -qarch=auto
 #
 BINDIR= ../../exec
-SRC_F90 = correct_forcing.f90
-CMD   =		rtofs_correct_forcing
+SRC_F90 = atmforcing_correct.f90
+CMD   =		rtofs_atmforcing_correct
 PROFLIB =	-lprof
 #
 #

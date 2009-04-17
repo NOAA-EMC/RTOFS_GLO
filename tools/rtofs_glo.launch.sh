@@ -1,230 +1,96 @@
 #!/bin/sh
 #
 #
-set -x
+##set -x
 
-#
-# Define environment variables to be passed to submitted job.
-#
-# HOMEDIR
-# runID
-# sdate
-# job_name
-# step_name
-# dependency
-# TANK
-# forecast_days
-# lastday
-#
-
-export SECONDS=0    
-export cyc='00'     
-export prev_cyc='12'
-export envir='prod'
-export HOMEDIR=/marine/save/$USER/hycom_glo/projects/port
-export SMSBIN=/nwprod/sms/bin
-export PATH="$PATH":/nwprod/sms/bin:/nwprod/util/ush
-#
-# Set run parameters
-#
-export runID=port
-job='rtofs'
-forecast_days=3
-runtype=fcst # fcst or anal
-
-
-if [ ${real_time} = 'T' ]
+if [ $# -ne 2 ] 
 then
-   sdate=`cut -c7-14 /com/date/t${cyc}z`
-   #    sdate=`date '+%Y%m%d'`
-else
-   sdate=$1
+  echo "USAGE: $0 <YYYYMMDD> <NDAYS>"
+  exit -2
 fi
 
-# modstank  - for hindcast
-#export TANK=/gpfs/m/marine/noscrub/seaspara/modstank
+export forecast_start=$1
+forecast_days=$2
+hindcast=YES # YES or NO
 
-let forecast_hours=forecast_days*24
-export forecast_end=`/nwprod/util/exec/ndate $forecast_hours ${sdate}'00' | cut -c1-8`
-
-export ENDHOUR=$forecast_hours
-
-# relaunch???? default is sdate (run once)
-export lastday=20061110
-export lastday=$sdate
-
-#
-# Directories and executables
-#
-#dbgz
-# export FLUXDIR=/marine/noscrub/seaspara/flux/gfs. #gdas
-NDATE=/nwprod/util/exec/ndate
-export sudotmp=/ptmp
-export sudocom=/marine/noscrub/$USER/simulations
-toolsdir=$HOMEDIR/tools
-jobdir=$toolsdir/../jobs
-logdir=$sudocom/$runID/logs
-runtag=${sdate}.$$
-subfile=${logdir}/rtofs_glo.sub.${runtag}.sh
-########
-# just in case
-##export MODX=${HOMEDIR}/exec/bufr_prepmods.HOLD
-
-####################################
-# Specify NET and RUN Name and model
-####################################
-export NET=rtofs
-export RUN=rtofs
-export modID=glo # HurricaneTest
-#
-# NOTE: temporary: clean working directories.
-#
-rm -Rf ${sudotmp}/$USER/${runID}
-mkdir -p ${sudotmp}/$USER/${runID}
-if [ ${cold_start} = 'T' ] 
-then
-  rm -Rf ${sudocom}/${runID}
-  mkdir -p ${sudocom}/${runID}
-fi
-#
-test -d $logdir || mkdir -p $logdir
-###dbgz   \$FLUXDIR ; \\
-# NOTE: IMPORTANT: for ncep 1/3, add   \$inputgrid to the environment
-
-YMD=$sdate
+# Set some run environment variables.
+export HOMErtofs=/marine/save/$LOGNAME/hycom_glo/projects/RB-1.0.2
+export projID=`basename $HOMErtofs`
+export cyc=00
+export RUN_ENVIR=dev
 # very important: redefinition of the default date (PDY !!!
 # if PDY is defined here, it will not be reset by setpdy utility.
-export PDY=$YMD
-PDYm1=`$NDATE -24 ${PDY}'00' | cut -c1-8`
-PDYm2=`$NDATE -48 ${PDY}'00' | cut -c1-8`
-PDYm3=`$NDATE -72 ${PDY}'00' | cut -c1-8`
-PDYm4=`$NDATE -96 ${PDY}'00' | cut -c1-8`
-PDYm5=`$NDATE -120 ${PDY}'00' | cut -c1-8`
-PDYm6=`$NDATE -144 ${PDY}'00' | cut -c1-8`
-PDYm7=`$NDATE -168 ${PDY}'00' | cut -c1-8`
-PDYp1=`$NDATE 24 ${PDY}'00' | cut -c1-8`
-
-#
-# Create temporary directories 
-#
-for TME in $PDY $PDYm1 $PDYm2 $PDYp1
-do
-  test -d ${sudocom}/${runID}/rtofs/rtofs.${TME} || mkdir -p ${sudocom}/${runID}/rtofs/rtofs.${TME}
-done
-test -d ${sudotmp}/$USER/${runID}/${job}_${envir} ||  mkdir -p ${sudotmp}/$USER/${runID}/${job}_${envir}
-#
-# Put the restart etc in place 
-#
-# NOTE: we was running a day late, in real time now (see PDY calcs in JRTOFS* scripts)
-#
-archive_dir=${sudocom}/${runID}/rtofs
-if [ $runtype = 'anal' ]
+export PDY=$forecast_start
+export envir=prod # prod or para
+if [ $hindcast = YES ] 
 then
-  restart_dir=${archive_dir}/rtofs.$PDYm1
-  dates=${PDYm1}'00'
-else
-  restart_dir=${archive_dir}/rtofs.$PDY
-  dates=${PDY}'00'
+  # Redefine default top level directories for rtofs_forcing_getges.sh script
+  export GETGES_COM=/ptmp/$LOGNAME/tmpdir/com.$$
+else 
+   export GETGES_COM=/com
 fi
-if [ ${cold_start} = 'T' ] ### &&  [ ${real_time} = 'T' ] 
+
+# Create temporary directory.
+# test -d /ptmp/$LOGNAME/tmpdir/$projID || rm -rf /ptmp/$LOGNAME/tmpdir/$projID
+# mkdir -p /ptmp/$LOGNAME/tmpdir/$projID
+
+# Set paths to directories.
+export utilexec=/nwprod/util/exec
+export HOMEout=/marine/noscrub/$LOGNAME/simulations/$projID
+FLUXDIR=/marine/noscrub/$LOGNAME/flux
+
+#=== DON'T EDIT BELOW THIS LINE ==================
+
+# Calculate forecast length.
+let forecast_hours=forecast_days*24
+export forecast_end=`$utilexec/ndate $forecast_hours ${forecast_start}${cyc} | cut -c1-8`
+
+# Write out some info.
+echo "LAUNCHER INFO: run: ${projID}, cycle: t${cyc}z, PDY=${PDY}."
+echo "LAUNCHER INFO: forecast starts at ${forecast_start}, ends at ${forecast_end}."
+
+# Test the restart file.
+resttplate=$HOMEout/rtofs/rtofs.${forecast_start}/rtofs_glo.t${cyc}z.next_restart
+if [ ! -s ${resttplate}.a ] || [ ! -s ${resttplate}.b ]
 then
-  for cfd in $PDYm1 ### $PDYm2 $PDYm3 $PDYm4 $PDYm5 $PDYm6 $PDYm7
+  echo "LAUNCHER ERROR: Wrong restart file ${resttplate}.[ab]"
+  exit -3
+fi 
+basetime=1900123100
+hdate=`awk '{  if (NR==2) { print $5 } }'  < ${resttplate}.b | cut -d. -f1 `
+dater=`$utilexec/ndate \` expr $hdate \* 24 \`  ${basetime}`
+if [ ${dater} -ne ${forecast_start}${cyc} ] 
+then 
+  echo "LAUNCHER ERROR: Date in the restart file."
+  echo "                FILE:  ${resttplate}.b" 
+  echo "                DATES: forecast_start=${forecast_start} dater=$dater"
+  exit -3
+fi 
+
+
+# Set up temporary fluxes directory for hindcast
+# NOTE: done for forecast case (gfs) only. Add nowcast (gdas) case if necessary.
+if [ $hindcast = YES ] 
+then
+  mkdir -p ${GETGES_COM}/gfs/$envir
+  cdate=`$utilexec/ndate -24 ${forecast_start}'00' | cut -c1-8`
+  while [ $cdate -le $forecast_end ] 
   do
-    comdir=/com/rtofs/${envir}/rtofs.$cfd
-    rtofsdir=${archive_dir}/rtofs.$cfd
-    test $rtofsdir && mv $rtofsdir ${rtofsdir}.bak.$$
-    ln -sf $comdir $rtofsdir
+    if [ -d $FLUXDIR/gfs.${cdate} ]
+    then
+      ln -s $FLUXDIR/gfs.${cdate} ${GETGES_COM}/gfs/$envir/gfs.${cdate}
+    else
+      echo "LAUNCHER ERROR: No forcing directory found."
+      echo "                DIR:  $FLUXDIR/gfs.${cdate}"    
+      exit -3
+    fi
+    cdate=`$utilexec/ndate 24 ${cdate}'00' | cut -c1-8`
   done
 fi
-cd ${restart_dir}
-dater=`${toolsdir}/date_from_restart.sh ${restart_dir}/rtofs_glo.t00z.next_restart.b `
-echo ; pwd ; 
-if [ ${dater} -ne ${dates} ] 
-then 
-  echo 'LAUNCHER ERROR: check date in the restart file, dates=' $dates ' dater=' $dater
-  echo "file:  ${restart_dir}/rtofs_${modID}.t00z.next_restart.b"
-  exit 6
-fi 
-#>-  if [ ${cold_start} = 'T' ] 
-#>-  then
-#>-    cdir=`pwd`
-#>-    cd ${sudocom}/${runID}/rtofs/rtofs.$PDYm1
-#>-    ln -sf /com/${job}/${envir}/${job}.$PDYm1/rtofs_glo.t${cyc}z.next_restart.a .
-#>-    ln -sf /com/${job}/${envir}/${job}.$PDYm1/rtofs_glo.t${cyc}z.next_restart.b .
-#>-    # ln -sf /com/${job}/${envir}/${job}.$PDYm1/rtofs_${modID}.t${cyc}z.lowfreq.input .
-#>-    # dbgz IMPORTANT !!!!!! ONE-TIME DEAL
-#>-    # ln -sf $toolsdir/../input/rtofs_glo.t${cyc}z.lowfreq.input .
-#>-    cd $cdir 
-#>-  fi
 
-#
-# Prepare LL script
-#
-cat << EOF > ${subfile}
-#@ shell=/bin/sh 
-# @ job_name = jrtofs_port_00
-# @ output = ${logdir}/rtofs_glo_00.${runtag}
-# @ error = ${logdir}/rtofs_glo_00.${runtag}
-# @ shell = /bin/sh
-# @ group = devonprod
-# @ wall_clock_limit = 03:00:00
-# @ account_no = RTO-T2O 
-# @ notification = never
-## @ blocking = unlimited
-#@ environment = MP_EUILIB=us ; \\
-   \$SECONDS ; \\
-   \$cyc ; \\
-   \$prev_cyc ; \\
-   \$envir ; \\
-   \$runID ; \\
-   \$PDY ; \\
-   \$TANK ; \\
-   \$ENDHOUR ; \\
-   \$forecast_end ; \\
-   \$lastday ; \\
-   \$PATH ; \\
-   \$HOMEDIR ; \\
-   \$SMSBIN ; \\
-   \$sudotmp ; \\
-   \$sudocom ; \\
-   \$MODX ; 
-# Forecast
-#
-# @ step_name = jrtofs_port_forecast_00
-# @ output = ${logdir}/rtofs_glo_00.${runtag}.\$(stepid)
-# @ error = ${logdir}/rtofs_glo_00.${runtag}.\$(stepid)
-# @ job_type = parallel
-# @ class = devhigh
-# @ total_tasks = 32
-# @ node = 2
-# @ resources = ConsumableMemory(1024 mb) ConsumableCpus(1)
-# @ node_usage=not_shared
-# @ network.MPI=csss,shared,us
-# @ wall_clock_limit = 03:00:00
-# @ executable = ../jobs/JRTOFS_GLO_FORECAST.sms.${envir}
-# @ queue
-#
-# Postprocess 
-#
-# @ dependency = ( jrtofs_port_forecast_00 == 0 )
-# @ step_name = jrtofs_port_post_00
-# @ output = ${logdir}/ofs_atl_00.${runtag}.\$(stepid)
-# @ error = ${logdir}/ofs_atl_00.${runtag}.\$(stepid)
-# @ job_type = serial
-# @ class = 1
-# @ resources = ConsumableMemory(4000 mb) ConsumableCpus(1)
-# @ wall_clock_limit = 03:00:00
-# @ executable = ../jobs/JRTOFS_GLO_POST.sms.${envir}
-# @ queue
-EOF
-#
-# Submit the forecast cycle
-#
-cd ${toolsdir}
-llsubmit ${subfile}
+# Make logs directory if necessary.
+test $HOMEout/logs || mkdir -p $HOMEout/logs
 
-
-
-
-
-
+# Submit the forecast job.
+llsubmit rtofs_job_command.sms
+echo 'LAUNCHER: job rtofs_job_command.sms is submitted at host '`hostname`' at '`date`

@@ -1,4 +1,4 @@
-program intp
+program atmforcing
   !$$$ MAIN PROGRAM DOCUMENTATION BLOCK
   !
   !   MAIN PROGRAM:  Intp.f90
@@ -862,4 +862,4 @@ contains
   !
   !  =========================================
   !    
-end program intp
+end program atmforcing

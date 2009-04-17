@@ -2,7 +2,7 @@
 set -x
 #
 #########################################################################
-# Usage: rtofs_correct_forcing.sh                                       #
+# Usage: rtofs_atmforcing_correct.sh                                    #
 #                                                                       #
 # Description: Correct GFS near-surface air temperature                 #
 #              Originally, air temperature is in the file               #
@@ -16,7 +16,7 @@ set -x
 #    02-02-2007 Ilya Rivin                                              #
 #########################################################################
 
-echo "*** Started script $0"
+echo "*** Started script $0 on hostname "`hostname`' at time '`date`
 
 # It is assumed that forcing.imput files
 # forcing.airtmp.[ab] forcing.surtmp.[ab] and regional.mask.[ab]
@@ -31,14 +31,14 @@ ihead=`expr ${blines} \- ${num_frames} `
 sname=`grep span ${DATA}/forcing.surtmp.b |head -1 |cut -c1-10`
 aname=`grep span ${DATA}/forcing.airtmp.b |head -1 |cut -c1-10`
 
-cat > correct_forcing.in <<EOF
+cat > atmforcing_correct.in <<EOF
 $ihead
 $num_frames
 $aname
 $sname
 EOF
 
-$EXECrtofs/rtofs_correct_forcing < correct_forcing.in >>$pgmout 2>errfile
+$EXECrtofs/rtofs_atmforcing_correct < atmforcing_correct.in >>$pgmout 2>errfile
 export err=$?; err_chk
 
 mv ${DATA}/forcing.airtmp.a ${DATA}/forcing.airtm1.a 
@@ -46,4 +46,4 @@ mv ${DATA}/forcing.airtmp.b ${DATA}/forcing.airtm1.b
 mv ${DATA}/forcing.airtem.a ${DATA}/forcing.airtmp.a 
 mv ${DATA}/forcing.airtem.b ${DATA}/forcing.airtmp.b 
 
-echo "*** Finished script $0"
+echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

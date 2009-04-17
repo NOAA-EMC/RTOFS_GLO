@@ -1,4 +1,4 @@
-PROGRAM correct_forcing
+PROGRAM atmforcing_correct
   !
   ! Correct GFS near-surface air temperature from forcing.airtmp.[ab] file
   ! GFS surface temperature is read from forcing.surtmp.[ab] and air
@@ -91,4 +91,4 @@ PROGRAM correct_forcing
   DEALLOCATE(ip)
   DEALLOCATE(preambl)
   !
-END PROGRAM correct_forcing
+END PROGRAM atmforcing_correct

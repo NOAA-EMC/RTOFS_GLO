@@ -1,65 +1,107 @@
-##$SMSBIN/smsinit $LOADL_STEP_ID 
+#!/bin/sh
 
+###############################################################
+# The RUN_ENVIR should be defined in the upper-level SMS script
+###############################################################
+export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-##temporary stuff
-export NET=rtofs
-export RUN=rtofs
-export modID=glo
-export job='rtofs_glo_forecast_00'
-export NNODES=2
-export NPROCS=32
+if [ $RUN_ENVIR != dev ]
+then
+$SMSBIN/smsinit $LOADL_STEP_ID 
+fi
 
 set -xa
 
-# #### 06/03/2005 #############################
-# SETUP RTOFS_GLO_FORECAST PROCESSING VARIABLES
-# #############################################
-export PATH=$PATH:.
-
-export PS4='$SECONDS + '
-####################################
-# obtain unique process id (pid) and make temp directory
-####################################
-export pid=$$
-export DATA=/ptmp/$LOGNAME/${runID}/${job}_${envir}
-rm -rf $DATA
-mkdir -p $DATA
-cd $DATA
-
-export cycle=t${cyc}z
-
-####################################
-# Specify NET and RUN Name and model
-####################################
+#######################################
+# Specify NET and RUN Name and model ID
+#######################################
 export NET=rtofs
 export RUN=rtofs
 export modID=glo
+
+#####################
+# SETUP RUN VARIABLES
+#####################
+if [ $RUN_ENVIR = dev ]
+then
+  export job=${job:-${RUN}_${modID}_forecast_${projID}}
+fi
+
+#####################
+# SETUP MPP VARIABLES
+#####################
+if [ $RUN_ENVIR = dev ]
+then
+  export NPROCS=${NPROCS:-`echo $LOADL_PROCESSOR_LIST | wc -w | awk '{ print $1}'` }
+  export NNODES=${NNODES:-`expr $NPROCS \/ 16`} # for p6 cluster
+fi
+
+# #################################
+# SETUP SHELL  PROCESSING VARIABLES
+# #################################
+export PATH=$PATH:.
+export PS4='$SECONDS + '
+date
+
+##########################################################
+ # obtain unique process id (pid) and make temp directories
+##########################################################
+export pid=$$
+if [ $RUN_ENVIR = dev ]
+then
+   tmpdir=${tmpdir:-/ptmp/$LOGNAME/tmpdir/${projID}}
+else
+   tmpdir=/tmpnwprd
+fi
+export DATA=$tmpdir/${job} ### .${pid}
+test -d $DATA && rm -rf $DATA
+mkdir -p $DATA
+cd $DATA
+
+####################################
+# File To Log Msgs
+####################################
+if [ $RUN_ENVIR = dev ]
+then
+  export jlogfile=/marine/noscrub/$LOGNAME/simulations/$projID/logs/jlogfile
+elif [ $RUN_ENVIR = prod ]
+then
+  export jlogfile=/com/logs/jlogfile
+else
+  export jlogfile=/com/logs/${envir}/jlogfile
+fi
+test -d `dirname $jlogfile` || mkdir -p $jlogfile
+
 
 ####################################
 # Determine Job Output Name on System
 ####################################
 export outid="LL$job"
-[ $envir != prod ]  && export outid="LL${job}_${envir}"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 
-####################################
-# File To Log Msgs
-####################################
-export jlogfile=/marine/noscrub/$LOGNAME/simulations/port/logs/jlogfile
+export cycle=t${cyc}z
 
-##################################
-# Set up the following variables
-##################################
-export SENDSMS=YES
-export SENDCOM=YES
-export SENDDBN=NO
+#####################################################
+# SAVEGES - Copy files from TMPDIR ($DATA) to $GESdir
+# SENDSMS - Flag events on SMS
+# SENDCOM - Copy files from TMPDIR ($DATA) to $COMOUT
+# SENDDBN - Issue DBNet client calls
+# RERUN   - Rerun fcst from beginning (default no)
+#####################################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-NO}
+export SENDSMS=${SENDSMS:-NO}
 
-export RESTART=NO
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMErtofs=$HOMEDIR
+if [ $RUN_ENVIR = dev ]
+then
+  export HOMErtofs=${HOMErtofs:-/marine/save/$LOGNAME/hycom_glo/projects/$projID}
+else
+  export HOMErtofs=/nw${envir}
+fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
@@ -76,21 +118,37 @@ export utilexec=/nwprod/util/exec
 #################################################################
 sh $utilscript/setup.sh
 
-##########################################
+###########################################################
 # Run setpdy and initialize PDY variables
-##########################################
+# For any retrospecitve run, set the PDY in the SMS script
+###########################################################
+export PDY=${PDY:-}
 sh $utilscript/setpdy.sh
 . PDY
 
-############################################
-# Define the directory for restart output
-############################################
-export GESdir=/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}/nwges/${RUN}.${PDY}
-
-if [ ! -d $GESdir ]
+##############################################
+# Define Input/Output/Restart directories
+##############################################
+if [ $RUN_ENVIR = dev ]
 then
-    mkdir -p $GESdir
+  export COMIN=${COMIN:-/marine/noscrub/$LOGNAME/simulations/${projID}/${NET}/${RUN}.${PDY}}
+  export COMINm1=${COMINm1:-/marine/noscrub/$LOGNAME/simulations/${projID}/${NET}/${RUN}.${PDYm1}}
+  export COMOUT=${COMOUT:-/marine/noscrub/$LOGNAME/simulations/${projID}/${NET}/${RUN}.${PDY}}
+  export GESdir=/marine/noscrub/$LOGNAME/simulations/${projID}/${NET}/nwges/${RUN}.${PDY}
+else
+  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
+  export COMINm1=/com/${NET}/${envir}/${RUN}.${PDYm1}
+  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
+  export GESdir=/nwges/${envir}/${RUN}.${PDY}
 fi
+mkdir -m 775 -p $COMOUT
+test -d $GESdir || mkdir -p $GESdir
+test -d $COMOUT || mkdir -p $COMOUT
+
+##################################################################
+# Run the config file to set up specific model variables if needed
+##################################################################
+. $PARMrtofs/${RUN}_${modID}_coarse_config
 
 ##############################################
 # Check for restart
@@ -103,34 +161,32 @@ else
     export RESTART=NO
 fi
 
-########################################
-# Control which model grid to use
-########################################
-####>> export gridsize=12
-####>> export lgrid=2
-####>> export gridlabel=A${gridsize}
-####>> export gridres=ncep1_${gridsize}
-####>> export KDM=32       # number of model layers
-
-##############################################
-# Define COM directories
-##############################################
-export COMIN=/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}/${RUN}.${PDY}
-export COMINm1=/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}/${RUN}.${PDYm1}
-export COMOUT=/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}/${RUN}.${PDY}
-export COMFLX=/marine/noscrub/$LOGNAME/simulations/${runID}/${NET}
-mkdir -m 775 -p $COMOUT
-
 env
-#############################################################
-# execute the script
-sh ${HOMErtofs}/scripts/exrtofs_glo_forecast.sh.sms
-#############################################################
 
+#################################################################
+#  Send a message to the jlogfile indication the start of the job
+#################################################################
+msh="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+####################
+# execute the script
+####################
+sh ${HOMErtofs}/scripts/exrtofs_glo_forecast.sh.sms
+
+#===================================================================
+
+cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.forecast.`basename $pgmout`
 
-##cd /tmpnwprd
+msg="JOB $hob HAS COMPLETTED NORMALLY."
+postmsg "$jlogfile" "$msg"
+
+cd /tmpnwprd
 
 date
 
-##$SMSBIN/smscomplete
+if [ $RUN_ENVIR != dev ]
+then
+SMSBIN/smscomplete
+fi

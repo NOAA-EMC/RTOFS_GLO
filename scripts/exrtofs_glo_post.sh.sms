@@ -25,7 +25,7 @@ export PS4='$SECONDS + '
 
 cd $DATA
 
-msg="rtofs_atl_post has begun on `hostname`"
+msg="RTOFS_GLO_POST JOB has begun on `hostname` at `date`"
 postmsg "$jlogfile" "$msg"
 
 #
@@ -40,6 +40,7 @@ do
   tplate=${RUN}_${modID}.t${cyc}z.${YYYY}_${DDD}_${HH}.archv
   cp -p $afile ${COMOUT}/${tplate}.a
   cp -p ${afile%.a}.b ${COMOUT}/${tplate}.b
+  cp -p ${afile%.a}.txt ${COMOUT}/${tplate}.txt
 done
 #
 # Copy restarts in the permanent location
@@ -60,3 +61,8 @@ do
   cp -p $rfile ${COMOUT}/${tplate}.b
   cp -p ${rfile%.b}.a ${COMOUT}/${tplate}.a
 done
+#################################################
+msg='THE RTOFS_GLO_POST JOB HAS ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################
