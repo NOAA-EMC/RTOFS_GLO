@@ -874,14 +874,7 @@ c ---   snsibl = sensible heat flux  (W/m^2) into atmos from ocean.
 c ---   surflx = thermal energy flux (W/m^2) into ocean
         evap   = slat*clh*wind*(0.97*qsatur(temp(i,j,1,n))-vpmx)
         snsibl = ssen*csh*wind* tdif
-c NCEP ilya dbgz 20080414 begin
-c       if     (mnproc.eq.1)  
-        if (abs(radfl).gt.1.e20)
-     &  write (lp,'(a,2i4,e13.6)') 
-     &    "ILYA: RADIATION FLUXES ONLY",i,j,radfl
         surflx(i,j) = radfl 
-c       surflx(i,j) = radfl - snsibl - evap
-c NCEP ilya dbgz 20080414 end
 c
 cdiag   if     (i.eq.itest.and.j.eq.jtest) then
 cdiag     write(lp,'(i9,2i5,a,3f8.5)')
