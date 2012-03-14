@@ -15,7 +15,7 @@ hindcast=NO # YES or NO
 testcast=NO # YES or NO
 
 # Set some run environment variables.
-export HOMErtofs=/glocean/save/$LOGNAME/hycom_glo/projects/RB-1.0.0
+export HOMErtofs=/glocean/save/$LOGNAME/hycom_glo/projects/REL-1.0.0
 export COMtmp=/ptmp/$LOGNAME/tmpdir/com.$$
 export projID=`basename $HOMErtofs`
 export cyc=00

@@ -1,5 +1,5 @@
 # @ shell=/bin/sh 
-# @ job_name = RB-1.0.0
+# @ job_name = REL-1.0.0
 # @ initialdir = /glocean/save/$(user)/hycom_glo/projects/$(job_name)/jobs
 # @ comment = /glocean/scrub/$(user)/simulations/$(job_name)/logs
 # @ group = devonprod
