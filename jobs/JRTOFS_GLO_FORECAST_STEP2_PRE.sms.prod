@@ -1,0 +1,226 @@
+#!/bin/sh
+
+export RUN_ENVIR=${RUN_ENVIR:-prod}
+
+if [ $RUN_ENVIR != dev ]
+then
+$SMSBIN/smsinit $LOADL_STEP_ID 
+fi
+
+set -xa
+
+#######################################
+# Specify NET and RUN Name and model ID
+#######################################
+export NET=rtofs
+export RUN=rtofs
+export modID=glo
+export RUN_MODE=forecast
+export RUN_STEP=step2
+
+#####################
+# SETUP RUN VARIABLES
+#####################
+if [ $RUN_ENVIR = dev ]
+then
+  export job=${job:-${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_pre_${projID}}
+fi
+
+#####################
+# SETUP MPP VARIABLES
+#####################
+if [ $RUN_ENVIR = dev ]
+then
+  export NPROCS=1
+  export NPROCS=${NPROCS:-`echo $LOADL_PROCESSOR_LIST | wc -w | awk '{ print $1}'` }
+  export NNODES=${NNODES:-`expr $NPROCS \/ 16`} # for p6 cluster
+fi
+
+# #################################
+# SETUP SHELL  PROCESSING VARIABLES
+# #################################
+export PATH=$PATH:.
+export PS4='$SECONDS + '
+date
+
+export mycyc='00'
+export cycle=t${mycyc}z
+
+##########################################################
+ # obtain unique process id (pid) and make temp directories
+##########################################################
+export pid=$$
+if [ $RUN_ENVIR = dev ]
+then
+   tmpdir=${tmpdir:-/ptmp/$LOGNAME/tmpdir/${projID}}
+else
+   tmpdir=/tmpnwprd
+fi
+if [ $RUN_ENVIR = dev ]
+then
+  export DATA=$tmpdir/${job} ### .${pid}
+else
+  export DATA=$tmpdir/${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_${mycyc}
+fi
+test -d $DATA && rm -rf $DATA
+mkdir -p $DATA
+cd $DATA
+
+####################################
+# File To Log Msgs
+####################################
+if [ $RUN_ENVIR = dev ]
+then
+  export jlogfile=$HOMEout/logs/jlogfile
+elif [ $RUN_ENVIR = prod ]
+then
+  export jlogfile=/com/logs/jlogfile
+else
+  export jlogfile=/com/logs/${envir}/jlogfile
+fi
+test -d `dirname $jlogfile` || mkdir -p $jlogfile
+
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+
+#####################################################
+# SAVEGES - Copy files from TMPDIR ($DATA) to $GESdir
+# SENDSMS - Flag events on SMS
+# SENDCOM - Copy files from TMPDIR ($DATA) to $COMOUT
+# SENDDBN - Issue DBNet client calls
+# RERUN   - Rerun fcst from beginning (default no)
+#####################################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDSMS=${SENDSMS:-YES}
+
+####################################
+# Specify Execution Areas
+####################################
+if [ $RUN_ENVIR = dev ]
+then
+  export HOMErtofs=${HOMErtofs:-/glocean/save/$LOGNAME/hycom_glo/projects/$projID}
+else
+  export HOMErtofs=/nw${envir}
+fi
+export EXECrtofs=${HOMErtofs}/exec
+export PARMrtofs=${HOMErtofs}/parm
+export FIXrtofs=${HOMErtofs}/fix
+export USHrtofs=${HOMErtofs}/ush
+
+#############################
+# Set up the UTILITIES
+##############################
+export utilscript=/nwprod/util/ush
+export utilexec=/nwprod/util/exec
+
+#################################################################
+# Run setup to initialize working directory and utility scripts
+#################################################################
+sh $utilscript/setup.sh
+
+###########################################################
+# Run setpdy and initialize PDY variables
+# For any retrospecitve run, set the PDY in the SMS script
+###########################################################
+export PDY=${PDY:-}
+sh $utilscript/setpdy.sh
+. PDY
+
+##############################################
+# Define Input/Output/Restart directories
+##############################################
+if [ $RUN_ENVIR = dev ]
+then
+  export COMIN=${COMIN:-${HOMEout}/${NET}/${RUN}.${PDY}}
+  export COMINm1=${COMINm1:-${HOMEout}/${NET}/${RUN}.${PDYm1}}
+  export COMOUT=${COMOUT:-${HOMEout}/${NET}/${RUN}.${PDY}}
+  export GESdir=${HOMEout}/${NET}/nwges/${RUN}.${PDY}
+  export GESdirm1=${HOMEout}/${NET}/nwges/${RUN}.${PDYm1}
+else
+  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
+  export COMINm1=/com/${NET}/${envir}/${RUN}.${PDYm1}
+  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
+  export GESdir=/nwges/${envir}/${RUN}.${PDY}
+  export GESdirm1=/nwges/${envir}/${RUN}.${PDYm1}
+fi
+mkdir -m 775 -p $COMOUT
+test -d $GESdir || mkdir -p $GESdir
+test -d $COMOUT || mkdir -p $COMOUT
+
+###################
+# Define model gird
+###################
+export inputgrid=navy_0.08
+export useslp=NO # YES or NO, use sea level pressure
+
+##################################################################
+# Run the config file to set up specific model variables if needed
+##################################################################
+. $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
+
+##############################################
+# Check for restart
+##############################################
+restart_f=${RUN}_${modID}.t${cyc}z.restart_f
+if [ -s $GESdir/${restart_f}*.a -a -s $GESdir/${restart_f}*.b ]
+then
+    export RESTART=YES
+else
+    export RESTART=NO
+fi
+
+env
+
+#################################
+# Set up forecast step parameters
+#################################
+stepnum=${RUN_STEP#step}
+cnum=1
+fcstdays_before_thisstep=0
+while [ ${cnum} -lt ${stepnum} ]
+do
+   eval daysadd="\$fcstdays_step$cnum"
+   fcstdays_before_thisstep=`expr \${fcstdays_before_thisstep} + ${daysadd}`
+   cnum=`expr ${cnum} + 1`
+done
+export startdate=`$utilexec/ndate \` expr \${fcstdays_before_thisstep} \* 24 \`  ${PDY}${mycyc} | cut -c1-8`
+
+eval fcstdays="\$fcstdays_step$stepnum"
+eval SAVE_RESTART="\$SAVE_RESTART_FORECAST_STEP$stepnum"
+eval CONTINUE_FORECAST="\$CONTINUE_FORECAST_STEP$stepnum"
+export fcstdays
+export stepnum
+
+#################################################################
+#  Send a message to the jlogfile indication the start of the job
+#################################################################
+msh="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+####################
+# execute the script
+####################
+sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}_pre.sh.sms
+
+#===================================================================
+
+cat $pgmout
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}_pre.`basename $pgmout`
+
+msg="JOB $hob HAS COMPLETTED NORMALLY."
+postmsg "$jlogfile" "$msg"
+
+cd /tmpnwprd
+
+date
+
+if [ $RUN_ENVIR != dev ]
+then
+$SMSBIN/smscomplete
+fi

@@ -1,0 +1,153 @@
+#!/bin/sh
+###############################################################################
+####  UNIX Script Documentation Block                                         #
+#                                                                             #
+# Script name:         exrtofs_glo_analysis.sh.sms                            #
+# Script description:                                                         #
+#                                                                             #
+# Author:        Ilya Rivin      Org: NP23         Date: 2010-07-30           #
+#                                                                             #
+# Abstract: This script generates the analysis fields                         #
+#           for the RTOFS_GLO Ocean model                                     #
+#                                                                             #
+# Sub-scripts called:                                                         #
+#                                                                             #
+# Script history log:                                                         #
+# 2010-07-30  Ilya Rivin                                                      #
+#                                                                             #
+###############################################################################
+set -xa
+
+export PS4='$SECONDS + '
+
+cd $DATA
+
+msg="RTOFS_GLO_ANALYSIS JOB has begun on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+# --------------------------------------------------------------------------- #
+# 0. date and time stuff
+
+  export analdays=${analdays:-2}
+  export enddate=${analysis_end:-$PDY}
+  export startdate=`$utilexec/ndate -\` expr $analdays \* 24 \`  ${enddate}'00' | cut -c1-8`
+  export inputgrid=${inputgrid:-navy_0.08}
+
+# --------------------------------------------------------------------------- #
+# 1. Get input files
+  ${USHrtofs}/${RUN}_runstaging.sh
+
+# --------------------------------------------------------------------------- #
+# 2. Get initial conditions (restart files)
+  test -f restart_in.a && rm -f restart_in.a
+  test -f restart_in.b && rm -f restart_in.b
+
+  LEAD=`expr $analdays \* -24`
+  RESTtplate=${RUN}_${modID}.t${mycyc}z.n${LEAD}.restart
+
+  if [ $RESTART = YES ]
+  then
+     anal_hour=`${utilexec}/nhour ${enddate}${mycyc} ${PDY}${mycyc}`
+     while [ $anal_hour -ge $LEAD ]
+     do       
+       if [ -s $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.b ]
+       then
+         # find most recent analysis restart
+         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.b restart_in.b
+         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.a restart_in.a
+         echo "Analysis is started from restart: $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.[ab]"
+
+       # replace limits file
+         sday=`sh $utilscript/date_normal2hycom.sh \` ${utilexec}/ndate +$anal_hour ${PDY}${mycyc} \` `
+         echo "  $sday $eday false false  " > limits
+         break
+
+       fi
+
+       anal_hour=`expr $anal_hour - 1`
+     done
+     if [ $anal_hour -lt $LEAD ]
+     then
+        $USHrtofs/${RUN}_abort.sh  "Missing Restart File" \
+          "ABNORMAL EXIT ANALYSIS: NO FILE for restart_in.[ab]" 2
+    fi 
+
+  else 
+    if [ -s ${COMIN}/${RESTtplate}.a ] && \
+       [ -s ${COMIN}/${RESTtplate}.b ]
+    then
+      ln -s -f ${COMIN}/${RESTtplate}.a restart_in.a
+      ln -s -f ${COMIN}/${RESTtplate}.b restart_in.b
+      echo "Analysis is started from restart: ${COMIN}/${RESTtplate}.[ab]"
+    else
+      $USHrtofs/${RUN}_abort.sh "Missing Restart File" \
+        "ABNORMAL EXIT ANALYSIS: NO FILE for restart_in.[ab]" 2
+    fi
+  fi
+
+  if [ -s restart_in.a -a -s restart_in.b ]
+  then
+    echo "Initial restart files copied"
+    basetime=1900123100
+    hdate=`awk '{  if (NR==2) { print $5 } }'  < restart_in.b | cut -d. -f1 `
+    dater=`$utilexec/ndate \` expr $hdate \* 24 \`  ${basetime}`
+    if [ ${dater} -ne ${startdate}${mycyc} ] 
+    then 
+      $USHrtofs/${RUN}_abort.sh  "RESTAERT DATES: expected=${startdate}${mycyc} actual=$dater" \
+        "ABNORMAL EXIT ANALYSIS: WRONG DATE in the restart file" 2
+    fi
+  else
+      $USHrtofs/${RUN}_abort.sh "Missing Restart File" \
+        "ABNORMAL EXIT ANALYSIS: FATAL ERROR--NO RESTART FILE" 911
+  fi
+
+# --------------------------------------------------------------------------- #
+# 2. Run analysis
+
+  ${USHrtofs}/${RUN}_submit.sh
+
+  ok="unknown"
+  test -s ${DATA}/summary_out && ok=`tail -1 ${DATA}/summary_out`
+  if [ "$ok" = "normal stop" ]; then
+    modelstatus=0
+  else
+    modelstatus=1
+  fi 
+  if [ $modelstatus = 0 ]
+  then
+      # Copy to /com initial restart file for forecast step
+      for rfile in ${DATA}/restart_out.b ${DATA}/restart_out1.b 
+      do
+        cdate=`${USHrtofs}/rtofs_date4restart.sh $rfile`
+        if [ $cdate -eq $PDY$mycyc ]
+        then          
+          YYYYMMDD=`echo $cdate | cut -c1-8`
+          YYYYDDD=`sh $utilscript/date2jday.sh $YYYYMMDD`
+          YYYY=`echo $YYYYDDD | cut -c1-4`
+          DDD=`echo $YYYYDDD | cut -c5-7`
+          HH=`echo $cdate | cut -c9-10`
+          RESTtplate=${RUN}_${modID}.t${mycyc}z.n${HH}.restart
+          cp -p $rfile ${COMOUT}/${RESTtplate}.b
+          cp -p ${rfile%.b}.a ${COMOUT}/${RESTtplate}.a
+        fi
+      done
+    echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.anal.log
+  else
+    $USHrtofs/${RUN}_abort.sh "Abnormal model exit from analyis" \
+       "ABNORMAL EXIT ANALYSIS: problem with analysis model run" -1
+  fi
+
+# --------------------------------------------------------------------------- #
+# 3. Copy results in the archive
+
+  if [ $SENDCOM = 'YES' ]
+  then
+    ${USHrtofs}/${RUN}_tmp2com.sh
+  fi
+
+#################################################
+msg="THE RTOFS_GLO_ANALYSIS JOB HAS ENDED NORMALLY on `hostname` at `date`."
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################
+

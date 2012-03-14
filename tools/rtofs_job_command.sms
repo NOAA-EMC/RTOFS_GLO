@@ -1,0 +1,258 @@
+# @ shell=/bin/sh 
+# @ job_name = RB-1.0.0
+# @ initialdir = /glocean/save/$(user)/hycom_glo/projects/$(job_name)/jobs
+# @ comment = /glocean/scrub/$(user)/simulations/$(job_name)/logs
+# @ group = devonprod
+# @ account_no = RTO-T2O
+# @ notification = never
+# @ environment = MP_EUILIB=us ; \
+   $MP_SHARED_MEMORY=yes ; \
+   $MEMORY_AFFINITY=MCM ; \
+   $PATH ; \
+   $GETGES_COM ; \
+   $projID ; \
+   $cyc ; \
+   $RUN_ENVIR ; \
+   $envir ; \
+   $PDY ; \
+   $analdays ; \
+   $tmpdir ; \
+   $HOMErtofs ; \
+   $HOMEout ; \
+   $RUNPOST
+#
+# 1. Analysis preparation step.
+# 
+# @ step_name = jrtofs_analysis_pre
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=serial
+# @ class = devhigh
+##- # @ total_tasks = 377
+##- # @ node = 12
+# @ node_usage=not_shared
+# @ wall_clock_limit = 01:00:00
+##- # @ task_affinity=cpu(1)
+# @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+##- # @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_ANALYSIS_PRE.sms.para
+# @ queue
+#
+# 2. Analysis step.
+# 
+# @ dependency = ( jrtofs_analysis_pre == 0 )
+# @ step_name = jrtofs_analysis
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+#>> # @ total_tasks = 1001
+#>> # @ node = 32
+# @ total_tasks = 2034
+# @ node = 64
+# @ node_usage=not_shared
+# @ wall_clock_limit = 01:15:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_ANALYSIS.sms.prod
+# @ queue
+#
+# 3. Analysis post-processing step.
+# 
+# @ dependency = ( jrtofs_analysis == 0 )
+# @ step_name = jrtofs_analysis_post
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+# @ total_tasks = 4
+# @ node = 1
+# @ node_usage=not_shared
+# @ wall_clock_limit = 05:55:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_ANALYSIS_POST.sms.prod
+# @ queue
+#
+# 4. Forecast preparation step 1.
+# 
+# @ dependency = ( jrtofs_analysis == 0 )
+# @ step_name = jrtofs_forecast_step1_pre
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=serial
+# @ class = devhigh
+##- # @ total_tasks = 377
+##- # @ node = 12
+# @ node_usage=not_shared
+# @ wall_clock_limit = 00:40:00
+##- # @ task_affinity=cpu(1)
+# @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+##- # @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP1_PRE.sms.prod
+# @ queue
+#
+# 5. Forecast step 1.
+# 
+# @ dependency = ( jrtofs_forecast_step1_pre == 0 )
+# @ step_name = jrtofs_forecast_step1
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+#>> # @ total_tasks = 1001
+#>> # @ node = 32
+# @ total_tasks = 2034
+# @ node = 64
+# @ node_usage=not_shared
+# @ wall_clock_limit = 02:00:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP1.sms.prod
+# @ queue
+#
+# 6. Forecast post-processing step 1.
+# 
+# @ dependency = ( jrtofs_forecast_step1 == 0 )
+# @ step_name = jrtofs_forecast_step1_post
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+# @ total_tasks = 4
+# @ node = 1
+# @ node_usage=not_shared
+# @ wall_clock_limit = 05:55:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP1_POST.sms.prod
+# @ queue
+#
+# 7. Forecast preparation step 2.
+# 
+# @ dependency = ( jrtofs_forecast_step1 == 0 )
+# @ step_name = jrtofs_forecast_step2_pre
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=serial
+# @ class = devhigh
+##- # @ total_tasks = 377
+##- # @ node = 12
+# @ node_usage=not_shared
+# @ wall_clock_limit = 00:40:00
+##- # @ task_affinity=cpu(1)
+# @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+##- # @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP2_PRE.sms.prod
+# @ queue
+#
+# 8. Forecast step 2
+# 
+# @ dependency = ( jrtofs_forecast_step2_pre == 0 )
+# @ step_name = jrtofs_forecast_step2
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+#>> # @ total_tasks = 1001
+#>> # @ node = 32
+# @ total_tasks = 2034
+# @ node = 64
+# @ node_usage=not_shared
+# @ wall_clock_limit = 02:00:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP2.sms.prod
+# @ queue
+#
+# 9. Forecast post-processing step 2.
+# 
+# @ dependency = ( jrtofs_forecast_step2 == 0 )
+# @ step_name = jrtofs_forecast_step2_post
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+# @ total_tasks = 4
+# @ node = 1
+# @ node_usage=not_shared
+# @ wall_clock_limit = 05:55:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP2_POST.sms.prod
+# @ queue
+#
+# 10. Forecast preparation step 3.
+# 
+# @ dependency = ( jrtofs_forecast_step2 == 0 )
+# @ step_name = jrtofs_forecast_step3_pre
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=serial
+# @ class = devhigh
+##- # @ total_tasks = 377
+##- # @ node = 12
+# @ node_usage=not_shared
+# @ wall_clock_limit = 00:30:00
+##- # @ task_affinity=cpu(1)
+# @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+##- # @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP3_PRE.sms.prod
+# @ queue
+#
+# 11. Forecast step 3
+# 
+# @ dependency = ( jrtofs_forecast_step3_pre == 0 )
+# @ step_name = jrtofs_forecast_step3
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+#>> # @ total_tasks = 1001
+#>> # @ node = 32
+# @ total_tasks = 2034
+# @ node = 64
+# @ node_usage=not_shared
+# @ wall_clock_limit = 02:00:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP3.sms.prod
+# @ queue
+#
+# 12. Forecast post-processing step 3.
+# 
+# @ dependency = ( jrtofs_forecast_step3 == 0 )
+# @ step_name = jrtofs_forecast_step3_post
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+# @ total_tasks = 4
+# @ node = 1
+# @ node_usage=not_shared
+# @ wall_clock_limit = 05:55:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(110Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP3_POST.sms.prod
+# @ queue
+

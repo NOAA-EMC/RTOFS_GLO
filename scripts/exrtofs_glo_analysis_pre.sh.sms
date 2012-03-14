@@ -1,0 +1,96 @@
+#!/bin/sh
+###############################################################################
+####  UNIX Script Documentation Block                                         #
+#                                                                             #
+# Script name:         exrtofs_glo_analysis_pre.sh.sms                        #
+# Script description:                                                         #
+#                                                                             #
+# Author:        Ilya Rivin      Org: NP23         Date: 2010-07-30           #
+#                                                                             #
+# Abstract: This script generates input fields for                            #
+#           for the RTOFS_GLO Ocean model analysis.                           #
+#                                                                             #
+# Sub-scripts called:                                                         #
+#                                                                             #
+# Script history log:                                                         #
+# 2010-07-30  Ilya Rivin                                                      #
+#                                                                             #
+###############################################################################
+set -xa
+
+export PS4='$SECONDS + '
+
+cd $DATA
+
+msg="RTOFS_GLO_ANALYSIS_PRE JOB has begun on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+# --------------------------------------------------------------------------- #
+# 0. date and time stuff
+
+  export analdays=${analdays:-2}
+  export enddate=${analysis_end:-$PDY}
+  export startdate=`$utilexec/ndate -\` expr $analdays \* 24 \`  ${enddate}'00' | cut -c1-8`
+  export inputgrid=${inputgrid:-navy_0.08}
+
+
+# --------------------------------------------------------------------------- #
+# 1  Set up the start time and end time for the analysis
+  sday=`sh $utilscript/date_normal2hycom.sh $startdate$mycyc`
+  eday=`sh $utilscript/date_normal2hycom.sh $enddate$mycyc`
+  echo "  $sday $eday false false  " > limits
+
+# 2. Copy the necessary input files for the model analysis
+
+# 2.g Get initial conditions (restart files)
+  test -f restart_in.a && rm -f restart_in.a
+  test -f restart_in.b && rm -f restart_in.b
+  test -f restart_b_choosen && rm -f restart_b_choosen  
+    LEAD=`expr $analdays \* -24`
+    RESTtplate=${RUN}_${modID}.t${mycyc}z.n${LEAD}.restart
+    NAVYrestplate=restart_r${startdate}'00'
+    NAVYrest=${NAVYIN}/${startdate}/wgrdbul/${NAVYrestplate}
+    if [ -s ${NAVYrest}.a ] && [ -s ${NAVYrest}.b ]
+    then
+      # dbgz NOTE: add a file size check
+      #size_a=`ls -l ${NAVYrest}.a.gz | awk '{ print $5 }'`
+      #size_b=`ls -l ${NAVYrest}.b.gz | awk '{ print $5 }'`
+      ln -s -f ${NAVYrest}.a ${DATA}/${RESTtplate}.a
+      ln -s -f ${NAVYrest}.b ${DATA}/${RESTtplate}.b
+      chmod u+rw ${DATA}/${RESTtplate}.[ab]
+      echo "Restart files ${NAVYrest}.[ab] are found."
+    else
+      if [ -s ${NAVYrest}.a.gz ] && [ -s ${NAVYrest}.b.gz ]
+      then
+         echo "Restart files ${NAVYrest}.[ab].gz are found."
+         gunzip -c ${NAVYrest}.b.gz > $DATA/${RESTtplate}.b
+        if [ $? -eq 0 ]
+        then
+          gunzip -c ${NAVYrest}.a.gz > $DATA/${RESTtplate}.a
+        fi
+      fi
+    fi  
+    $USHrtofs/${RUN}_choose_restart.sh  $startdate$mycyc
+    err=$?
+    if [ $err -lt 0 ] || [ $err -eq 22 ] || [ ! -s restart_b_choosen ] 
+    then
+       $USHrtofs/${RUN}_abort.sh "Missing Restart File" \
+        "ABNORMAL EXIT ANALYSIS_PRE: NO FILE for restart_in.[ab]" 2
+    else
+      restb=`cat restart_b_choosen`
+      echo "Restat file to be used is ${restb%.b}.[ab]"
+      cp -p $restb ${COMOUT}/${RESTtplate}.b
+      cp -p ${restb%.b}.a ${COMOUT}/${RESTtplate}.a
+      chmod u+rw ${COMOUT}/${RESTtplate}.[ab]
+      
+    fi
+# --------------------------------------------------------------------------- #
+# 3. Do staging
+  $USHrtofs/${RUN}_prestaging.sh 
+
+#################################################
+msg="THE RTOFS_GLO_ANALYSIS_PRE JOB HAS ENDED NORMALLY on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################
+

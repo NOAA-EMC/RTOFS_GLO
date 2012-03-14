@@ -1,0 +1,8 @@
+&intp_pars
+dbgn = 3,         ! debugging =0 - no dbg; =1,2,3 - add output
+avg3 = 1,	  ! if avg3 = 1, then averaged fluxes are converted to instantaneous fields
+wslocal = 1,      ! if  wslocal = 1, then wind stress are computed from wind velocities
+global=.true.,    ! true for global atm grid, false otherwise
+serial=.true.     ! true if job type is serial, false if job type is parallel
+hr3_avg = .true.  ! true if using two clock approach for time averaging (NOT READY FOR GLOBAL).
+/
