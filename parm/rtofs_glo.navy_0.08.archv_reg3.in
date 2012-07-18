@@ -13,40 +13,17 @@ NetCDF
  712    'idmp  ' = i-extent of plotted subregion (<=idm; 0 implies idm)
  850    'jdmp  ' = j-extent of plotted subregion (<=jdm; 0 implies jdm)
    1    'itype ' = interpolation type (0=sample,1=linear)
-  33    'kz    ' = number of depths to sample
+  10    'kz    ' = number of depths to sample
    0.0  'z     ' = sample depth  1
-  10.0  'z     ' = sample depth  2
-  20.0  'z     ' = sample depth  3
-  30.0  'z     ' = sample depth  4
-  50.0  'z     ' = sample depth  5
-  75.0  'z     ' = sample depth  6
  100.0  'z     ' = sample depth  7
- 125.0  'z     ' = sample depth  8
- 150.0  'z     ' = sample depth  9
  200.0  'z     ' = sample depth 10
- 250.0  'z     ' = sample depth 11
- 300.0  'z     ' = sample depth 12
  400.0  'z     ' = sample depth 13
- 500.0  'z     ' = sample depth 14
- 600.0  'z     ' = sample depth 15
  700.0  'z     ' = sample depth 16
- 800.0  'z     ' = sample depth 17
- 900.0  'z     ' = sample depth 18
 1000.0  'z     ' = sample depth 19
-1100.0  'z     ' = sample depth 20
-1200.0  'z     ' = sample depth 21
-1300.0  'z     ' = sample depth 22
-1400.0  'z     ' = sample depth 23
-1500.0  'z     ' = sample depth 24
-1750.0  'z     ' = sample depth 25
 2000.0  'z     ' = sample depth 26
-2500.0  'z     ' = sample depth 27
 3000.0  'z     ' = sample depth 28
-3500.0  'z     ' = sample depth 29
 4000.0  'z     ' = sample depth 30
-4500.0  'z     ' = sample depth 31
 5000.0  'z     ' = sample depth 32
-5500.0  'z     ' = sample depth 33
    00    'botio ' = bathymetry  I/O unit (0 no I/O)
    00    'mltio ' = mix.l.thk.  I/O unit (0 no I/O)
     0.0  'tempml' = temperature jump across mixed-layer (degC,  0 no I/O)
