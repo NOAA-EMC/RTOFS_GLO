@@ -1,5 +1,5 @@
 # @ shell=/bin/sh 
-# @ job_name = REL-1.0.0
+# @ job_name = REL-1.0.1
 # @ initialdir = /glocean/save/$(user)/hycom_glo/projects/$(job_name)/jobs
 # @ comment = /glocean/scrub/$(user)/simulations/$(job_name)/logs
 # @ group = devonprod
@@ -79,7 +79,26 @@
 # @ executable = $(initialdir)/JRTOFS_GLO_ANALYSIS_POST.sms.prod
 # @ queue
 #
-# 4. Forecast preparation step 1.
+# 4. Analysis regional post-processing step.
+# 
+# @ dependency = ( jrtofs_analysis == 0 )
+# @ step_name = jrtofs_analysis_reg_post
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+# @ total_tasks = 4
+# @ node = 1
+# @ node_usage=not_shared
+# @ wall_clock_limit = 00:40:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(25Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_ANALYSIS_REG_POST.sms.prod
+# @ queue
+#
+# 5. Forecast preparation step 1.
 # 
 # @ dependency = ( jrtofs_analysis == 0 )
 # @ step_name = jrtofs_forecast_step1_pre
@@ -98,7 +117,7 @@
 # @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP1_PRE.sms.prod
 # @ queue
 #
-# 5. Forecast step 1.
+# 6. Forecast step 1.
 # 
 # @ dependency = ( jrtofs_forecast_step1_pre == 0 )
 # @ step_name = jrtofs_forecast_step1
@@ -119,7 +138,7 @@
 # @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP1.sms.prod
 # @ queue
 #
-# 6. Forecast post-processing step 1.
+# 7. Forecast post-processing step 1.
 # 
 # @ dependency = ( jrtofs_forecast_step1 == 0 )
 # @ step_name = jrtofs_forecast_step1_post
@@ -138,7 +157,26 @@
 # @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP1_POST.sms.prod
 # @ queue
 #
-# 7. Forecast preparation step 2.
+# 8. Forecast regional post-processing step 1.
+# 
+# @ dependency = ( jrtofs_forecast_step1 == 0 )
+# @ step_name = jrtofs_forecast_step1_reg_post
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+# @ total_tasks = 4
+# @ node = 1
+# @ node_usage=not_shared
+# @ wall_clock_limit = 00:40:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(25Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP1_REG_POST.sms.prod
+# @ queue
+#
+# 9. Forecast preparation step 2.
 # 
 # @ dependency = ( jrtofs_forecast_step1 == 0 )
 # @ step_name = jrtofs_forecast_step2_pre
@@ -157,7 +195,7 @@
 # @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP2_PRE.sms.prod
 # @ queue
 #
-# 8. Forecast step 2
+# 10. Forecast step 2
 # 
 # @ dependency = ( jrtofs_forecast_step2_pre == 0 )
 # @ step_name = jrtofs_forecast_step2
@@ -178,7 +216,7 @@
 # @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP2.sms.prod
 # @ queue
 #
-# 9. Forecast post-processing step 2.
+# 11. Forecast post-processing step 2.
 # 
 # @ dependency = ( jrtofs_forecast_step2 == 0 )
 # @ step_name = jrtofs_forecast_step2_post
@@ -197,7 +235,26 @@
 # @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP2_POST.sms.prod
 # @ queue
 #
-# 10. Forecast preparation step 3.
+# 12. Forecast regional post-processing step 2.
+# 
+# @ dependency = ( jrtofs_forecast_step2 == 0 )
+# @ step_name = jrtofs_forecast_step2_reg_post
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+# @ total_tasks = 4
+# @ node = 1
+# @ node_usage=not_shared
+# @ wall_clock_limit = 00:40:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(25Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP2_REG_POST.sms.prod
+# @ queue
+#
+# 13. Forecast preparation step 3.
 # 
 # @ dependency = ( jrtofs_forecast_step2 == 0 )
 # @ step_name = jrtofs_forecast_step3_pre
@@ -216,7 +273,7 @@
 # @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP3_PRE.sms.prod
 # @ queue
 #
-# 11. Forecast step 3
+# 14. Forecast step 3
 # 
 # @ dependency = ( jrtofs_forecast_step3_pre == 0 )
 # @ step_name = jrtofs_forecast_step3
@@ -237,7 +294,7 @@
 # @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP3.sms.prod
 # @ queue
 #
-# 12. Forecast post-processing step 3.
+# 15. Forecast post-processing step 3.
 # 
 # @ dependency = ( jrtofs_forecast_step3 == 0 )
 # @ step_name = jrtofs_forecast_step3_post
@@ -254,5 +311,24 @@
 # @ node_resources=ConsumableMemory(110Gb)
 # @ network.MPI=csss,shared,us
 # @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP3_POST.sms.prod
+# @ queue
+#
+# 16. Forecast regional post-processing step 3.
+# 
+# @ dependency = ( jrtofs_forecast_step3 == 0 )
+# @ step_name = jrtofs_forecast_step3_reg_post
+# @ output = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ error = $(comment)/$(step_name).$(jobid).$(stepid)
+# @ job_type=parallel
+# @ class = devhigh
+# @ total_tasks = 4
+# @ node = 1
+# @ node_usage=not_shared
+# @ wall_clock_limit = 00:40:00
+# @ task_affinity=cpu(1)
+### @ task_affinity=core(1)
+# @ node_resources=ConsumableMemory(25Gb)
+# @ network.MPI=csss,shared,us
+# @ executable = $(initialdir)/JRTOFS_GLO_FORECAST_STEP3_REG_POST.sms.prod
 # @ queue
 
