@@ -223,7 +223,7 @@ do
   fhr=`expr $fhr + $intvl_6hrly` 
 done
 
-##-- if [ $procstatus = 0 ]
+ if [ $procstatus = 0 ]
 ##-- then
 ##--   if [ $running_realtime = 'YES' ]
 ##--   then
