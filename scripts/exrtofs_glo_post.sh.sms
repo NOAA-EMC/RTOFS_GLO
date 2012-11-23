@@ -113,6 +113,7 @@ if [ ${RUN_MODE} = 'analysis' ]
 then
   fhr=00
   export mode=n
+  analhrs=`expr $analdays \* 24` 
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
@@ -151,10 +152,12 @@ do
   fi
   if [ ${RUN_MODE} = 'analysis' ]
   then
+    typeset -Z2 fhr3
+    fhr3=`expr $analhrs - $fhr2`
     if [ $fhr -eq $ENDHOUR ]; then
        arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}00.archv
     else
-       arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}-${fhr2}.archv
+       arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}-${fhr3}.archv
     fi
   fi
   #*********************************

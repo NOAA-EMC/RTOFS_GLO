@@ -8,6 +8,8 @@ $SMSBIN/smsinit $LOADL_STEP_ID
 fi
 
 set -xa
+export MP_IOAGENT_CNT=all
+export MP_IO_BUFFER_SIZE=8M
 
 #######################################
 # Specify NET and RUN Name and model ID

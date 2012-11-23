@@ -52,15 +52,6 @@ test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
 
-##############################################
-# temporary analysis and forecast directories
-##############################################
-export ANAL_DATA=$tmpdir/${RUN}_${modID}_analysis_${mycyc} ## .${pid}
-#SEC inconsistent with anal, projID undefined export ANAL_DATA=$tmpdir/${RUN}_${modID}_analysis_${projID} ## .${pid}
-export FCST_DATA1=$tmpdir/${RUN}_${modID}_forecast_step1_${mycyc} ## .${pid}
-export FCST_DATA2=$tmpdir/${RUN}_${modID}_forecast_step2_${mycyc} ## .${pid}
-#SEC inconsistent with forecast, projID undefined export FCST_DATA=$tmpdir/${RUN}_${modID}_forecast_${projID} ## .${pid}
-
 ####################################
 # File To Log Msgs
 ####################################
@@ -93,7 +84,7 @@ export cycle=t${cyc}z
 # RERUN   - Rerun fcst from beginning (default no)
 #####################################################
 export SENDCOM=${SENDCOM:-YES}
-export SENDDBN=${SENDDBN:-YES}
+export SENDDBN=${SENDDBN:-NO}
 export SENDSMS=${SENDSMS:-YES}
 
 ####################################
@@ -146,14 +137,11 @@ if [ $RUN_ENVIR = dev ]
 then
   export COMIN=${COMIN:-${HOMEout}/${NET}/${RUN}.${PDY}}
   export COMOUT=${COMOUT:-${HOMEout}/${NET}/${RUN}.${PDY}}
-  export GESdir=${HOMEout}/${NET}/nwges/${RUN}.${PDY}
 else
   export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
   export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
-  export GESdir=/nwges/${envir}/${RUN}.${PDY}
 fi
 mkdir -m 775 -p $COMOUT
-test -d $GESdir || mkdir -p $GESdir
 test -d $COMOUT || mkdir -p $COMOUT
 
 ################################################################
@@ -175,10 +163,7 @@ postmsg "$jlogfile" "$msg"
 
 
 cd $tmpdir
-### test -d ${ANAL_DATA} && rm -rf ${ANAL_DATA} 
-### test -d ${FCST_DATA1} && rm -rf ${FCST_DATA1} 
-### test -d ${FCST_DATA2} && rm -rf ${FCST_DATA2} 
-### rm -rf $DATA
+rm -rf $DATA
 
 date
 

@@ -119,7 +119,7 @@ do
 
   for fn in $PARM.nowcast $PARM.day.1 $PARM.day.2 $PARM.day.3 $PARM.day.4
   do
-    hpmcount $EXEComb/rtofs_avg $fn avg.$fn >> $pgmout 2>> errfile
+    $EXEComb/rtofs_avg $fn avg.$fn >> $pgmout 2>> errfile
     export err=$?; err_chk
     echo $err
   done
