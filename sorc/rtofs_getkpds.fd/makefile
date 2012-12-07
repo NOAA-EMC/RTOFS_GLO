@@ -1,4 +1,4 @@
-SHELL=/usr/bin/ksh
+##SHELL=/usr/bin/ksh
 #
 # This makefile was produced by /usr/bin/fmgen at 04:12:32 PM on 05/01/95
 # If it is invoked by the command line
@@ -42,10 +42,10 @@ OBJS=	${SRCS:.f90=.o}
 # CMD		Name of the executable
 # PROFLIB	Library needed for profiling
 # 
-CF =		ncepxlf95
+CF =		ifort
 
 INC   = 
-LIBS  = -L/nwprod/lib -lw3_4 -lbacio_4 
+LIBS  = -L/nwprod/lib -lw3nco_4 -lbacio_4
 CMD  =         rtofs_getkpds
 PROFLIB =	-lprof
 
@@ -53,7 +53,7 @@ PROFLIB =	-lprof
 # To compile with flowtracing turned on, use the second line
 # To compile giving profile additonal information, use the third line
 # WARNING:  SIMULTANEOUSLY PROFILING AND FLOWTRACING IS NOT RECOMMENDED 
-FFLAGS = -qsuffix=f=f90:cpp=F90 -qfree=f90 -O3 
+FFLAGS = -free -O3 
 LDFLAGS = -O3 
 
 # Lines from here on down should not need to be changed.  They are the

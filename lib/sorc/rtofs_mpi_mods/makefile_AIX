@@ -11,40 +11,23 @@ MODSER=../../incmod/rtofs_serial_mods_4
 
 #--------------------------------------
 # The following was used for XLF on AIX
-FCser=ifort
-FCmpi=mpfort
-###CPP=/usr/bin/cpp -P
-CPPFLAGSser  = -DREAL4 -DSERIAL_IO -DTIMER -DARCTIC
-CPPFLAGSmpi  =-DAIX -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
-#  echo "here0 $@"
-##if [ $@ = "ser" ] ;\
-##then \
-##  echo "here1 $@"
-##  FC=FCser ;\
-##  CPPFLAGS=CPPFLAGSser ;\
-##else \
-##  echo "here2 $@"
-##  FC=FCmpi ;\
-##  CPPFLAGS=CPPFLAGSmpi ;\
-##fi
-#--- FC=$(FCmpi) 
-#--- CPPFLAGS=$(CPPFLAGSmpi)
-#--- FFLAGSADD=-integer-size 32 -real-size 64
-FC=$(FCser) 
-CPPFLAGS=$(CPPFLAGSser)
+FC=ncepxlf95
+CPP=/usr/lib/cpp -P
+CPPFLAGS  =DAIX -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
 FFLAGSADD= 
-FFLAGSSER= -fixed -fp-model strict # -integer-size 32 -real-size 64  
+FFLAGSSER= -qfixed -qstrict -qspillsize=32000 -qwarn64 \
+        -qflttrap=overflow:zerodivide:invalid:enable:imprecise -qsigtrap
 FFLAGS=$(FFLAGSSER) $(FFLAGSADD)
 CFLAGS= 
-ARFLAGS= -ruv
-LDFLAGS= $(FFLAGS) 
+ARFLAGS= -X64 -q -v
+LDFLAGS= $(FFLAGS) -b64
 
-RM            = /bin/rm -f
+RM            = /usr/bin/rm -f
 TESTD         = /usr/bin/test -d
 TESTF         = /usr/bin/test -f
-MV            = /bin/mv -f
-CP            = /bin/cp -p
-MKDIR         = /bin/mkdir -p
+MV            = /usr/bin/mv -f
+CP            = /usr/bin/cp -p
+MKDIR         = /usr/bin/mkdir -p
 #
 # rules.
 #
@@ -57,10 +40,9 @@ MKDIR         = /bin/mkdir -p
 	$(FC)  $(FCFFLAGS) -c $*.f
 
 .F.o:
-	#$(RM) $<.f
-	#$(CPP) $(CPPFLAGS) $< | sed -e '/^ *$$/d' > $<.f
-	#$(FC) $(FFLAGS) -c $<.f
-	$(FC) $(CPPFLAGS) $(FFLAGS) -c $*.F
+	$(RM) $<.f
+	$(CPP) $(CPPFLAGS) $< | sed -e '/^ *$$/d' > $<.f
+	$(FC) $(FFLAGS) -c $<.f
 
 .f.a:	$(FC) -c $(FFLAGS) $<
 	ar $(ARFLAGS) $@ $*.o
@@ -68,13 +50,10 @@ MKDIR         = /bin/mkdir -p
 mpi:  cleanmpi dimension_MPI $(LIBMPI)( mod_dimensions.o mod_xc.o mod_za.o wtime.o )
 	$(TESTD) $(MODMPI) || $(MKDIR) $(MODMPI) ; \
 	$(MV) mod_dimensions.mod mod_xc.mod mod_za.mod $(MODMPI)
-	#$(FCmpi) $(CPPFLAGSmpi) $(FFLAGS) -c $*.F
 
 ser:  cleanser dimension_SER $(LIBSER)( mod_dimensions.o mod_xc.o mod_za.o wtime.o )
 	$(TESTD) $(MODSER) || $(MKDIR) $(MODSER) ; \
 	$(MV) mod_dimensions.mod mod_xc.mod mod_za.mod $(MODSER)
-	echo " echoing $@"
-	#$(FCser) $(CPPFLAGSser) $(FFLAGS) -c $*.F
 
 dimension_MPI: dimensions_0.08_mpi.h dimensions_0.08_serial.h
 	$(CP) dimensions_0.08_mpi.h dimensions.h
@@ -92,7 +71,7 @@ cleanall:
 	-$(RM) *.F.f *.mod *.o $(LIBSER) $(LIBMPI) core $(MODMPI)/*.mod $(MODSER)/*.mod dimensions.h
 
 install: cleanall 
-	make mpi FFLAGSADD="-integer-size 32 -real-size 64"
+	make mpi FFLAGSADD="-qrealsize=8 -qintsize=4"
 	make ser 
 	$(RM) dimensions.h
 

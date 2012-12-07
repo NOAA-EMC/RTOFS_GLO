@@ -30,8 +30,8 @@ PROGRAM getkgds
   EXTERNAL getgi,getgb1s
   !
   ! write(*,'(/a/)') '*************** START program getkgds ********************'
-  CALL getenv('GRBFILE',grbfile)
-  CALL getenv('IDXFILE',idxfile)
+  CALL getenv('GRBFILE',value=grbfile)
+  CALL getenv('IDXFILE',value=idxfile)
   !
   CALL baopenr(lugb,TRIM(ADJUSTL(grbfile)),ierr)
   IF(ierr.NE.0) THEN
