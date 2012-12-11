@@ -27,16 +27,17 @@
 # LDFLAGS:    Loader flags.
 # EXTRALIBS:  Extra local libraries (if any).
 #
-FC            = ifort
-FCFFLAGS      = -fixed $(NETCDF_FFLAGS)
+FC            = ncepxlf95
+FCFFLAGS      = -g  -qfixed -O3 -qcache=auto -qspillsize=32000   \
+               -qflttrap=overflow:zerodivide:invalid:enable:imprecise -qsigtrap
 CC            = cc
 CCFLAGS       =
-CPP           = /usr/bin/cpp 
-CPPFLAGS      = -C -P -traditional-cpp -DLINUX -DREAL4
+CPP           = /usr/lib/cpp -P
+CPPFLAGS      = -DAIX -DREAL4
 LD            = $(FC)
-LDFLAGS       = 
+LDFLAGS       = $(FCFFLAGS) -bloadmap:out
 LIBRARY       = -L/nwprod/lib
-EXTRALIBS     = -lw3nco_4 -lbacio_4 $(NETCDF_LDFLAGS)
+EXTRALIBS     = -lw3_4 -lbacio_4
 
 #
 # --- generic make definitions
@@ -115,9 +116,9 @@ ARCHV_SRC = 	hycomarchv.f micomarchv.f \
                 archv2data2d.f archv2data2t.f archv2data3z.f archv2datasf.f archv2datasfl.f archv2restart.f putdat.f
 
 #LIBN     = ${LIBRARY} /nwprod/lib/libnetcdf.a ${EXTRALIBS}
-LIBN     = ${LIBRARY} /usrx/local/netcdf-3.6.3/lib/libnetcdf.a ${EXTRALIBS}
-INCLUDE  = /usrx/local/netcdf-3.6.3/include
-LN       =/bin/ln
+LIBN     = ${LIBRARY} /usrx/local/netcdf.3.5.0/lib/libnetcdf.a ${EXTRALIBS}
+INCLUDE  = /usrx/local/netcdf.3.5.0/include
+LN       = /usr/bin/ln
 
 #
 # --- executables.
@@ -147,7 +148,7 @@ rtofs_archv2datasf:       $(MODB) archv2datasf.o  $(DATAZ_OBJ)
 rtofs_archv2datasfl:      $(MODB) archv2datasfl.o $(DATAZ_OBJ)
 	$(LD) $(LDFLAGS) -o rtofs_archv2datasfl archv2datasfl.o $(MODB) $(DATAZ_OBJ)
 
-rtofs_archv2ncdf2d:  $(NETCDF_STUFF)	$(MODB) archv2data2d.o  $(NCDFH_OBJ)
+rtofs_archv2ncdf2d:  NETCDF_STUFF	$(MODB) archv2data2d.o  $(NCDFH_OBJ)
 	$(LD) $(LDFLAGS) -o rtofs_archv2ncdf2d  archv2data2d.o  $(MODB) $(NCDFH_OBJ) $(LIBN)
 
 rtofs_archm2ncdf2d:       $(MODB) archm2data2d.o  $(NCDFH_OBJ)

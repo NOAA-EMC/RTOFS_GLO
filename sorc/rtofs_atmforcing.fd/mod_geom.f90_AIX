@@ -3,7 +3,7 @@ MODULE mod_geom
   USE mod_gribio, ONLY: rdgrib
   USE mod_flags
   PRIVATE
-  ! IMPLICIT NONE
+  IMPLICIT NONE
   PUBLIC hycom_global_tripolar, atm_gaussian,rd_hycom_grid_params,mask_atm &
        ,horiz_intp,horiz_intp_,global_extend !!$$ ,extend_fld
   !
