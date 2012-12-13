@@ -61,7 +61,7 @@ do
   fi
 done
 test -s $rlistYMDH || exit 22
-sort -nb +1 $rlistYMDH | cut -d' ' -f1 > ${rlistYMDH}sorted
+sort -nb -k2 $rlistYMDH | cut -d' ' -f1 > ${rlistYMDH}sorted
 ##rm -f $rlist ; rm -f $rlistYMDH
 #
 # Find the best restart file with correct range.
@@ -87,7 +87,7 @@ do
   test $err -eq 0 || exit 22
   nl=`wc $DATA/hycom_range_stdout | awk '{print $1-3}'`
   head -${nl} $DATA/hycom_range_stdout > $DATA/hycom_range_a
-  cut -c40-71 $restb | tail +3 | awk '{printf ( "%16.6E%16.6E\n", $1, $2)}' \
+  cut -c40-71 $restb | tail -n +3 | awk '{printf ( "%16.6E%16.6E\n", $1, $2)}' \
     > $DATA/hycom_range_b
   diff $DATA/hycom_range_a $DATA/hycom_range_b > $diffs
   if [ `cat $diffs | wc -l` -eq 0 ]

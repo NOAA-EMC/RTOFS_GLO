@@ -55,7 +55,7 @@ postmsg "$jlogfile" "$msg"
          echo "Forecast is started from restart: $GESdir/${RUN}_${modID}.t${mycyc}z.restart_f${fcst_hour}.[ab]"
 
        # replace limits file
-         sday=`$utilscript/date_normal2hycom.sh \` ${utilexec}/ndate +$fcst_hour ${PDY}${mycyc} \` `
+         sday=`sh $utilscript/date_normal2hycom.sh \` ${utilexec}/ndate +$fcst_hour ${PDY}${mycyc} \` `
          echo "  $sday $eday false false  " > limits
          break
 

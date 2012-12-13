@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 #
 ##set -x
@@ -15,7 +15,7 @@ hindcast=NO # YES or NO
 testcast=NO # YES or NO
 
 # Set some run environment variables.
-export HOMErtofs=/marine/save/$LOGNAME/hycom_glo/projects/RB-1.0.2
+export HOMErtofs=/glocean/save/$LOGNAME/hycom_glo/projects/REL-1.0.0
 export COMtmp=/ptmp/$LOGNAME/tmpdir/com.$$
 export projID=`basename $HOMErtofs`
 export cyc=00
@@ -53,7 +53,7 @@ mkdir -p /ptmp/$LOGNAME/tmpdir/$projID
 
 # Set paths to directories.
 export utilexec=/nwprod/util/exec
-export HOMEout=/marine/noscrub/$LOGNAME/simulations/$projID
+export HOMEout=/glocean/scrub/$LOGNAME/simulations/$projID
 export tmpdir=/ptmp/$LOGNAME/tmpdir/${projID}
 FLUXDIR=/marine/noscrub/seaspara/flux/gfs/prod  # needed only if hidcast=YES
 #FLUXDIR=/marine/noscrub/$LOGNAME/flux  # needed only if hidcast=YES
@@ -129,9 +129,8 @@ then
 fi
 
 # Make logs directory if necessary.
-test -d $HOMEout/logs || mkdir -p $HOMEout/logs
+test $HOMEout/logs || mkdir -p $HOMEout/logs
 
 # Submit the forecast job.
-module load lsf
-bsub < rtofs_job_command.lsf
+llsubmit rtofs_job_command.sms
 echo 'LAUNCHER: job rtofs_job_command.sms is submitted at host '`hostname`' at '`date`

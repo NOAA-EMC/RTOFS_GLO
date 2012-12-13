@@ -43,69 +43,26 @@
 #
 # Define the name of the executable
 #
+include ../make.include
+
 TARGET = rtofs_forecast
 #
 # CPP, Compiler, and Linker Options
 #
 FC       = mpfort
-CPP      = cpp -P
+CPP      = /lib/cpp
 CC       = gcc
 CCFLAGS  = -O
-CPPFLAGS = -DIA32 -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
-#CPPFLAGS = -DAIX -DENDIAN_IO -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
-OPTS     = -O -fixed -fp-model strict -assume byterecl -convert big_endian 
-#OPTS     = -O -qfixed -qstrict -qtune=auto -qcache=auto
-LIST     = -qspillsize=32000 -qrealsize=8 -qintsize=4 -qfullpath
-SMP      =
-TRAPS    =
-PROFILE  =
-DEBUG    =
-MEM      =
-MAP      =
-W3LIB    =
-BACIO    =
-ESSL     =
-################################## MASS     =  -lmass
-HPMLIB   =
-SEARCH   =
+CPPFLAGS+= -DIA32 -DENDIAN_IO -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
+OPTS     = -O -fixed -fp-model strict
 #
 # Assemble Options
 #
 FFLAGS   = -compiler ifort -assume byterecl -cm -vec_report0 -w -O2 -xSSE4.2 -ip -tpp7 -xW -r8 -lmpi $(OPTS)
-#FFLAGS   = $(OPTS) $(LIST) $(TRAPS) $(PROFILE) $(DEBUG)
 CFLAGS   =
 FFLAGST  = -assume byterecl -cm -vec_report0 -w -O2 -xSSE4.2 -ip -tpp7 -xW -r8 -lmpi
-#FFLAGST  = $(FFLAGS) $(SMP)
 LDFLAGS  = $(FFLAGS)
-#LDFLAGS  = $(FFLAGS) $(MEM) $(MAP) $(SMP) $(PROFILE)
-LIBS     = $(W3LIB) $(BACIO) $(ESSL) $(MASS) $(HPMLIB) $(SEARCH)
-
-#
-# --- generic make definitions
-#
-SHELL         = /bin/sh
-
-#
-# rules.
-#
-
-.SUFFIXES:
-.SUFFIXES: .c .F .f .o
-
-#
-# rules.
-#
-.c.o:
-	$(CC) $(CPPFLAGS) $(CFLAGS)  -c $*.c
-
-.f.o:
-	$(FC)             $(FFLAGS) -c $*.f
-
-.F.o:
-	#$(CPP) $(CPPFLAGS) $< | sed -e '/^ *$$/d' > $<.f
-	#$(FC) $(FFLAGS) -c $<.f
-	#-\mv $<.o $*.o
-	$(FC) $(CPPFLAGS) $(FFLAGS) -c $*.F
+LIBS     = 
 
 #############################################################
 MODS =  mod_dimensions.o mod_xc.o mod_za.o mod_pipe.o mod_incupd.o mod_floats.o mod_tides.o mod_mean.o mod_hycom.o
@@ -128,11 +85,6 @@ SRCS =	hycom.f archiv.f  barotp.f bigrid.f  blkdat.f cnuity.f convec.f \
         mod_pipe.F \
         mod_xc.F mod_xc_sm.F mod_xc_mp.F \
         mod_za.F mod_za_sm.F mod_za_mp.F mod_za_mp1.F
-
-#
-#hycom:	$(MODS) $(OBJS) hycom.o
-#	$(LD)  $(LDFLAGS) -o hycom  hycom.o $(MODS) $(OBJS) $(EXTRALIBS)
-
 
 # ---------------------------------------------------------------------
 # Standard part of the Makefile starts here

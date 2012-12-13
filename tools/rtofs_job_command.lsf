@@ -1,0 +1,55 @@
+#!/bin/ksh --login
+#-> 
+#-> #************
+#-> # ANALYSIS-PRE
+#-> #*************
+#-> 
+#-> #BSUB
+#-> #BSUB -q "hpc_ibm"
+#-> #BSUB -J jrtofs_analysis_pre
+#-> #BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.out.%J
+#-> #BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.err.%J
+#-> #BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre
+#-> #BSUB -x
+#-> #BSUB -W 0:15
+#-> module load ics
+#->  
+#-> if [[ -s /usrx/local/Modules/3.2.9/init/ksh ]] ; then
+#->   . /usrx/local/Modules/3.2.9/init/ksh
+#-> fi
+#-> /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS_PRE.sms.prod
+
+#*********
+# ANALYSIS
+#**********
+
+#!/bin/ksh --login
+
+#BSUB
+#BSUB -a poe
+#BSUB -q "hpc_ibm"
+#BSUB -J jrtofs_analysis
+#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis.out.%J
+#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis.err.%J
+#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis
+#BSUB -x
+#BSUB -n 2034
+#BSUB -R span[ptile=32]
+#BSUB -W 1:15
+
+if [[ -s /usrx/local/Modules/3.2.9/init/ksh ]] ; then
+  . /usrx/local/Modules/3.2.9/init/ksh
+fi
+
+module load lsf
+module load ics
+module load ibmpe
+
+module list
+
+export MP_USE_BULK_XFER=yes
+export MP_TASK_AFFINITY=cpu
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+
+/marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS.sms.prod

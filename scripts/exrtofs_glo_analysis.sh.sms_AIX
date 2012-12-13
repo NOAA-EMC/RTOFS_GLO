@@ -7,7 +7,7 @@
 #                                                                             #
 # Author:        Ilya Rivin      Org: NP23         Date: 2010-07-30           #
 #                                                                             #
-# Abstract: This script generates the forecast fields                         #
+# Abstract: This script generates the analysis fields                         #
 #           for the RTOFS_GLO Ocean model                                     #
 #                                                                             #
 # Sub-scripts called:                                                         #
@@ -21,76 +21,68 @@ set -xa
 export PS4='$SECONDS + '
 
 cd $DATA
-  
-msg="RTOFS_GLO_FORECAST JOB has begun on `hostname` at `date`"
+
+msg="RTOFS_GLO_ANALYSIS JOB has begun on `hostname` at `date`"
 postmsg "$jlogfile" "$msg"
 
 # --------------------------------------------------------------------------- #
 # 0. date and time stuff
 
-  export fcstdays=${fcstdays:-6}
-  export startdate=${startdate:-${PDY}}
-  export enddate=`$utilexec/ndate \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
+  export analdays=${analdays:-2}
+  export enddate=${analysis_end:-$PDY}
+  export startdate=`$utilexec/ndate -\` expr $analdays \* 24 \`  ${enddate}'00' | cut -c1-8`
   export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #
-# 2. Get input files
-  $USHrtofs/${RUN}_runstaging.sh
+# 1. Get input files
+  ${USHrtofs}/${RUN}_runstaging.sh
 
 # --------------------------------------------------------------------------- #
 # 2. Get initial conditions (restart files)
   test -f restart_in.a && rm -f restart_in.a
   test -f restart_in.b && rm -f restart_in.b
 
+  LEAD=`expr $analdays \* -24`
+  RESTtplate=${RUN}_${modID}.t${mycyc}z.n${LEAD}.restart
+
   if [ $RESTART = YES ]
   then
-     fcst_hour=`${utilexec}/nhour ${enddate}${mycyc} ${PDY}${mycyc}`
-     while [ $fcst_hour -ge 0 ]
+     anal_hour=`${utilexec}/nhour ${enddate}${mycyc} ${PDY}${mycyc}`
+     while [ $anal_hour -ge $LEAD ]
      do       
-       if [ -s $GESdir/${RUN}_${modID}.t${mycyc}z.restart_f${fcst_hour}.b ]
+       if [ -s $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.b ]
        then
-         # find most recent forecast restart
-         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.restart_f${fcst_hour}.b restart_in.b
-         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.restart_f${fcst_hour}.a restart_in.a
-         echo "Forecast is started from restart: $GESdir/${RUN}_${modID}.t${mycyc}z.restart_f${fcst_hour}.[ab]"
+         # find most recent analysis restart
+         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.b restart_in.b
+         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.a restart_in.a
+         echo "Analysis is started from restart: $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.[ab]"
 
        # replace limits file
-         sday=`$utilscript/date_normal2hycom.sh \` ${utilexec}/ndate +$fcst_hour ${PDY}${mycyc} \` `
+         sday=`sh $utilscript/date_normal2hycom.sh \` ${utilexec}/ndate +$anal_hour ${PDY}${mycyc} \` `
          echo "  $sday $eday false false  " > limits
          break
 
        fi
 
-       fcst_hour=`expr $fcst_hour - 1`
+       anal_hour=`expr $anal_hour - 1`
      done
-     if [ $fcst_hour -lt 0 ]
+     if [ $anal_hour -lt $LEAD ]
      then
         $USHrtofs/${RUN}_abort.sh  "Missing Restart File" \
-          "ABNORMAL EXIT FORECAST: NO FILE for restart_in.[ab]" 2
+          "ABNORMAL EXIT ANALYSIS: NO FILE for restart_in.[ab]" 2
     fi 
 
   else 
-    if [ ${CONTINUE_FORECAST} = NO ] 
-    then
-      #
-      # Restart from the nowcast restart
-      RESTtplate=${RUN}_${modID}.t${mycyc}z.n${mycyc}.restart
-    else
-      #
-      # Restart from previous forecast step restart
-      LEAD=`${utilexec}/nhour ${startdate}${mycyc} ${PDY}${mycyc}`
-      RESTtplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart
-    fi
     if [ -s ${COMIN}/${RESTtplate}.a ] && \
        [ -s ${COMIN}/${RESTtplate}.b ]
     then
       ln -s -f ${COMIN}/${RESTtplate}.a restart_in.a
       ln -s -f ${COMIN}/${RESTtplate}.b restart_in.b
-      echo "Forecast is started from restart: ${COMIN}/${RESTtplate}.[ab]"
+      echo "Analysis is started from restart: ${COMIN}/${RESTtplate}.[ab]"
     else
       $USHrtofs/${RUN}_abort.sh "Missing Restart File" \
-        "ABNORMAL EXIT FORECAST: NO FILE for restart_in.[ab] (need ${COMIN}/${RESTtplate}.[ab])" 2
-      fi
+        "ABNORMAL EXIT ANALYSIS: NO FILE for restart_in.[ab]" 2
+    fi
   fi
 
   if [ -s restart_in.a -a -s restart_in.b ]
@@ -102,15 +94,15 @@ postmsg "$jlogfile" "$msg"
     if [ ${dater} -ne ${startdate}${mycyc} ] 
     then 
       $USHrtofs/${RUN}_abort.sh  "RESTAERT DATES: expected=${startdate}${mycyc} actual=$dater" \
-        "ABNORMAL EXIT FORECAST: WRONG DATE in the restart file" 2
+        "ABNORMAL EXIT ANALYSIS: WRONG DATE in the restart file" 2
     fi
   else
       $USHrtofs/${RUN}_abort.sh "Missing Restart File" \
-        "ABNORMAL EXIT FORECAST: FATAL ERROR--NO RESTART FILE" 911
+        "ABNORMAL EXIT ANALYSIS: FATAL ERROR--NO RESTART FILE" 911
   fi
 
 # --------------------------------------------------------------------------- #
-# 2.# 1. Run forecast
+# 2. Run analysis
 
   ${USHrtofs}/${RUN}_submit.sh
 
@@ -121,27 +113,24 @@ postmsg "$jlogfile" "$msg"
   else
     modelstatus=1
   fi 
-  if [ $modelstatus = 0 ] 
+  if [ $modelstatus = 0 ]
   then
-      if [ ${SAVE_RESTART} = YES ]
-      then
-        # Copy to /com initial restart file for the next forecast step
-        date_out=0 ; date_out1=0 
-        test -s ${DATA}/restart_out.b && date_out=`${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out.b`
-        test -s ${DATA}/restart_out1.b &&  date_out1=`${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out1.b`
-        if [ ${date_out} -gt ${date_out1} ]
-        then
-          rfile=${DATA}/restart_out.b
-          cdate=${date_out}
-        else
-          rfile=${DATA}/restart_out1.b
-          cdate=${date_out1}
+      # Copy to /com initial restart file for forecast step
+      for rfile in ${DATA}/restart_out.b ${DATA}/restart_out1.b 
+      do
+        cdate=`${USHrtofs}/rtofs_date4restart.sh $rfile`
+        if [ $cdate -eq $PDY$mycyc ]
+        then          
+          YYYYMMDD=`echo $cdate | cut -c1-8`
+          YYYYDDD=`sh $utilscript/date2jday.sh $YYYYMMDD`
+          YYYY=`echo $YYYYDDD | cut -c1-4`
+          DDD=`echo $YYYYDDD | cut -c5-7`
+          HH=`echo $cdate | cut -c9-10`
+          RESTtplate=${RUN}_${modID}.t${mycyc}z.n${HH}.restart
+          cp -p $rfile ${COMOUT}/${RESTtplate}.b
+          cp -p ${rfile%.b}.a ${COMOUT}/${RESTtplate}.a
         fi
-        LEAD=`${utilexec}/nhour ${cdate} ${PDY}${mycyc}`
-        RESTtplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart
-        cp -p $rfile ${COMOUT}/${RESTtplate}.b
-        cp -p ${rfile%.b}.a ${COMOUT}/${RESTtplate}.a
-      fi
+      done
     echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.anal.log
   else
     $USHrtofs/${RUN}_abort.sh "Abnormal model exit from analyis" \
@@ -157,7 +146,7 @@ postmsg "$jlogfile" "$msg"
   fi
 
 #################################################
-msg="THE RTOFS_GLO_FORECAST JOB HAS ENDED NORMALLY on `hostname` at `date`."
+msg="THE RTOFS_GLO_ANALYSIS JOB HAS ENDED NORMALLY on `hostname` at `date`."
 postmsg "$jlogfile" "$msg"
 
 ################## END OF SCRIPT #######################
