@@ -22,10 +22,6 @@ export cyc=00
 export RUN_ENVIR=dev
 export envir=prod # prod or para
 
-# DONT EDIT BELOW THIS LINE !!!!!!!!!!!!!!!
-#=======================================================================
-
-
 # Get the length of the forecast from a config file
 RUN=rtofs
 modID=glo
@@ -48,7 +44,7 @@ then
 fi 
 
 # Create temporary directory.
-test -d /ptmp/$LOGNAME/tmpdir/$projID || rm -rf /ptmp/$LOGNAME/tmpdir/$projID
+test -d /ptmp/$LOGNAME/tmpdir/$projID && rm -rf /ptmp/$LOGNAME/tmpdir/$projID
 mkdir -p /ptmp/$LOGNAME/tmpdir/$projID
 
 # Set paths to directories.

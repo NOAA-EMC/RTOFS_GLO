@@ -1,0 +1,36 @@
+#!/bin/ksh  --login
+
+#BSUB
+#BSUB -a intelmpi
+#BSUB -q "hpc_ibm"
+#BSUB -J jrtofs_analysis
+#BSUB -oo /gpfs/td1/marine/noscrub/Ilya.Rivin/simulations/rtofs_glo_analysis_00/jrtofs_analysis.out
+#BSUB -eo /gpfs/td1/marine/noscrub/Ilya.Rivin/simulations/rtofs_glo_analysis_00/jrtofs_analysis.err
+#BSUB -x
+#BSUB -n 2034
+#BSUB -R span[ptile=8]
+#>>> #BSUB -R span[ptile=32]
+#BSUB -W 1:15
+
+if [[ -s /usrx/local/Modules/3.2.9/init/ksh ]] ; then
+  . /usrx/local/Modules/3.2.9/init/ksh
+fi
+
+set -x
+ulimit -s unlimited
+
+export I_MPI_DEVICE=rdssm
+export I_MPI_FABRICS=shm:dapl
+export DAPL_ACK_TIMER=20
+export I_MPI_RDMA_EAGER_THRESHOLD=65536
+export I_MPI_PIN_DOMAIN=auto
+export I_MPI_PIN_PROCESSOR_LIST=allcores:scatter
+export SAVE_ALL_TASKS=yes
+
+cd /gpfs/td1/marine/noscrub/Ilya.Rivin/simulations/rtofs_glo_analysis_00
+module list
+which mpirun 
+pwd
+ls -l ./rtofs_forecast
+mpirun -ppn 4 ./rtofs_forecast 1> OUTFILE 2> ERRORFILE
+
