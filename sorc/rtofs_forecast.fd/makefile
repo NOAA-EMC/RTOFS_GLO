@@ -47,15 +47,19 @@ TARGET = rtofs_forecast
 #
 # CPP, Compiler, and Linker Options
 #
-FC       = mpfort
+#>>>>>FC       = ncepmpxlf95
+FC       = mpiifort
+##-->> FC       = mpfort
 CPP      = cpp -P
 CC       = gcc
 CCFLAGS  = -O
 CPPFLAGS = -DIA32 -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
 #CPPFLAGS = -DAIX -DENDIAN_IO -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
-OPTS     = -O -fixed -fp-model strict -assume byterecl -convert big_endian 
+OPTS     = -fixed -fp-model strict -O -xHost -assume byterecl -convert big_endian -traceback -g 
+##-->> OPTS     = -compiler ifort -fixed -fp-model strict -O -xHost -assume byterecl -convert big_endian -traceback -g 
 #OPTS     = -O -qfixed -qstrict -qtune=auto -qcache=auto
-LIST     = -qspillsize=32000 -qrealsize=8 -qintsize=4 -qfullpath
+LIST     = -cm -vec_report0 -w -xSSE4.2 -ip -tpp7 -xW -r8 -lmpi 
+#LIST     = -qspillsize=32000 -qrealsize=8 -qintsize=4 -qfullpath
 SMP      =
 TRAPS    =
 PROFILE  =
@@ -71,11 +75,9 @@ SEARCH   =
 #
 # Assemble Options
 #
-FFLAGS   = -compiler ifort -assume byterecl -cm -vec_report0 -w -O2 -xSSE4.2 -ip -tpp7 -xW -r8 -lmpi $(OPTS)
+FFLAGS   = $(OPTS) $(LIST) 
 #FFLAGS   = $(OPTS) $(LIST) $(TRAPS) $(PROFILE) $(DEBUG)
 CFLAGS   =
-FFLAGST  = -assume byterecl -cm -vec_report0 -w -O2 -xSSE4.2 -ip -tpp7 -xW -r8 -lmpi
-#FFLAGST  = $(FFLAGS) $(SMP)
 LDFLAGS  = $(FFLAGS)
 #LDFLAGS  = $(FFLAGS) $(MEM) $(MAP) $(SMP) $(PROFILE)
 LIBS     = $(W3LIB) $(BACIO) $(ESSL) $(MASS) $(HPMLIB) $(SEARCH)

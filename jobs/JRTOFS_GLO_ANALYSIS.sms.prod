@@ -35,6 +35,11 @@ then
   export NPROCS=2034 # other variants: 1001 or 377
   export NPROCS=${NPROCS:-`echo $LOADL_PROCESSOR_LIST | wc -w | awk '{ print $1}'` }
   export NNODES=${NNODES:-`expr $NPROCS \/ 16`} # for p6 cluster
+  N_TASK=`echo $LSB_HOSTS | wc -w`
+  N_NODE=`echo $LSB_HOSTS | awk '{ for (j = 1; j <= NF; ++j) print $j }' \
+         | sort | uniq | wc -l`
+  echo "NPROCS="${NPROCS}",  NNODES="${NNODES}
+  echo "N_TASK="${N_TASK}",  N_NODE="${N_NODE}
 fi
 
 # #################################
