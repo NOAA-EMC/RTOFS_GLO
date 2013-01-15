@@ -9,12 +9,11 @@ MODDIR=../../incmod/rtofs_hycomiot_mods_4
 
 #--------------------------------------
 # The following was used for XLF on AIX
-DEFS= -DAIX -DREAL4
 FC=ifort
-CPPFLAGS  = DAIX -DREAL4 -DSERIAL_IO -DTIMER -DARCTIC
+CPPFLAGS  = DIA32 -DREAL4 -DSERIAL_IO -DTIMER -DARCTIC
 INC1   = ../../incmod/rtofs_serial_mods_4
 LIBS  = -L/nwprod/lib -lw3nco_4 -lbacio_4  -L../../. -lrtofs_serial_mods_4
-FFLAGS= -free -fp-model strict \
+FFLAGS= -free -fp-model strict -assume byterecl -convert big_endian \
 	-I$(INC1) $(LIBS) 
 CFLAGS= 
 ARFLAGS= ruv

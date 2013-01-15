@@ -157,6 +157,7 @@ CONTAINS
     !  
     nx=SIZE(qx,dim=1)
     ny=SIZE(qy,dim=2)
+    maskout=maskin
     ! if (dbgn) print *,'hycom_global_tripolar_1: nx,ny=',nx,ny !dbgzp
     ALLOCATE(ip1(nx,ny),plon(nx,ny),plat(nx,ny),qlon(nx,ny),qlat(nx,ny))
     !

@@ -1,0 +1,24 @@
+#!/bin/bash 
+#*********************
+# FORECAST STEP1 POST
+#*********************
+
+#BSUB -J jrtofs_forecast_step1_post -w 'done("jrtofs_forecast_step1")'
+#BSUB -q "hpc_ibm"
+#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step1_post.out.%J
+#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step1_post.err.%J
+#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step1_pre
+#BSUB -x
+#BSUB -W 0:20
+module load HDF5/1.8.9/serial
+module load ics/12.1
+module use /hwrf/noscrub/soft/modulefiles
+module load netcdf/3.6.3-usrx
+# module use /usrx/local/modulefiles
+# module load NetCDF/4.2/serial
+module list 
+
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_FORECAST_STEP1_POST.sms.prod ) > stdout.anal_post
+
+
+

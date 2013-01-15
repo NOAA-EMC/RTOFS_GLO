@@ -90,8 +90,8 @@ fi
 # 2.d Get fix forcing file
 
   #dbgz 201213 
-  for fil in 
-  # for fil in kpar offlux rivers
+  #for fil in 
+  for fil in kpar offlux rivers
   do
     for type in a b
     do
@@ -137,9 +137,7 @@ fi
 
 # 3. Get Forcing files
 
-  #dbgz 201213 
-  for fil in 
-  # for fil in airtmp precip presur radflx shwflx surtmp tauewd taunwd vapmix wndspd
+  for fil in airtmp precip presur radflx shwflx surtmp tauewd taunwd vapmix wndspd
   do
     for type in a b
     do

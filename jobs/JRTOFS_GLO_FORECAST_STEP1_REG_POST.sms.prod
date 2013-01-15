@@ -177,7 +177,7 @@ postmsg "$jlogfile" "$msg"
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/exrtofs_glo_reg_post.sh.sms
+ksh ${HOMErtofs}/scripts/exrtofs_glo_reg_post.sh.sms
 
 cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_STEP}_reg_post.`basename $pgmout`

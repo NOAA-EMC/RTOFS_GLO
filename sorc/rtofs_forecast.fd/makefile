@@ -51,14 +51,16 @@ TARGET = rtofs_forecast
 FC       = mpiifort
 ##-->> FC       = mpfort
 CPP      = cpp -P
-CC       = gcc
+CC       = icc    #gcc
 CCFLAGS  = -O
 CPPFLAGS = -DIA32 -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
+OPTS     = -fixed -fp-model strict -O3 -assume byterecl -convert big_endian 
+LIST     = -r8 
 #CPPFLAGS = -DAIX -DENDIAN_IO -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
-OPTS     = -fixed -fp-model strict -O -xHost -assume byterecl -convert big_endian -traceback -g 
+#==> OPTS     = -fixed -fp-model strict -O -xHost -assume byterecl -convert big_endian -traceback -g 
 ##-->> OPTS     = -compiler ifort -fixed -fp-model strict -O -xHost -assume byterecl -convert big_endian -traceback -g 
 #OPTS     = -O -qfixed -qstrict -qtune=auto -qcache=auto
-LIST     = -cm -vec_report0 -w -xSSE4.2 -ip -tpp7 -xW -r8 -lmpi 
+#==> LIST     = -cm -vec_report0 -w -xSSE4.2 -ip -tpp7 -xW -r8 -lmpi 
 #LIST     = -qspillsize=32000 -qrealsize=8 -qintsize=4 -qfullpath
 SMP      =
 TRAPS    =
@@ -80,7 +82,7 @@ FFLAGS   = $(OPTS) $(LIST)
 CFLAGS   =
 LDFLAGS  = $(FFLAGS)
 #LDFLAGS  = $(FFLAGS) $(MEM) $(MAP) $(SMP) $(PROFILE)
-LIBS     = $(W3LIB) $(BACIO) $(ESSL) $(MASS) $(HPMLIB) $(SEARCH)
+LIBS     = $(W3LIB) $(BACIO) $(ESSL) $(MASS) $(HPMLIB) $(SEARCH)  -lmpi
 
 #
 # --- generic make definitions

@@ -28,11 +28,11 @@
 # EXTRALIBS:  Extra local libraries (if any).
 #
 FC            = ifort
-FCFFLAGS      = -fixed $(NETCDF_FFLAGS)
+FCFFLAGS      = -fixed -assume byterecl -convert big_endian $(NETCDF_FFLAGS)
 CC            = cc
 CCFLAGS       =
 CPP           = /usr/bin/cpp 
-CPPFLAGS      = -C -P -traditional-cpp -DLINUX -DREAL4
+CPPFLAGS      = -C -P -traditional-cpp -DREAL4
 LD            = $(FC)
 LDFLAGS       = 
 LIBRARY       = -L/nwprod/lib

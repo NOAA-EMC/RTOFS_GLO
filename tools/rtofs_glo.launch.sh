@@ -12,7 +12,7 @@ echo 'NOTE: The run parameters are set in parm/rtofs_glo.navy_0.08.config file'
 
 export today=$1
 hindcast=NO # YES or NO
-testcast=NO # YES or NO
+testcast=YES # YES or NO
 
 # Set some run environment variables.
 export HOMErtofs=/marine/save/$LOGNAME/hycom_glo/projects/RB-1.0.2
@@ -36,7 +36,7 @@ then
 fi
 if [ $hindcast = NO ] &&  [ $testcast = YES ]
 then
-  export GETGES_COM=/global/hires/glopara/com
+  export GETGES_COM=/com_p6
 fi 
 if [ $hindcast = NO ] &&  [ $testcast = NO ]
 then
@@ -129,5 +129,13 @@ test -d $HOMEout/logs || mkdir -p $HOMEout/logs
 
 # Submit the forecast job.
 module load lsf
-bsub < rtofs_job_command.lsf
+#dbgz 20130110
+#./rtofs_job_command.lsf
+########jobID_anal_pre=`bsub < rtofs_job_command_anal_pre.lsf | cut -d' ' -f1`
+###########bsub < rtofs_job_command.lsf
+#- bsub < rtofs_job_command_anal_pre.lsf
+#- sleep 5
+#- bsub < rtofs_job_command_anal.lsf
+#- sleep 5
+bsub < rtofs_job_command_anal_post.lsf
 echo 'LAUNCHER: job rtofs_job_command.sms is submitted at host '`hostname`' at '`date`

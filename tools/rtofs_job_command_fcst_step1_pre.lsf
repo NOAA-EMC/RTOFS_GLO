@@ -1,0 +1,18 @@
+#!/bin/bash 
+
+#*******************
+# FORECAST STEP1 PRE
+#*******************
+
+#BSUB -J jrtofs_forecast_step1_pre
+#BSUB -q "hpc_ibm"
+#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step1_pre.out.%J
+#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step1_pre.err.%J
+#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step1_pre
+#BSUB -x
+#BSUB -W 0:20
+module load ics
+module list 
+
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_FORECAST_STEP1_PRE.sms.prod ) > stdout.anal_pre
+

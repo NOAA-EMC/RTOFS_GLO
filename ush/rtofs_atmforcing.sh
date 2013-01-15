@@ -59,7 +59,6 @@ NPROCS=${NPROCS:-1}
 if [ $NPROCS -gt 1 ]
 then
   rm -f cmdfile_tmp cmdfile.*
-  export MP_PGMMODEL=mpmd
 fi
 while [ $idate -le $edate ]
 do
@@ -67,7 +66,7 @@ do
    then
      $USHrtofs/${RUN}_atmforcing_stage.sh $idate
    else
-     echo $USHrtofs/${RUN}_atmforcing_stage.sh $idate >> cmdfile_tmp
+     echo /usrx/local/bin/getrusage -rss $USHrtofs/${RUN}_atmforcing_stage.sh $idate >> cmdfile_tmp
    fi
    NTIME=`expr $NTIME + 1`
    idate=`${utilexec}/ndate $intvl $idate` 
@@ -82,15 +81,16 @@ then
     cmdlen=`cat $cfile | wc -l`
     while [ $cmdlen -lt $NPROCS ]
     do
-      echo 'sleep 1' >> $cfile
+      echo '/usrx/local/bin/getrusage -rss sleep 1' >> $cfile
       cmdlen=`expr $cmdlen + 1`
     done
-    export MP_CMDFILE=$cfile
-    poe -procs $NPROCS
+    module load ics
+    module load ibmpe
+    export MP_LABELIO=yes
+    mpirun.lsf /usrx/local/bin/getrusage -rss ./$cfile >>$pgmout 2>errfile 
     exit=$?
     ## rm -f cmdfile.*
   done
-  export MP_PGMMODEL=spmd
   ## rm -f cmdfile_tmp
 fi
 

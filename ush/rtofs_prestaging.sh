@@ -70,8 +70,8 @@ fi
 # 3.a call atmforcing to get the forcing files 
 
 #dbgz 20121213
-echo "*** NO FORCING FOR NOW"
-exit
+#echo "*** NO FORCING FOR NOW"
+#exit
 
 
 

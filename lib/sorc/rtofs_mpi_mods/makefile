@@ -12,10 +12,12 @@ MODSER=../../incmod/rtofs_serial_mods_4
 #--------------------------------------
 # The following was used for XLF on AIX
 FCser=ifort
-FCmpi=mpfort
+FCmpi=mpiifort
 ###CPP=/usr/bin/cpp -P
-CPPFLAGSser  = -DREAL4 -DSERIAL_IO -DTIMER -DARCTIC
-CPPFLAGSmpi  =-DAIX -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
+CPPFLAGSser  = -DIA32 -DREAL4 -DSERIAL_IO -DTIMER -DARCTIC
+CPPFLAGSmpi  = -DIA32 -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
+FFLAGSADDser=
+FFLAGSADDmpi=-r8 -lmpi
 #  echo "here0 $@"
 ##if [ $@ = "ser" ] ;\
 ##then \
@@ -30,10 +32,12 @@ CPPFLAGSmpi  =-DAIX -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
 #--- FC=$(FCmpi) 
 #--- CPPFLAGS=$(CPPFLAGSmpi)
 #--- FFLAGSADD=-integer-size 32 -real-size 64
+#
 FC=$(FCser) 
 CPPFLAGS=$(CPPFLAGSser)
-FFLAGSADD= 
-FFLAGSSER= -fixed -fp-model strict # -integer-size 32 -real-size 64  
+FFLAGSADD= $(FFLAGSADDser)
+#
+FFLAGSSER= -fixed -fp-model strict -assume byterecl -convert big_endian # -integer-size 32 -real-size 64  
 FFLAGS=$(FFLAGSSER) $(FFLAGSADD)
 CFLAGS= 
 ARFLAGS= -ruv

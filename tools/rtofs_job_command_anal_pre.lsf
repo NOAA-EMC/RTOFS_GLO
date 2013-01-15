@@ -1,0 +1,18 @@
+#!/bin/bash 
+
+#************
+# ANALYSIS-PRE
+#*************
+
+#BSUB -J jrtofs_analysis_pre
+#BSUB -q "hpc_ibm"
+#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.out.%J
+#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.err.%J
+#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre
+#BSUB -x
+#BSUB -W 0:20
+module load ics
+module list 
+
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS_PRE.sms.prod ) > stdout.anal_pre
+

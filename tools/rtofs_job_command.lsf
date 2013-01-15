@@ -1,86 +1,75 @@
-#!/bin/ksh --login
+#!/bin/bash 
+
+#************
+# ANALYSIS-PRE
+#*************
+
+#BSUB -J jrtofs_analysis_pre
+#BSUB -q "hpc_ibm"
+#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.out.%J
+#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.err.%J
+#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre
+#BSUB -x
+#BSUB -W 0:20
+module load ics
+module list 
+
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS_PRE.sms.prod ) > stdout.anal_pre
+
+
 #*********
 # ANALYSIS
 #**********
-
-#BSUB
+#BSUB -J jrtofs_analysis -w 'exit("jrtofs_analysis_pre")'
 #BSUB -a poe
-###-> #BSUB -a intelmpi
-#BSUB -q "hpc_ibm"
-#BSUB -J jrtofs_analysis
-#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/jrtofs_analysis.out.%J
-#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/jrtofs_analysis.err.%J
-#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis
-#BSUB -x
+#BSUB -W 1:30
+#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis.out.%J
+#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis.err.%J
 #BSUB -n 2034
+#BSUB -q "hpc_ibm"
 #BSUB -R span[ptile=8]
-#>>> #BSUB -R span[ptile=32]
-#BSUB -W 1:15
-
-if [[ -s /usrx/local/Modules/3.2.9/init/ksh ]] ; then
-  . /usrx/local/Modules/3.2.9/init/ksh
-fi
+#BSUB -x
 
 set -x
+ulimit -s unlimited
 
-module load lsf
-module load ics
-module load ibmpe
+export LANG=en_US
+
+export MP_EAGER_LIMIT=65536
+export MP_COREFILE_FORMAT=core.txt
+export MP_EUIDEVELOP=min
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_MPILIB=mpich2
+
+export MP_LABELIO=yes
+export MP_SINGLE_THREAD=yes
+
+export MP_USE_BULK_XFER=yes
+export MPICH_ALLTOALL_THROTTLE=0
+export MP_TASK_AFFINITY=core:1
+
+#export MP_COLLECTIVE_OFFLOAD=yes
 
 module list
 
-export MP_USE_BULK_XFER=yes
-export MP_TASK_AFFINITY=core
-#>>> export MP_TASK_AFFINITY=cpu
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS.sms.prod ) > stdout.anal
 
-/marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS.sms.prod
+#************
+# ANALYSIS-PRE
+#*************
 
-#+> ulimit -s unlimited
-
-#+> export MP_EAGER_LIMIT=165536
-#+> export MP_COREFILE_FORMAT=core.txt
-#+> export MP_EUIDEVELOP=min
-#+> export MP_EUIDEVICE=sn_all
-#+> export MP_EUILIB=us
-#+> export MP_MPILIB=mpich2
-
-#+> export MP_LABELIO=yes
-#+> export MP_SINGLE_THREAD=yes
-#+> export MP_USE_BULK_XFER=yes
-#+> export MPICH_ALLTOALL_THROTTLE=0
-#+> export MP_TASK_AFFINITY=core
-
-#==> export I_MPI_DEVICE=rdssm
-#==> export I_MPI_FABRICS=shm:dapl
-#==> export DAPL_ACK_TIMER=20
-#==> export I_MPI_RDMA_EAGER_THRESHOLD=65536
-#==> export I_MPI_PIN_DOMAIN=auto
-#==> export I_MPI_PIN_PROCESSOR_LIST=allcores:scatter
-#==> export SAVE_ALL_TASKS=yes
+#--> #BSUB -J jrtofs_analysis_post -w 'done("jrtofs_analysis")'
+#--> #BSUB -q "hpc_ibm"
+#--> #BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_post.out.%J
+#--> #BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_post.err.%J
+#--> #BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre
+#--> #BSUB -x
+#--> #BSUB -W 0:20
+#--> module load ics
+#--> module list 
+#--> 
+#--> (time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS_POST.sms.prod ) > stdout.anal_post
 
 
-
-###################################################
-
-#-> 
-#-> #************
-#-> # ANALYSIS-PRE
-#-> #*************
-#-> 
-#-> #BSUB
-#-> #BSUB -q "hpc_ibm"
-#-> #BSUB -J jrtofs_analysis_pre
-#-> #BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.out.%J
-#-> #BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.err.%J
-#-> #BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre
-#-> #BSUB -x
-#-> #BSUB -W 0:15
-#-> module load ics
-#->  
-#-> if [[ -s /usrx/local/Modules/3.2.9/init/ksh ]] ; then
-#->   . /usrx/local/Modules/3.2.9/init/ksh
-#-> fi
-#-> /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS_PRE.sms.prod
 

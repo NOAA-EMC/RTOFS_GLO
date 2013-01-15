@@ -34,7 +34,6 @@ NPROCS=${NPROCS:-1}
 if [ $NPROCS -gt 1 ]
 then
   rm -f cmdfile_tmp* cmdfile.*
-  export MP_PGMMODEL=mpmd
 fi
 #
 # Write archive files copying commands in CMD
@@ -50,9 +49,9 @@ do
   DD=`echo $YYYYMMDD | cut -c7-8`
   LEAD=`${utilexec}/nhour ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
   tplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.archv
-  echo "cp -p $afile ${COMOUT}/${tplate}.a" >> cmdfile_tmp_a
-  echo "cp -p ${afile%.a}.b ${COMOUT}/${tplate}.b" >> cmdfile_tmp_b
-  echo "cp -p ${afile%.a}.txt ${COMOUT}/${tplate}.txt" >> cmdfile_tmp_txt
+  echo "/usrx/local/bin/getrusage -rss cp -p $afile ${COMOUT}/${tplate}.a" >> cmdfile_tmp_a
+  echo "/usrx/local/bin/getrusage -rss cp -p ${afile%.a}.b ${COMOUT}/${tplate}.b" >> cmdfile_tmp_b
+  echo "/usrx/local/bin/getrusage -rss cp -p ${afile%.a}.txt ${COMOUT}/${tplate}.txt" >> cmdfile_tmp_txt
 done
 #
 # Write restart files copying commands in CMD files if necessary
@@ -87,13 +86,15 @@ do
   fi
   if [ ${copy_restart} = 't' ] 
   then
-    echo "cp -p $rfile ${OUTDIR}/${tplate}.b" >> cmdfile_tmp_b
-    echo "cp -p ${rfile%.b}.a ${OUTDIR}/${tplate}.a" >> cmdfile_tmp_a
+    echo "/usrx/local/bin/getrusage -rss cp -p $rfile ${OUTDIR}/${tplate}.b" >> cmdfile_tmp_b
+    echo "/usrx/local/bin/getrusage -rss cp -p ${rfile%.b}.a ${OUTDIR}/${tplate}.a" >> cmdfile_tmp_a
   fi
 done
 #
 # Copy restart and archive files in permanent location.
 #
+#dbgz 20130113
+NPROCS=1
 for ftype in a b txt
 do 
   if [ $NPROCS -gt 1 ] 
@@ -105,21 +106,20 @@ do
       cmdlen=`cat $cfile | wc -l`
       while [ $cmdlen -lt $NPROCS ]
       do
-        echo 'sleep 1' >> $cfile
+        echo '/usrx/local/bin/getrusage -rss sleep 1' >> $cfile
         cmdlen=`expr $cmdlen + 1`
       done
-      export MP_CMDFILE=$cfile
-      poe -procs $NPROCS
+     module load ics
+      module load ibmpe
+      export MP_LABELIO=yes
+      mpirun.lsf /usrx/local/bin/getrusage -rss ./$cfile >>$pgmout 2>errfile ### < my_stdin > my_stdout
       exit=$?
     done
     rm -f cmdfile.*
   else
-    sh cmdfile_tmp_$b{ftype}
+    sh cmdfile_tmp_${ftype}
   fi
 done
-if [ $NPROCS -gt 1 ] ; then
-  export MP_PGMMODEL=spmd
-fi
 ## rm -f cmdfile_tmp*
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
