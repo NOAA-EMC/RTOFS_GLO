@@ -48,7 +48,6 @@ export CDF036=${RUN}_${modID}_3dz_${mode}${fhr}_daily_3zsio.nc
 touch run_script.sh; rm run_script.sh
 echo \#!/bin/sh > run_script.sh
 echo ${EXECrtofs}/${RUN}_archv2ncdf3z \< $DATA/archv2ncdf3z_\$1.in \>\> $pgmout 2\>\>errfile >> run_script.sh
-echo ${EXECrtofs}/${RUN}_archv2ncdf3z \< $DATA/archv2ncdf3z_\$1.in >>run_script.sh
 
 for fnam in uvl vvl tem sal 
 do

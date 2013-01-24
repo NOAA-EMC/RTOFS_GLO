@@ -11,6 +11,9 @@
 #BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre
 #BSUB -x
 #BSUB -W 0:20
+
+ulimit -s unlimited
+
 module load ics
 module list 
 

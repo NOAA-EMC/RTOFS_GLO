@@ -44,8 +44,9 @@ then
 fi 
 
 # Create temporary directory.
-test -d /ptmp/$LOGNAME/tmpdir/$projID && rm -rf /ptmp/$LOGNAME/tmpdir/$projID
-mkdir -p /ptmp/$LOGNAME/tmpdir/$projID
+#dbgz 20130118
+#> test -d /ptmp/$LOGNAME/tmpdir/$projID && rm -rf /ptmp/$LOGNAME/tmpdir/$projID
+#> mkdir -p /ptmp/$LOGNAME/tmpdir/$projID
 
 # Set paths to directories.
 export utilexec=/nwprod/util/exec
@@ -130,12 +131,46 @@ test -d $HOMEout/logs || mkdir -p $HOMEout/logs
 # Submit the forecast job.
 module load lsf
 #dbgz 20130110
-#./rtofs_job_command.lsf
 ########jobID_anal_pre=`bsub < rtofs_job_command_anal_pre.lsf | cut -d' ' -f1`
-###########bsub < rtofs_job_command.lsf
-#- bsub < rtofs_job_command_anal_pre.lsf
-#- sleep 5
-#- bsub < rtofs_job_command_anal.lsf
-#- sleep 5
-bsub < rtofs_job_command_anal_post.lsf
-echo 'LAUNCHER: job rtofs_job_command.sms is submitted at host '`hostname`' at '`date`
+#
+# Submit analysis
+#dbgz 20130118
+#-- sleep 1
+#-- bsub < rtofs_job_command_anal_pre.lsf
+#-- sleep 5
+#-- bsub < rtofs_job_command_anal.lsf
+#-- sleep 5
+#-- bsub < rtofs_job_command_anal_post.lsf
+#-- bsub < rtofs_job_command_anal_reg_post.lsf
+#-- echo 'LAUNCHER: RTOFS-GLO analysis is submitted at host '`hostname`' at '`date`
+#
+# Submit forecast step1
+sleep 1
+bsub < rtofs_job_command_fcst_step1_pre.lsf
+sleep 5
+bsub < rtofs_job_command_fcst_step1.lsf
+sleep 5
+bsub < rtofs_job_command_fcst_step1_post.lsf
+bsub < rtofs_job_command_fcst_step1_reg_post.lsf
+echo 'LAUNCHER: RTOFS-GLO forecast step1 is submitted at host '`hostname`' at '`date`
+#
+# Submit forecast step2
+sleep 1
+bsub < rtofs_job_command_fcst_step2_pre.lsf
+sleep 5
+bsub < rtofs_job_command_fcst_step2.lsf
+sleep 5
+bsub < rtofs_job_command_fcst_step2_post.lsf
+bsub < rtofs_job_command_fcst_step2_reg_post.lsf
+echo 'LAUNCHER: RTOFS-GLO forecast step2 is submitted at host '`hostname`' at '`date`
+#
+# Submit forecast step3
+sleep 1
+bsub < rtofs_job_command_fcst_step3_pre.lsf
+sleep 5
+bsub < rtofs_job_command_fcst_step3.lsf
+sleep 5
+bsub < rtofs_job_command_fcst_step3_post.lsf
+bsub < rtofs_job_command_fcst_step3_reg_post.lsf
+echo 'LAUNCHER: RTOFS-GLO forecast step3 is submitted at host '`hostname`' at '`date`
+

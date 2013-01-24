@@ -1,14 +1,13 @@
 #!/bin/bash 
 
-#*********
-# ANALYSIS
-#**********
-#### #BSUB -J jrtofs_analysis 
-#BSUB -J jrtofs_analysis -w 'done("jrtofs_analysis_pre")'
+#***************
+# FORECAST STEP2
+#***************
+#BSUB -J jrtofs_forecast_step2 -w 'done("jrtofs_forecast_step2_pre")'
 #BSUB -a poe
 #BSUB -W 1:30
-#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis.out.%J
-#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis.err.%J
+#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step2.out.%J
+#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step2.err.%J
 #BSUB -n 2034
 #BSUB -q "hpc_ibm"
 #BSUB -R span[ptile=8]
@@ -37,7 +36,7 @@ export MP_TASK_AFFINITY=core:1
 
 module list
 
-(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS.sms.prod ) > stdout.anal
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_FORECAST_STEP2.sms.prod ) > stdout.anal
 
 
 

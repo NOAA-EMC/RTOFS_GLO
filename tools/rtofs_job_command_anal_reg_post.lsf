@@ -3,14 +3,17 @@
 # ANALYSIS POST
 #**************
 
-#BSUB -J jrtofs_analysis_reg_post
-##### #BSUB -J jrtofs_analysis_reg_post -w 'done("jrtofs_analysis")'
+##### #BSUB -J jrtofs_analysis_reg_post
+#BSUB -J jrtofs_analysis_reg_post -w 'done("jrtofs_analysis")'
 #BSUB -q "hpc_ibm"
 #BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_reg_post.out.%J
 #BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_reg_post.err.%J
-#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre
+#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_reg_post
 #BSUB -x
-#BSUB -W 0:20
+#BSUB -W 0:40
+
+ulimit -s unlimited
+
 module load HDF5/1.8.9/serial
 module load ics/12.1
 module use /hwrf/noscrub/soft/modulefiles
