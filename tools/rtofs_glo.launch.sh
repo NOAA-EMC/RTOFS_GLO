@@ -128,21 +128,23 @@ fi
 # Make logs directory if necessary.
 test -d $HOMEout/logs || mkdir -p $HOMEout/logs
 
-# Submit the forecast job.
+# Submit the job.
 module load lsf
 #dbgz 20130110
 ########jobID_anal_pre=`bsub < rtofs_job_command_anal_pre.lsf | cut -d' ' -f1`
 #
 # Submit analysis
 #dbgz 20130118
-#-- sleep 1
-#-- bsub < rtofs_job_command_anal_pre.lsf
-#-- sleep 5
-#-- bsub < rtofs_job_command_anal.lsf
-#-- sleep 5
-#-- bsub < rtofs_job_command_anal_post.lsf
-#-- bsub < rtofs_job_command_anal_reg_post.lsf
-#-- echo 'LAUNCHER: RTOFS-GLO analysis is submitted at host '`hostname`' at '`date`
+#- sleep 1
+#- bsub < rtofs_job_command_anal_pre.lsf
+#- sleep 5
+bsub < rtofs_job_command_anal.lsf
+#- sleep 5
+#- bsub < rtofs_job_command_anal_post.lsf
+#- bsub < rtofs_job_command_anal_reg_post.lsf
+echo 'LAUNCHER: RTOFS-GLO analysis is submitted at host '`hostname`' at '`date`
+#dbgz
+exit
 #
 # Submit forecast step1
 sleep 1

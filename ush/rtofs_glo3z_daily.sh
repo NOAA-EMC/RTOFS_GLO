@@ -74,18 +74,19 @@ do
 
 done
 #dbgz 20120112
-NPROCS=1
+# NPROCS=1
 if [ $NPROCS -gt 1 ] 
 then
     touch scp.sh; rm -f scp.sh
-    echo /usrx/local/bin/getrusage -rss sh run_script.sh tem > scp.sh
-    echo /usrx/local/bin/getrusage -rss sh run_script.sh sal >> scp.sh
-    echo /usrx/local/bin/getrusage -rss sh run_script.sh uvl >> scp.sh
-    echo /usrx/local/bin/getrusage -rss sh run_script.sh vvl >> scp.sh
+    echo sh ./run_script.sh tem > scp.sh
+    echo sh ./run_script.sh sal >> scp.sh
+    echo sh ./run_script.sh uvl >> scp.sh
+    echo sh ./run_script.sh vvl >> scp.sh
     module load ics
     module load ibmpe
     export MP_LABELIO=yes
-    mpirun.lsf /usrx/local/bin/getrusage -rss ./scp.sh >>$pgmout 2>errfile 
+    export MP_CMDFILE=./scp.sh
+    mpirun.lsf >>$pgmout 2>errfile 
 else 
   for fnam in uvl vvl tem sal 
   do

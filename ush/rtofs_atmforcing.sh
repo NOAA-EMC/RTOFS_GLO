@@ -66,7 +66,7 @@ do
    then
      $USHrtofs/${RUN}_atmforcing_stage.sh $idate
    else
-     echo /usrx/local/bin/getrusage -rss $USHrtofs/${RUN}_atmforcing_stage.sh $idate >> cmdfile_tmp
+     echo $USHrtofs/${RUN}_atmforcing_stage.sh $idate >> cmdfile_tmp
    fi
    NTIME=`expr $NTIME + 1`
    idate=`${utilexec}/ndate $intvl $idate` 
@@ -81,13 +81,14 @@ then
     cmdlen=`cat $cfile | wc -l`
     while [ $cmdlen -lt $NPROCS ]
     do
-      echo '/usrx/local/bin/getrusage -rss sleep 1' >> $cfile
+      echo 'sleep 1' >> $cfile
       cmdlen=`expr $cmdlen + 1`
     done
     module load ics
     module load ibmpe
     export MP_LABELIO=yes
-    mpirun.lsf /usrx/local/bin/getrusage -rss ./$cfile >>$pgmout 2>errfile 
+    export MP_CMDFILE=./$cfile 
+    mpirun.lsf >>$pgmout 2>errfile 
     exit=$?
     ## rm -f cmdfile.*
   done

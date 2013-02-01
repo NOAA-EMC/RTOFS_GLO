@@ -4,8 +4,8 @@
 # FORECAST STEP1 PRE
 #*******************
 
-#BSUB -J jrtofs_forecast_step1_pre
-##################BSUB -J jrtofs_forecast_step1_pre -w 'done("jrtofs_analysis")'
+################ #BSUB -J jrtofs_forecast_step1_pre
+#BSUB -J jrtofs_forecast_step1_pre -w 'done("jrtofs_analysis")'
 #BSUB -q "hpc_ibm"
 #BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step1_pre.out.%J
 #BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step1_pre.err.%J

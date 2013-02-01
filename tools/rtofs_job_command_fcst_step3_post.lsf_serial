@@ -4,12 +4,10 @@
 #*********************
 
 #BSUB -J jrtofs_forecast_step3_post -w 'done("jrtofs_forecast_step3")'
-#BSUB -a poe
 #BSUB -q "hpc_ibm"
 #BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step3_post.out.%J
 #BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step3_post.err.%J
 #BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step3_post
-#BSUB -R span[ptile=8]
 #BSUB -x
 #BSUB -W 05:00
 
@@ -22,22 +20,6 @@ module load netcdf/3.6.3-usrx
 # module use /usrx/local/modulefiles
 # module load NetCDF/4.2/serial
 module list 
-
-export LANG=en_US
-
-export MP_EAGER_LIMIT=65536
-export MP_COREFILE_FORMAT=core.txt
-export MP_EUIDEVELOP=min
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
-export MP_MPILIB=mpich2
-
-export MP_LABELIO=yes
-export MP_SINGLE_THREAD=yes
-
-export MP_USE_BULK_XFER=yes
-export MPICH_ALLTOALL_THROTTLE=0
-export MP_TASK_AFFINITY=core:1
 
 (time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_FORECAST_STEP3_POST.sms.prod ) > stdout.anal_post
 
