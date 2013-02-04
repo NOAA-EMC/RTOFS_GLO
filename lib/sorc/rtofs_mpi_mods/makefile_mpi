@@ -1,0 +1,107 @@
+SHELL=/bin/sh
+
+# These modules are used by several of the OFS source codes. They are 
+# extracted to build a library, so that there won't be multiple copies 
+# of the same files. 
+ 
+LIBMPI=../../librtofs_mpi_mods_8.a
+LIBSER=../../librtofs_serial_mods_4.a
+MODMPI=../../incmod/rtofs_mpi_mods_8
+MODSER=../../incmod/rtofs_serial_mods_4
+
+#--------------------------------------
+# The following was used for XLF on AIX
+FCser=ifort
+FCmpi=mpiifort
+###CPP=/usr/bin/cpp -P
+CPPFLAGSser  = -DIA32 -DREAL4 -DSERIAL_IO -DTIMER -DARCTIC
+CPPFLAGSmpi  = -DIA32 -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
+FFLAGSADDser=
+FFLAGSADDmpi=-r8 -lmpi
+#  echo "here0 $@"
+##if [ $@ = "ser" ] ;\
+##then \
+##  echo "here1 $@"
+##  FC=FCser ;\
+##  CPPFLAGS=CPPFLAGSser ;\
+##else \
+##  echo "here2 $@"
+##  FC=FCmpi ;\
+##  CPPFLAGS=CPPFLAGSmpi ;\
+##fi
+FC=$(FCmpi) 
+CPPFLAGS=$(CPPFLAGSmpi)
+FFLAGSADD=-integer-size 32 -real-size 64
+#
+#--- FC=$(FCser) 
+#--- CPPFLAGS=$(CPPFLAGSser)
+#--- FFLAGSADD= $(FFLAGSADDser)
+#
+FFLAGSSER= -fixed -fp-model strict -assume byterecl -convert big_endian # -integer-size 32 -real-size 64  
+FFLAGS=$(FFLAGSSER) $(FFLAGSADD)
+CFLAGS= 
+ARFLAGS= -ruv
+LDFLAGS= $(FFLAGS) 
+
+RM            = /bin/rm -f
+TESTD         = /usr/bin/test -d
+TESTF         = /usr/bin/test -f
+MV            = /bin/mv -f
+CP            = /bin/cp -p
+MKDIR         = /bin/mkdir -p
+#
+# rules.
+#
+.SUFFIXES: .c .a .f .F 
+
+.c.o:
+	$(CC) $(CPPFLAGS) $(CCFLAGS)  -c $*.c
+
+.f.o:
+	$(FC)  $(FCFFLAGS) -c $*.f
+
+.F.o:
+	#$(RM) $<.f
+	#$(CPP) $(CPPFLAGS) $< | sed -e '/^ *$$/d' > $<.f
+	#$(FC) $(FFLAGS) -c $<.f
+	$(FC) $(CPPFLAGS) $(FFLAGS) -c $*.F
+
+.f.a:	$(FC) -c $(FFLAGS) $<
+	ar $(ARFLAGS) $@ $*.o
+
+mpi:  cleanmpi dimension_MPI $(LIBMPI)( mod_dimensions.o mod_xc.o mod_za.o wtime.o )
+	$(TESTD) $(MODMPI) || $(MKDIR) $(MODMPI) ; \
+	$(MV) mod_dimensions.mod mod_xc.mod mod_za.mod $(MODMPI)
+	#$(FCmpi) $(CPPFLAGSmpi) $(FFLAGS) -c $*.F
+
+ser:  cleanser dimension_SER $(LIBSER)( mod_dimensions.o mod_xc.o mod_za.o wtime.o )
+	$(TESTD) $(MODSER) || $(MKDIR) $(MODSER) ; \
+	$(MV) mod_dimensions.mod mod_xc.mod mod_za.mod $(MODSER)
+	echo " echoing $@"
+	#$(FCser) $(CPPFLAGSser) $(FFLAGS) -c $*.F
+
+dimension_MPI: dimensions_0.08_mpi.h dimensions_0.08_serial.h
+	$(CP) dimensions_0.08_mpi.h dimensions.h
+
+dimension_SER: dimensions_0.08_serial.h
+	$(CP) dimensions_0.08_serial.h dimensions.h
+
+cleanmpi:
+	-$(RM) *.F.f *.mod *.o $(LIBMPI) core $(MODMPI)/*.mod  dimensions.h
+
+cleanser:
+	-$(RM) *.F.f *.mod *.o $(LIBSER) core $(MODSER)/*.mod  dimensions.h
+
+cleanall:
+	-$(RM) *.F.f *.mod *.o $(LIBSER) $(LIBMPI) core $(MODMPI)/*.mod $(MODSER)/*.mod dimensions.h
+
+install: cleanall 
+	make mpi FFLAGSADD="-integer-size 32 -real-size 64"
+	make ser 
+	$(RM) dimensions.h
+
+mod_dimensions.o:   mod_dimensions.F dimensions.h
+mod_xc.o: mod_xc.F  mod_dimensions.o mod_xc_sm.h mod_xc_mp.h unit_offset.h
+mod_za.o: mod_za.F  mod_xc.o         mod_za_sm.h mod_za_mp.h mod_za_mp1.h
+wtime.o:   wtime.F
+
