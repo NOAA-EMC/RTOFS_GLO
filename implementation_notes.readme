@@ -1,20 +1,22 @@
 IMPLEMENTATION INSTRUCTIONS:
 
-0. SET-UP MODULES:
+I. LOAD MODULES
+---------------
 
+module use /usrx/local/modulefiles
 module load ibmpe
 module load lsf
-module load netcdf/3.6.3-usrx
-module use /usrx/local/modulefiles
+module load NetCDF/3.6.3
 module load ics/12.1
 
-I. BUILD A PROJECT
+II. BUILD A PROJECT
+-------------------
 
-I.1) mkdir /tmpnwprd/rtofs/rtofs_glo.v1.0.2
+II.1) mkdir /tmpnwprd/rtofs/rtofs_glo.v1.0.2
 
-I.2) cd /tmpnwprd/rtofs/rtofs_glo.v1.0.2
+II.2) cd /tmpnwprd/rtofs/rtofs_glo.v1.0.2
 
-I.3) check out the following directories and a file:   
+II.3) Check out the following directories and a file:   
      https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.2/jobs
      https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.2/lib
      https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.2/parm
@@ -23,87 +25,94 @@ I.3) check out the following directories and a file:
      https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.2/ush
      https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.2/implementation_notes.readme
 
-I.4) cp -p /tmpnwprd/rtofs/rtofs_glo.v1.0.2/jobs/*.prod /nwprod/jobs/. 
-     cp -p /tmpnwprd/rtofs/rtofs_glo.v1.0.2/parm/* /nwprod/parm/. 
-     cp -p /tmpnwprd/rtofs/rtofs_glo.v1.0.2/scripts/*.sms /nwprod/scripts/*.sms
-     cp -p /tmpnwprd/rtofs/rtofs_glo.v1.0.2/ush/* /nwprod/ush/*.sh
-     cp -prh /tmpnwprd/rtofs/rtofs_glo.v1.0.2/sorc/* /nwprod/sorc/.
-     cp -prh /tmpnwprd/rtofs/rtofs_glo.v1.0.2/lib/sorc/* /nwprod/lib/sorc/.
-     cp -p /marine/noscrub/Ilya.Rivin/hycom_glo/prod/fix/* /nwprod/fix/.
+II.4) cp -p   /tmpnwprd/rtofs/rtofs_glo.v1.0.2/jobs/*.prod    /nwprod/jobs/. 
+      cp -p   /tmpnwprd/rtofs/rtofs_glo.v1.0.2/parm/*         /nwprod/parm/. 
+      cp -p   /tmpnwprd/rtofs/rtofs_glo.v1.0.2/scripts/*.sms  /nwprod/scripts/*.sms
+      cp -p   /tmpnwprd/rtofs/rtofs_glo.v1.0.2/ush/*          /nwprod/ush/*.sh
+      cp -prh /tmpnwprd/rtofs/rtofs_glo.v1.0.2/sorc/*         /nwprod/sorc/.
+      cp -prh /tmpnwprd/rtofs/rtofs_glo.v1.0.2/lib/sorc/*     /nwprod/lib/sorc/.
+      cp -p   /marine/noscrub/Ilya.Rivin/hycom_glo/prod/fix/* /nwprod/fix/.
 
-II. Build the library
+III. BUILD THE LIBRARIES
+------------------------
      
-II.1) test -d /nwprod/lib/incmod || mkdir -p /nwprod/lib/incmod
-II.2) cd /nwprod/lib/sorc/rtofs_mpi_mods
-      rm makefile dimensions.h *.mod *.o
-      cp makefile_serial makefile
-      make ser
-      rm makefile dimensions.h *.mod *.o
-      cp makefile_mpi makefile
-      make mpi
-      rm makefile dimensions.h *.mod *.o
-II.3) cd /nwprod/lib/sorc/rtofs_hycomiot
-      make istall
+III.1) test -d /nwprod/lib/incmod || mkdir -p /nwprod/lib/incmod
+III.2) cd /nwprod/lib/sorc/rtofs_mpi_mods
+       rm makefile dimensions.h *.mod *.o
+       cp makefile_serial makefile
+       make ser
+       rm makefile dimensions.h *.mod *.o
+       cp makefile_mpi makefile
+       make mpi
+       rm makefile dimensions.h *.mod *.o
+III.3) cd /nwprod/lib/sorc/rtofs_hycomiot
+       make istall
 
-III. COMPILE PROJECT SOURCE CODES
+IV. COMPILE PROJECT SOURCE CODES
+--------------------------------
 
-III.1) For each CDIR=/nwprod/sorc/rtofs_*.fd directory OTHER THAN rtofs_cdo-1.4.0.1.fd:
+IV.1) For each CDIR=/nwprod/sorc/rtofs_*.fd directory OTHER THAN rtofs_cdo-1.4.0.1.fd:
        cd $CDIR
        make clean ; make
        mv rtofs_* /nwprod/exec/.
        make clean
 
-III.2) Build CDO:
+IV.2) Build CDO:
       cd /nwprod/sorc/rtofs_cdo-1.4.0.1.fd
       ./rtofs_makecdo.sh
 
-III. SET-UP INITIAL CONDITIONS
+V. SET-UP INITIAL CONDITIONS
+----------------------------
 
-III.1) mkdir /com/rtofs/prod/rtofs.YYYYMMDD for yesterday ($PDYm1)
-III.2) cp -pr cirrus:/com/rtofs/prod/rtofs.YYYYMMDD /com/rtofs/prod/.
-       Here YYYYMMDD is yesterday date ($PDYm1) and cirrus is assumed to be production machine.
-III.3) Make sure that the restart files
-        /dcom/us007003/YYYYMMDD/wgrdbul/restart_rYYYYMMDD00.[ab].gz
-       are coming. Here YYYYMMDD is the day before yesterday ($PDYm2)
+V.1) mkdir /com/rtofs/prod/rtofs.YYYYMMDD for yesterday ($PDYm1)
+V.2) cp -pr cirrus:/com/rtofs/prod/rtofs.YYYYMMDD /com/rtofs/prod/.
+     Here YYYYMMDD is yesterday date ($PDYm1) and cirrus is assumed to be production machine.
+V.3) Make sure that the restart files
+     /dcom/us007003/YYYYMMDD/wgrdbul/restart_rYYYYMMDD00.[ab].gz
+     are coming. Here YYYYMMDD is the day before yesterday ($PDYm2)
 
+VI. VERSION NUMBERS
+-------------------
 
-IV. This is the version numbers:
     project_ver=v1.0.2
     code_ver=v1.0.2
 
-V. Computer resources and run-time environment variables are specified in the correcponding files:
+VII. COMPUTER RESOURCES AND RUN-TIME ENVIRONMENT
+------------------------------------------------
+
+    Computer resources and run-time environment variables are specified in the correcponding files:
     
-V.1) All resources for pre-processing (PRE) steps (anal, fcst_step1, fcst_step2, fcst_step3) are in  
+VII.1) All resources for pre-processing (PRE) steps (anal, fcst_step1, fcst_step2, fcst_step3) are in  
     https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.2/tools/rtofs_job_command_anal_pre.lsf
-V.2) All resources for model run steps (anal, fcst_step1, fcst_step2, fcst_step3) are  in
+VII.2) All resources for model run steps (anal, fcst_step1, fcst_step2, fcst_step3) are  in
    https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.2/tools/rtofs_job_command_anal.lsf
-V.3) All resources for post-processing (POST) steps (anal, fcst_step1, fcst_step2, fcst_step3) are in 
+VII.3) All resources for post-processing (POST) steps (anal, fcst_step1, fcst_step2, fcst_step3) are in 
     https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.2/tools/rtofs_job_command_anal_post.lsf
-V.4) All resources for regional post-processing (REG_POST) steps (anal, fcst_step1, fcst_step2, fcst_step3) are  in
+VII.4) All resources for regional post-processing (REG_POST) steps (anal, fcst_step1, fcst_step2, fcst_step3) are  in
    https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.2/tools/rtofs_job_command_anal_reg_post.lsf
 
-VI. Dependencies: 
+VI. JOB DEPENDENCES
+-------------------
 
+VIII.1a) anal_pre:            after GFS 00Z cycle is completed. 
+VIII.1b) anal:                after 1a is completed
+VIII.1c) anal_post:           after 1b is completed
+VIII.1d) anal_reg_post:       after 1b is completed
 
-VI.1a) anal_pre.lsf: after GFS 00Z is completed. 
-VI.1b) anal.lsf: after 1a is completed
-VI.1c) anal_post.lsf: after 1b is completed
-VI.1d) anal_reg_post.lsf: after 1b is completed
+VIII.2a) fcst_step1_pre:      after GFS 00Z cycle is completed.
+VIII.2b) fcst_step1:          after 1b is completed
+VIII.2c) fcst_step1_post:     after 2b is completed
+VIII.2d) fcst_step1_reg_post: after 2b is completed
 
-VI.2a) fcst_step1_pre.lsf: after GFS 00Z is completed.
-VI.2b) fcst_step1.lsf: after 1b is completed
-VI.2c) fcst_step1_post.lsf: after 2b is completed
-VI.2d) fcst_step1_reg_post.lsf: after 2b is completed
+VIII.3a) fcst_step2_pre:      after GFS 00Z cycle is completed.
+VIII.3b) fcst_step2:          after 2b is completed
+VIII.3c) fcst_step2_post:     after 3b is completed
+VIII.3d) fcst_step2_reg_post: after 3b is completed
 
-VI.3a) fcst_step2_pre.lsf: after GFS 00Z is completed.
-VI.3b) fcst_step2.lsf: after 2b is completed
-VI.3c) fcst_step2_post.lsf: after 3b is completed
-VI.3d) fcst_step2_reg_post.lsf: after 3b is completed
-
-VI.4a) fcst_step3_pre.lsf: after GFS 00Z is completed.
-VI.4b) fcst_step3.lsf: after 3b is completed
-VI.4c) fcst_step3_post.lsf: after 4b is completed
-VI.4d) fcst_step3_reg_post.lsf: after 4b is completed
+VIII.4a) fcst_step3_pre:      after GFS 00Z cycle is completed.
+VIII.4b) fcst_step3:          after 3b is completed
+VIII.4c) fcst_step3_post:     after 4b is completed
+VIII.4d) fcst_step3_reg_post: after 4b is completed
 
 
 
