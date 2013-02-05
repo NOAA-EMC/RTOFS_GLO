@@ -94,7 +94,7 @@ done
 # Copy restart and archive files in permanent location.
 #
 #dbgz 20130113
-#NPROCS=1
+NPROCS=1
 for ftype in a b txt
 do 
   if [ $NPROCS -gt 1 ] 
