@@ -48,7 +48,7 @@ make install
 
 #  Build CDO
 cd $RTOFS_CDO
-#gtar -zxvf cdo-1.5.0.tar.gz
+gtar -zxvf cdo-1.5.0.tar.gz
 cd cdo-1.5.0
 ./configure --prefix=$RTOFS_CDO \
 --with-zlib=/usrx/local/lib \

@@ -46,7 +46,7 @@ III.2) cd /nwprod/lib/sorc/rtofs_mpi_mods
        make mpi
        rm makefile dimensions.h *.mod *.o
 III.3) cd /nwprod/lib/sorc/rtofs_hycomiot
-       make istall
+       make install
 
 IV. COMPILE PROJECT SOURCE CODES
 --------------------------------
@@ -59,7 +59,8 @@ IV.1) For each CDIR=/nwprod/sorc/rtofs_*.fd directory OTHER THAN rtofs_cdo-1.4.0
 
 IV.2) Build CDO:
       cd /nwprod/sorc/rtofs_cdo-1.4.0.1.fd
-      ./rtofs_makecdo.sh
+      sh ./rtofs_makecdo.sh
+      mv cdo /nwprod/exec/rtofs_cdo
 
 V. SET-UP INITIAL CONDITIONS
 ----------------------------

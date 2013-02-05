@@ -32,7 +32,7 @@
 #define HAVE_DLFCN_H 1
 
 /* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
-#define HAVE_DOPRNT 1
+/* #undef HAVE_DOPRNT */
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
@@ -149,7 +149,7 @@
 /* #undef ssize_t */
 
 /* Define to `unsigned char' if <sys/types.h> does not define. */
-/* #undef uchar */
+#define uchar unsigned char
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef uint */

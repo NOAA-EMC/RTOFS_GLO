@@ -8,7 +8,7 @@ then
    exit 1
 fi
 
-grib_filter=/com/pmb/wx11ll/RFC/RTOFS/sorc/rtofs_cdo-1.4.0.1.fd/bin/grib_filter
+grib_filter=/marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/sorc/rtofs_cdo-1.4.0.1.fd/bin/grib_filter
 rules_filter=rules.filter$$
 
 force=0
