@@ -2,14 +2,23 @@
 
 export RUN_ENVIR=${RUN_ENVIR:-prod}
 
-if [ $RUN_ENVIR != dev ]
-then
-$SMSBIN/smsinit $LOADL_STEP_ID 
-fi
-
 set -xa
-export MP_IOAGENT_CNT=all
-export MP_IO_BUFFER_SIZE=8M
+####################
+### MP VARIABLES ###
+####################
+export MP_EAGER_LIMIT=65536
+export MP_COREFILE_FORMAT=core.txt
+export MP_EUIDEVELOP=min
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_MPILIB=mpich2
+
+export MP_LABELIO=yes
+export MP_SINGLE_THREAD=yes
+
+export MP_USE_BULK_XFER=yes
+export MPICH_ALLTOALL_THROTTLE=0
+export MP_TASK_AFFINITY=cpu:1
 
 #######################################
 # Specify NET and RUN Name and model ID
@@ -18,7 +27,7 @@ export NET=rtofs
 export RUN=rtofs
 export modID=glo
 export RUN_MODE=forecast
-export RUN_STEP=step1
+export RUN_STEP=step3
 
 #####################
 # SETUP RUN VARIABLES
@@ -33,7 +42,7 @@ fi
 #####################
 if [ $RUN_ENVIR = dev ]
 then
-  export NPROCS=2034 # other variants: 1001 or 377
+    export NPROCS=2034 # other variants: 1001 or 377
   export NPROCS=${NPROCS:-`echo $LOADL_PROCESSOR_LIST | wc -w | awk '{ print $1}'` }
   export NNODES=${NNODES:-`expr $NPROCS \/ 16`} # for p6 cluster
 fi
@@ -59,7 +68,7 @@ else
    tmpdir=/tmpnwprd
 fi
 export DATA=$tmpdir/${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_${mycyc} ### .${pid}
-##export DATA=$tmpdir/${job} ### .${pid}
+#export DATA=$tmpdir/${job} ### .${pid}
 test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
@@ -72,7 +81,7 @@ then
   export jlogfile=$HOMEout/logs/jlogfile
 elif [ $RUN_ENVIR = prod ]
 then
-  export jlogfile=/com/logs/jlogfile
+  export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
@@ -88,14 +97,14 @@ export pgmout="OUTPUT.${pid}"
 
 #####################################################
 # SAVEGES - Copy files from TMPDIR ($DATA) to $GESdir
-# SENDSMS - Flag events on SMS
+# SENDECF - Flag events on ECF
 # SENDCOM - Copy files from TMPDIR ($DATA) to $COMOUT
 # SENDDBN - Issue DBNet client calls
 # RERUN   - Rerun fcst from beginning (default no)
 #####################################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
-export SENDSMS=${SENDSMS:-YES}
+export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
@@ -124,7 +133,7 @@ sh $utilscript/setup.sh
 
 ###########################################################
 # Run setpdy and initialize PDY variables
-# For any retrospecitve run, set the PDY in the SMS script
+# For any retrospecitve run, set the PDY in the ECF script
 ###########################################################
 export PDY=${PDY:-}
 sh $utilscript/setpdy.sh
@@ -192,9 +201,9 @@ export startdate=`$utilexec/ndate \` expr \${fcstdays_before_thisstep} \* 24 \` 
 eval fcstdays="\$fcstdays_step$stepnum"
 eval SAVE_RESTART="\$SAVE_RESTART_FORECAST_STEP$stepnum"
 eval CONTINUE_FORECAST="\$CONTINUE_FORECAST_STEP$stepnum"
-export fcstdays
-export stepnum
 export SAVE_RESTART
+export stepnum
+export CONTINUE_FORECAST
 export CONTINUE_FORECAST
 
 #################################################################
@@ -206,7 +215,7 @@ postmsg "$jlogfile" "$msg"
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}.sh.sms
+sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}.sh.ecf
 
 #===================================================================
 
@@ -219,8 +228,3 @@ postmsg "$jlogfile" "$msg"
 cd /tmpnwprd
 
 date
-
-if [ $RUN_ENVIR != dev ]
-then
-$SMSBIN/smscomplete
-fi

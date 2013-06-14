@@ -2,11 +2,6 @@
 
 export RUN_ENVIR=${RUN_ENVIR:-prod}
 
-if [ $RUN_ENVIR != dev ]
-then
-$SMSBIN/smsinit $LOADL_STEP_ID 
-fi
-
 set -xa
 
 #######################################
@@ -16,14 +11,14 @@ export NET=rtofs
 export RUN=rtofs
 export modID=glo
 export RUN_MODE=forecast
-export RUN_STEP=step3
+export RUN_STEP=step1
 
 #####################
 # SETUP RUN VARIABLES
 #####################
 if [ $RUN_ENVIR = dev ]
 then
-  export job=${job:-${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_${projID}}
+  export job=${job:-${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_pre_${projID}}
 fi
 
 #####################
@@ -31,7 +26,7 @@ fi
 #####################
 if [ $RUN_ENVIR = dev ]
 then
-    export NPROCS=2034 # other variants: 1001 or 377
+  export NPROCS=1
   export NPROCS=${NPROCS:-`echo $LOADL_PROCESSOR_LIST | wc -w | awk '{ print $1}'` }
   export NNODES=${NNODES:-`expr $NPROCS \/ 16`} # for p6 cluster
 fi
@@ -56,8 +51,12 @@ then
 else
    tmpdir=/tmpnwprd
 fi
-export DATA=$tmpdir/${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_${mycyc} ### .${pid}
-#export DATA=$tmpdir/${job} ### .${pid}
+if [ $RUN_ENVIR = dev ]
+then
+  export DATA=$tmpdir/${job} ### .${pid}
+else
+  export DATA=$tmpdir/${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_${mycyc}
+fi
 test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
@@ -70,7 +69,7 @@ then
   export jlogfile=$HOMEout/logs/jlogfile
 elif [ $RUN_ENVIR = prod ]
 then
-  export jlogfile=/com/logs/jlogfile
+  export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
@@ -86,14 +85,14 @@ export pgmout="OUTPUT.${pid}"
 
 #####################################################
 # SAVEGES - Copy files from TMPDIR ($DATA) to $GESdir
-# SENDSMS - Flag events on SMS
+# SENDECF - Flag events on ECF
 # SENDCOM - Copy files from TMPDIR ($DATA) to $COMOUT
 # SENDDBN - Issue DBNet client calls
 # RERUN   - Rerun fcst from beginning (default no)
 #####################################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
-export SENDSMS=${SENDSMS:-YES}
+export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
@@ -122,7 +121,7 @@ sh $utilscript/setup.sh
 
 ###########################################################
 # Run setpdy and initialize PDY variables
-# For any retrospecitve run, set the PDY in the SMS script
+# For any retrospecitve run, set the PDY in the ECF script
 ###########################################################
 export PDY=${PDY:-}
 sh $utilscript/setpdy.sh
@@ -190,10 +189,8 @@ export startdate=`$utilexec/ndate \` expr \${fcstdays_before_thisstep} \* 24 \` 
 eval fcstdays="\$fcstdays_step$stepnum"
 eval SAVE_RESTART="\$SAVE_RESTART_FORECAST_STEP$stepnum"
 eval CONTINUE_FORECAST="\$CONTINUE_FORECAST_STEP$stepnum"
-export SAVE_RESTART
+export fcstdays
 export stepnum
-export CONTINUE_FORECAST
-export CONTINUE_FORECAST
 
 #################################################################
 #  Send a message to the jlogfile indication the start of the job
@@ -204,12 +201,12 @@ postmsg "$jlogfile" "$msg"
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}.sh.sms
+sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}_pre.sh.ecf
 
 #===================================================================
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}_pre.`basename $pgmout`
 
 msg="JOB $hob HAS COMPLETTED NORMALLY."
 postmsg "$jlogfile" "$msg"
@@ -217,8 +214,3 @@ postmsg "$jlogfile" "$msg"
 cd /tmpnwprd
 
 date
-
-if [ $RUN_ENVIR != dev ]
-then
-$SMSBIN/smscomplete
-fi

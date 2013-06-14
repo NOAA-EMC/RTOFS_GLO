@@ -2,11 +2,6 @@
 
 export RUN_ENVIR=${RUN_ENVIR:-prod}
 
-if [ $RUN_ENVIR != dev ]
-then
-$SMSBIN/smsinit $LOADL_STEP_ID 
-fi
-
 set -xa
 
 #######################################
@@ -16,7 +11,7 @@ export NET=rtofs
 export RUN=rtofs
 export modID=glo
 export RUN_MODE=forecast
-export RUN_STEP=step2
+export RUN_STEP=step3
 
 ####################
 # SETUP RUN VARIABLES
@@ -61,7 +56,7 @@ then
   export jlogfile=$HOMEout/logs/jlogfile
 elif [ $RUN_ENVIR = prod ]
 then
-  export jlogfile=/com/logs/jlogfile
+  export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
@@ -79,14 +74,14 @@ export cycle=t${cyc}z
 
 #####################################################
 # SAVEGES - Copy files from TMPDIR ($DATA) to $GESdir
-# SENDSMS - Flag events on SMS
+# SENDECF - Flag events on ECF
 # SENDCOM - Copy files from TMPDIR ($DATA) to $COMOUT
 # SENDDBN - Issue DBNet client calls
 # RERUN   - Rerun fcst from beginning (default no)
 #####################################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-NO}
-export SENDSMS=${SENDSMS:-YES}
+export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
@@ -115,7 +110,7 @@ sh $utilscript/setup.sh
 
 ###########################################################
 # Run setpdy and initialize PDY variables
-# For any retrospecitve run, set the PDY in the SMS script
+# For any retrospecitve run, set the PDY in the ECF script
 ###########################################################
 export PDY=${PDY:-}
 sh $utilscript/setpdy.sh
@@ -177,7 +172,7 @@ postmsg "$jlogfile" "$msg"
 ####################
 # execute the script
 ####################
-ksh ${HOMErtofs}/scripts/exrtofs_glo_reg_post.sh.sms
+ksh ${HOMErtofs}/scripts/exrtofs_glo_reg_post.sh.ecf
 
 cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_STEP}_reg_post.`basename $pgmout`
@@ -190,8 +185,3 @@ cd $tmpdir
 rm -rf $DATA
 
 date
-
-if [ $RUN_ENVIR != dev ]
-then
-  $SMSBIN/smscomplete
-fi

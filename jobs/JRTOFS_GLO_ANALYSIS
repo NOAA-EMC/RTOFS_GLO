@@ -2,14 +2,25 @@
 
 export RUN_ENVIR=${RUN_ENVIR:-prod}
 
-if [ $RUN_ENVIR != dev ]
-then
-$SMSBIN/smsinit $LOADL_STEP_ID 
-fi
-
 set -xa
-export MP_IOAGENT_CNT=all
-export MP_IO_BUFFER_SIZE=8M
+#export MP_IOAGENT_CNT=all
+#export MP_IO_BUFFER_SIZE=8M
+####################
+### MP VARIABLES ###
+####################
+export MP_EAGER_LIMIT=65536
+export MP_COREFILE_FORMAT=core.txt
+export MP_EUIDEVELOP=min
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_MPILIB=mpich2
+
+export MP_LABELIO=yes
+export MP_SINGLE_THREAD=yes
+
+export MP_USE_BULK_XFER=yes
+export MPICH_ALLTOALL_THROTTLE=0
+export MP_TASK_AFFINITY=cpu:1
 
 #######################################
 # Specify NET and RUN Name and model ID
@@ -79,7 +90,7 @@ then
   export jlogfile=$HOMEout/logs/jlogfile
 elif [ $RUN_ENVIR = prod ]
 then
-  export jlogfile=/com/logs/jlogfile
+  export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
@@ -95,14 +106,14 @@ export pgmout="OUTPUT.${pid}"
 
 #####################################################
 # SAVEGES - Copy files from TMPDIR ($DATA) to $GESdir
-# SENDSMS - Flag events on SMS
+# SENDECF - Flag events on ECF
 # SENDCOM - Copy files from TMPDIR ($DATA) to $COMOUT
 # SENDDBN - Issue DBNet client calls
 # RERUN   - Rerun fcst from beginning (default no)
 #####################################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
-export SENDSMS=${SENDSMS:-YES}
+export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
@@ -131,7 +142,7 @@ sh $utilscript/setup.sh
 
 ###########################################################
 # Run setpdy and initialize PDY variables
-# For any retrospecitve run, set the PDY in the SMS script
+# For any retrospecitve run, set the PDY in the ECF script
 ###########################################################
 export PDY=${PDY:-}
 sh $utilscript/setpdy.sh
@@ -191,7 +202,7 @@ postmsg "$jlogfile" "$msg"
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}.sh.sms
+sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}.sh.ecf
 
 #===================================================================
 
@@ -204,8 +215,3 @@ postmsg "$jlogfile" "$msg"
 cd /tmpnwprd
 
 date
-
-if [ $RUN_ENVIR != dev ]
-then
-$SMSBIN/smscomplete
-fi
