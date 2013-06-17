@@ -42,7 +42,7 @@ then
 else
    tmpdir=/tmpnwprd
 fi
-export DATA=$tmpdir/${job} ## .${pid}
+export DATA=$tmpdir/${job}.${pid}
 test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA

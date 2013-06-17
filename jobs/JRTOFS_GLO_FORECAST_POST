@@ -42,7 +42,7 @@ then
 else
    tmpdir=/tmpnwprd
 fi
-export DATA=$tmpdir/${job} ## .${pid}
+export DATA=$tmpdir/${job}.${pid}
 test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
@@ -151,13 +151,12 @@ mkdir -m 775 -p $COMOUT
 test -d $GESdir || mkdir -p $GESdir
 test -d $COMOUT || mkdir -p $COMOUT
 
-#################################
-# Set up forecast step parameters
-#################################
+############################################
+# Set up forecast post-processing parameters
+############################################
 export startdate==${startdate:-${PDY}}
-fcstdays_before_thisstep=`expr $startdate \- $PDY`
+export fcstdays_before_thisstep=`expr $startdate \- $PDY`
 eval fcstdays="\$fcst_post_ndays"
-export fcstdays_before_thisstep
 export fcstdays
 
 ################################################################
