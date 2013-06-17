@@ -2,11 +2,6 @@
 
 export RUN_ENVIR=${RUN_ENVIR:-prod}
 
-if [ $RUN_ENVIR != dev ]
-then
-$SMSBIN/smsinit $LOADL_STEP_ID 
-fi
-
 set -xa
 
 #######################################
@@ -16,14 +11,13 @@ export NET=rtofs
 export RUN=rtofs
 export modID=glo
 export RUN_MODE=forecast
-export RUN_STEP=step1
 
 ####################
 # SETUP RUN VARIABLES
 ####################
 if [ $RUN_ENVIR = dev ]
 then
-  export job=${job:-${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_post_${projID}}
+  export job=${job:-${RUN}_${modID}_${RUN_MODE}_post_${projID}}
   export NNODES=${NNODES:-1}
   export NPROCS=${NPROCS:-4}
 fi
@@ -70,7 +64,7 @@ then
   export jlogfile=$HOMEout/logs/jlogfile
 elif [ $RUN_ENVIR = prod ]
 then
-  export jlogfile=/com/logs/jlogfile
+  export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
@@ -88,14 +82,14 @@ export cycle=t${cyc}z
 
 #####################################################
 # SAVEGES - Copy files from TMPDIR ($DATA) to $GESdir
-# SENDSMS - Flag events on SMS
+# SENDECF - Flag events on ECF
 # SENDCOM - Copy files from TMPDIR ($DATA) to $COMOUT
 # SENDDBN - Issue DBNet client calls
 # RERUN   - Rerun fcst from beginning (default no)
 #####################################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
-export SENDSMS=${SENDSMS:-YES}
+export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
@@ -124,7 +118,7 @@ sh $utilscript/setup.sh
 
 ###########################################################
 # Run setpdy and initialize PDY variables
-# For any retrospecitve run, set the PDY in the SMS script
+# For any retrospecitve run, set the PDY in the ECF script
 ###########################################################
 export PDY=${PDY:-}
 sh $utilscript/setpdy.sh
@@ -160,25 +154,11 @@ test -d $COMOUT || mkdir -p $COMOUT
 #################################
 # Set up forecast step parameters
 #################################
-stepnum=${RUN_STEP#step}
-cnum=1
-fcstdays_before_thisstep=0
-while [ ${cnum} -lt ${stepnum} ]
-do
-   eval daysadd="\$fcstdays_step$cnum"
-   fcstdays_before_thisstep=`expr \${fcstdays_before_thisstep} + ${daysadd}`
-   cnum=`expr ${cnum} + 1`
-done
-export startdate=`$utilexec/ndate \` expr \${fcstdays_before_thisstep} \* 24 \`  ${PDY}${mycyc} | cut -c1-8`
-
-eval fcstdays="\$fcstdays_step$stepnum"
-eval SAVE_RESTART="\$SAVE_RESTART_FORECAST_STEP$stepnum"
-eval CONTINUE_FORECAST="\$CONTINUE_FORECAST_STEP$stepnum"
+export startdate==${startdate:-${PDY}}
+fcstdays_before_thisstep=`expr $startdate \- $PDY`
+eval fcstdays="\$fcst_post_ndays"
 export fcstdays_before_thisstep
 export fcstdays
-export stepnum
-export SAVE_RESTART
-export CONTINUE_FORECAST
 
 ################################################################
 # Send a message to the jlogfile indicating the start of the job
@@ -189,7 +169,7 @@ postmsg "$jlogfile" "$msg"
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/exrtofs_glo_post.sh.sms
+ksh ${HOMErtofs}/scripts/exrtofs_glo_post.sh.ecf
 
 cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.post.`basename $pgmout`
@@ -205,8 +185,3 @@ cd $tmpdir
 ### rm -rf $DATA
 
 date
-
-if [ $RUN_ENVIR != dev ]
-then
-  $SMSBIN/smscomplete
-fi
