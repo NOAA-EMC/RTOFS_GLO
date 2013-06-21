@@ -154,7 +154,7 @@ test -d $COMOUT || mkdir -p $COMOUT
 ############################################
 # Set up forecast post-processing parameters
 ############################################
-export startdate==${startdate:-${PDY}}
+export startdate=${startdate:-${PDY}}
 export fcstdays_before_thisstep=`expr $startdate \- $PDY`
 eval fcstdays="\$fcst_post_ndays"
 export fcstdays
