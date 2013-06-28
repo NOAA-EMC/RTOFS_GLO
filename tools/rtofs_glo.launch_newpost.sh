@@ -3,14 +3,15 @@
 #
 set -x
 
-if [ $# -ne 1 ] 
+if [ $# -ne 2 ] 
 then
-  echo "USAGE: $0 <YYYYMMDD>"
+  echo "USAGE: $0 <YYYYMMDD-forecast_start> <YYYYMMDD-post_start>"
   exit -2
 fi
 echo 'NOTE: The run parameters are set in parm/rtofs_glo.navy_0.08.config file'
 
 export today=$1
+export startdate=$2
 hindcast=NO # YES or NO
 testcast=YES # YES or NO
 
@@ -43,8 +44,10 @@ then
   export GETGES_COM=/com
 fi 
 
-test -d /ptmp/$LOGNAME/tmpdir/$projID && rm -rf /ptmp/$LOGNAME/tmpdir/$projID
-mkdir -p /ptmp/$LOGNAME/tmpdir/$projID
+#dbgz
+# test -d /ptmp/$LOGNAME/tmpdir/$projID && rm -rf /ptmp/$LOGNAME/tmpdir/$projID
+# mkdir -p /ptmp/$LOGNAME/tmpdir/$projID
+test -d /ptmp/$LOGNAME/tmpdir/$projID || mkdir -p /ptmp/$LOGNAME/tmpdir/$projID
 
 # Set paths to directories.
 export utilexec=/nwprod/util/exec
@@ -60,7 +63,7 @@ export PDY=$today
 # This variable is used in hidncast mode to set up forcing directories.
 let analhrs=analdays*24
 nowcast_start=`$utilexec/ndate -${analhrs} ${today}${cyc} | cut -c1-8`
-forecast_start=$today
+forecast_start=$btoday
 
 # Calculate forecast length.
 export nowcast_end=$today
@@ -90,7 +93,6 @@ test -d $HOMEout/logs || mkdir -p $HOMEout/logs
 
 # Submit the job.
 module load lsf
-export startdate=${forecast_start}
 echo startdate $startdate
 bsub < rtofs_job_command_fcst_post.lsf
 bsub < rtofs_job_command_fcst_reg_post.lsf

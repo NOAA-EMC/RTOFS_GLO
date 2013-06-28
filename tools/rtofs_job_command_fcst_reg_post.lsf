@@ -40,7 +40,7 @@ export MP_USE_BULK_XFER=yes
 export MPICH_ALLTOALL_THROTTLE=0
 export MP_TASK_AFFINITY=core:1
 
-(time /gpfs/gd1/emc/marine/noscrub/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_FORECAST_REG_POST ) > stdout.anal_reg_post
+(time /gpfs/td1/emc/marine/noscrub/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_FORECAST_REG_POST ) > stdout.anal_reg_post
 
 
 
