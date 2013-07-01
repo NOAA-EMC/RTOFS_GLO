@@ -15,11 +15,11 @@ export RUN_MODE=forecast
 ####################
 # SETUP RUN VARIABLES
 ####################
+export NNODES=1 # ${NNODES:-1}
+export NPROCS=1 # ${NPROCS:-1}
 if [ $RUN_ENVIR = dev ]
 then
   export job=${job:-${RUN}_${modID}_${RUN_MODE}_reg_post_${projID}}
-  export NNODES=${NNODES:-1}
-  export NPROCS=${NPROCS:-4}
 fi
 
 # #################################

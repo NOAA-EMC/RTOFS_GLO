@@ -19,7 +19,7 @@ if [ $RUN_ENVIR = dev ]
 then
   export job=${job:-${RUN}_${modID}_${RUN_MODE}_post_${projID}}
   export NNODES=${NNODES:-1}
-  export NPROCS=${NPROCS:-4}
+  export NPROCS=${NPROCS:-1}
 fi
 
 # #################################
