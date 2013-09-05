@@ -24,7 +24,7 @@ test -d $DATA/$idate && rm -rf $DATA/$idate ; mkdir -p $DATA/$idate
 # NOTE: here is the possibility that pressure and forcing will be from different cycles. Check later.
 #dbgz: change envir for gfs
 ###forcefile=`${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t sfcflx -v $idate` || \
-forcefile=`${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e prod -n ${netwk} -t sfcflx -v $idate` || \
+forcefile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e prod -n ${netwk} -t sfcflx -v $idate` || \
   $USHrtofs/${RUN}_abort.sh "Missing Atmosperic Forcing File" \
     "ABNORMAL EXIT FORECAST: NO FILE sfcflx at $idate" 4
  
@@ -32,7 +32,7 @@ echo "forcefile $forcefile"
 flxfile=${DATA}/${idate}/${RUN}'.'`basename $forcefile`
 if [ $useslp = YES ] 
 then
-  pgrbfile=`${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t pgbges -v $idate`
+  pgrbfile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t pgbges -v $idate`
   echo "pgrbfile $pgrbfile"
   prsfile=${DATA}/${idate}/${RUN}'.'`basename $pgrbfile`
   $USHrtofs/${RUN}_atmforcing_extract.sh $forcefile $flxfile $pgrbfile $prsfile

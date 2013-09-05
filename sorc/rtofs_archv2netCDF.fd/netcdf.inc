@@ -1,3 +1,4 @@
+!     NetCDF-3.
 !
 ! netcdf version 3 fortran interface:
 !
@@ -59,8 +60,11 @@
       integer nf_nofill
       integer nf_lock
       integer nf_share
+      integer nf_64bit_offset
       integer nf_sizehint_default
       integer nf_align_chunk
+      integer nf_format_classic
+      integer nf_format_64bit
 
       parameter (nf_nowrite = 0)
       parameter (nf_write = 1)
@@ -70,8 +74,11 @@
       parameter (nf_nofill = 256)
       parameter (nf_lock = 1024)
       parameter (nf_share = 2048)
+      parameter (nf_64bit_offset = 512)
       parameter (nf_sizehint_default = 0)
       parameter (nf_align_chunk = -1)
+      parameter (nf_format_classic = 1)
+      parameter (nf_format_64bit = 2)
 
 !
 ! size argument for defining an unlimited dimension:
@@ -94,10 +101,10 @@
       integer nf_max_name
       integer nf_max_var_dims
 
-      parameter (nf_max_dims = 100)
-      parameter (nf_max_attrs = 2000)
-      parameter (nf_max_vars = 2000)
-      parameter (nf_max_name = 128)
+      parameter (nf_max_dims = 1024)
+      parameter (nf_max_attrs = 8192)
+      parameter (nf_max_vars = 8192)
+      parameter (nf_max_name = 256)
       parameter (nf_max_var_dims = nf_max_dims)
 
 !
@@ -132,6 +139,9 @@
       integer nf_ebadname
       integer nf_erange
       integer nf_enomem
+      integer nf_evarsize
+      integer nf_edimsize
+      integer nf_etrunc
 
       parameter (nf_noerr = 0)
       parameter (nf_ebadid = -33)
@@ -162,7 +172,9 @@
       parameter (nf_ebadname = -59)
       parameter (nf_erange = -60)
       parameter (nf_enomem = -61)
-
+      parameter (nf_evarsize = -62)
+      parameter (nf_edimsize = -63)
+      parameter (nf_etrunc = -64)
 !
 ! error handling modes:
 !
@@ -249,6 +261,11 @@
 !                          integer             old_mode)
       external        nf_set_fill
 
+      integer         nf_set_default_format
+!                          (integer             format,
+!                          integer             old_format)
+      external        nf_set_default_format
+
       integer         nf_redef
 !                         (integer             ncid)
       external        nf_redef
@@ -312,6 +329,11 @@
 !                         (integer             ncid,
 !                          integer             unlimdimid)
       external        nf_inq_unlimdim
+
+      integer         nf_inq_format
+!                         (integer             ncid,
+!                          integer             format)
+      external        nf_inq_format
 
 !
 ! dimension routines:
@@ -1086,6 +1108,8 @@
 !                          doubleprecision     dvals(1))
       external        nf_get_varm_double
 
+
+!     NetCDF-2.
 !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ! begin netcdf 2.4 backward compatibility:
 !
@@ -1229,12 +1253,12 @@
 !     
 !     advisory maximums:
 !     
-      parameter(maxncop = 32)
-      parameter(maxncdim = 100)
-      parameter(maxncatt = 2000)
-      parameter(maxncvar = 2000)
+      parameter(maxncop = 64)
+      parameter(maxncdim = 1024)
+      parameter(maxncatt = 8192)
+      parameter(maxncvar = 8192)
 !     not enforced 
-      parameter(maxncnam = 128)
+      parameter(maxncnam = 256)
       parameter(maxvdims = maxncdim)
 
 !     

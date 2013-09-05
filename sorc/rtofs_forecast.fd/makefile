@@ -47,12 +47,21 @@ TARGET = rtofs_forecast
 #
 # CPP, Compiler, and Linker Options
 #
-FC       = ncepmpxlf95
-CPP      = /usr/lib/cpp -P
-RCH     =
-CPPFLAGS = -DAIX -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
-OPTS     = -O -qfixed -qstrict -qtune=auto -qcache=auto
-LIST     = -qspillsize=32000 -qrealsize=8 -qintsize=4 -qfullpath
+#>>>>>FC       = ncepmpxlf95
+FC       = mpiifort
+##-->> FC       = mpfort
+CPP      = cpp -P
+CC       = icc    #gcc
+CCFLAGS  = -O
+CPPFLAGS = -DIA32 -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
+OPTS     = -fixed -fp-model strict -O3 -assume byterecl -convert big_endian 
+LIST     = -r8 
+#CPPFLAGS = -DAIX -DENDIAN_IO -DREAL8 -DMPI -DSERIAL_IO -DTIMER -DARCTIC
+#==> OPTS     = -fixed -fp-model strict -O -xHost -assume byterecl -convert big_endian -traceback -g 
+##-->> OPTS     = -compiler ifort -fixed -fp-model strict -O -xHost -assume byterecl -convert big_endian -traceback -g 
+#OPTS     = -O -qfixed -qstrict -qtune=auto -qcache=auto
+#==> LIST     = -cm -vec_report0 -w -xSSE4.2 -ip -tpp7 -xW -r8 -lmpi 
+#LIST     = -qspillsize=32000 -qrealsize=8 -qintsize=4 -qfullpath
 SMP      =
 TRAPS    =
 PROFILE  =
@@ -62,17 +71,18 @@ MAP      =
 W3LIB    =
 BACIO    =
 ESSL     =
-MASS     =  -lmass
+################################## MASS     =  -lmass
 HPMLIB   =
 SEARCH   =
 #
 # Assemble Options
 #
-FFLAGS   = $(OPTS) $(LIST) $(TRAPS) $(PROFILE) $(DEBUG)
+FFLAGS   = $(OPTS) $(LIST) 
+#FFLAGS   = $(OPTS) $(LIST) $(TRAPS) $(PROFILE) $(DEBUG)
 CFLAGS   =
-FFLAGST  = $(FFLAGS) $(SMP)
-LDFLAGS  = $(FFLAGS) $(MEM) $(MAP) $(SMP) $(PROFILE)
-LIBS     = $(W3LIB) $(BACIO) $(ESSL) $(MASS) $(HPMLIB) $(SEARCH)
+LDFLAGS  = $(FFLAGS)
+#LDFLAGS  = $(FFLAGS) $(MEM) $(MAP) $(SMP) $(PROFILE)
+LIBS     = $(W3LIB) $(BACIO) $(ESSL) $(MASS) $(HPMLIB) $(SEARCH)  -lmpi
 
 #
 # --- generic make definitions
@@ -96,9 +106,11 @@ SHELL         = /bin/sh
 	$(FC)             $(FFLAGS) -c $*.f
 
 .F.o:
-	$(CPP) $(CPPFLAGS) $< | sed -e '/^ *$$/d' > $<.f
-	$(FC) $(FFLAGS) -c $<.f
-	-\mv $<.o $*.o
+	#$(CPP) $(CPPFLAGS) $< | sed -e '/^ *$$/d' > $<.f
+	#$(FC) $(FFLAGS) -c $<.f
+	#-\mv $<.o $*.o
+	$(FC) $(CPPFLAGS) $(FFLAGS) -c $*.F
+
 #############################################################
 MODS =  mod_dimensions.o mod_xc.o mod_za.o mod_pipe.o mod_incupd.o mod_floats.o mod_tides.o mod_mean.o mod_hycom.o
 

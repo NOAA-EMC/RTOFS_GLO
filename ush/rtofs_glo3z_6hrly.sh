@@ -45,6 +45,6 @@ export CDF033=${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
 
 cp ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv_$reg.in $DATA/archv_$reg.in
 
-timex ${EXECrtofs}/${RUN}_archv2ncdf3z < $DATA/archv_$reg.in >> $pgmout 2>>errfile
+${EXECrtofs}/${RUN}_archv2ncdf3z < $DATA/archv_$reg.in >> $pgmout 2>>errfile
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

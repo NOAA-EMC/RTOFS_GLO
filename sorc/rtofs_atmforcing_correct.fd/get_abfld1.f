@@ -31,10 +31,10 @@ cir   iunit=900
           write(lp,*)'archive formatted b-file.'
         else
           write(lp,*)'separator = ' ,separator,' is not supported.'
-          call flush_(lp)
+          call flush(lp)
           stop
         endif
-        call flush_(lp)
+        call flush(lp)
         call zaiopf(fln_name(1:lgth)//'.a', 'old', iunit)
         open (unit=iunit,file=fln_name(1:lgth)//'.b',
      &      status='old', action='read')

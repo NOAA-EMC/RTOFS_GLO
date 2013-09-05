@@ -38,7 +38,7 @@ PROGRAM atmforcing
   USE mod_hycomio1, ONLY: mask_hycom_1,write_abrecord,start_abfile
   USE mod_za,ONLY : xcspmd,zaiost,zaiocl,idm,jdm
   USE mod_hytime
-  USE mod_dump
+  USE mod_dump, ONLY: dumpi,dumpr
   USE mod_geom
   USE mod_gribio
   USE mod_flags
@@ -602,13 +602,13 @@ PROGRAM atmforcing
            END IF
         END DO
      END DO
-     WRITE(*,*)'ndiff=',ndiff                       
-     WRITE(*,*)'msk_in:max,min=',MAXVAL(msk_in),MINVAL(msk_in)
-     WRITE(*,*)'msk_out:max,min=',MAXVAL(msk_out),MINVAL(msk_out)
-     WRITE(*,*)'real(imsk_intp):max,min=',MAXVAL(REAL(imsk_intp)),MINVAL(REAL(imsk_intp))
-     WRITE(*,*)'real(imsk_hycom):max,min=',MAXVAL(REAL(imsk_hycom)),MINVAL(REAL(imsk_hycom))
-     OPEN (unit=700,file='masks',form="unformatted")
-     WRITE(700) REAL(imsk_intp(:,:)),msk_out(:,:),REAL(imsk_hycom(:,:))
+     WRITE(*,*)'ndiff=',ndiff ; CALL flush(lp)                      
+     WRITE(*,*)'msk_in:max,min=',MAXVAL(msk_in),MINVAL(msk_in) ; CALL flush(lp)
+     WRITE(*,*)'msk_out:max,min=',MAXVAL(msk_out),MINVAL(msk_out) ; CALL flush(lp)
+     WRITE(*,*)'real(imsk_intp):max,min=',MAXVAL(REAL(imsk_intp)),MINVAL(REAL(imsk_intp)) ; CALL flush(lp)
+     WRITE(*,*)'real(imsk_hycom):max,min=',MAXVAL(REAL(imsk_hycom)),MINVAL(REAL(imsk_hycom)) ; CALL flush(lp)
+     OPEN (unit=700,file='masks',form="unformatted") ; CALL flush(lp)
+     WRITE(700) REAL(imsk_intp(:,:)),msk_out(:,:),REAL(imsk_hycom(:,:)) ; CALL flush(lp)
      CLOSE(700)
      !
      CALL dumpi(701,imsk_hycom,nxhycom,nyhycom,'mask_hycom')

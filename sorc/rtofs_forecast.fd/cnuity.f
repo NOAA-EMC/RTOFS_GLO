@@ -8,7 +8,7 @@ c --- hycom version 1.0
 c
       include 'common_blocks.h'
 c
-      integer m,n
+      integer m,n,ierror
 c
 c --- ------------------------------------------------------
 c --- continuity equation (flux-corrected transport version)
@@ -406,13 +406,19 @@ c
         call xcminr(dpkmin(1:2*kk))
         do k= 1,kk
           dpmin=dpkmin(k)
-          if (dpmin.lt.-onecm) then
+
+c      write(1000+mnproc,222) k,dpmin
+c 222  format('1 k,dpmin:',i5,1pe15.7)
+c      call flush(1000+mnproc)
+
+         if (dpmin.lt.-onecm) then
             iprint = 0
             do j=1,jj
               do l=1,isp(j)
                 do i=max(1,ifp(j,l)),min(ii,ilp(j,l))
                   if (dpoldm(i,j,k).eq.dpmin .and. iprint.le.5) then
-                    write (lp,100) nstep,i+i0,j+j0,k,19,dpmin*qonem
+                    write (1000+mnproc,100) nstep,i+i0,j+j0,k,19,dpmin*qonem
+                    call flush(1000+mnproc)
                     iprint = iprint + 1
                   endif
                 enddo !i
@@ -421,15 +427,22 @@ c
             call xcsync(flush_lp)
           endif
         enddo !k
+
         do k= 1,kk
           dpmin=dpkmin(k+kk)
+
+c      write(1000+mnproc,223) k,dpmin
+c 223  format('2 k,dpmin:',i5,1pe15.7)
+c      call flush(1000+mnproc)
+
           if (dpmin.lt.-onecm) then
             iprint = 0
             do j=1,jj
               do l=1,isp(j)
                 do i=max(1,ifp(j,l)),min(ii,ilp(j,l))
                   if (dp(i,j,k,n).eq.dpmin .and. iprint.le.5) then
-                    write (lp,100) nstep,i+i0,j+j0,k,15,dpmin*qonem
+                    write (1000+mnproc,100) nstep,i+i0,j+j0,k,15,dpmin*qonem
+                    call flush(1000+mnproc)
                     iprint = iprint + 1
                   endif
                 enddo !i
@@ -438,9 +451,19 @@ c
             call xcsync(flush_lp)
           endif
         enddo !k
+
         if     (minval(dpkmin(1:2*kk)).lt.dpfatal*onem) then
+
+c      do k=1,2*kk
+c      write(1000+mnproc,224) k,dpmin,dpfatal*onem
+c 224  format('3 k,dpmin:',i5,1pe15.7,'  dpfatal*onem',1pe15.7)
+c      call flush(1000+mnproc)
+c      enddo
+c      call mpi_finalize(ierror)
+c      stop 
+
           if     (mnproc.eq.1) then
-            write(lp,'(/ a,f9.2 /)')
+            write(1000+mnproc,'(/ a,f9.2 /)')
      &        'error: neg. dp (m) < ',dpfatal
           endif
           call xcstop('cnuity')

@@ -1,0 +1,75 @@
+#!/bin/bash 
+
+#************
+# ANALYSIS-PRE
+#*************
+
+#BSUB -J jrtofs_analysis_pre
+#BSUB -q "hpc_ibm"
+#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.out.%J
+#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre.err.%J
+#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre
+#BSUB -x
+#BSUB -W 0:20
+module load ics
+module list 
+
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS_PRE.sms.prod ) > stdout.anal_pre
+
+
+#*********
+# ANALYSIS
+#**********
+#BSUB -J jrtofs_analysis -w 'exit("jrtofs_analysis_pre")'
+#BSUB -a poe
+#BSUB -W 1:30
+#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis.out.%J
+#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis.err.%J
+#BSUB -n 2034
+#BSUB -q "hpc_ibm"
+#BSUB -R span[ptile=8]
+#BSUB -x
+
+set -x
+ulimit -s unlimited
+
+export LANG=en_US
+
+export MP_EAGER_LIMIT=65536
+export MP_COREFILE_FORMAT=core.txt
+export MP_EUIDEVELOP=min
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_MPILIB=mpich2
+
+export MP_LABELIO=yes
+export MP_SINGLE_THREAD=yes
+
+export MP_USE_BULK_XFER=yes
+export MPICH_ALLTOALL_THROTTLE=0
+export MP_TASK_AFFINITY=core:1
+
+#export MP_COLLECTIVE_OFFLOAD=yes
+
+module list
+
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS.sms.prod ) > stdout.anal
+
+#************
+# ANALYSIS-PRE
+#*************
+
+#--> #BSUB -J jrtofs_analysis_post -w 'done("jrtofs_analysis")'
+#--> #BSUB -q "hpc_ibm"
+#--> #BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_post.out.%J
+#--> #BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_post.err.%J
+#--> #BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_analysis_pre
+#--> #BSUB -x
+#--> #BSUB -W 0:20
+#--> module load ics
+#--> module list 
+#--> 
+#--> (time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_ANALYSIS_POST.sms.prod ) > stdout.anal_post
+
+
+

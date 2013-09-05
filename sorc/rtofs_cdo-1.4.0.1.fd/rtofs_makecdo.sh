@@ -14,7 +14,7 @@ cd $RTOFS_CDO
 gtar -zxvf szip-2.1.tar.gz
 cd szip-2.1
 ./configure --prefix=$RTOFS_CDO --disable-shared \
-CC=ncepxlc CXX=ncepxlC F77=ncepxlf
+SCC=icc CXX=icc SFC=ifort FFLAGS="-convert LITTLE_ENDIAN"
 make
 make install
 
@@ -24,7 +24,7 @@ gtar -zxvf jasper-1.900.1.tar.gz
 cd jasper-1.900.1
 ./configure --prefix=$RTOFS_CDO \
 --without-x --disable-opengl --disable-shared \
-CC=ncepxlc CXX=ncepxlC F77=ncepxlf
+SCC=icc CXX=icc SFC=ifort FFLAGS="-convert LITTLE_ENDIAN"
 make
 make install
 
@@ -33,7 +33,7 @@ cd $RTOFS_CDO
 gtar -zxvf proj-4.7.0.tar.gz
 cd proj-4.7.0
 ./configure --prefix=$RTOFS_CDO --without-mutex --without-jni --disable-shared \
-CC=ncepxlc CXX=ncepxlC F77=ncepxlf
+SCC=icc CXX=icc SFC=ifort FFLAGS="-convert LITTLE_ENDIAN"
 make
 make install
 
@@ -42,7 +42,7 @@ cd $RTOFS_CDO
 gtar -zxvf grib_api-1.9.8.tar.gz
 cd grib_api-1.9.8
 ./configure --prefix=$RTOFS_CDO --with-jasper=$RTOFS_CDO --disable-python \
-CC=ncepxlc F77=ncepxlf
+SCC=icc CXX=icc SFC=ifort FFLAGS="-convert LITTLE_ENDIAN"
 make
 make install
 
@@ -53,23 +53,25 @@ cd cdo-1.5.0
 ./configure --prefix=$RTOFS_CDO \
 --with-zlib=/usrx/local/lib \
 --with-szlib=$RTOFS_CDO \
---with-netcdf=/usrx/local/netcdf.3.5.0 \
+--with-hdf5=$HDF5 \
+--with-netcdf=$NETCDF \
 --with-proj=$RTOFS_CDO  \
 --with-jasper=$RTOFS_CDO \
 --with-grib_api=$RTOFS_CDO \
 --enable-grib --enable-cgribex --disable-shared \
-CC=ncepxlc CXX=ncepxlC
+SCC=icc CXX=icc
 make
 make install
 
+#--with-netcdf=/usrx/local/netcdf-3.6.3 \
 echo 'Cleaning up'
 
 cd $RTOFS_CDO
-rm -rf szip-2.1
-rm -rf jasper-1.900.1
-rm -rf proj-4.7.0
-rm -rf grib_api-1.9.8
-rm -rf cdo-1.5.0
+#rm -rf szip-2.1
+#rm -rf jasper-1.900.1
+#rm -rf proj-4.7.0
+#rm -rf grib_api-1.9.8
+#rm -rf cdo-1.5.0
 
 echo "All done!"
 echo "The cdo executable should be in $RTOFS_CDO/bin"

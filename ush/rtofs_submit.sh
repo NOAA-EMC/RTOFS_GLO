@@ -32,23 +32,12 @@ postmsg "$jlogfile" "$msg"
 #
 # 1. Prepare for the model run
 
-  export OMP_NUM_THREADS=${OMP_NUM_THREADS:-0}
-  export XLSMPOPTS=${XLSMPOPTS:-"stack=32000000"}
-  
   touch ok
   rm -f ok
   date >> TRACK
 
-  cmdtype='poe'
-
-  export MP_LABELIO=YES
-#  export MP_INFOLEVEL=3
-  export MP_STDOUTMODE=ordered
-
-  export MEMORY_AFFINITY=MCM
-  export TARGET_CPU_LIST=-1
-  poe $EXECrtofs/${RUN}_forecast -procs $NPROCS >> $pgmout 2>errfile
-## p5 launch  poe /usrx/local/mpi_trace/utils/launch.x $EXECrtofs/${RUN}_forecast -procs $NPROCS >> $pgmout 2>errfile
+  mpirun.lsf $EXECrtofs/${RUN}_forecast -procs $NPROCS >> $pgmout 2>errfile
+  # mpirun -ppn 16 $EXECrtofs/${RUN}_forecast  >> $pgmout 2>errfile
   export err=$?; err_chk
 
   date >> TRACK

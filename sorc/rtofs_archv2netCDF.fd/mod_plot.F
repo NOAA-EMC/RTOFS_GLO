@@ -142,6 +142,8 @@ c
       allocate(   scv2(ii,jj) )
       allocate(   scp2(ii,jj) )
 c
+      allocate(   pang(ii,jj) )
+c
       allocate(     ip(ii,jj) )
       allocate(     iq(ii,jj) )
       allocate(     iu(ii,jj) )

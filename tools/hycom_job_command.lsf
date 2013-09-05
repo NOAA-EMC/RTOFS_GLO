@@ -1,0 +1,44 @@
+#!/bin/bash 
+################################################################################
+#                                                                              #
+#                                                                              #
+################################################################################
+#BSUB -J jrtofs_analysis
+#BSUB -a poe
+#BSUB -W 1:30
+#BSUB -oo /gpfs/td1/marine/noscrub/Ilya.Rivin/simulations/rtofs_glo_analysis_00/jrtofs_analysis.out
+#BSUB -eo /gpfs/td1/marine/noscrub/Ilya.Rivin/simulations/rtofs_glo_analysis_00/jrtofs_analysis.err
+#BSUB -n 2034
+#BSUB -q "hpc_ibm"
+#BSUB -R span[ptile=8]
+#BSUB -x
+
+set -x
+ulimit -s unlimited
+
+export LANG=en_US
+
+export MP_EAGER_LIMIT=65536
+export MP_COREFILE_FORMAT=core.txt
+export MP_EUIDEVELOP=min
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_MPILIB=mpich2
+
+export MP_LABELIO=yes
+export MP_SINGLE_THREAD=yes
+
+export MP_USE_BULK_XFER=yes
+export MPICH_ALLTOALL_THROTTLE=0
+export MP_TASK_AFFINITY=core:1
+
+#export MP_COLLECTIVE_OFFLOAD=yes
+
+TMPDIR=/gpfs/td1/marine/noscrub/Ilya.Rivin/simulations/rtofs_glo_analysis_00
+cd $TMPDIR
+test -f ${TMPDIR}/rtofs_forecast && rm -f ${TMPDIR}/rtofs_forecast
+cp -pf /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/exec/rtofs_forecast ${TMPDIR}/.
+
+(time mpirun.lsf ./rtofs_forecast )  > stdout
+##(time mpirun.lsf mpirun -ppn 4 ./rtofs_forecast ) 1> OUTFILE 2> ERRORFILE
+

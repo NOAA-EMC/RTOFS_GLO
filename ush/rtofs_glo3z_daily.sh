@@ -47,14 +47,7 @@ export CDF036=${RUN}_${modID}_3dz_${mode}${fhr}_daily_3zsio.nc
 
 touch run_script.sh; rm run_script.sh
 echo \#!/bin/sh > run_script.sh
-echo timex ${EXECrtofs}/${RUN}_archv2ncdf3z \< $DATA/archv2ncdf3z_\$1.in \>\> $pgmout 2\>\>errfile >> run_script.sh
-echo ${EXECrtofs}/${RUN}_archv2ncdf3z \< $DATA/archv2ncdf3z_\$1.in >>run_script.sh
-
-touch scp.sh; rm -f scp.sh
-echo sh run_script.sh tem > scp.sh
-echo sh run_script.sh sal >> scp.sh
-echo sh run_script.sh uvl >> scp.sh
-echo sh run_script.sh vvl >> scp.sh
+echo ${EXECrtofs}/${RUN}_archv2ncdf3z \< $DATA/archv2ncdf3z_\$1.in \>\> $pgmout 2\>\>errfile >> run_script.sh
 
 for fnam in uvl vvl tem sal 
 do
@@ -69,7 +62,6 @@ do
     sal) sal1=36 ;;
   esac
 
-  export MP_PGMMODEL=mpmd
   pgmout=outfile
 
   rm change_archv; touch change_archv
@@ -81,9 +73,25 @@ do
   sed -f change_archv archv.in > archv2ncdf3z_$fnam.in
 
 done
-export MP_CMDFILE=scp.sh
-chmod 700 $MP_CMDFILE
-export MP_PROCS=$no_procs
-poe -procs $no_procs  >> $pgmout 2>> $MP_CMDFILE.out
+#dbgz 20120112
+# NPROCS=1
+if [ $NPROCS -gt 1 ] 
+then
+    touch scp.sh; rm -f scp.sh
+    echo sh ./run_script.sh tem > scp.sh
+    echo sh ./run_script.sh sal >> scp.sh
+    echo sh ./run_script.sh uvl >> scp.sh
+    echo sh ./run_script.sh vvl >> scp.sh
+    module load ics
+    module load ibmpe
+    export MP_LABELIO=yes
+    export MP_CMDFILE=./scp.sh
+    mpirun.lsf >>$pgmout 2>errfile 
+else 
+  for fnam in uvl vvl tem sal 
+  do
+    sh ./run_script.sh $fnam
+  done
+fi
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

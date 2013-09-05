@@ -1,4 +1,4 @@
-SHELL=/usr/bin/ksh
+SHELL=/bin/ksh
 #
 # This makefile was produced by /usr/bin/fmgen at 04:12:32 PM on 05/01/95
 # If it is invoked by the command line
@@ -29,8 +29,6 @@ SHELL=/usr/bin/ksh
 # LEX, or CAL.  An explicit rule will need to be added for PASCAL modules.
 #
 SRCS=   constants.f90 mod_flags.f90 mod_geom.f90 atmforcing.f90
-        
-
 OBJS=	${SRCS:.f90=.o}
 
 # Tunable parameters
@@ -41,12 +39,12 @@ OBJS=	${SRCS:.f90=.o}
 # CMD		Name of the executable
 # PROFLIB	Library needed for profiling
 # 
-CF =		ncepxlf95
+CF =		ifort
 
 INC1   = ../../lib/incmod/rtofs_serial_mods_4 
 INC2   = ../../lib/incmod/rtofs_hycomiot_mods_4
-LIBS  = -L/nwprod/lib -lw3_4 -lbacio_4 \
-        -L../../lib -lrtofs_serial_mods_4 -lrtofs_hycomiot_4
+LIBS  = -L../../lib -lrtofs_serial_mods_4 -lrtofs_hycomiot_4 \
+        -L/nwprod/lib -lw3nco_v2.0.3_4 -lbacio_v2.0.1_4
 CMD   =		rtofs_atmforcing
 PROFLIB =	-lprof
 
@@ -54,7 +52,7 @@ PROFLIB =	-lprof
 # To compile with flowtracing turned on, use the second line
 # To compile giving profile additonal information, use the third line
 # WARNING:  SIMULTANEOUSLY PROFILING AND FLOWTRACING IS NOT RECOMMENDED 
-FFLAGS = -qsuffix=f=f90:cpp=F90 -qfree=f90 -O3  
+FFLAGS = -free -O3 -assume byterecl -convert big_endian
 LDFLAGS = -O3 
 
 # Lines from here on down should not need to be changed.  They are the
@@ -62,11 +60,15 @@ LDFLAGS = -O3
 #
 all:	$(CMD)
 
-$(CMD):		$(OBJS) 
-	$(CF) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+$(CMD):	$(OBJS) 
+	$(CF) $(LDFLAGS) -o $(CMD) $(OBJS) $(LIBS)
 
-$(OBJS):	$(SRCS) $(INC1) $(INC2)
-	$(CF) $(FFLAGS) -c $< -I$(INC1) -I$(INC2)
+#$(CMD):		$(OBJS) 
+#	$(CF) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+#
+#
+#(OBJS):	$(SRCS) $(INC1) $(INC2)
+#	$(CF) $(FFLAGS) -c $< -I$(INC1) -I$(INC2)
 
 # Make the profiled version of the command and call it swathps.prof
 #
@@ -86,3 +88,19 @@ clobber:	clean
 
 void:	clobber
 	-rm -f $(SRCS) makefile
+
+
+atmforcing.o: atmforcing.f90 constants.o mod_flags.o mod_geom.o 
+
+################################
+.IGNORE:
+.SUFFIXES: .f90 .o
+
+#	There is probably no reason to modify these rules
+
+.f90.o:
+	$(CF) $(FFLAGS) -c $< -I$(INC1) -I$(INC2)
+
+#.f90.o:
+#	rm $@ $*.mod
+#	$(CF) $(FFLAGS) -c $< -I$(INC1) -I$(INC2)

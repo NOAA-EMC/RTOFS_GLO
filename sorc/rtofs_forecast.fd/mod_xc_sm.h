@@ -680,6 +680,8 @@ c
       implicit none
 c
       character*(*), intent(in) :: cerror
+
+      integer ierror
 c
 c**********
 c*
@@ -698,6 +700,9 @@ c
 c     print active timers.
 c
       call xctmrp
+
+      call mpifinalize(ierror)
+
 c
 c     shared memory version, just stop.
 c

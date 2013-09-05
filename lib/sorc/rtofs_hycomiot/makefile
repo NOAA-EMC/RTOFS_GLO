@@ -9,25 +9,22 @@ MODDIR=../../incmod/rtofs_hycomiot_mods_4
 
 #--------------------------------------
 # The following was used for XLF on AIX
-DEFS= -DAIX -DREAL4
-FC=ncepxlf95
-CPP=/usr/lib/cpp -P
-CPPFLAGS  = DAIX -DREAL8 -DSERIAL_IO -DTIMER -DARCTIC
-INC1   = ../../rtofs_serial_mods_4
-LIBS  = -L/nwprod/lib -lw3_4 -lbacio_4  -L../../. -lrtofs_serial_mods_4
-FFLAGS= -qfree=f90 -qstrict -qspillsize=32000 -qwarn64 \
-        -qflttrap=overflow:zerodivide:invalid:enable:imprecise -qsigtrap \
+FC=ifort
+CPPFLAGS  = DIA32 -DREAL4 -DSERIAL_IO -DTIMER -DARCTIC
+INC1   = ../../incmod/rtofs_serial_mods_4
+LIBS  = -L/nwprod/lib -lw3nco_4 -lbacio_4  -L../../. -lrtofs_serial_mods_4
+FFLAGS= -free -fp-model strict -assume byterecl -convert big_endian \
 	-I$(INC1) $(LIBS) 
 CFLAGS= 
-ARFLAGS= -X64 -q -v
-LDFLAGS= $(FFLAGS) -b64
+ARFLAGS= ruv
+LDFLAGS= $(FFLAGS) 
 
-RM            = /usr/bin/rm -f
+RM            = /bin/rm -f
 TESTD         = /usr/bin/test -d
 TESTF         = /usr/bin/test -f
-MV            = /usr/bin/mv -f
-CP            = /usr/bin/cp -p
-MKDIR         = /usr/bin/mkdir -p
+MV            = /bin/mv -f
+CP            = /bin/cp -p
+MKDIR         = /bin/mkdir -p
 #
 # rules.
 #
@@ -41,8 +38,7 @@ MKDIR         = /usr/bin/mkdir -p
 
 .F.o:
 	$(RM) $<.f
-	$(CPP) $(CPPFLAGS) $< | sed -e '/^ *$$/d' > $<.f
-	$(FC) $(FFLAGS) -c $<.f
+	$(FC) $(CPPFLAGS) $(FFLAGS) -c $*.F
 
 .f.a:	
 	$(FC) -c $(FFLAGS) $<
@@ -52,7 +48,8 @@ MKDIR         = /usr/bin/mkdir -p
 	$(FC) -c $(FFLAGS) $<
 	ar $(ARFLAGS) $@ $*.o
 
-$(LIB):	cleanall $(LIB)(flush.o mod_dump.o  mod_hytime.o mod_hycomio1.o mod_gribio.o)
+$(LIB):	cleanall $(LIB)(mod_dump.o  mod_hytime.o mod_hycomio1.o mod_gribio.o)
+#-- $(LIB):	cleanall $(LIB)(flush.o mod_dump.o  mod_hytime.o mod_hycomio1.o mod_gribio.o)
 
 cleanall:
 	-$(RM) *.F.f *.mod *.o $(LIB) core $(MODDIR)/*.mod
@@ -62,7 +59,7 @@ install: cleanall $(LIB)
 	$(MV) mod_dump.mod mod_gribio.mod mod_hycomio1.mod mod_hytime.mod $(MODDIR)
 	-$(RM) *.o
 
-flush.o: flush.f90
+#-- flush.o: flush.f90
 mod_dump.o: mod_dump..f90
 mod_hytime.o: hytime.f90
 mod_hycomio1.o: mod_hycomio1.f90 mod_hytime.o

@@ -4,18 +4,31 @@
 #####################################################################
 #
 AR=ar
-CPP=/usr/lib/cpp -P 
-FC=ncepxlf95
-LD=ncepxlf95
+CPP=/usr/bin/cpp -P 
+FC=ifort
+LD=ifort
 ARFLAGS=-rv
 INC1   = ../../lib/incmod/rtofs_serial_mods_4
 INC2   = ../../lib/incmod/rtofs_hycomiot_mods_4
 LIBS=-L../../lib -lrtofs_serial_mods_4 -lrtofs_hycomiot_4
-CPPFLAGS=-DAIX -DREAL4 -DARCTIC
-FFLAGS=-O -qarch=auto -qfixed=72 -g  -I$(INC1) -I$(INC2) # -03
-F90FLAGS=-qsuffix=f=f90:cpp=F90 -qfree=f90 -O -qarch=auto -g -I$(INC1) -I$(INC2) # -03
-FCFLAGS= -c -qfixed -qstrict -qspillsize=32000 -qwarn64 -I$(INC1) -I$(INC2)
-LDFLAGS=-O3 -qarch=auto
+CPPFLAGS=-DIA32 -DREAL4 -DARCTIC
+FFLAGS=-O -fixed  -assume byterecl -convert big_endian -I$(INC1) -I$(INC2) # -03
+F90FLAGS=-free -O -xHost -assume byterecl -convert big_endian -I$(INC1) -I$(INC2) # -03
+FCFLAGS= -c -fixed -fp-model strict -assume byterecl -convert big_endian -I$(INC1) -I$(INC2)
+LDFLAGS=-O3 -xHost
+#-AIX AR=ar
+#-AIX CPP=/usr/lib/cpp -P 
+#-AIX FC=ncepxlf95
+#-AIX LD=ncepxlf95
+#-AIX ARFLAGS=-rv
+#-AIX INC1   = ../../lib/incmod/rtofs_serial_mods_4
+#-AIX INC2   = ../../lib/incmod/rtofs_hycomiot_mods_4
+#-AIX LIBS=-L../../lib -lrtofs_serial_mods_4 -lrtofs_hycomiot_4
+#-AIX CPPFLAGS=-DAIX -DREAL4 -DARCTIC
+#-AIX FFLAGS=-O -qarch=auto -qfixed=72 -g  -I$(INC1) -I$(INC2) # -03
+#-AIX F90FLAGS=-qsuffix=f=f90:cpp=F90 -qfree=f90 -O -qarch=auto -g -I$(INC1) -I$(INC2) # -03
+#-AIX FCFLAGS= -c -qfixed -qstrict -qspillsize=32000 -qwarn64 -I$(INC1) -I$(INC2)
+#-AIX LDFLAGS=-O3 -qarch=auto
 #
 BINDIR= ../../exec
 SRC_F90 = atmforcing_correct.f90

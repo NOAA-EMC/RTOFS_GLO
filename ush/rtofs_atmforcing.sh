@@ -59,7 +59,6 @@ NPROCS=${NPROCS:-1}
 if [ $NPROCS -gt 1 ]
 then
   rm -f cmdfile_tmp cmdfile.*
-  export MP_PGMMODEL=mpmd
 fi
 while [ $idate -le $edate ]
 do
@@ -85,12 +84,14 @@ then
       echo 'sleep 1' >> $cfile
       cmdlen=`expr $cmdlen + 1`
     done
-    export MP_CMDFILE=$cfile
-    poe -procs $NPROCS
+    module load ics
+    module load ibmpe
+    export MP_LABELIO=yes
+    export MP_CMDFILE=./$cfile 
+    mpirun.lsf >>$pgmout 2>errfile 
     exit=$?
     ## rm -f cmdfile.*
   done
-  export MP_PGMMODEL=spmd
   ## rm -f cmdfile_tmp
 fi
 
