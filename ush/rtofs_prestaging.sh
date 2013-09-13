@@ -99,6 +99,9 @@ fi
       then
         cp -p forcing.${fil}.${type} ${COMOUT}/${RUN}_${modID}.${runstep}.t${mycyc}z.forcing.${fil}.${type} 
         echo "forcing.${fil}.${type} copied" 
+        if [[ ${type} = a ]]; then
+        $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_FORCINGA $job ${COMOUT}/${RUN}_${modID}.${runstep}.t${mycyc}z.forcing.${fil}.${type}
+        fi
        else
         $USHrtofs/${RUN}_abort.sh "Missing Fix Forcing File" \
           "ABNORMAL EXIT FORECAST: NO FILE for forcing.${fil}.${type}" 2
