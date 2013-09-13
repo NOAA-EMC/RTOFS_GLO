@@ -223,6 +223,7 @@ do
 done
 
 if [ $procstatus = 0 ]
+then
   msg='THE RTOFS_GLO_REG_POST JOB HAS ENDED NORMALLY.'
   postmsg "$jlogfile" "$msg"
 fi
