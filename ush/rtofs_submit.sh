@@ -36,7 +36,7 @@ postmsg "$jlogfile" "$msg"
   rm -f ok
   date >> TRACK
 
-  mpirun.lsf $EXECrtofs/${RUN}_forecast -procs $NPROCS >> $pgmout 2>errfile
+  mpirun.lsf $EXECcode/${RUN}_forecast -procs $NPROCS >> $pgmout 2>errfile
   # mpirun -ppn 16 $EXECrtofs/${RUN}_forecast  >> $pgmout 2>errfile
   export err=$?; err_chk
 

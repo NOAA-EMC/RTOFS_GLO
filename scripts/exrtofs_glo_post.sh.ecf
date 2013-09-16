@@ -285,7 +285,7 @@ do
     hr_3z_hrly=`expr $hr_3z_hrly + $intvl_6hrly`
     if [ $volume_3z_6hrly = 'YES' ]
     then
-      for reg in reg1 reg2 reg3 
+      for reg in hvr_reg1 hvr_reg2 hvr_reg3 
       do
         ${USHrtofs}/${RUN}_glo3z_6hrly.sh $reg
         if [ $SENDCOM = 'YES' ]
@@ -328,7 +328,7 @@ then
   fi
 
   echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
-  msg='THE OFS_ATL_POST JOB HAS ENDED NORMALLY.'
+  msg='THE RTOFS_GLO_POST JOB HAS ENDED NORMALLY.'
   postmsg "$jlogfile" "$msg"
 fi
 

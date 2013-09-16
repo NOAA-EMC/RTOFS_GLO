@@ -1,0 +1,48 @@
+{
+   "CC"                 : "gcc -std=gnu99",
+   "CPP"                : "gcc -E",
+   "CPPFLAGS"           : "-I/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/proj-4.7.0/include -I/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/grib_api-1.9.8/include -I/usrx/local/NetCDF/3.6.3/include -I/usrx/local/HDF5/1.8.9/serial/include -I/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/szip-2.1/include -I/usrx/local/lib/include  -I/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/jasper-1.900.1/include",
+   "CFLAGS"             : "-g -O2 -pthread",
+   "LDFLAGS"            : "-L/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/proj-4.7.0/lib -L/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/grib_api-1.9.8/lib -L/usrx/local/NetCDF/3.6.3/lib -L/usrx/local/HDF5/1.8.9/serial/lib -L/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/szip-2.1/lib -L/usrx/local/lib/lib  -L/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/jasper-1.900.1/lib",
+   "LIBS"               : "-lproj -lgrib_api -ljasper -lnetcdf -lhdf5_hl -lhdf5 -lsz -lz  -lm ",
+   "FCFLAGS"            : "",
+   "INCLUDES"           : "",
+   "LD"                 : "/usr/bin/ld -m elf_x86_64",
+   "NM"                 : "/usr/bin/nm -B",
+   "AR"                 : "ar",
+   "AS"                 : "as",
+   "DLLTOOL"            : ":",
+   "OBJDUMP"            : "objdump",
+   "STRIP"              : "strip",
+   "RANLIB"             : "ranlib",
+   "INSTALL"            : "/usr/bin/install -c",
+   "cdi"                : {
+     "enable_cdi_lib" : false
+   },
+  "threads"    : {
+    "lib"      : "",
+    "include"  : ""
+  },
+  "zlib"     : {
+    "lib"      : " -L/usrx/local/lib/lib -lz",
+  },
+  "szlib"    : {
+    "lib"      : " -L/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/szip-2.1/lib -lsz",
+    "include"  : " -I/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/szip-2.1/include"
+  },
+  "hdf5"     : {
+    "lib"      : " -L/usrx/local/HDF5/1.8.9/serial/lib -lhdf5",
+    "include"  : " -I/usrx/local/HDF5/1.8.9/serial/include"
+  },
+  "netcdf"   : {
+    "lib"      : " -L/usrx/local/NetCDF/3.6.3/lib -lnetcdf",
+    "include"  : " -I/usrx/local/NetCDF/3.6.3/include"
+  },
+   "proj"               : {
+     "lib"              : " -L/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/proj-4.7.0/lib -lproj",
+     "include"          : " -I/gpfs/td1/emc/marine/save/Avichal.Mehra/net3.6_rtofs_cdo-1.4.0.1.fd/proj-4.7.0/include"
+   },
+   "USER_NAME"          : "Avichal.Mehra",
+   "HOST_NAME"          : "t14a1",
+   "SYSTEM_TYPE"        : "x86_64-unknown-linux-gnu"
+   }
