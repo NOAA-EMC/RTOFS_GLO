@@ -1,57 +1,44 @@
 #!/bin/sh
-
 #
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         rtofs_create_regions_mpmd_weights.sh                   #
+# Script name:         rtofs_glo2d_3hrly.sh                                   #
 # Script description:                                                         #
 #                                                                             #
-# Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2013-08-20     #
+# Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2011-07-20     #
 #                                                                             #
-# Abstract: This script submits 11 jobs for the 11 sub regions on individual  #
-#           nodes to create GRIB2 files directly                              #
+# Abstract: This script creates the surface fields for RTOFS-Global           #
+#           every 3 hours in netCDF format                                    #
 #                                                                             #
-#                                                                             #
-# Sub-scripts called:    cmdfile.$i (i from 1 to 11)                          # 
-#                                                                             #
+# Sub-scripts called:                                                         #
+#                                                                             # 
 # Executables called:                                                         #
-#                                                                             #
+#                    rtofs_archv2ncdf2d                                       #
+#                                                                             # 
 #                                                                             #
 # Imported variables:                                                         #
 #                    RUN                                                      #
-#                    utilexec                                                 #
-#                    USHrtofs                                                #
+#                    modID                                                    #
+#                    fhr                                                      #
+#                    EXECrtofs                                                #
+#                    PARMglobal                                               #
+#                    mode                                                     #
 #                                                                             #
 #                                                                             #
 # Script history log:                                                         #
 # XXXX-XX-XXX  Joe Dow                                                        #
 #                                                                             #
 ###############################################################################
-set -xeu
+
+set -x
+typeset -Z3 fhr
 
 echo "*** Started script $0 on hostname "`hostname`' at time '`date`
 
-cd $DATA 
-# Submit seperate scripts for the 11 regions
+export CDF030=${RUN}_${modID}_2ds_${mode}${fhr}_1hrly_diag.nc
+export CDF031=${RUN}_${modID}_2ds_${mode}${fhr}_1hrly_prog.nc
 
-test -f cmdfile && rm -f cmdfile cmdfile.*
-
-ifile=1
-for region in alaska arctic bering guam gulf_alaska honolulu hudson_baffin samoa trop_paci_lowres west_atl west_conus
-
-do
-   
-   echo "$USHrtofs/${RUN}_nc2grib2.sh_prod $region > out_${region} 2>&1"               >> cmdfile.$ifile
-   chmod +x cmdfile.$ifile
-   echo "./cmdfile.$ifile" >> cmdfile
-   ifile=`expr $ifile + 1`
-
-done
-
-chmod +x cmdfile
-echo "mpirun.lsf ${utilexec}/mpiserial"
-mpirun.lsf ${utilexec}/mpiserial
-exit=$?
+${EXECrtofs}/rtofs_archv2ncdf2d < ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv2ncdf2d_1hrly.in >> $pgmout 2>>errfile 
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

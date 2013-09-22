@@ -6,3 +6,4 @@ CDO:         1.5.0  (https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branch
 
 W3 lib:      2.0.3 (/nwprod/lib/libw3nco_v2.0.3_4.a)
 BUFR  lib:   2.0.1 (/nwprod/lib/libbacio_v2.0.1_4.a)
+NetCDF:      3.6.3 (usrx/local/NetCDF/3.6.3)

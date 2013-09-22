@@ -8,13 +8,16 @@
 #                                                                             #
 # Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2011-07-20     #
 #                                                                             #
-# Abstract: This is the post-processing script for RTOFS_GLO                  #
+# Abstract: This is the post_grib for RTOFS_GLO                               #
+#           Writes out hourly netcdf files for nowcast and 1-72 hr forecast   #
+#           and 3-hrly from 72-144 hrs forecast                               #
+#           Also packs the netcdf files in GRIB2 format                       #
+#           These are surface only (2d) diag and prog files                   #
 #                                                                             #
 # Sub-scripts called:                                                         # 
-#                    rtofs_glo2d_daily.sh                                     #
-#                    rtofs_glo3z_daily.sh                                     #
 #                    rtofs_glo2d_3hrly.sh                                     #
-#                    rtofs_glo3z_6hrly.sh                                     #
+#                    rtofs_glo2d_1hrly.sh                                     #
+#                    create_regions_mpmd_weights.sh_prod                      #
 #                                                                             # 
 # Imported variables:                                                         #
 #                    RUN                                                      #
@@ -53,14 +56,10 @@ procstatus=0
 
 typeset -Z3 fhr
 typeset -Z3 fhr0
-typeset -Z3 intvl_daily
 typeset -Z3 intvl_3hrly
-typeset -Z3 intvl_6hrly
 typeset -Z3 intvl_1hrly
-typeset -Z3 hr_daily
 typeset -Z3 hr_2d_1hrly
 typeset -Z3 hr_2d_hrly
-typeset -Z3 hr_3z_hrly
 typeset -Z3 ENDHOUR
 typeset -Z3 firsthr
 typeset -Z3 lasthr
@@ -88,14 +87,10 @@ fi
 # define what functions to do (default to operational settings)
 export running_realtime=${running_realtime:-NO}
 export run_parallel=${run_parallel:-NO}
-export surface_daily=${surface_daily:-NO}
-export volume_3z_daily=${volume_3z_daily:-NO}
-export volume_3z_6hrly=${volume_3z_6hrly:-NO}
+export surface_1hrly=${surface_1hrly:-YES}
 export grib_1hrly=${grib_1hrly:-YES}
 export intvl_1hrly=${intvl_1hrly:-1}
-export intvl_daily=${intvl_daily:-24}
 export intvl_3hrly=${intvl_3hrly:-3}
-export intvl_6hrly=${intvl_6hrly:-6}
 export no_procs=${NPROCS:-4} # no of processors used in poe
 
 if [ ${fcstdays_before_thisstep} -eq 3 ]
@@ -148,9 +143,7 @@ else
 fi
 
 # srtarting hours
-export hr_daily=`expr $fhr0 \+ 24`
 export hr_2d_hrly=`expr $fhr0 \+ 3`
-export hr_3z_hrly=`expr $fhr0 \+ 6`
 export hr_2d_1hrly=`expr $fhr0 \+ 1`
 
 
@@ -233,52 +226,7 @@ do
     exit
   fi
 
-#*********************************************************************
-  if [ $fhr -eq $hr_daily ]
-  then
-    hr_daily=`expr $hr_daily + $intvl_daily`
-    if [ $surface_daily = 'YES' ]
-    then
-      ${USHrtofs}/${RUN}_glo2d_daily.sh
-      if [ $SENDCOM = 'YES' ]
-      then
-        for ftype in diag prog
-        do
-          cfile=${RUN}_${modID}_2ds_${mode}${fhr}_daily_${ftype}.nc
-          cp -f -p $cfile $COMOUT/.
-          if [ $SENDDBN = YES ]
-          then
-            $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
-          else
-            msg="File $COMOUT/$cfile not posted to db_net."
-            postmsg "$jlogfile" "$msg"
-          fi
-        done
-      fi
-    fi 
-
-    if [ $volume_3z_daily = 'YES' ]
-    then
-      ${USHrtofs}/${RUN}_glo3z_daily.sh
-      if [ $SENDCOM = 'YES' ]
-      then
-        for fld in 3zuio 3zvio 3ztio 3zsio
-        do
-          cfile=${RUN}_${modID}_3dz_${mode}${fhr}_daily_${fld}.nc
-          cp -f -p $cfile $COMOUT/.
-          if [ $SENDDBN = YES ]
-          then
-            $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
-          else
-            msg="File $COMOUT/$cfile not posted to db_net."
-            postmsg "$jlogfile" "$msg"
-          fi
-        done
-      fi
-    fi
-  fi # End of Daily loop
-  # Daily runs end here
-  # Now for the hourly runs: 3 hourly for the surface files and 6 hourlies for volume regional 
+  # Now for the hourly runs: 1 hourly and 3 hourly for the surface files  
   #
   # 3 hourly for surface files
   if [ $fhr -eq $hr_2d_hrly ]; then
@@ -305,30 +253,6 @@ do
     fi # end of sfc loop
   fi # end of 3 hrly loop
 
-  # 6 hourlies for volume files in 3 regions
-  #
-  if [ $fhr -eq $hr_3z_hrly ]; then
-    hr_3z_hrly=`expr $hr_3z_hrly + $intvl_6hrly`
-    if [ $volume_3z_6hrly = 'YES' ]
-    then
-      for reg in reg1 reg2 reg3 
-      do
-        ${USHrtofs}/${RUN}_glo3z_6hrly.sh $reg
-        if [ $SENDCOM = 'YES' ]
-        then
-          cfile=${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
-          cp -f -p $cfile  $COMOUT/.
-          if [ $SENDDBN = YES ]
-          then
-            $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
-          else
-            msg="File $COMOUT/$cfile not posted to db_net."
-            postmsg "$jlogfile" "$msg"
-          fi
-        fi
-      done # regional loop
-    fi # 6hrly loop 
-  fi # volume 3z loop
 
  # 1 hourly for surface files
   if [ $fhr -eq $hr_2d_1hrly ]; then

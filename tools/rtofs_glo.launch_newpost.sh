@@ -16,7 +16,7 @@ hindcast=NO # YES or NO
 testcast=YES # YES or NO
 
 # Set some run environment variables.
-export HOMErtofs=/gpfs/`hostname | cut -c1-1`d1/emc/marine/noscrub/save/$LOGNAME/hycom_glo/projects/RB-1.0.2
+export HOMErtofs=/gpfs/`hostname | cut -c1-1`d1/emc/marine/noscrub/save/$LOGNAME/hycom_glo/projects/RB-1.0.3
 export COMtmp=/ptmp/$LOGNAME/tmpdir/com.$$
 export projID=`basename $HOMErtofs`
 export cyc=00

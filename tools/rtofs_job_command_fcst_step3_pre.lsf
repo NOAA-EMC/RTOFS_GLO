@@ -5,17 +5,18 @@
 #*******************
 
 #BSUB -J jrtofs_forecast_step3_pre  -w 'done("jrtofs_forecast_step2")'
-#BSUB -q "hpc_ibm"
-#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step3_pre.out.%J
-#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step3_pre.err.%J
-#BSUB -cwd /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step3_pre
+#BSUB -P RTO-T2O
+#BSUB -q "devhigh"
+#BSUB -oo /ptmp/Ilya.Rivin/tmpdir/RB-1.0.3/jrtofs_forecast_step3_pre.out.%J
+#BSUB -eo /ptmp/Ilya.Rivin/tmpdir/RB-1.0.3/jrtofs_forecast_step3_pre.err.%J
+#BSUB -cwd /ptmp/Ilya.Rivin/tmpdir/RB-1.0.3/jrtofs_forecast_step3_pre
 #BSUB -x
-#BSUB -W 0:20
+#BSUB -W 0:40
 
 ulimit -s unlimited
 
 module load ics
 module list 
 
-(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_FORECAST_STEP3_PRE.sms.prod ) > stdout.anal_pre
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.3/jobs/JRTOFS_GLO_FORECAST_STEP3_PRE ) > stdout.anal_pre
 

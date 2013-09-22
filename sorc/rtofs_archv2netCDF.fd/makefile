@@ -115,8 +115,8 @@ ARCHV_SRC = 	hycomarchv.f micomarchv.f \
                 archv2data2d.f archv2data2t.f archv2data3z.f archv2datasf.f archv2datasfl.f archv2restart.f putdat.f
 
 #LIBN     = ${LIBRARY} /nwprod/lib/libnetcdf.a ${EXTRALIBS}
-LIBN     = ${LIBRARY} /usrx/local/netcdf-3.6.3/lib/libnetcdf.a ${EXTRALIBS}
-INCLUDE  = /usrx/local/netcdf-3.6.3/include
+LIBN     = ${LIBRARY} /usrx/local/NetCDF/3.6.3/lib/libnetcdf.a ${EXTRALIBS}
+INCLUDE  = /usrx/local/NetCDF/3.6.3/include
 LN       =/bin/ln
 
 #

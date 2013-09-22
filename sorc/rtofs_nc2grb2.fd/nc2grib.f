@@ -1,9 +1,9 @@
 !$$$  MAIN PROGRAM DOCUMENTATION BLOCK
 !
-! MAIN PROGRAM: SSTOIQD_GRB2SST
+! MAIN PROGRAM: RTOFS_NC2GRIB2
 !   PRGMMR: STOKES           ORG: NP23        DATE: 2010-09-30
 !
-! ABSTRACT:  Convert NCDC formatted SST file to grib2.
+! ABSTRACT:  Convert regional netcdf files from Global RTOFS to GRIB2 files
 !
 ! PROGRAM HISTORY LOG:
 ! 2010-09-27  Diane C. Stokes
@@ -36,11 +36,13 @@
 !
 ! ATTRIBUTES:  (LIST MACHINES FOR WHICH CODE IS USED AND CHECKED OUT)
 !
-!   MACHINE:  IBM SP
+!   MACHINE:  WCOSS 
 !   LANGUAGE: F90
 !
 c------------------------------------------------------------------------
 c------------------------------------------------------------------------
+! This code reads in ascii file (converted to ascii from netcdf) and writes
+! the output in GRIB2 format directly
       program nc2grib
       
 
@@ -80,8 +82,6 @@ c      real(4), dimension(:,:) :: var_name,rsvar,bsvar,var_name_pack
      *     lon0,lat0,dlat,dlon,depth
       lat1=lat0+dlat*jmax
       lon1=lon0+dlon*imax
-c      write(*,*) imax,jmax,iday,iyr,imo,fcsthr,icycle,parm,p_cat,
-c     *     lat0,lat1,lon0,lon1,dlat,dlon
       ngrdpts=imax*jmax
       lcgrib=ngrdpts*4
 
@@ -145,13 +145,6 @@ c------------------------------------------------------------------------
         call errexit(11)
       endif
 
-c      lsec2=len_trim(title)
-c      print*,'trimmed title=',title(1:lsec2)
-c      call addlocal(cgrib,lcgrib,title,lsec2,ierr)
-c      if(ierr.ne.0)then
-c        print *, 'Error calling addlocal.  ierr=',ierr
-c        call errexit(12)
-c      endif
 
       call addgrid(cgrib,lcgrib,igds,igdstmpl,igdstmplen,0,0,ierr)
       if(ierr.ne.0)then

@@ -4,13 +4,15 @@
 # FORECAST STEP3
 #***************
 #BSUB -J jrtofs_forecast_step3 -w 'done("jrtofs_forecast_step3_pre")'
+#BSUB -P RTO-T2O
 #BSUB -a poe
 #BSUB -W 1:30
-#BSUB -oo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step3.out.%J
-#BSUB -eo /gpfs/td1/scrub/ptmp/Ilya.Rivin/tmpdir/RB-1.0.2/jrtofs_forecast_step3.err.%J
+#BSUB -oo /ptmp/Ilya.Rivin/tmpdir/RB-1.0.3/jrtofs_forecast_step3.out.%J
+#BSUB -eo /ptmp/Ilya.Rivin/tmpdir/RB-1.0.3/jrtofs_forecast_step3.err.%J
 #BSUB -n 2034
-#BSUB -q "hpc_ibm"
+#BSUB -q "devhigh"
 #BSUB -R span[ptile=8]
+#BSUB -R "rusage[mem=3450]" -R "affinity[core]"
 #BSUB -x
 
 set -x
@@ -36,7 +38,7 @@ export MP_TASK_AFFINITY=core:1
 
 module list
 
-(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.2/jobs/JRTOFS_GLO_FORECAST_STEP3.sms.prod ) > stdout.anal
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.3/jobs/JRTOFS_GLO_FORECAST_STEP3 ) > stdout.anal
 
 
 

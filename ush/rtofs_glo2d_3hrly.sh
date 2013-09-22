@@ -32,6 +32,7 @@
 ###############################################################################
 
 set -x
+typeset -Z3 fhr
 
 echo "*** Started script $0 on hostname "`hostname`' at time '`date`
 
@@ -39,7 +40,7 @@ export CDF030=${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_diag.nc
 export CDF031=${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_prog.nc
 
 export pgm=${RUN}_archv2ncdf2d
-${EXECrtofs}/${RUN}_archv2ncdf2d < ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv2ncdf2d.in >> $pgmout 2>>errfile 
+${EXECrtofs}/${RUN}_archv2ncdf2d < ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv2ncdf2d_3hrly.in >> $pgmout 2>>errfile 
 export err=$?; err_chk
 
 

@@ -1,4 +1,44 @@
 #!/bin/ksh
+#
+###############################################################################
+####  UNIX Script Documentation Block                                         #
+#                                                                             #
+# Script name:         rtofs_nc2grib2.sh                                      #
+# Script description:  rtofs_nc2grib2.sh <region>                             #
+#                                                                             #
+# Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2013-08-20     #
+#                                                                             #
+# Abstract: This script creates the hourly grib2 files from global nc files   #
+#           for 11 sub regions (except after 72 hours the forecast files are  #
+#           3 hourlies) . The regions are:                                    #
+#           alaska arctic bering guam gulf_alaska honolulu hudson_baffin      #
+#           samoa trop_paci_lowres west_atl west_conus                        #
+#                                                                             #
+#                                                                             #
+# Sub-scripts called:                                                         #
+#                                                                             #
+# Executables called:                                                         #
+#                    rtofs_nc2grib                                            #
+#                                                                             #
+#                                                                             #
+# Imported variables:                                                         #
+#                    RUN_MODE                                                 #
+#                    fcstdays_before_thisstep                                 #
+#                    modID                                                    #
+#                    PDY                                                      #
+#                    fhr                                                      #
+#                    cdo_r                                                    #
+#                    FIXrtofs                                                 #
+#                    PARMrtofs                                                #
+#                    mode                                                     #
+#                    DATA                                                     #
+#                                                                             #
+#                                                                             #
+# Script history log:                                                         #
+# XXXX-XX-XXX  Joe Dow                                                        #
+#                                                                             #
+###############################################################################
+
 set -xeu
 
 echo "*** Started script $0 on hostname "`hostname`' at time '`date`
@@ -49,7 +89,7 @@ cd $regdir
 test -f ${region}.out && rm ${region}.out
 touch nc.out ${region}.out
 
-# Set up for infiles here
+# Set up for infiles here: get the lat0 lat1 lon0 lon1 dlat and dlon from des files
 xx=`grep -i "xsize" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
 yy=`grep -i "ysize" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
 x0=`grep -i "xfirst" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
@@ -57,6 +97,7 @@ y0=`grep -i "yfirst" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
 xinc=`grep -i "xinc" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
 yinc=`grep -i "yinc" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
 
+# create infiles for each region below:
 
 while [ $fhr -le $nhr ]
 do
