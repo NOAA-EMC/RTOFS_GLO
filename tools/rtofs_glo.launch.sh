@@ -134,22 +134,37 @@ test -d $HOMEout/logs || mkdir -p $HOMEout/logs
 
 # Submit the job.
 module load lsf
+\
+#----------------------------------
+# bsub < rtofs_job_command_anal.lsf
 
-bsub < rtofs_job_command_fcst_d1-3_grib_post.lsf
+#bsub < rtofs_job_command_anal_grib_post.lsf
+#bsub < rtofs_job_command_fcst_d1-3_grib_post.lsf
+#bsub < rtofs_job_command_fcst_d4-6_grib_post.lsf
+
+bsub < rtofs_job_command_anal_post.lsf
+
+startdate=$forecast_start
+while [ $startdate -le $forecast_end ]
+do 
+  export startdate=`$utilexec/ndate +24 ${startdate}'00' | cut -c1-8`
+  bsub < rtofs_job_command_fcst_post.lsf
+done
+
 exit
+#-------------------------------------
 
 #dbgz 20130110
 ########jobID_anal_pre=`bsub < rtofs_job_command_anal_pre.lsf | cut -d' ' -f1`
 #
 # Submit analysis
-#dbgz 20130118
-#-- sleep 1
-#-- bsub < rtofs_job_command_anal_pre.lsf
-#-- exit
-#-- sleep 5
-#-- bsub < rtofs_job_command_anal.lsf
-#-- exit
-#-- sleep 5
+sleep 1
+bsub < rtofs_job_command_anal_pre.lsf
+exit
+sleep 5
+bsub < rtofs_job_command_anal.lsf
+exit
+sleep 5
 bsub < rtofs_job_command_anal_post.lsf
 bsub < rtofs_job_command_anal_grib2_post.lsf
 echo 'LAUNCHER: RTOFS-GLO analysis is submitted at host '`hostname`' at '`date`

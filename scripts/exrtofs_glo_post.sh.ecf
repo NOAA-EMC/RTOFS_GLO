@@ -260,7 +260,7 @@ do
     hr_2d_hrly=`expr $hr_2d_hrly + $intvl_3hrly`
     if [ $surface_3hrly = 'YES' ]
     then 
-      ${USHrtofs}/${RUN}_glo2d_3hrly.sh
+      ksh ${USHrtofs}/${RUN}_glo2d_3hrly.sh
       if [ $SENDCOM = 'YES' ]
       then
         for ftype in diag prog

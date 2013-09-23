@@ -173,6 +173,7 @@ test -d $COMOUT || mkdir -p $COMOUT
 # Set up forecast post-processing parameters
 ############################################
 export startdate=${startdate:-${PDY}}
+export fcstdays=3
 export fcstdays_before_thisstep=0
 
 ################################################################
@@ -187,7 +188,7 @@ postmsg "$jlogfile" "$msg"
 ksh ${HOMErtofs}/scripts/exrtofs_glo_grib_post.sh.ecf
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.d1-3_grib_post.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.forecast_d1-3_grib_post.`basename $pgmout`
 
 msg="JOB $job HAS COMPLETED NORMALLY." 
 postmsg "$jlogfile" "$msg"

@@ -3,8 +3,8 @@
 # ANALYSIS POST
 #**************
 
-##### #BSUB -J jrtofs_analysis_post
-#BSUB -J jrtofs_analysis_post -w 'done("jrtofs_analysis")'
+#BSUB -J jrtofs_analysis_post
+##### #BSUB -J jrtofs_analysis_post -w 'done("jrtofs_analysis")'
 #BSUB -P RTO-T2O
 #BSUB -q "devhigh"
 #BSUB -oo /ptmp/Ilya.Rivin/tmpdir/RB-1.0.3/jrtofs_analysis_post.out.%J

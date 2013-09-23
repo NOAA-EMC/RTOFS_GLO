@@ -42,7 +42,7 @@ for region in alaska arctic bering guam gulf_alaska honolulu hudson_baffin samoa
 
 do
    
-   echo "$USHrtofs/${RUN}_nc2grib2.sh_prod $region > out_${region} 2>&1"               >> cmdfile.$ifile
+   echo "ksh $USHrtofs/${RUN}_nc2grib2.sh $region > out_${region} 2>&1"               >> cmdfile.$ifile
    chmod +x cmdfile.$ifile
    echo "./cmdfile.$ifile" >> cmdfile
    ifile=`expr $ifile + 1`

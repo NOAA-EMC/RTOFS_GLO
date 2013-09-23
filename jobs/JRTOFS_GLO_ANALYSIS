@@ -132,7 +132,7 @@ if [ "$envir" = "prod" ] || [ "$envir" = "para" ] \
 then
   #NCO
   export HOMEofs=/nw${envir}/${RUN}_${modID}.${model_ver}
-  export CODEofs=/nw${envir}/${RUN_GLOBAL}_code.${code_ver}
+  export CODEofs=/nw${envir}/${RUN}_code.${code_ver}
 else
   #DEV
   export HOMEofs=$PROJECTdir

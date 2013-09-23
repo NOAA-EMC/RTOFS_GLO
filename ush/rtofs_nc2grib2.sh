@@ -51,7 +51,6 @@ region=$1
 regdir=${DATA}/${region}
 mkdir -p $region
 
-fhr=00
 dhr=024
 
 # Here hours of ouput are hardwired. For the forecast,
@@ -59,13 +58,17 @@ dhr=024
 
 if [ ${RUN_MODE} = 'analysis' ]
 then
-   nhr=48
-else
-   nhr=72
+  fhr=001
+  nhr=48
+fi
+if [ ${RUN_MODE} = 'forecast' ]
    if [ ${fcstdays_before_thisstep} -eq 3 ]
    then
-      fhr=72
+      fhr=75
       nhr=144
+   else
+      fhr=001
+      nhr=72
    fi
 fi
 
@@ -90,18 +93,17 @@ test -f ${region}.out && rm ${region}.out
 touch nc.out ${region}.out
 
 # Set up for infiles here: get the lat0 lat1 lon0 lon1 dlat and dlon from des files
-xx=`grep -i "xsize" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
-yy=`grep -i "ysize" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
-x0=`grep -i "xfirst" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
-y0=`grep -i "yfirst" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
-xinc=`grep -i "xinc" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
-yinc=`grep -i "yinc" ${PARMrtofs}/grid_${region}.des | cut -f2 -d "=" `
+xx=`grep -i "xsize" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
+yy=`grep -i "ysize" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
+x0=`grep -i "xfirst" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
+y0=`grep -i "yfirst" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
+xinc=`grep -i "xinc" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
+yinc=`grep -i "yinc" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
 
 # create infiles for each region below:
 
 while [ $fhr -le $nhr ]
 do
-  fhr=`expr $fhr + $intvl_hrly`
 
   #echo xx yy day year month fcsthr cyc table# param# x0 y0 xinc yinc
   echo $xx $yy  $day $year $month $fhr $mycyc 0 3 $x0 $y0 $xinc $yinc 0 > infile_sst_${region}
@@ -124,7 +126,7 @@ do
   fi
 
   # Some housekeeping
-  touch rtofs_glo_${mode}_temp_${region}_std.grb2
+  touch ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
   touch sst_std.nc sss_std.asc u_velocity_std.nc v_velocity_std.nc ssh_std.nc ubaro_std.asc vbaro_std.asc
   test -f sst_std.nc && rm sst_std.nc
   test -f sss_std.asc && rm sss_std.asc
@@ -178,15 +180,15 @@ do
     export XLFUNIT_50=${regdir}/${var}_${fhr}_std_${region}.grb2
 
     $EXECrtofs/${RUN}_nc2grib < ${regdir}/infile_${var}_${region}  > nc2grb.ft06_${region} 2>> nc2grb.err_${region}
-    export err=$?; err_chk
-    cat ${regdir}/${var}_${fhr}_std_${region}.grb2 >> rtofs_glo_${mode}_temp_${region}_std.grb2
+    # export err=$?; err_chk
+    cat ${regdir}/${var}_${fhr}_std_${region}.grb2 >> ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
     test -f ${regdir}/${var}_${fhr}_std_${region}.grb2 && rm ${regdir}/${var}_${fhr}_std_${region}.grb2
 
     if [ ${var} = 'vbaro' ]; then
 
       if [ ${fhr} -eq ${dhr} ]; then
-        cp rtofs_glo_${mode}_temp_${region}_std.grb2 rtofs_glo.t${cycle}z.${mode}${dhr}_${region}_std.grb2 
-        test -f rtofs_glo_${mode}_temp_${region}_std.grb2 && rm rtofs_glo_${mode}_temp_${region}_std.grb2
+        cp ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 ${RUN}_${modID}.t${mycyc}z.${mode}${dhr}_${region}_std.grb2 
+        test -f ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 && rm ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
         echo $dhr from dhr loop >> ${region}.out
         if [ ${RUN_MODE} = 'forecast' ]; then
           dhr=048
@@ -194,13 +196,14 @@ do
       fi
 
       if [ ${fhr} -eq ${nhr} ]; then
-        cp rtofs_glo_${mode}_temp_${region}_std.grb2 rtofs_glo.t${cycle}z.${mode}${ENDHOUR}_${region}_std.grb2 
-        test -f rtofs_glo_${mode}_temp_${region}_std.grb2 && rm rtofs_glo_${mode}_temp_${region}_std.grb2
+        cp ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 ${RUN}_${modID}.t${mycyc}z.${mode}${fhr}_${region}_std.grb2 
+        test -f ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 && rm ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
         echo $nhr from nhr loop >> ${region}.out
       fi
 
     fi
   done
+  fhr=`expr $fhr + $intvl_hrly`
 done
 
 # More cleaning up and housekeeping 

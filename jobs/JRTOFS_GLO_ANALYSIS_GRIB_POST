@@ -169,6 +169,11 @@ mkdir -m 775 -p $COMOUT
 test -d $GESdir || mkdir -p $GESdir
 test -d $COMOUT || mkdir -p $COMOUT
 
+############################################
+# Set up forecast post-processing parameters
+############################################
+export fcstdays_before_thisstep=-2 # used in nc2grib
+
 ################################################################
 # Send a message to the jlogfile indicating the start of the job
 ################################################################
@@ -181,7 +186,7 @@ postmsg "$jlogfile" "$msg"
 ksh ${HOMErtofs}/scripts/exrtofs_glo_grib_post.sh.ecf
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.grib_post.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.analysis.grib_post.`basename $pgmout`
 
 msg="JOB $job HAS COMPLETED NORMALLY." 
 postmsg "$jlogfile" "$msg"

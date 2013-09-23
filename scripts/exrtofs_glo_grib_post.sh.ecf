@@ -17,7 +17,7 @@
 # Sub-scripts called:                                                         # 
 #                    rtofs_glo2d_3hrly.sh                                     #
 #                    rtofs_glo2d_1hrly.sh                                     #
-#                    create_regions_mpmd_weights.sh_prod                      #
+#                    create_regions_mpmd_weights.sh                           #
 #                                                                             # 
 # Imported variables:                                                         #
 #                    RUN                                                      #
@@ -93,13 +93,21 @@ export intvl_1hrly=${intvl_1hrly:-1}
 export intvl_3hrly=${intvl_3hrly:-3}
 export no_procs=${NPROCS:-4} # no of processors used in poe
 
-if [ ${fcstdays_before_thisstep} -eq 3 ]
+if [ ${RUN_MODE} = 'analysis' ]
 then
-   export surface_3hrly=${surface_3hrly:-YES}
-   export surface_1hrly=${surface_1hrly:-NO}
-else
-   export surface_3hrly=${surface_3hrly:-NO}
-   export surface_1hrly=${surface_1hrly:-YES}
+  export surface_3hrly=${surface_3hrly:-YES}
+  export surface_1hrly=${surface_1hrly:-NO}
+fi
+if [ ${RUN_MODE} = 'forecast' ]
+then
+  if [ ${fcstdays_before_thisstep} -ge 3 ]
+  then
+     export surface_3hrly=${surface_3hrly:-YES}
+     export surface_1hrly=${surface_1hrly:-NO}
+  else
+     export surface_3hrly=${surface_3hrly:-NO}
+     export surface_1hrly=${surface_1hrly:-YES}
+  fi
 fi
 
 echo $surface_1hrly $surface_3hrly
@@ -135,7 +143,7 @@ then
 fi
 export fhr0=$fhr
 
-if [ ${fcstdays_before_thisstep} -eq 3 ]
+if [ ${RUN_MODE} = 'forecast' ] && [ ${fcstdays_before_thisstep} -ge 3 ]
 then
    fhr=`expr $fhr + $intvl_3hrly`
 else
@@ -234,7 +242,7 @@ do
     hr_2d_hrly=`expr $hr_2d_hrly + $intvl_3hrly`
     if [ $surface_3hrly = 'YES' ]
     then 
-      ${USHrtofs}/${RUN}_glo2d_3hrly.sh
+      ksh ${USHrtofs}/${RUN}_glo2d_3hrly.sh
       if [ $SENDCOM = 'YES' ]
       then
         for ftype in diag prog
@@ -260,7 +268,7 @@ do
     hr_2d_1hrly=`expr $hr_2d_1hrly + $intvl_1hrly`
     if [ $surface_1hrly = 'YES' ]
     then
-      sh ${USHrtofs}/${RUN}_glo2d_1hrly.sh
+      ksh ${USHrtofs}/${RUN}_glo2d_1hrly.sh
       if [ $SENDCOM = 'YES' ]
       then
         for ftype in diag prog
@@ -280,7 +288,7 @@ do
      fi # end of sfc loop
   fi # end of 1 hrly loop
 
-if [ ${fcstdays_before_thisstep} -eq 3 ]
+if [ ${RUN_MODE} = 'forecast' ] && [ ${fcstdays_before_thisstep} -ge 3 ]
 then
    fhr=`expr $fhr + $intvl_3hrly`
 else
@@ -292,22 +300,25 @@ done
 # If you want to pack to grib then
     if [ $grib_1hrly = 'YES' ]
     then
-      sh ${USHrtofs}/create_regions_mpmd_weights.sh_prod
+      ksh ${USHrtofs}/${RUN}_create_regions_mpmd_weights.sh
     fi
 if [ $SENDCOM = 'YES' ]
         then
 # Copy them to grib output dir
     for ftype in alaska arctic bering guam gulf_alaska honolulu hudson_baffin samoa trop_paci_lowres west_atl west_conus
     do
-    cfile=${RUN}_${modID}.t${cycle}z.${mode}${ENDHOUR}_${ftype}_std.grb2
-    cp -f -p $DATA/$ftype/$cfile  ${COMOUT}/.
+      for cfile in `ls -C1 $DATA/$ftype/${RUN}_${modID}.t${mycyc}z.${mode}*_${ftype}_std.grb2`
+      do
+          cp -f -p $cfile  ${COMOUT}/.
           if [ $SENDDBN = 'YES' ]
           then
             $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
           else
-            msg="File $COMOUT/$cfile not posted to db_net."
+            cname=`basename $cfile`
+            msg="File $COMOUT/$cname not posted to db_net."
             postmsg "$jlogfile" "$msg"
           fi
+       done
      done
 fi
       
@@ -320,11 +331,11 @@ then
     then
       cd $COMOUT
       # need definition of files
-      for gfile in *.grb
+      for gfile in *.grb2
       do
         md5 $gfile >> $DATA/csum.$PDY$mycyc
       done
-      for gfile in `ls -C1 ${RUN}_${modID}.t${mycyc}z.[FN]???.3d.grb ${RUN}_${modID}.t${mycyc}z.[fn]???.grb`
+      for gfile in `ls -C1 ${RUN}_${modID}.t${mycyc}z.[fn]*_std.grb2`
       do
         $md5 $gfile >> $DATA/csum_nodc.$PDY$mycyc
       done
