@@ -138,18 +138,18 @@ module load lsf
 #----------------------------------
 # bsub < rtofs_job_command_anal.lsf
 
-#bsub < rtofs_job_command_anal_grib_post.lsf
-#bsub < rtofs_job_command_fcst_d1-3_grib_post.lsf
-#bsub < rtofs_job_command_fcst_d4-6_grib_post.lsf
+bsub < rtofs_job_command_anal_grib_post.lsf
+bsub < rtofs_job_command_fcst_d1-3_grib_post.lsf
+bsub < rtofs_job_command_fcst_d4-6_grib_post.lsf
 
-bsub < rtofs_job_command_anal_post.lsf
+#bsub < rtofs_job_command_anal_post.lsf
 
-startdate=$forecast_start
-while [ $startdate -le $forecast_end ]
-do 
-  export startdate=`$utilexec/ndate +24 ${startdate}'00' | cut -c1-8`
-  bsub < rtofs_job_command_fcst_post.lsf
-done
+#startdate=$forecast_start
+#while [ $startdate -le $forecast_end ]
+#do 
+#  export startdate=`$utilexec/ndate +24 ${startdate}'00' | cut -c1-8`
+#  bsub < rtofs_job_command_fcst_post.lsf
+#done
 
 exit
 #-------------------------------------

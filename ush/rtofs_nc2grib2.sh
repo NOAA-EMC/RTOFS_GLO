@@ -62,6 +62,7 @@ then
   nhr=48
 fi
 if [ ${RUN_MODE} = 'forecast' ]
+then
    if [ ${fcstdays_before_thisstep} -eq 3 ]
    then
       fhr=75
