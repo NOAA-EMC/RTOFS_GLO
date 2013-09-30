@@ -15,9 +15,11 @@ hindcast=NO # YES or NO
 testcast=NO # YES or NO
 
 # Set some run environment variables.
-export HOMErtofs=/marine/save/$LOGNAME/hycom_glo/projects/RB-1.0.3
+export HOMErtofs=
+export PROJECTdir=/marine/save/$LOGNAME/hycom_glo/projects/RB-1.0.3
+export CODEdir=/marine/save/$LOGNAME/hycom_glo/codes/rtofs_code.v2.2.18
 export COMtmp=/ptmp/$LOGNAME/tmpdir/com.$$
-export projID=`basename $HOMErtofs`
+export projID=`basename $PROJECTdir`
 export model_ver=1.0.3
 export code_ver=2.2.18
 export cdo_ver=1.5.0
@@ -29,7 +31,7 @@ export envir=prod # prod or para
 RUN=rtofs
 modID=glo
 inputgrid=navy_0.08
-. $HOMErtofs/parm/${RUN}_${modID}.${inputgrid}.config
+. $PROJECTdir/parm/${RUN}_${modID}.${inputgrid}.config
 export fcstdays=`expr ${fcstdays_step1} + ${fcstdays_step2} + ${fcstdays_step3}`
 #
 # Redefine default top level directories for rtofs_forcing_getges.sh script
@@ -136,11 +138,11 @@ test -d $HOMEout/logs || mkdir -p $HOMEout/logs
 module load lsf
 \
 #----------------------------------
-# bsub < rtofs_job_command_anal.lsf
+#bsub < rtofs_job_command_anal.lsf
 
-bsub < rtofs_job_command_anal_grib_post.lsf
-bsub < rtofs_job_command_fcst_d1-3_grib_post.lsf
-bsub < rtofs_job_command_fcst_d4-6_grib_post.lsf
+#bsub < rtofs_job_command_anal_grib_post.lsf
+#bsub < rtofs_job_command_fcst_d1-3_grib_post.lsf
+#bsub < rtofs_job_command_fcst_d4-6_grib_post.lsf
 
 #bsub < rtofs_job_command_anal_post.lsf
 
@@ -151,6 +153,12 @@ bsub < rtofs_job_command_fcst_d4-6_grib_post.lsf
 #  bsub < rtofs_job_command_fcst_post.lsf
 #done
 
+for NN in 01 02 03 04 05 06 07 08
+do
+  export job=${RUN}_${modID}_forecast_post_${projID}.${NN}
+  bsub < rtofs_job_command_fcst_post.lsf
+done
+
 exit
 #-------------------------------------
 
@@ -160,14 +168,14 @@ exit
 # Submit analysis
 sleep 1
 bsub < rtofs_job_command_anal_pre.lsf
-exit
 sleep 5
 bsub < rtofs_job_command_anal.lsf
-exit
 sleep 5
 bsub < rtofs_job_command_anal_post.lsf
 bsub < rtofs_job_command_anal_grib2_post.lsf
 echo 'LAUNCHER: RTOFS-GLO analysis is submitted at host '`hostname`' at '`date`
+#dbgz
+exit
 #
 # Submit forecast step1
 sleep 1
@@ -190,10 +198,16 @@ echo 'LAUNCHER: RTOFS-GLO forecast step2 is submitted at host '`hostname`' at '`
 #> bsub < rtofs_job_command_fcst_step3.lsf
 #> echo 'LAUNCHER: RTOFS-GLO forecast step3 is submitted at host '`hostname`' at '`date`
 
-startdate=$forecast_start
-while [ $startdate -le $forecast_end ]
-do 
-  export startdate=`$utilexec/ndate +24 ${startdate}'00' | cut -c1-8`
+#-- startdate=$forecast_start
+#-- while [ $startdate -le $forecast_end ]
+#-- do 
+#--    export startdate=`$utilexec/ndate +24 ${startdate}'00' | cut -c1-8`
+#--    bsub < rtofs_job_command_fcst_post.lsf
+#-- done
+
+for NN in 01 02 03 04 05 06 07 08
+do
+  export job=${RUN}_${modID}_forecast_post_${projID}.${NN}
   bsub < rtofs_job_command_fcst_post.lsf
 done
 

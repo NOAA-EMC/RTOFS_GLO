@@ -121,16 +121,15 @@ export SENDECF=${SENDECF:-YES}
 ####################################
 # Specify Execution Areas
 ####################################
-if [ "$envir" = "prod" ] || [ "$envir" = "para" ] \
-   || [ "$envir" = "test" ] || [ "$envir" = "dev" ]
+if [ $RUN_ENVIR = dev ]
 then
-  #NCO
-  export HOMEofs=/nw${envir}/${RUN}_${modID}.${model_ver}
-  export CODEofs=/nw${envir}/${RUN}_code.${code_ver}
-else
   #DEV
   export HOMEofs=$PROJECTdir
   export CODEofs=$CODEdir
+else
+  #NCO
+  export HOMEofs=/nw${envir}/${RUN}_${modID}.${model_ver}
+  export CODEofs=/nw${envir}/${RUN}_code.${code_ver}
 fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm

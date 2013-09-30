@@ -42,7 +42,7 @@ export LANG=en_US
 #> export MPICH_ALLTOALL_THROTTLE=0
 #> export MP_TASK_AFFINITY=core:1
 
-(time /gpfs/td1/emc/marine/noscrub/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.3/jobs/JRTOFS_GLO_FORECAST_POST ) > stdout.anal_post.$$
+(time /marine/save/Ilya.Rivin/hycom_glo/projects/RB-1.0.3/jobs/JRTOFS_GLO_FORECAST_POST ) > stdout.anal_post.$$
 
 
 
