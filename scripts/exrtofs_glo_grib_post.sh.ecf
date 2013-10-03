@@ -30,7 +30,7 @@
 #                    SENDCOM                                                  #
 #                    PDY                                                      #  
 #                    mycyc                                                    #
-#                    analdays                                                 #
+#                    fcstdays                                                 #
 #                    inputgrid                                                #
 #                                                                             #
 #                                                                             #
@@ -68,21 +68,20 @@ typeset -Z3 lasthr
 
 # Define the end forecast hour here:
 
-export PDY=$PDY
+export fcstdays=${fcstdays:-1}
 if [ ${RUN_MODE} = 'analysis' ]
 then
-  export analdays=${analdays:-2}
-  export enddate=${analysis_end:-$PDY}
-  export startdate=`$utilexec/ndate -\` expr $analdays \* 24 \`  ${enddate}'00' | cut -c1-8`
-  export ENDHOUR=`expr $analdays \* 24`
+  export startdate=${startdate:-${PDYm2}}
+  # export enddate=${analysis_end:-$PDY}
+  # export startdate=`$utilexec/ndate -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
+  # export ENDHOUR=`expr $fcstdays \* 24`
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
-  export fcstdays=${fcstdays:-3}
   export startdate=${startdate:-${PDY}}
+fi
   export enddate=`$utilexec/ndate \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
   export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24 `
-fi
 
 # define what functions to do (default to operational settings)
 export running_realtime=${running_realtime:-NO}
@@ -100,7 +99,7 @@ then
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
-  if [ ${fcstdays_before_thisstep} -ge 3 ]
+  if [ ${RUN_MODE} = 'forecast' ] && [ ${fcstdays_before_thisstep} -ge 3 ]
   then
      export surface_3hrly=${surface_3hrly:-YES}
      export surface_1hrly=${surface_1hrly:-NO}
@@ -130,15 +129,14 @@ cp -f -p $DEPTHFILEb ${DATA}/regional.depth.b
 # Copy in the Parm Files:
 cp -f -p ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv2ncdf2d.in ${DATA}/archv2ncdf2d.in
 
+fhr=`expr \${fcstdays_before_thisstep} \* 24`
 if [ ${RUN_MODE} = 'analysis' ]
 then
-  fhr=000
   export mode=n
   analhrs=`expr $analdays \* 24` 
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
-  fhr=`expr \${fcstdays_before_thisstep} \* 24`
   export mode=f
 fi
 export fhr0=$fhr
@@ -180,11 +178,13 @@ do
   then
     typeset -Z2 fhr3
     fhr3=`expr $analhrs - $fhr2`
-    if [ $fhr -eq $ENDHOUR ]; then
-       arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}00.archv
+    if [ $fhr3 -eq -0 ]
+    then
+      chr=00
     else
-       arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}-${fhr3}.archv
+      chr='-'${fhr3}
     fi
+    arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}${chr}.archv
   fi
   #*********************************
   if [ $run_parallel = 'YES' ]; then

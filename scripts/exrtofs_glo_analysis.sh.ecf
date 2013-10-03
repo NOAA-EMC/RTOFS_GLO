@@ -28,9 +28,9 @@ postmsg "$jlogfile" "$msg"
 # --------------------------------------------------------------------------- #
 # 0. date and time stuff
 
-  export analdays=${analdays:-2}
+  export fcstdays=${fcstdays:-2}
   export enddate=${analysis_end:-$PDY}
-  export startdate=`$utilexec/ndate -\` expr $analdays \* 24 \`  ${enddate}'00' | cut -c1-8`
+  export startdate=`$utilexec/ndate -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
   export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #
@@ -42,7 +42,7 @@ postmsg "$jlogfile" "$msg"
   test -f restart_in.a && rm -f restart_in.a
   test -f restart_in.b && rm -f restart_in.b
 
-  LEAD=`expr $analdays \* -24`
+  LEAD=`expr $fcstdays \* -24`
   RESTtplate=${RUN}_${modID}.t${mycyc}z.n${LEAD}.restart
 
   if [ $RESTART = YES ]

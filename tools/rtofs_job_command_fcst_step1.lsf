@@ -3,7 +3,8 @@
 #***************
 # FORECAST STEP1
 #***************
-#BSUB -J jrtofs_forecast_step1 -w 'done("jrtofs_forecast_step1_pre")'
+#BSUB -J jrtofs_forecast_step1
+###### #BSUB -J jrtofs_forecast_step1 -w 'done("jrtofs_forecast_step1_pre")'
 #BSUB -P RTO-T2O
 #BSUB -a poe
 #BSUB -W 1:30

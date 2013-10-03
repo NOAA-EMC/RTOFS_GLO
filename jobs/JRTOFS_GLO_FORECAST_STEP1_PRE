@@ -115,7 +115,7 @@ then
 else
   #NCO
   export HOMErtofs=/nw${envir}/${RUN}_${modID}.${model_ver}
-  export CODErtofs=/nw${envir}/${RUN_GLOBAL}_code.${code_ver}
+  export CODErtofs=/nw${envir}/${RUN}_code.${code_ver}
 fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm

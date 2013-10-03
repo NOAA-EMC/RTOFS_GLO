@@ -27,7 +27,7 @@
 #                    SENDCOM                                                  #
 #                    PDY                                                      #  
 #                    mycyc                                                    #
-#                    analdays                                                 #
+#                    fcstdays                                                 #
 #                    inputgrid                                                #
 #                                                                             #
 #                                                                             #
@@ -65,10 +65,10 @@ typeset -Z3 ENDHOUR
 
 if [ ${RUN_MODE} = 'analysis' ]
 then
-  export analdays=${analdays:-2}
+  export fcstdays=${fcstdays:-2}
   export enddate=${analysis_end:-$PDY}
-  export startdate=`$utilexec/ndate -\` expr $analdays \* 24 \`  ${enddate}'00' | cut -c1-8`
-  export ENDHOUR=`expr $analdays \* 24`
+  export startdate=`$utilexec/ndate -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
+  export ENDHOUR=`expr $fcstdays \* 24`
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
@@ -113,7 +113,7 @@ if [ ${RUN_MODE} = 'analysis' ]
 then
   fhr=00
   export mode=n
-  analhrs=`expr $analdays \* 24` 
+  analhrs=`expr $fcstdays \* 24` 
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then

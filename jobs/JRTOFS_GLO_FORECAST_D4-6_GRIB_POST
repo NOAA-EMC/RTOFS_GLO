@@ -110,17 +110,19 @@ then
   #DEV
   export HOMErtofs=$PROJECTdir
   export CODErtofs=$CODEdir
+  export CDOrtofs=$CDOdir
 else
   #NCO
   export HOMErtofs=/nw${envir}/${RUN}_${modID}.${model_ver}
-  export CODErtofs=/nw${envir}/${RUN_GLOBAL}_code.${code_ver}
+  export CODErtofs=/nw${envir}/${RUN}_code.${code_ver}
+  export CDOrtofs=/nw${envir}/${RUN}_cdo.${cdo_ver}
 fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
 export USHrtofs=${HOMErtofs}/ush
 export EXECcode=${CODErtofs}/exec
-export cdo_r=${HOMErtofs}/sorc/${RUN}_cdo-${cdo_ver}.fd/bin/cdo
+export cdo_r=${CDOdir}/bin/cdo
 
 #############################
 # Set up the UTILITIES

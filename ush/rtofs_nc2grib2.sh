@@ -56,31 +56,17 @@ dhr=024
 # Here hours of ouput are hardwired. For the forecast,
 # output is hourly for 0-72 hrs and 3-hourly afterwards.
 
-if [ ${RUN_MODE} = 'analysis' ]
-then
-  fhr=001
-  nhr=48
-fi
-if [ ${RUN_MODE} = 'forecast' ]
-then
-   if [ ${fcstdays_before_thisstep} -eq 3 ]
-   then
-      fhr=75
-      nhr=144
-   else
-      fhr=001
-      nhr=72
-   fi
-fi
 
-echo $fhr $nhr
-
-if [ ${fcstdays_before_thisstep} -eq 3 ]
+if [ ${fcstdays_before_thisstep} -ge 3 ]
 then
-   intvl_hrly=$intvl_3hrly
+   intvl_hrly=${intvl_3hrly}
+   fhr=`expr ${fcstdays_before_thisstep} \* 24 \+ 3`
 else
-   intvl_hrly=$intvl_1hrly
+   intvl_hrly=${intvl_1hrly}
 fi
+fhr=`expr ${fcstdays_before_thisstep} \* 24 \+ ${intvl_hrly}`
+nhr=`expr \( ${fcstdays_before_thisstep} \+ ${fcstdays} \) \* 24`
+echo "fhr=$fhr nhr=$nhr"
 
 export year=`echo $PDY | cut -c1-4`
 export mycyc=${mycyc:-00}
@@ -117,7 +103,7 @@ do
 
 
   # Split the netCDF file into components
-  if [ ${fcstdays_before_thisstep} -eq 3 ]
+  if [ ${fcstdays_before_thisstep} -ge 3 ]
   then
     $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_diag.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_
     $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_prog.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_

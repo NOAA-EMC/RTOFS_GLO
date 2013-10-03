@@ -3,8 +3,8 @@
 # FORECAST POST
 #*********************
 
-### #BSUB -J jrtofs_forecast_post  -w 'done("jrtofs_forecast_step2")'
-#BSUB -J jrtofs_forecast_post  
+#BSUB -J jrtofs_forecast_post  -w 'done("jrtofs_forecast_step2")'
+### #BSUB -J jrtofs_forecast_post  
 #> #BSUB -a poe
 #BSUB -P RTO-T2O
 #BSUB -q "devhigh"

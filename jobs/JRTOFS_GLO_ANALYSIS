@@ -207,6 +207,11 @@ fi
 
 env
 
+#################################
+# Set up analysis step parameters
+#################################
+eval fcstdays="\$analdays"
+
 #################################################################
 #  Send a message to the jlogfile indication the start of the job
 #################################################################

@@ -124,18 +124,18 @@ export SENDECF=${SENDECF:-YES}
 if [ $RUN_ENVIR = dev ]
 then
   #DEV
-  export HOMEofs=$PROJECTdir
-  export CODEofs=$CODEdir
+  export HOMErtofs=$PROJECTdir
+  export CODErtofs=$CODEdir
 else
   #NCO
-  export HOMEofs=/nw${envir}/${RUN}_${modID}.${model_ver}
-  export CODEofs=/nw${envir}/${RUN}_code.${code_ver}
+  export HOMErtofs=/nw${envir}/${RUN}_${modID}.${model_ver}
+  export CODErtofs=/nw${envir}/${RUN}_code.${code_ver}
 fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
 export USHrtofs=${HOMErtofs}/ush
-export EXECcode=${CODEofs}/exec
+export EXECcode=${CODErtofs}/exec
 
 #############################
 # Set up the UTILITIES

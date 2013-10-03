@@ -15,14 +15,14 @@ hindcast=NO # YES or NO
 testcast=NO # YES or NO
 
 # Set some run environment variables.
-export HOMErtofs=
-export PROJECTdir=/marine/save/$LOGNAME/hycom_glo/projects/RB-1.0.3
-export CODEdir=/marine/save/$LOGNAME/hycom_glo/codes/rtofs_code.v2.2.18
-export COMtmp=/ptmp/$LOGNAME/tmpdir/com.$$
-export projID=`basename $PROJECTdir`
 export model_ver=1.0.3
 export code_ver=2.2.18
 export cdo_ver=1.5.0
+export PROJECTdir=/marine/save/$LOGNAME/hycom_glo/projects/RB-${model_ver}
+export CODEdir=/marine/save/$LOGNAME/hycom_glo/codes/rtofs_code.v${code_ver}
+export CDOdir=/marine/save/Ilya.Rivin/hycom_glo/CDO/rtofs_cdo.v${cdo_ver}
+export COMtmp=/ptmp/$LOGNAME/tmpdir/com.$$
+export projID=`basename $PROJECTdir`
 export cyc=00
 export RUN_ENVIR=dev
 export envir=prod # prod or para
@@ -153,6 +153,72 @@ module load lsf
 #  bsub < rtofs_job_command_fcst_post.lsf
 #done
 
+#for NN in 01 02 03 04 05 06 07 08
+#do
+#  export job=${RUN}_${modID}_forecast_post_${projID}.${NN}
+#  bsub < rtofs_job_command_fcst_post.lsf
+#done
+
+#for NN in 01 02 03 04
+#do
+#  export job=${RUN}_${modID}_forecast_grib_post_${projID}.${NN}
+#  bsub < rtofs_job_command_fcst_grib_post.lsf
+#done
+
+#export job=${RUN}_${modID}_forecast_grib_post_${projID}.04
+#bsub < rtofs_job_command_fcst_grib_post.lsf
+
+
+#for NN in 01 02
+#do
+#  export job=${RUN}_${modID}_analysis_grib_post_${projID}.${NN}
+#  bsub < rtofs_job_command_anal_grib_post.lsf
+#done
+
+######exit
+#-------------------------------------
+
+#dbgz 20130110
+########jobID_anal_pre=`bsub < rtofs_job_command_anal_pre.lsf | cut -d' ' -f1`
+#
+# Submit analysis
+#sleep 1
+#bsub < rtofs_job_command_anal_pre.lsf
+#sleep 5
+#bsub < rtofs_job_command_anal.lsf
+#sleep 5
+#bsub < rtofs_job_command_anal_post.lsf
+#for NN in 01 02
+#do
+#  export job=${RUN}_${modID}_analysis_grib_post_${projID}.${NN}
+#  bsub < rtofs_job_command_anal_grib_post.lsf
+#done
+#echo 'LAUNCHER: RTOFS-GLO analysis is submitted at host '`hostname`' at '`date`
+#dbgz
+#exit
+#
+# Submit forecast step1
+# sleep 1
+# bsub < rtofs_job_command_fcst_step1_pre.lsf
+# sleep 5
+# bsub < rtofs_job_command_fcst_step1.lsf
+# echo 'LAUNCHER: RTOFS-GLO forecast step1 is submitted at host '`hostname`' at '`date`
+#
+# Submit forecast step2
+# sleep 1
+# bsub < rtofs_job_command_fcst_step2_pre.lsf
+# sleep 5
+# bsub < rtofs_job_command_fcst_step2.lsf
+# echo 'LAUNCHER: RTOFS-GLO forecast step2 is submitted at host '`hostname`' at '`date`
+
+#
+# Submit forecast post-processing
+sleep 5
+for NN in 01 02 03 04
+do
+  export job=${RUN}_${modID}_forecast_grib_post_${projID}.${NN}
+  bsub < rtofs_job_command_fcst_grib_post.lsf
+done
 for NN in 01 02 03 04 05 06 07 08
 do
   export job=${RUN}_${modID}_forecast_post_${projID}.${NN}
@@ -160,36 +226,7 @@ do
 done
 
 exit
-#-------------------------------------
 
-#dbgz 20130110
-########jobID_anal_pre=`bsub < rtofs_job_command_anal_pre.lsf | cut -d' ' -f1`
-#
-# Submit analysis
-sleep 1
-bsub < rtofs_job_command_anal_pre.lsf
-sleep 5
-bsub < rtofs_job_command_anal.lsf
-sleep 5
-bsub < rtofs_job_command_anal_post.lsf
-bsub < rtofs_job_command_anal_grib2_post.lsf
-echo 'LAUNCHER: RTOFS-GLO analysis is submitted at host '`hostname`' at '`date`
-#dbgz
-exit
-#
-# Submit forecast step1
-sleep 1
-bsub < rtofs_job_command_fcst_step1_pre.lsf
-sleep 5
-bsub < rtofs_job_command_fcst_step1.lsf
-echo 'LAUNCHER: RTOFS-GLO forecast step1 is submitted at host '`hostname`' at '`date`
-#
-# Submit forecast step2
-sleep 1
-bsub < rtofs_job_command_fcst_step2_pre.lsf
-sleep 5
-bsub < rtofs_job_command_fcst_step2.lsf
-echo 'LAUNCHER: RTOFS-GLO forecast step2 is submitted at host '`hostname`' at '`date`
 #
 # Submit forecast step3
 #> sleep 1
@@ -210,6 +247,3 @@ do
   export job=${RUN}_${modID}_forecast_post_${projID}.${NN}
   bsub < rtofs_job_command_fcst_post.lsf
 done
-
-bsub < rtofs_job_command_fcst_d1-3_grib_post.lsf
-bsub < rtofs_job_command_fcst_d4-6_grib_post.lsf

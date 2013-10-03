@@ -57,15 +57,6 @@ test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
 
-##############################################
-# temporary analysis and forecast directories
-##############################################
-export ANAL_DATA=$tmpdir/${RUN}_${modID}_analysis_${mycyc} ## .${pid}
-#SEC inconsistent with anal, projID undefined export ANAL_DATA=$tmpdir/${RUN}_${modID}_analysis_${projID} ## .${pid}
-export FCST_DATA1=$tmpdir/${RUN}_${modID}_forecast_step1_${mycyc} ## .${pid}
-export FCST_DATA2=$tmpdir/${RUN}_${modID}_forecast_step2_${mycyc} ## .${pid}
-#SEC inconsistent with forecast, projID undefined export FCST_DATA=$tmpdir/${RUN}_${modID}_forecast_${projID} ## .${pid}
-
 ####################################
 # File To Log Msgs
 ####################################
@@ -112,7 +103,7 @@ then
 else
   #NCO
   export HOMErtofs=/nw${envir}/${RUN}_${modID}.${model_ver}
-  export CODErtofs=/nw${envir}/${RUN_GLOBAL}_code.${code_ver}
+  export CODErtofs=/nw${envir}/${RUN}_code.${code_ver}
 fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
@@ -172,7 +163,7 @@ test -d $COMOUT || mkdir -p $COMOUT
 ## This assumes that the $job has the name structure of the type job_*NN
 ## where NN is two-digit number
 export postday=`echo $job | rev |cut -c1-2 | rev`
-export startdate=`${utilexec}/ndate \`expr 24 \* $postday\` $PDY$mycyc |cut -c1-8`
+export startdate=`${utilexec}/ndate \`expr 24 \* \( $postday \- 1 \) \` $PDY$mycyc |cut -c1-8`
 #export startdate=${startdate:-${PDY}}
 export fcstdays_before_thisstep=` expr \` $utilexec/nhour $startdate$mycyc $PDY$mycyc \` \/ 24 `
 eval fcstdays="\$fcst_post_ndays"
@@ -197,9 +188,6 @@ postmsg "$jlogfile" "$msg"
 
 
 cd $tmpdir
-### test -d ${ANAL_DATA} && rm -rf ${ANAL_DATA} 
-### test -d ${FCST_DATA1} && rm -rf ${FCST_DATA1} 
-### test -d ${FCST_DATA2} && rm -rf ${FCST_DATA2} 
 ### rm -rf $DATA
 
 date

@@ -52,19 +52,10 @@ then
 else
    tmpdir=/tmpnwprd
 fi
-export DATA=$tmpdir/${RUN}_${modID}_${RUN_MODE}_post_${mycyc} ## ${job}.${pid}
+export DATA=${job}.${pid}} ## $tmpdir/${RUN}_${modID}_${RUN_MODE}_post_${mycyc
 test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
-
-##############################################
-# temporary analysis and forecast directories
-##############################################
-export ANAL_DATA=$tmpdir/${RUN}_${modID}_analysis_${mycyc} ## .${pid}
-#SEC inconsistent with anal, projID undefined export ANAL_DATA=$tmpdir/${RUN}_${modID}_analysis_${projID} ## .${pid}
-export FCST_DATA1=$tmpdir/${RUN}_${modID}_forecast_step1_${mycyc} ## .${pid}
-export FCST_DATA2=$tmpdir/${RUN}_${modID}_forecast_step2_${mycyc} ## .${pid}
-#SEC inconsistent with forecast, projID undefined export FCST_DATA=$tmpdir/${RUN}_${modID}_forecast_${projID} ## .${pid}
 
 ####################################
 # File To Log Msgs
@@ -112,7 +103,7 @@ then
 else
   #NCO
   export HOMErtofs=/nw${envir}/${RUN}_${modID}.${model_ver}
-  export CODErtofs=/nw${envir}/${RUN_GLOBAL}_code.${code_ver}
+  export CODErtofs=/nw${envir}/${RUN}_code.${code_ver}
 fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
@@ -148,6 +139,11 @@ export inputgrid=navy_0.08
 # Run the config file to set up specific model variables if needed
 ##################################################################
 . $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
+
+#################################
+# Set up analysis_post parameters
+#################################
+eval fcstdays="\$analdays"
 
 ##############################################
 # Define Input/Output/Restart directories
@@ -185,9 +181,6 @@ postmsg "$jlogfile" "$msg"
 
 
 cd $tmpdir
-### test -d ${ANAL_DATA} && rm -rf ${ANAL_DATA} 
-### test -d ${FCST_DATA1} && rm -rf ${FCST_DATA1} 
-### test -d ${FCST_DATA2} && rm -rf ${FCST_DATA2} 
 ### rm -rf $DATA
 
 date

@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 ####################################
 # Ensure environment is defined.
 ####################################
@@ -53,19 +52,10 @@ then
 else
    tmpdir=/tmpnwprd
 fi
-export DATA=$tmpdir/${RUN}_${modID}_${RUN_MODE}_grib_post_${mycyc} ## ${job}.${pid}
+export DATA=$tmpdir/${RUN}_${modID}_${RUN_MODE}_grib_post_${mycyc}.${pid} # ${job}.${pid}
 test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
-
-##############################################
-# temporary analysis and forecast directories
-##############################################
-export ANAL_DATA=$tmpdir/${RUN}_${modID}_analysis_${mycyc} ## .${pid}
-#SEC inconsistent with anal, projID undefined export ANAL_DATA=$tmpdir/${RUN}_${modID}_analysis_${projID} ## .${pid}
-export FCST_DATA1=$tmpdir/${RUN}_${modID}_forecast_step1_${mycyc} ## .${pid}
-export FCST_DATA2=$tmpdir/${RUN}_${modID}_forecast_step2_${mycyc} ## .${pid}
-#SEC inconsistent with forecast, projID undefined export FCST_DATA=$tmpdir/${RUN}_${modID}_forecast_${projID} ## .${pid}
 
 ####################################
 # File To Log Msgs
@@ -110,17 +100,19 @@ then
   #DEV
   export HOMErtofs=$PROJECTdir
   export CODErtofs=$CODEdir
+  export CDOrtofs=$CDOdir
 else
   #NCO
   export HOMErtofs=/nw${envir}/${RUN}_${modID}.${model_ver}
-  export CODErtofs=/nw${envir}/${RUN_GLOBAL}_code.${code_ver}
+  export CODErtofs=/nw${envir}/${RUN}_code.${code_ver}
+  export CDOrtofs=/nw${envir}/${RUN}_cdo.${cdo_ver}
 fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
 export USHrtofs=${HOMErtofs}/ush
 export EXECcode=${CODErtofs}/exec
-export cdo_r=${HOMErtofs}/sorc/${RUN}_cdo-${cdo_ver}.fd/bin/cdo
+export cdo_r=${CDOdir}/bin/cdo
 
 #############################
 # Set up the UTILITIES
@@ -169,9 +161,17 @@ test -d $GESdir || mkdir -p $GESdir
 test -d $COMOUT || mkdir -p $COMOUT
 
 ############################################
-# Set up forecast post-processing parameters
+# Set up analysis post-processing parameters
 ############################################
-export fcstdays_before_thisstep=-2 # used in nc2grib
+## This assumes that the $job has the name structure of the type job_*NN
+## where NN is two-digit number
+export postday=`echo $job | rev |cut -c1-2 | rev`
+export startdate=`${utilexec}/ndate \`expr -24 \* $postday\` $PDY$mycyc |cut -c1-8`
+export fcstdays_before_thisstep=` expr \` $utilexec/nhour $startdate$mycyc $PDYm2$mycyc \` \/ 24 `
+eval fcstdays="\$fcst_post_ndays" # length of the current post run.
+export fcstdays
+eval analdays="\$analdays" # length of the analysis.
+export analdays 
 
 ################################################################
 # Send a message to the jlogfile indicating the start of the job
@@ -192,9 +192,6 @@ postmsg "$jlogfile" "$msg"
 
 
 cd $tmpdir
-### test -d ${ANAL_DATA} && rm -rf ${ANAL_DATA} 
-### test -d ${FCST_DATA1} && rm -rf ${FCST_DATA1} 
-### test -d ${FCST_DATA2} && rm -rf ${FCST_DATA2} 
 ### rm -rf $DATA
 
 date
