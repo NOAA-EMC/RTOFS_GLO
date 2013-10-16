@@ -182,35 +182,34 @@ module load lsf
 ########jobID_anal_pre=`bsub < rtofs_job_command_anal_pre.lsf | cut -d' ' -f1`
 #
 # Submit analysis
-#sleep 1
-#bsub < rtofs_job_command_anal_pre.lsf
-#sleep 5
-#bsub < rtofs_job_command_anal.lsf
-#sleep 5
-#bsub < rtofs_job_command_anal_post.lsf
-#for NN in 01 02
-#do
-#  export job=${RUN}_${modID}_analysis_grib_post_${projID}.${NN}
-#  bsub < rtofs_job_command_anal_grib_post.lsf
-#done
-#echo 'LAUNCHER: RTOFS-GLO analysis is submitted at host '`hostname`' at '`date`
+sleep 1
+bsub < rtofs_job_command_anal_pre.lsf
+sleep 5
+bsub < rtofs_job_command_anal.lsf
+sleep 5
+bsub < rtofs_job_command_anal_post.lsf
+for NN in 01 02
+do
+  export job=${RUN}_${modID}_analysis_grib_post_${projID}.${NN}
+  bsub < rtofs_job_command_anal_grib_post.lsf
+done
+echo 'LAUNCHER: RTOFS-GLO analysis is submitted at host '`hostname`' at '`date`
 #dbgz
 #exit
 #
 # Submit forecast step1
-# sleep 1
-# bsub < rtofs_job_command_fcst_step1_pre.lsf
-# sleep 5
-# bsub < rtofs_job_command_fcst_step1.lsf
-# echo 'LAUNCHER: RTOFS-GLO forecast step1 is submitted at host '`hostname`' at '`date`
+sleep 1
+bsub < rtofs_job_command_fcst_step1_pre.lsf
+sleep 5
+bsub < rtofs_job_command_fcst_step1.lsf
+echo 'LAUNCHER: RTOFS-GLO forecast step1 is submitted at host '`hostname`' at '`date`
 #
 # Submit forecast step2
-# sleep 1
-# bsub < rtofs_job_command_fcst_step2_pre.lsf
-# sleep 5
-# bsub < rtofs_job_command_fcst_step2.lsf
-# echo 'LAUNCHER: RTOFS-GLO forecast step2 is submitted at host '`hostname`' at '`date`
-
+sleep 1
+bsub < rtofs_job_command_fcst_step2_pre.lsf
+sleep 5
+bsub < rtofs_job_command_fcst_step2.lsf
+ echo 'LAUNCHER: RTOFS-GLO forecast step2 is submitted at host '`hostname`' at '`date`
 #
 # Submit forecast post-processing
 sleep 5

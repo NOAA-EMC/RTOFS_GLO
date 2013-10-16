@@ -4,8 +4,8 @@
 # FORECAST STEP1 PRE
 #*******************
 
-#BSUB -J jrtofs_forecast_step1_pre
-################ #BSUB -J jrtofs_forecast_step1_pre -w 'done("jrtofs_analysis")'
+################ #BSUB -J jrtofs_forecast_step1_pre
+#BSUB -J jrtofs_forecast_step1_pre -w 'done("jrtofs_analysis")'
 #BSUB -P RTO-T2O
 #BSUB -q "devhigh"
 #BSUB -oo /ptmp/Ilya.Rivin/tmpdir/RB-1.0.3/jrtofs_forecast_step1_pre.out.%J
