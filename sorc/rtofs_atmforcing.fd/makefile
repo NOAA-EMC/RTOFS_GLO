@@ -41,10 +41,10 @@ OBJS=	${SRCS:.f90=.o}
 # 
 CF =		ifort
 
-INC1   = ../../lib/incmod/rtofs_serial_mods_4 
-INC2   = ../../lib/incmod/rtofs_hycomiot_mods_4
-LIBS  = -L../../lib -lrtofs_serial_mods_4 -lrtofs_hycomiot_4 \
-        -L/nwprod/lib -lw3nco_v2.0.3_4 -lbacio_v2.0.1_4
+INC1   = ${RTOFS_LIB_INC}/rtofs_serial_mods_4 
+INC2   = ${RTOFS_LIB_INC}/rtofs_hycomiot_mods_4
+LIBS  = -L${RTOFS_LIB} -lrtofs_serial_mods_4 -lrtofs_hycomiot_4 \
+        ${W3NCO_LIB4} ${BACIO_LIB4}
 CMD   =		rtofs_atmforcing
 PROFLIB =	-lprof
 

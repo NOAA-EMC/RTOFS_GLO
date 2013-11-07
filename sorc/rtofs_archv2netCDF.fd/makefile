@@ -35,8 +35,8 @@ CPP           = /usr/bin/cpp
 CPPFLAGS      = -C -P -traditional-cpp -DREAL4
 LD            = $(FC)
 LDFLAGS       = 
-LIBRARY       = -L/nwprod/lib
-EXTRALIBS     = -lw3nco_4 -lbacio_4 $(NETCDF_LDFLAGS)
+##LIBRARY       = -L/nwprod/lib
+EXTRALIBS     = ${W3NCO_LIB4} ${BACIO_LIB4} $(NETCDF_LDFLAGS)
 
 #
 # --- generic make definitions
@@ -115,8 +115,10 @@ ARCHV_SRC = 	hycomarchv.f micomarchv.f \
                 archv2data2d.f archv2data2t.f archv2data3z.f archv2datasf.f archv2datasfl.f archv2restart.f putdat.f
 
 #LIBN     = ${LIBRARY} /nwprod/lib/libnetcdf.a ${EXTRALIBS}
-LIBN     = ${LIBRARY} /usrx/local/netcdf-3.6.3/lib/libnetcdf.a ${EXTRALIBS}
-INCLUDE  = /usrx/local/netcdf-3.6.3/include
+#LIBN     = ${LIBRARY} /usrx/local/NetCDF/3.6.3/lib/libnetcdf.a ${EXTRALIBS}
+#INCLUDE  = /usrx/local/NetCDF/3.6.3/include
+LIBN     = ${LIBRARY} ${NETCDF_LDFLAGS_F} ${EXTRALIBS}
+INCLUDE  = ${NETCDF}/include
 LN       =/bin/ln
 
 #

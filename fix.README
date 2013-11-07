@@ -32,3 +32,33 @@ HTAR: -rwxrwxr-x  wx20ir/g01      64818 2011-10-25 08:49  REL-1.0.0/rtofs_glo.na
 HTAR: -rwxrwxr-x  wx20ir/g01         36 2011-10-25 08:49  REL-1.0.0/rtofs_glo.navy_0.08.veldf4.b
 HTAR: -rw-------  wx20ir/g01        256 2012-03-12 23:39  /stmp/HTAR_CF_CHK_197294_1331609942
 HTAR: Listing complete for /NCEPDEV/hpssuser/g01/wx20ir/rtofs_global/fix/REL-1.0.0, 29 files 30 total objects
+
+Additional files for grib2 are currently at 
+
+/marine/noscrub/Ilya.Rivin/hycom_glo/fix_nc2grib2/
+total 6837760
+-rw-r--r-- 1 Ilya.Rivin marine  538546740 Jun 11 12:22 rtofs_alaska_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine  551839700 Jun 11 12:23 rtofs_arctic_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine  554507364 Jun 11 12:23 rtofs_bering_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine        290 Jun 11 12:22 rtofs_grid_alaska.des
+-rw-r--r-- 1 Ilya.Rivin marine        292 Jun 11 12:22 rtofs_grid_arctic.des
+-rw-r--r-- 1 Ilya.Rivin marine        292 Jun 11 12:22 rtofs_grid_bering.des
+-rw-r--r-- 1 Ilya.Rivin marine        292 Jun 11 12:24 rtofs_grid_global1-10.des
+-rw-r--r-- 1 Ilya.Rivin marine        295 Jun 11 12:24 rtofs_grid_global1-8.des
+-rw-r--r-- 1 Ilya.Rivin marine        292 Jun 11 12:22 rtofs_grid_guam.des
+-rw-r--r-- 1 Ilya.Rivin marine        289 Jun 11 12:22 rtofs_grid_gulf_alaska.des
+-rw-r--r-- 1 Ilya.Rivin marine        291 Jun 11 12:22 rtofs_grid_honolulu.des
+-rw-r--r-- 1 Ilya.Rivin marine        291 Jun 11 12:24 rtofs_grid_hudson_baffin.des
+-rw-r--r-- 1 Ilya.Rivin marine        293 Jun 11 12:22 rtofs_grid_samoa.des
+-rw-r--r-- 1 Ilya.Rivin marine        291 Jun 11 12:22 rtofs_grid_trop_paci_lowres.des
+-rw-r--r-- 1 Ilya.Rivin marine        290 Jun 11 12:22 rtofs_grid_west_atl.des
+-rw-r--r-- 1 Ilya.Rivin marine        290 Jun 11 12:22 rtofs_grid_west_conus.des
+-rw-r--r-- 1 Ilya.Rivin marine  557644700 Jun 11 12:23 rtofs_guam_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine  534596416 Jun 11 12:23 rtofs_gulf_alaska_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine  565499064 Jun 11 12:24 rtofs_honolulu_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine  544470604 Aug  1 13:34 rtofs_hudson_baffin_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine  555194468 Jun 11 12:24 rtofs_samoa_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine  535189560 Jun 11 12:24 rtofs_trop_paci_lowres_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine 1265174760 Jun 11 12:25 rtofs_weights_8.nc
+-rw-r--r-- 1 Ilya.Rivin marine  233836544 Jun 11 12:24 rtofs_west_atl_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine  564569616 Jun 11 12:24 rtofs_west_conus_weights.nc

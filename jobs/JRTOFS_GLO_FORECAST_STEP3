@@ -1,5 +1,14 @@
 #!/bin/sh
 
+####################################
+# Ensure environment is defined.
+####################################
+set +x
+echo cyc is ${cyc:?} 
+echo envir is ${envir:?} 
+echo model_ver is ${model_ver:?}
+echo code_ver is ${code_ver:?}
+
 export RUN_ENVIR=${RUN_ENVIR:-prod}
 
 set -xa
@@ -111,14 +120,19 @@ export SENDECF=${SENDECF:-YES}
 ####################################
 if [ $RUN_ENVIR = dev ]
 then
-  export HOMErtofs=${HOMErtofs:-/glocean/save/$LOGNAME/hycom_glo/projects/$projID}
+  #DEV
+  export HOMErtofs=$PROJECTdir
+  export CODErtofs=$CODEdir
 else
-  export HOMErtofs=/nw${envir}
+  #NCO
+  export HOMErtofs=/nw${envir}/${RUN}_${modID}.${model_ver}
+  export CODErtofs=/nw${envir}/${RUN}_code.${code_ver}
 fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
 export USHrtofs=${HOMErtofs}/ush
+export EXECcode=${CODErtofs}/exec
 
 #############################
 # Set up the UTILITIES
