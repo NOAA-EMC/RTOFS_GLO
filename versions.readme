@@ -1,9 +1,0 @@
-RTOFS-Global: 1.0.3
-
-HYCOM model: 2.2.18 (https://svnemc.ncep.noaa.gov/projects/rtofs_glo/hycom_code/tags/rtofs_code.v2.2.18) 
-HYCOM libs:  1.0.0  (https://svnemc.ncep.noaa.gov/projects/rtofs_glo/rtofs_lib/tags/rtofs_lib.v1.0.0)
-CDO:         1.5.0  (https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/branches/RB-1.0.3/sorc/rtofs_cdo-1.5.0.fd3)
-
-W3 lib:      2.0.3 (/nwprod/lib/libw3nco_v2.0.3_4.a)
-BUFR  lib:   2.0.1 (/nwprod/lib/libbacio_v2.0.1_4.a)
-NetCDF:      3.6.3 (usrx/local/NetCDF/3.6.3)
