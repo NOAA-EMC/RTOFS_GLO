@@ -45,7 +45,7 @@ OBJS=	${SRCS:.f90=.o}
 CF =		ifort
 
 INC   = 
-LIBS  = -L/nwprod/lib -lw3nco_4 -lbacio_4
+LIBS  = ${W3NCO_LIB4} ${BACIO_LIB4}
 CMD  =         rtofs_getkpds
 PROFLIB =	-lprof
 
