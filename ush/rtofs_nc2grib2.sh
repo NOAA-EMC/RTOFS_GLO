@@ -73,6 +73,13 @@ export mycyc=${mycyc:-00}
 export month=`echo $PDY | cut -c5-6`
 export day=`echo $PDY | cut -c7-8`
 
+if [ ${mode} = 'n' ]; then
+export gen_pro=14
+fi
+if [ ${mode} = 'f' ]; then
+export gen_pro=2
+fi
+
 
 cd $regdir
 
@@ -162,7 +169,10 @@ do
     echo ${var}_std.asc var_std_${region}.asc
     test -f fort.50 && rm -f fort.50
     test -f fort.20 && rm -f fort.20
+    test -f fort.30 && rm -f fort.30
     ln -s ${regdir}/${var}_std_${region}.asc fort.20
+    echo ${var} > var_name
+    ln -s var_name fort.30
 
     export XLFUNIT_50=${regdir}/${var}_${fhr}_std_${region}.grb2
 
