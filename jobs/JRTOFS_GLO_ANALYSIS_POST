@@ -50,9 +50,9 @@ if [ $RUN_ENVIR = dev ]
 then
    tmpdir=${tmpdir:-/ptmp/$LOGNAME/tmpdir/${projID}}
 else
-   tmpdir=/tmpnwprd
+   tmpdir=/tmpnwprd1
 fi
-export DATA=${job}.${pid}} ## $tmpdir/${RUN}_${modID}_${RUN_MODE}_post_${mycyc
+export DATA=$tmpdir/${job}.${pid}
 test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
@@ -63,10 +63,11 @@ cd $DATA
 if [ $RUN_ENVIR = dev ]
 then
   export jlogfile=$HOMEout/logs/jlogfile
-elif [ $RUN_ENVIR = prod ]
+elif [ $RUN_ENVIR = prod -a $envir = prod ]
 then
   export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
+  export DBNROOT=/nwprod/spa_util/fakedbn
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
 test -d `dirname $jlogfile` || mkdir -p $jlogfile

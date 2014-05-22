@@ -50,7 +50,7 @@ if [ $RUN_ENVIR = dev ]
 then
    tmpdir=${tmpdir:-/ptmp/$LOGNAME/tmpdir/${projID}}
 else
-   tmpdir=/tmpnwprd
+   tmpdir=/tmpnwprd1
 fi
 export DATA=$tmpdir/${job}.${pid}
 test -d $DATA && rm -rf $DATA
@@ -63,10 +63,11 @@ cd $DATA
 if [ $RUN_ENVIR = dev ]
 then
   export jlogfile=$HOMEout/logs/jlogfile
-elif [ $RUN_ENVIR = prod ]
+elif [ $RUN_ENVIR = prod -a $envir = prod ]
 then
   export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
+  export DBNROOT=/nwprod/spa_util/fakedbn
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
 test -d `dirname $jlogfile` || mkdir -p $jlogfile
@@ -163,6 +164,10 @@ test -d $COMOUT || mkdir -p $COMOUT
 ## This assumes that the $job has the name structure of the type job_*NN
 ## where NN is two-digit number
 export postday=`echo $job | rev |cut -c1-2 | rev`
+export digitest=`echo $postday |cut -c1`
+if [ $digitest -eq 0 ]; then
+  export postday=`echo $postday|cut -c2`
+fi
 export startdate=`${utilexec}/ndate \`expr 24 \* \( $postday \- 1 \) \` $PDY$mycyc |cut -c1-8`
 #export startdate=${startdate:-${PDY}}
 export fcstdays_before_thisstep=` expr \` $utilexec/nhour $startdate$mycyc $PDY$mycyc \` \/ 24 `

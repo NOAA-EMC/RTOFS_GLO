@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 ####################################
 # Ensure environment is defined.
 ####################################
@@ -9,6 +8,7 @@ echo cyc is ${cyc:?}
 echo envir is ${envir:?} 
 echo model_ver is ${model_ver:?}
 echo code_ver is ${code_ver:?}
+echo cdo_ver is ${cdo_ver:?}
 
 export RUN_ENVIR=${RUN_ENVIR:-prod}
 
@@ -20,25 +20,16 @@ set -xa
 export NET=rtofs
 export RUN=rtofs
 export modID=glo
-export RUN_MODE=forecast
-export RUN_STEP=step3
+export RUN_MODE=analysis
 
-#####################
+####################
 # SETUP RUN VARIABLES
-#####################
+####################
 if [ $RUN_ENVIR = dev ]
 then
-  export job=${job:-${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_pre_${projID}}
-fi
-
-#####################
-# SETUP MPP VARIABLES
-#####################
-if [ $RUN_ENVIR = dev ]
-then
-  export NPROCS=1
-  export NPROCS=${NPROCS:-`echo $LOADL_PROCESSOR_LIST | wc -w | awk '{ print $1}'` }
-  export NNODES=${NNODES:-`expr $NPROCS \/ 16`} # for p6 cluster
+  export job=${job:-${RUN}_${modID}_${RUN_MODE}_grib_post_${projID}}
+  export NNODES=${NNODES:-1}
+  export NPROCS=${NPROCS:-4}
 fi
 
 # #################################
@@ -52,21 +43,16 @@ export mycyc='00'
 export cycle=t${mycyc}z
 
 ##########################################################
- # obtain unique process id (pid) and make temp directories
+# obtain unique process id (pid) and make temp directories
 ##########################################################
 export pid=$$
 if [ $RUN_ENVIR = dev ]
 then
    tmpdir=${tmpdir:-/ptmp/$LOGNAME/tmpdir/${projID}}
 else
-   tmpdir=/tmpnwprd
+   tmpdir=/tmpnwprd1
 fi
-if [ $RUN_ENVIR = dev ]
-then
-  export DATA=$tmpdir/${job} ### .${pid}
-else
-  export DATA=$tmpdir/${RUN}_${modID}_${RUN_MODE}_${RUN_STEP}_${mycyc}
-fi
+export DATA=$tmpdir/${job}.${pid}
 test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
@@ -77,10 +63,11 @@ cd $DATA
 if [ $RUN_ENVIR = dev ]
 then
   export jlogfile=$HOMEout/logs/jlogfile
-elif [ $RUN_ENVIR = prod ]
+elif [ $RUN_ENVIR = prod -a $envir = prod ]
 then
   export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
+  export DBNROOT=/nwprod/spa_util/fakedbn
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
 test -d `dirname $jlogfile` || mkdir -p $jlogfile
@@ -93,6 +80,8 @@ export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 
+export cycle=t${cyc}z
+
 #####################################################
 # SAVEGES - Copy files from TMPDIR ($DATA) to $GESdir
 # SENDECF - Flag events on ECF
@@ -102,6 +91,7 @@ export pgmout="OUTPUT.${pid}"
 #####################################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
+export SENDDBN_NTC=${SENDDBN_NTC:-YES}
 export SENDECF=${SENDECF:-YES}
 
 ####################################
@@ -112,16 +102,19 @@ then
   #DEV
   export HOMErtofs=$PROJECTdir
   export CODErtofs=$CODEdir
+  export CDOrtofs=$CDOdir
 else
   #NCO
   export HOMErtofs=/nw${envir}/${RUN}_${modID}.${model_ver}
   export CODErtofs=/nw${envir}/${RUN}_code.${code_ver}
+  export CDOrtofs=/nw${envir}/${RUN}_shared/${RUN}_cdo.${cdo_ver}
 fi
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
 export USHrtofs=${HOMErtofs}/ush
 export EXECcode=${CODErtofs}/exec
+export cdo_r=${CDOrtofs}/bin/cdo
 
 #############################
 # Set up the UTILITIES
@@ -142,32 +135,10 @@ export PDY=${PDY:-}
 sh $utilscript/setpdy.sh
 . PDY
 
-##############################################
-# Define Input/Output/Restart directories
-##############################################
-if [ $RUN_ENVIR = dev ]
-then
-  export COMIN=${COMIN:-${HOMEout}/${NET}/${RUN}.${PDY}}
-  export COMINm1=${COMINm1:-${HOMEout}/${NET}/${RUN}.${PDYm1}}
-  export COMOUT=${COMOUT:-${HOMEout}/${NET}/${RUN}.${PDY}}
-  export GESdir=${HOMEout}/${NET}/nwges/${RUN}.${PDY}
-  export GESdirm1=${HOMEout}/${NET}/nwges/${RUN}.${PDYm1}
-else
-  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
-  export COMINm1=/com/${NET}/${envir}/${RUN}.${PDYm1}
-  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
-  export GESdir=/nwges/${envir}/${RUN}.${PDY}
-  export GESdirm1=/nwges/${envir}/${RUN}.${PDYm1}
-fi
-mkdir -m 775 -p $COMOUT
-test -d $GESdir || mkdir -p $GESdir
-test -d $COMOUT || mkdir -p $COMOUT
-
 ###################
 # Define model gird
 ###################
 export inputgrid=navy_0.08
-export useslp=NO # YES or NO, use sea level pressure
 
 ##################################################################
 # Run the config file to set up specific model variables if needed
@@ -175,57 +146,70 @@ export useslp=NO # YES or NO, use sea level pressure
 . $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
 
 ##############################################
-# Check for restart
+# Define Input/Output/Restart directories
 ##############################################
-restart_f=${RUN}_${modID}.t${cyc}z.restart_f
-if [ -s $GESdir/${restart_f}*.a -a -s $GESdir/${restart_f}*.b ]
+if [ $RUN_ENVIR = dev ]
 then
-    export RESTART=YES
+  export COMIN=${COMIN:-${HOMEout}/${NET}/${RUN}.${PDY}}
+  export COMOUT=${COMOUT:-${HOMEout}/${NET}/${RUN}.${PDY}}
+  export GESdir=${HOMEout}/${NET}/nwges/${RUN}.${PDY}
 else
-    export RESTART=NO
+  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
+  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
+  export GESdir=/nwges/${envir}/${RUN}.${PDY}
 fi
 
-env
+if [ $envir = prod ]; then
+    export pcom=/pcom/rtofs
+else
+    export pcom=/pcom/${envir}/rtofs
+fi
 
-#################################
-# Set up forecast step parameters
-#################################
-stepnum=${RUN_STEP#step}
-cnum=1
-fcstdays_before_thisstep=0
-while [ ${cnum} -lt ${stepnum} ]
-do
-   eval daysadd="\$fcstdays_step$cnum"
-   fcstdays_before_thisstep=`expr \${fcstdays_before_thisstep} + ${daysadd}`
-   cnum=`expr ${cnum} + 1`
-done
-export startdate=`$utilexec/ndate \` expr \${fcstdays_before_thisstep} \* 24 \`  ${PDY}${mycyc} | cut -c1-8`
 
-eval fcstdays="\$fcstdays_step$stepnum"
-eval SAVE_RESTART="\$SAVE_RESTART_FORECAST_STEP$stepnum"
-eval CONTINUE_FORECAST="\$CONTINUE_FORECAST_STEP$stepnum"
+test -d $GESdir || mkdir -m 775 -p $GESdir
+test -d $COMOUT || mkdir -m 775 -p $COMOUT
+test -d $pcom || mkdir -m 775 -p $pcom
+
+############################################
+# Set up analysis post-processing parameters
+############################################
+## This assumes that the $job has the name structure of the type job_*NN
+## where NN is two-digit number
+export postday=`echo $job | rev |cut -c1-2 | rev`
+export digitest=`echo $postday |cut -c1`
+if [ $digitest -eq 0 ]; then
+  export postday=`echo $postday|cut -c2`
+fi
+export startdate=`${utilexec}/ndate \`expr -24 \* $postday\` $PDY$mycyc |cut -c1-8`
+export fcstdays_before_thisstep=` expr \` $utilexec/nhour $startdate$mycyc $PDYm2$mycyc \` \/ 24 `
+eval fcstdays="\$fcst_post_ndays" # length of the current post run.
 export fcstdays
-export stepnum
+eval analdays="\$analdays" # length of the analysis.
+export analdays 
 
-#################################################################
-#  Send a message to the jlogfile indication the start of the job
-#################################################################
-msh="HAS BEGUN on `hostname`"
+################################################################
+# Send a message to the jlogfile indicating the start of the job
+################################################################
+msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
+export MP_CSS_INTERRUPT=yes
+unset MP_POLLING_INTERVAL
+env
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}_pre.sh.ecf
-
-#===================================================================
+ksh ${HOMErtofs}/scripts/exrtofs_glo_grib2_post.sh.ecf
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}_pre.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.analysis.grib_post.`basename $pgmout`
 
-msg="JOB $hob HAS COMPLETTED NORMALLY."
+msg="JOB $job HAS COMPLETED NORMALLY." 
 postmsg "$jlogfile" "$msg"
 
-cd /tmpnwprd
+
+cd $tmpdir
+##rm -rf $DATA
+
 
 date

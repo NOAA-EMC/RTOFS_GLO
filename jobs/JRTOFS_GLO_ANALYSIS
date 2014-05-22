@@ -81,12 +81,9 @@ if [ $RUN_ENVIR = dev ]
 then
    tmpdir=${tmpdir:-/ptmp/$LOGNAME/tmpdir/${projID}}
 else
-   tmpdir=/tmpnwprd
+   tmpdir=/tmpnwprd1
 fi
-#SEC currently running this with different cyc than in $job, so have to set DATA directory
-#SEC this way
-#SEC export DATA=$tmpdir/${job} ### .${pid}
-export DATA=$tmpdir/${RUN}_${modID}_analysis_${mycyc}
+export DATA=$tmpdir/${job}.${pid}
 test -d $DATA && rm -rf $DATA
 mkdir -p $DATA
 cd $DATA
@@ -97,10 +94,11 @@ cd $DATA
 if [ $RUN_ENVIR = dev ]
 then
   export jlogfile=$HOMEout/logs/jlogfile
-elif [ $RUN_ENVIR = prod ]
+elif [ $RUN_ENVIR = prod -a $envir = prod ]
 then
   export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
+  export DBNROOT=/nwprod/spa_util/fakedbn
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
 test -d `dirname $jlogfile` || mkdir -p $jlogfile
@@ -231,6 +229,6 @@ cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}.`basename $pgmout`
 msg="JOB $hob HAS COMPLETTED NORMALLY."
 postmsg "$jlogfile" "$msg"
 
-cd /tmpnwprd
+cd /tmpnwprd1
 
 date

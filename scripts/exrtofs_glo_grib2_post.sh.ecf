@@ -310,9 +310,47 @@ if [ $SENDCOM = 'YES' ]
       for cfile in `ls -C1 $DATA/$ftype/${RUN}_${modID}.t${mycyc}z.${mode}*_${ftype}_std.grb2`
       do
           cp -f -p $cfile  ${COMOUT}/.
+          file=`echo $cfile |awk -F/ '{print $5}'`
+          fhour=`echo $file | cut -c17-19`
+
+          ####################################
+          # Processing GRIB2 RTOFS for AWIPS
+          ####################################
+          pgm=tocgrib2
+          export pgm;. prep_step
+          startmsg
+
+          export FORT11=$ftype/${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std.grb2
+          export FORT31=" "
+          export FORT51=grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
+          $utilexec/tocgrib2 < $PARMrtofs/grib2_rtofs_glo_${fhour}_${ftype}_std
+
+          err=$?;export err ;err_chk
+          echo " error from tocgrib2=",$err
+
+          if [ $SENDCOM = "YES" ] ; then
+          ##############################
+          # Post Files to PCOM
+          ##############################
+
+             cp  grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std  $pcom/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
+
+          fi
+
           if [ $SENDDBN = 'YES' ]
           then
-            $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
+            $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_REG_GB2 $job $COMOUT/$file
+
+            ##########################
+            # Distribute Data to NCF
+            #########################
+            #
+            #    Distribute Data to TOC (AWIPS)
+            #
+            if [ $SENDDBN_NTC = YES ]; then
+                $DBNROOT/bin/dbn_alert NTC_LOW $NET $job  $pcom/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
+            echo " "
+            fi
           else
             cname=`basename $cfile`
             msg="File $COMOUT/$cname not posted to db_net."
