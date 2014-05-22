@@ -70,16 +70,17 @@ c      real(4), dimension(:,:) :: var_name,rsvar,bsvar,var_name_pack
       character,allocatable, dimension(:) ::  cgrib
 
       character(len=80) title
+      character*20     cvar_name
       integer(4)    listsec0(2)
       integer(4)    listsec1(13)
       integer(4)    igds(5)
       integer(4)    igdstmpl(igdstmplen)
       integer(4)    ipdstmpl(ipdstmplen)
       integer(4)    idrstmpl(idrstmplen)
-      integer       imax,jmax,ngrdpts,lcgrib,parm,p_cat
+      integer       imax,jmax,ngrdpts,lcgrib,parm,p_cat,gen_pro,clun
       real          lat0,lon0,lat1,lon1,dlat,dlon
       read(*,*) imax,jmax,iday,iyr,imo,fcsthr,icycle,parm,p_cat,
-     *     lon0,lat0,dlat,dlon,depth
+     *     lon0,lat0,dlat,dlon,depth,gen_pro
       lat1=lat0+dlat*jmax
       lon1=lon0+dlon*imax
       ngrdpts=imax*jmax
@@ -90,7 +91,7 @@ c      real(4), dimension(:,:) :: var_name,rsvar,bsvar,var_name_pack
       allocate (cgrib(lcgrib))
 c------------------------------------------------------------------------
 c------------------------------------------------------------------------
-      lun=20; lugb=50
+      lun=20; lugb=50; clun=30
       write(ciu,'(i2)')lugb
       ename='XLFUNIT_'//adjustl(ciu)
       call getenv (ename, fname)
@@ -137,6 +138,7 @@ c------------------------------------------------------------------------
 
       read (lun,22) var_name   
  22   format(f8.4)
+      read (clun,*) cvar_name
  
 ! create msg for var_name field
       CALL gribcreate(cgrib,lcgrib,listsec0,listsec1,ierr)
@@ -157,9 +159,9 @@ c------------------------------------------------------------------------
 
       ipdstmpl(1) = p_cat   ! Parameter category (see Code table 4.1) (3:Surface Properties)
       ipdstmpl(2) = parm ! Parameter number (see Code table 4.2)  (0:Water Temperature)
-      ipdstmpl(3) = 2 ! Type of generating process (see Code table 4.3) (0:Analysis)
-      ipdstmpl(4) = 85 ! Background generating process identifier (defined by originating centre)
-      ipdstmpl(5) = 0  ! Analysis or forecast generating process identified (see Code ON388 Table A) (44:SST Analysis)
+      ipdstmpl(3) = gen_pro ! Type of generating process (see Code table 4.3) (0:Analysis)
+      ipdstmpl(4) = 0 ! Background generating process identifier (defined by originating centre)
+      ipdstmpl(5) = 85  ! Analysis or forecast generating process identified (see Code ON388 Table A) (44:SST Analysis)
       ipdstmpl(6) = 0 ! Hours of observational data cutoff after reference time
       ipdstmpl(7) = 0 ! Minutes of observational data cutoff after reference time
       ipdstmpl(8) = 1 ! Indicator of unit of time range (see Code table 4.4)
@@ -185,13 +187,24 @@ c------------------------------------------------------------------------
 
       ibmap = 0   ! Bitmap indicator ( see Code Table 6.0 ) (0:bitmap applies and is included in Section 6.)
       
+       if (cvar_name.eq.'sst') then
+
       where(var_name(:,:) > 99.)
         bmap(:,:) = .false.
-c        var_name_pack(:,:) = 0.          
+      elsewhere
+        bmap(:,:) = .true.
+        var_name_pack(:,:) = var_name(:,:)+273.15
+      endwhere
+      else
+
+      where(var_name(:,:) > 99.)
+        bmap(:,:) = .false.
       elsewhere
         bmap(:,:) = .true.
         var_name_pack(:,:) = var_name(:,:)
       endwhere
+c  End of SST if loop
+      endif
 
       call addfield(cgrib,lcgrib,ipdsnum,ipdstmpl,ipdstmplen,
      1              coordlist,numcoord,idrsnum,idrstmpl,

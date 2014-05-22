@@ -1,0 +1,10 @@
+Fix files are changed:
+* grid_hudson_baffin.des
+* hudson_baffin_weights.nc
+
+The files are in the direcotry:
+/ocean/noscrub/Ilya.Rivin/hycom_glo/fix_NC2Grib2_UPDATE
+
+Changes:
+The domain of Hudson-Baffin region is changed.  
+It extends from 40N instead of 45N.
