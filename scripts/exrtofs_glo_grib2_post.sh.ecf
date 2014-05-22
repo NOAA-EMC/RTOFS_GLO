@@ -347,7 +347,7 @@ if [ $SENDCOM = 'YES' ]
             #
             #    Distribute Data to TOC (AWIPS)
             #
-            if [ $SENDDBN_NTC = YES ]; then
+            if [ $SENDDBN_NTC = YES -a $mode = f ]; then
                 $DBNROOT/bin/dbn_alert NTC_LOW $NET $job  $pcom/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
             echo " "
             fi
