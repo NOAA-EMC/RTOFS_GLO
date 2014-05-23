@@ -1,36 +1,30 @@
-TITLE: 
-
-RTOFS-GLOBAL or implementation in vertical directory structure.
-
-CHANGE REQUEST CLASS:
-
-Major change
+Routine change
 
 DESCRIPTION OF CHANGE:  
 
-This is RTOFS-GLOBAL v1.0.3. Please check RTOFS_GLO modulefile for software
-used. Note that HYCOM code, HYCOM (RTOFS) lib and CDO are in separate SVN 
-repositories.
+This is RTOFS-GLOBAL v1.0.5.
 
-This version includes generation of regional surface GRIB2 files and removes
-regional low vertical resolution NetCDF files.
+This version includes changes to regional surface GRIB2  files. The changes are:
+
+1. New WMO headers for nowcast files.
+2. Extended Baffin-Hudson Bay sub-region.
+3. SST in deg K instead of deg C.
 
 BENEFIT OF CHANGE: 
 
-The new vertical directory structure, following the Environment Equivalence 
-Project, will speed up the transition of NWP systems changes/upgrades from R2O,
-between EMC and NCO, and vice-versa.
+The new WMO headers will allow AWIPS2 users to distinguish between forecast
+and nowcast files. An extended Baffin-Hudson Bay sub-region will allow OPC
+to produce sea-spray products for a larger region. Deg K is WMO standard
+and used for all AWIPS2 temperatures.
 
-Make GRIB2 products available for AWIPS.
 
 USER IMPACT STATEMENT:
 
-Additional GRIB2 products.
+Improved GRIB2 products for ingestion in AWIPS2..
 
 TECHNICAL IMPACT STATEMENT:
 
-Post processing will include GRIB2 products and hence will take
-longer and use more resources. Existing NetCDF products should not be impacted.
+No impact is expected.
 
 RISKS:
 
@@ -44,33 +38,36 @@ IMPLEMENTATION INSTRUCTIONS:
 
 I. LOAD MODULES
 ---------------
-I.1) check out https://svnemc.ncep.noaa.gov/projects/rtofs_shared/modulefiles/RTOFS_GLO into <modules-dir>
-I.2) Replace NCEPLIB value in ROFS_GLO/v1.0.3 to <modules-dir>.
-I.3) module use -a <modules-dir>
+
+I.1) Please note that RTOFS_GLO modulefile for 
+     version v1.0.5 should be created in /nwprod/modulefiles. There is no 
+     change in the modulefile other than version number. The corresponding
+     .version file (specifying default version) should be upgraded to v1.0.5.
+     The sample module file for rtofs_glo.v1.0.5 is also available at
+     https://svnemc.ncep.noaa.gov/projects/rtofs_shared/modulefiles/RTOFS_GLO/v1.0.5
+I.2) module use -a /nwprod/modulefiles
      module load RTOFS_GLO
 
 I. BUILD A PROJECT
 -------------------
 
-II.1) mkdir /tmpnwprd/rtofs/rtofs_glo.v1.0.3
+II.1) mkdir /tmpnwprd/rtofs/rtofs_glo.v1.0.5
 
-II.2) cd /tmpnwprd/rtofs/rtofs_glo.v1.0.3
+II.2) cd /tmpnwprd/rtofs/rtofs_glo.v1.0.5
 
-II.3) Check out ROFS_GLOBAL:
-     https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/tags/IT-rtofs_glo.v1.0.3-20131107
+II.3) Check out RTOFS_GLOBAL:
+     https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/tags/IT-rtofs_glo.v1.0.5-20140523
      into/nw${envir}
      The result will be the directory 
-     /nw${envir}/IT-rtofs_glo.v1.0.3-20131107
+     /nw${envir}/IT-rtofs_glo.v1.0.5-20140523
 
 II.4) Create the directory structure
-      mv  /nw${envir}/IT-rtofs_glo.v1.0.3-20131107  /nw${envir}/rtofs_glo.v1.0.3
-      mkdir /nw${envir}/rtofs_glo.v1.0.3/fix
-      mkdir /nw${envir}/rtofs_glo.v1.0.3/exec
+      mv  /nw${envir}/IT-rtofs_glo.v1.0.5-20140523  /nw${envir}/rtofs_glo.v1.0.5
 
 III. COMPILE PROJECT SOURCE CODES
 --------------------------------
 
-For each CDIR= /nw${envir}/rtofs_glo.v1.0.3/sorc/rtofs_*.fd directory:
+For each CDIR= /nw${envir}/rtofs_glo.v1.0.5/sorc/rtofs_*.fd directory:
        cd $CDIR
        make clean ; make
        mv rtofs_* ../../exec/.
@@ -79,9 +76,9 @@ For each CDIR= /nw${envir}/rtofs_glo.v1.0.3/sorc/rtofs_*.fd directory:
 IV. SET-UP FIX FILES
 ---------------------
 
-cp -p /nwprod/fix/rtofs_glo* /nw${envir}/rtofs_glo.v1.0.3/fix/.
-cp -p  /marine/noscrub/Ilya.Rivin/hycom_glo/fix_nc2grib2/rtofs_* /nw${envir}/rtofs_glo.v1.0.3/fix/.
-
+cp -p  /ocean/noscrub/Ilya.Rivin/hycom_glo/fix.v1.0.5 /nw${envir}/rtofs_glo.v1.0.5/fix/.
+NOTE: check  https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/tags/IT-rtofs_glo.v1.0.5-20140523/fix.README
+      for more instructions.
 NOTE: fix files are too big o be part of SVN repository. 
 
 V. SET-UP INITIAL CONDITIONS
@@ -92,8 +89,12 @@ ONLY if creating a parallel or test run
 V.1) mkdir /com/rtofs/${envir] if necessary
 V.2) ln -s /com/rtofs/prod/rtofs.YYYYMMDD /com/rtofs/${envir]/rtofs.YYYYMMDD for yesterday ($PDYm1)
 
+
 VI. COMPUTER RESOURCES AND RUN-TIME ENVIRONMENT
 ------------------------------------------------
+
+Computer resources and run-time environment DO NOT CHANGE
+for rtofs_glo v.1.0.3, v1.0.4, and 1.0.5.
 
 Computer resources and sample LSF command files  are in
 https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/tools/RB-1.0.3_tools/rtofs_job_command*.lsf
@@ -119,20 +120,20 @@ VI.3) Resources for GRIB post-processing steps (anal_grib_post, fcst_grib_post) 
 VI. JOB DEPENDENCIES
 -------------------
 
-VIII.1a) anal_pre:                              after GFS 00Z cycle is completed. 
-VIII.1b) anal:                                  after 1a is completed
-VIII.1c) anal_post:                             after 1b is completed
-VIII.1d) anal_grib_post:                        after 1b is completed
+VIII.1a) anal_pre:                                after GFS 00Z cycle is completed. 
+VIII.1b) anal:                                    after 1a is completed
+VIII.1c) anal_post:                               after 1b is completed
+VIII.1d) anal_grib2_post:                         after 1b is completed
 
-VIII.2a) fcst_step1_pre:                        after GFS 00Z cycle is completed.
-VIII.2b) fcst_step1:                            after 1b is completed
-VIII.2c) fcst_post_01 - fcst_post_04:           after 2b is completed
-VIII.2d) fcst_grib_post_01 - fcst_grib_post_03: after 2b is completed
+VIII.2a) fcst_step1_pre:                          after GFS 00Z cycle is completed.
+VIII.2b) fcst_step1:                              after 1b is completed
+VIII.2c) fcst_post_01 - fcst_post_04:             after 2b is completed
+VIII.2d) fcst_grib2_post_01 - fcst_grib2_post_03: after 2b is completed
 
-VIII.3a) fcst_step2_pre:                        after GFS 00Z cycle is completed.
-VIII.3b) fcst_step2:                            after 2b is completed
-VIII.3c) fcst_post_0 - fcst_post_08:            after 3b is completed
-VIII.3d) fcst_grib_post_04 - fcst_grib_post_06: after 3b is completed
+VIII.3a) fcst_step2_pre:                          after GFS 00Z cycle is completed.
+VIII.3b) fcst_step2:                              after 2b is completed
+VIII.3c) fcst_post_0 - fcst_post_08:              after 3b is completed
+VIII.3d) fcst_grib2_post_04 - fcst_grib2_post_06: after 3b is completed
 
 
 NOTE 1: In current configuration step3 is not used (run for 0 days). 
