@@ -209,11 +209,11 @@ do
   # link current archive to the working directory
   rm -rf archv.a archv.b > /dev/null
 
-  if [ -s $COMOUT/${arfile_tplate}.a ]; then
-    ln -s -f $COMOUT/${arfile_tplate}.a archv.a
-    ln -s -f $COMOUT/${arfile_tplate}.b archv.b
+  if [ -s $COMIN/${arfile_tplate}.a ]; then
+    ln -s -f $COMIN/${arfile_tplate}.a archv.a
+    ln -s -f $COMIN/${arfile_tplate}.b archv.b
   else
-    echo Missing archv file $COMOUT/${arfile_tplate}. >>${RUN}_${modID}.t${mycyc}z.nav.log
+    echo Missing archv file $COMIN/${arfile_tplate}. >>${RUN}_${modID}.t${mycyc}z.nav.log
     echo "NOTdone due to missing archv file" >>${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk  
   fi
@@ -323,7 +323,7 @@ if [ $SENDCOM = 'YES' ]
           export FORT11=$ftype/${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std.grb2
           export FORT31=" "
           export FORT51=grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
-          $utilexec/tocgrib2 < $PARMrtofs/grib2_rtofs_glo_${fhour}_${ftype}_std
+          $utilexec/tocgrib2 < $PARMrtofs/grib2_rtofs_glo_${mode}${fhour}_${ftype}_std
 
           err=$?;export err ;err_chk
           echo " error from tocgrib2=",$err
@@ -347,7 +347,7 @@ if [ $SENDCOM = 'YES' ]
             #
             #    Distribute Data to TOC (AWIPS)
             #
-            if [ $SENDDBN_NTC = YES -a $mode = f ]; then
+            if [ $SENDDBN_NTC = YES ]; then
                 $DBNROOT/bin/dbn_alert NTC_LOW $NET $job  $pcom/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
             echo " "
             fi

@@ -1,5 +1,7 @@
 Fix files are saved at 
 /ocean/noscrub/Ilya.Rivin/hycom_glo/fix.v1.0.5
+The copy on HPSS is /hpssuser/g01/wx20ir/rtofs_global/fix/REL-1.0.5.tar
+
 
 The two new files are 
 rtofs_grid_hudson_baffin.des

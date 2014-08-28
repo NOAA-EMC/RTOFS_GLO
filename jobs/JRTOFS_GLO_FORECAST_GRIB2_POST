@@ -68,7 +68,8 @@ elif [ $RUN_ENVIR = prod -a $envir = prod ]
 then
   export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.${pid}
 else
-  export DBNROOT=/nwprod/spa_util/fakedbn
+  export SENDDBN=NO
+  export SENDDBN_NTC=NO
   export jlogfile=/com/logs/${envir}/jlogfile
 fi
 test -d `dirname $jlogfile` || mkdir -p $jlogfile

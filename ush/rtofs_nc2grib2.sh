@@ -100,13 +100,13 @@ while [ $fhr -le $nhr ]
 do
 
   #echo xx yy day year month fcsthr cyc table# param# x0 y0 xinc yinc
-  echo $xx $yy  $day $year $month $fhr $mycyc 0 3 $x0 $y0 $xinc $yinc 0 > infile_sst_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 3 4 $x0 $y0 $xinc $yinc 0 > infile_sss_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 2 1 $x0 $y0 $xinc $yinc 0 > infile_u_velocity_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 3 1 $x0 $y0 $xinc $yinc 0 > infile_v_velocity_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 195 3 $x0 $y0 $xinc $yinc 0 > infile_ssh_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 194 1 $x0 $y0 $xinc $yinc 0 > infile_ubaro_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 195 1 $x0 $y0 $xinc $yinc 0 > infile_vbaro_${region}
+  echo $xx $yy  $day $year $month $fhr $mycyc 0 3 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_sst_${region}
+  echo $xx $yy  $day $year $month $fhr $mycyc 3 4 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_sss_${region}
+  echo $xx $yy  $day $year $month $fhr $mycyc 2 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_u_velocity_${region}
+  echo $xx $yy  $day $year $month $fhr $mycyc 3 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_v_velocity_${region}
+  echo $xx $yy  $day $year $month $fhr $mycyc 195 3 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ssh_${region}
+  echo $xx $yy  $day $year $month $fhr $mycyc 194 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ubaro_${region}
+  echo $xx $yy  $day $year $month $fhr $mycyc 195 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_vbaro_${region}
 
 
   # Split the netCDF file into components
