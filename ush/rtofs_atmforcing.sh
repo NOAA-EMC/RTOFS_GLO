@@ -45,14 +45,17 @@ idate=$sdate
 NTIME=0
 
 # Copy the surface flux files from GFS/GDAS
+# jpdt_table is the table to pick PDS data from
 
 cd $DATA
 rm -rf t.dat
 if [ ${RUN_MODE} = "analysis" ]
 then
  export netwk=gdas # Nowcast mode
+ echo "8 8 0 0 8 0 0 0 0 0 0 0 0 0 0 0" > jpdt_table.dat
 else
- export netwk=gfs  # Forecast mode     
+ export netwk=gfs  # Forecast mode
+ echo "8 8 0 0 8 0 0 0 0 8 8 8 8 0 0 0" > jpdt_table.dat
 fi
 
 NPROCS=${NPROCS:-1}
@@ -103,6 +106,9 @@ fi
 #-            (READ IN mod_geom.f90)
 #- UNIT  9  - FILE regional.grid.a, HYCOM GRID 
 #-            (READ IN mod_geom.f90)
+#- UNIT 27  - FILE jpdt_table.dat is the PDT Table 4.0 or 4.8
+#-            depending on if the data is instantaneos (4.0)
+#-            or averaged (table 4.8)
 #- UNIT 33  - FILE listflx.dat, LIST OF DATES AND MRF FLUS FILES TO 
 #-            BE USED IN INTERPOLATION.
 #- UNIT 59  - FILE regional.depth.a, HYCOM BATHIMETRY 
@@ -128,6 +134,7 @@ export XLFRTEOPTS="unit_vars=yes:buffering=disable_all"
 export XLFUNIT_7=intp_pars.dat
 export XLFUNIT_8=regional.grid.b
 export XLFUNIT_9=regional.grid.a
+export XLFUNTI_27=jpdt_table.dat
 export XLFUNIT_33=listflx.dat
 export XLFUNIT_59=regional.depth.a
 export XLFUNIT_61=regional.mask.a

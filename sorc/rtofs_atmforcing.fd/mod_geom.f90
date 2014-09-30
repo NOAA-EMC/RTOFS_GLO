@@ -1,6 +1,6 @@
 MODULE mod_geom
   USE mod_za,ONLY : zaiost,zaiopf,zaiord,zaiocl,idm,jdm
-  USE mod_gribio, ONLY: rdgrib
+  USE mod_grib2io, ONLY: rdgrib
   USE mod_flags
   PRIVATE
   ! IMPLICIT NONE
@@ -627,7 +627,7 @@ CONTAINS
     WRITE(*,*)SIZE(exhycom2d,dim=1),SIZE(exhycom2d,dim=2),' exhycom2d size'
     WRITE(*,*)SIZE(eyhycom2d,dim=1),SIZE(eyhycom2d,dim=2),' eyhycom2d size'
     nxatm2=nxatm/2 ; nyatm2=nyatm/2 
-    CALL rdgrib(lu,TRIM(name),flx,kpds(:),.TRUE.)  ! LAND
+!    CALL rdgrib(lu,TRIM(name),xgfld,jpdtno,npts)  ! LAND
     !dbgz IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     flx=1 ! all is sea
     !

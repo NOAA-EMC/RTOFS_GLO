@@ -22,14 +22,28 @@ idate=$1
 test -d $DATA/$idate && rm -rf $DATA/$idate ; mkdir -p $DATA/$idate 
 
 # NOTE: here is the possibility that pressure and forcing will be from different cycles. Check later.
-#dbgz: change envir for gfs
-###forcefile=`${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t sfcflx -v $idate` || \
-forcefile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e prod -n ${netwk} -t sfcflx -v $idate` || \
+ffile=none
+for sflux in sfcflx2 sfcflx
+do
+  ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t ${sflux} -v $idate` 
+  err=$?
+  if [ $err -eq 0 ]
+  then
+    forcefile=$ffile
+    fn1=$sflux
+    break
+  fi
+done
+
+if [ $ffile == 'none' ]
+then
   $USHrtofs/${RUN}_abort.sh "Missing Atmosperic Forcing File" \
     "ABNORMAL EXIT FORECAST: NO FILE sfcflx at $idate" 4
  
+fi
 echo "forcefile $forcefile"
-flxfile=${DATA}/${idate}/${RUN}'.'`basename $forcefile`
+
+fflxfile=${DATA}/${idate}/${RUN}'.'`basename $forcefile`
 if [ $useslp = YES ] 
 then
   pgrbfile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t pgbges -v $idate`
@@ -37,9 +51,16 @@ then
   prsfile=${DATA}/${idate}/${RUN}'.'`basename $pgrbfile`
   $USHrtofs/${RUN}_atmforcing_extract.sh $forcefile $flxfile $pgrbfile $prsfile
 else
-  $USHrtofs/${RUN}_atmforcing_extract.sh $forcefile $flxfile 
-fi
-##.. cp -p $forcefile $flxfile
+if [ $fn1 == 'sfcflx' ]; then
+cp -p $forcefile $fflxfile
+/nwprod/util/exec/cnvgrib -g12 ${fflxfile} ${fflxfile}.grib2
+flxfile=${fflxfile}.grib2
+else
+cp -p $forcefile $fflxfile
+flxfile=${fflxfile}
+fi # fn1 loop
+fi # useslp loop
+##cp -p $forcefile $fflxfile
 ##.. prsfile=$pgrbfile 
 ${utilexec}/grbindex $flxfile $flxfile.idx
 if [ $useslp = YES ] 
@@ -87,7 +108,11 @@ if [ $useslp = YES ]
 then
   echo $idate $flxfile '<' $forcefile $pgrbfile >>t.dat 
 else
-  echo $idate $flxfile '<' $forcefile >>t.dat 
-fi
+if [ $fn1 == 'sfcflx' ]; then
+  echo $idate $flxfile '<' $flxfile >>t.dat
+else
+  echo $idate $flxfile '<' $forcefile >>t.dat
+fi # fn1 loop
+fi #useslp loop
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

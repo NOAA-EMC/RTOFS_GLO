@@ -40,7 +40,7 @@ PROGRAM atmforcing
   USE mod_hytime
   USE mod_dump, ONLY: dumpi,dumpr
   USE mod_geom
-  USE mod_gribio
+  USE mod_grib2io
   USE mod_flags
 
   !
@@ -99,19 +99,21 @@ PROGRAM atmforcing
   INTEGER, PARAMETER :: &
        natm=16          &
        ,nhycom=10       &
-       ,nextrap_max=23  &
+       ,nextrap_max=45  &
+!       ,nextrap_max=23  &
        ,lp=6               ! output unit number
   !
   INTEGER :: nxhycom,mapflg,nyhycom,i,j,iii,jjj,k,n,m,ntime &
        ,nxatm,nyatm,nxatm_prev,nyatm_prev,nxatm2,nyatm2 &
        ,hh1,hh2,ndiff,nextrap,lua,lub,ii,edges=0 &
-       ,lua1,lub1 &
-       ,ixmin,ixmax,jymin,jymax, nshift
+       ,lua1,lub1,iparm,jdiscno &
+       ,ixmin,ixmax,jymin,jymax, nshift,jpdtno,xpts,ypts
   INTEGER, DIMENSION(:), ALLOCATABLE :: avgflxs1
   INTEGER, DIMENSION(:,:), ALLOCATABLE:: imsk_intp,imsk_hycom
-  INTEGER, DIMENSION(3,natm) :: kpds567
+  INTEGER, DIMENSION(4,natm) :: kpds567
   INTEGER, DIMENSION(200) :: gds 
-  INTEGER, DIMENSION(3) :: kpds
+  INTEGER, DIMENSION(4) :: kpds
+  INTEGER, DIMENSION(natm) :: jdisc_num,jpdt_num
   REAL ::  ftime,mskfrac=0.99,maxspeed,speed,cdval,plon0
   REAL, DIMENSION(:), ALLOCATABLE :: exhycom,eyhycom,exatm,eyatm,htime,off_time
   REAL, DIMENSION(:,:), ALLOCATABLE :: &
@@ -124,6 +126,11 @@ PROGRAM atmforcing
   CHARACTER (len=400), DIMENSION (:),ALLOCATABLE :: atmnames
 
   LOGICAL :: clsgrib,grid_file_exist=.FALSE.,atm_grid_changed
+  real,dimension(5000000)      :: xgfld
+! With pressue
+  data jdisc_num/0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2/
+! Without pressure
+!  data jdisc_num/0,0,0,0,0,0,0,0,0,0,0,0,0,0,2/
   !
   !
   ! Read parameters and allocate arrays
@@ -131,6 +138,11 @@ PROGRAM atmforcing
   OPEN (7,file='intp_pars.dat')
   READ(7,intp_pars)
   CLOSE(7)
+  open (27,file='jpdt_table.dat')
+  read(27,*)(jpdt_num(i),i=1,natm)
+  close(27)
+
+
   WRITE(*,intp_pars); CALL flush(lp)
   ! check if regional.grid.[ab] exists and read mapflg. nxhycom,nyhycom will be 
   ! redefined few lines later after call xcspmd
@@ -156,6 +168,7 @@ PROGRAM atmforcing
 
   OPEN (33,file='listflx.dat',form='formatted')
   READ(33,*) ntime
+  write(*,*) "  ntime  ",ntime
   ALLOCATE (htime(ntime) &
        ,ctime(ntime) &
        ,atmnames(ntime))
@@ -217,30 +230,31 @@ PROGRAM atmforcing
   avgflxs1(9:10)=0
 
   kpds567=RESHAPE (source=  &
-       (/124,  1 , 0    &  ! UFLX        1
-       ,125,   1 , 0    &  ! VFLX        2
-       , 11, 105 , 2    &  ! TMP 2m      3
-       , 51, 105 , 2    &  ! SPFH 2m     4
-       , 59,   1 , 0    &  ! PRATE       5
-       , 33, 105 ,10    &  ! UGRD 10m    6
-       , 34, 105 ,10    &  ! VGRD 10m    7
-       ,122,   1 , 0    &  ! SHTFL       8
-       ,121,   1 , 0    &  ! LHTFL       9
-       ,205,   1 , 0    &  ! DLWRF      10
-       ,212,   1 , 0    &  ! ULWRF      11
-       ,204,   1 , 0    &  ! DSWRF      12
-       ,211,   1 , 0    &  ! USWRF      13
-       , 11,   1 , 0    &  ! TMP 0m     14
-       ,  1,   1 , 0    &  ! PRES       15
-       , 81,   1 , 0 /) &  ! LAND       16 always must be the last one
-       ,shape = (/ 3,natm /) )  
+       (/002, 017, 001, 000  &  ! UFLX        1
+       ,002,  018, 001, 000  &  ! VFLX        2
+       ,000,  000, 103, 002  &  ! TMP 2m      3
+       ,001,  000, 103, 002  &  ! SPFH 2m     4
+       ,001,  007, 001, 000  &  ! PRATE       5
+       ,002,  002, 103, 010  &  ! UGRD 10m    6
+       ,002,  003, 103, 010  &  ! VGRD 10m    7
+       ,000,  011, 001, 000  &  ! SHTFL       8
+       ,000,  010, 001, 000  &  ! LHTFL       9
+       ,005,  192, 001, 000  &  ! DLWRF      10
+       ,005,  193, 001, 000  &  ! ULWRF      11
+       ,004,  192, 001, 000  &  ! DSWRF      12
+       ,004,  193, 001, 000  &  ! USWRF      13
+       ,000,  000, 001, 000  &  ! TMP 0m     14
+       ,003,  000, 001, 000  &  ! PRES       15
+       ,000,  000, 001, 000 /) &  ! LAND     16
+!       ,003,  001, 101  &  ! PRES      16 
+       ,shape = (/ 4,natm /) )  
 !!!       ,  2, 102 , 0    &  ! PRMSL      16
 
 
   ! 
   !Compute HYCOM land/sea mask from regional.depth.a (land=0,sea=1)
   !
-  PRINT *,'--- Preparing HYCOM mask'; CALL flush(lp)
+!  PRINT *,'--- Preparing HYCOM mask'; CALL flush(lp)
   CALL mask_hycom_1(imsk_hycom)
 
   !write(*,*) '1: imsk_hycom min, max = ',minval(imsk_hycom),maxval(imsk_hycom) ! dbgzp
@@ -277,10 +291,14 @@ PROGRAM atmforcing
      PRINT *, "Inside Time Loop ",m
      !
      !   Get GFS grid parameters (before  20021029.t12Z: 512x256, after: 768x384)
-     CALL getgds(81,TRIM(atmnames(m)),gds)
-     nxatm=gds(2) ; nyatm=gds(3)
-     nxatm2=nxatm/2 ; nyatm2=nyatm/2 
-     IF (m==1) THEN 
+!     CALL getgds(81,TRIM(atmnames(m)),gds)
+     
+     jdiscno=0
+     call rdgrib(81,TRIM(atmnames(m)),xgfld,kpds,jpdtno,jdiscno,0,xpts,ypts)
+     nxatm=xpts ; nyatm=ypts
+     print *, "1st rdgrib ",nxatm,"  ypts  ",nyatm
+     nxatm2=nxatm/2 ; nyatm2=nyatm/2
+     IF (m==1) THEN
         nxatm_prev=nxatm ; nyatm_prev=nyatm
         atm_grid_changed=.TRUE.
      ELSE
@@ -307,6 +325,7 @@ PROGRAM atmforcing
              ,eyatm &
              ,atmflxs &
              )
+
         ALLOCATE ( &
              atmflx(1:nxatm,1:nyatm) &
              ,latent(1:nxatm,1:nyatm) &
@@ -371,14 +390,25 @@ PROGRAM atmforcing
      !
      clsgrib=.FALSE.
      DO i=1,natm-1 
+        jpdtno=jpdt_num(i)
+        jdiscno=jdisc_num(i)
         IF (i==natm-1) clsgrib=.TRUE.
         kpds=kpds567(:,i)
         IF( wslocal==1 .AND. i==1) THEN  !use zonal wind
            kpds=kpds567(:,6)
+           jpdtno=jpdt_num(6)
+           jdiscno=jdisc_num(6)
         ELSEIF( wslocal==1 .AND. i==2) THEN !use meridional wind
            kpds=kpds567(:,7)
+           jpdtno=jpdt_num(7)
+           jdiscno=jdisc_num(7)
         ENDIF
-        CALL rdgrib(82,TRIM(atmnames(m)),atmflx,kpds,clsgrib)  
+! Get jpdt from the script
+
+        CALL rdgrib(82,TRIM(atmnames(m)),xgfld,kpds,jpdtno,jdiscno,1,xpts,ypts)  
+!        print *, "After 2nd rdgrib "
+!        write(45,*)" kpds ",kpds,jpdtno,jdiscno
+        atmflx=reshape(source=xgfld,shape=SHAPE(atmflx))
         IF (mapflg==mapflg_tripol) THEN
            DO j=1,nyatm
               atmflxs(1:nxatm-nshift,j,i) =atmflx(nshift+1:nxatm,j)

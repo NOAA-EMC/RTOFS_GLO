@@ -21,7 +21,7 @@
 # pgbges, pgiges, pgbgm6, pgigm6, pgbgm3, pgigm3, pgbgp3, pgigp3,
 # sigcur, sfccur, pgbcur, pgicur, prepqc, tcvg12, tcvges, tcvitl, 
 # enggrb, enggri, icegrb, icegri, snogrb, snogrb_high, snogri, sstgrb, sstgri.
-# sfcflx
+# sfcflx,sfcflx2
 # Specify option "-v valid" for the valid date wanted (default $CDATE).
 # Currently, the valid hours specified must be a multiple of 1.
 # Either 2-digit or 4-digit years are currently allowed.
@@ -133,7 +133,7 @@ if [[ $gfile = '?' || $# -gt 1 || $err -ne 0 || -z $valid ||\
   echo "           pgbges, pgiges, pgbgm6, pgigm6, pgbgm3, pgigm3, pgbgp3, pgigp3," >&2
   echo "           sigcur, sfccur, pgbcur, pgicur, prepqc, tcvg12, tcvges, tcvitl," >&2
   echo "           enggrb, enggri, icegrb, icegri, snogrb, snogri, sstgrb, sstgri," >&2
-  echo "           sfcflx, restrt" >&2
+  echo "           sfcflx, sfcflx2, restrt" >&2
  elif [[ $valid = '?' ]];then
   echo "         valid is the valid date in yyyymmddhh or yymmddhh form" >&2
   echo "         (default is environmental variable CDATE)" >&2
@@ -252,6 +252,10 @@ if [[ $netwk = gdas ]];then
    ;;
   sfcflx) geslist='
    $GETGES_COM/gfs/$envir/gdas.$day/gdas1.t${cyc}z.sfluxgrbf$fh'
+   fhinc=01
+   ;;
+  sfcflx2) geslist='
+   $GETGES_COM/gfs/$envir/gdas.$day/gdas1.t${cyc}z.sfluxgrbf${fh}.grib2'
    fhinc=01
    ;;
   pgbges) geslist='
@@ -423,6 +427,9 @@ elif [[ $netwk = gfs ]];then
   sfcflx) geslist='
    $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.sfluxgrbf$fh'
    ;;
+  sfcflx2) geslist='
+   $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.sfluxgrbf${fh}.grib2'
+   ;;
   pgbges) geslist='
    $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.pgrbf$fh'
    ;;
@@ -589,6 +596,9 @@ elif [[ $netwk = gfs ]];then
    ;;
   sfcflx) geslist='
    $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.sfluxgrbf$fh'
+   ;;
+  sfcflx2) geslist='
+   $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.sfluxgrbf${fh}.grib2'
    ;;
   pgbges) geslist='
    $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.pgrbf$fh'

@@ -43,8 +43,9 @@ CF =		ifort
 
 INC1   = ${RTOFS_LIB_INC}/rtofs_serial_mods_4 
 INC2   = ${RTOFS_LIB_INC}/rtofs_hycomiot_mods_4
+INC3	= /nwprod/lib/incmod/g2_4
 LIBS  = -L${RTOFS_LIB} -lrtofs_serial_mods_4 -lrtofs_hycomiot_4 \
-        ${W3NCO_LIB4} ${BACIO_LIB4}
+         -L/nwprod/lib  -lg2_4 -lw3nco_4 -lbacio_4 -ljasper -lpng -lz
 CMD   =		rtofs_atmforcing
 PROFLIB =	-lprof
 
@@ -99,7 +100,7 @@ atmforcing.o: atmforcing.f90 constants.o mod_flags.o mod_geom.o
 #	There is probably no reason to modify these rules
 
 .f90.o:
-	$(CF) $(FFLAGS) -c $< -I$(INC1) -I$(INC2)
+	$(CF) $(FFLAGS) -c $< -I$(INC1) -I$(INC2) -I$(INC3)
 
 #.f90.o:
 #	rm $@ $*.mod
