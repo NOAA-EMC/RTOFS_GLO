@@ -1,13 +1,6 @@
-Fix files are saved at 
-/ocean/noscrub/Ilya.Rivin/hycom_glo/fix.v1.0.5
+The files are the same as in /nwprod/rtofs_glo.v1.0.5/fix
 The copy on HPSS is /hpssuser/g01/wx20ir/rtofs_global/fix/REL-1.0.5.tar
-
-
-The two new files are 
-rtofs_grid_hudson_baffin.des
-rtofs_hudson_baffin_weights.nc
-The files withsoft links are the same for rtofs_glo versions 1.0.3, 1.0.4, and 
-1.0.5
+Anothe copy /ocean/noscrub/Ilya.Rivin/hycom_glo/fix.v1.0.5
 
 total 544512
 lrwxrwxrwx 1 Ilya.Rivin marine        52 May 23 19:32 rtofs_alaska_weights.nc -> /nwprod/rtofs_glo.v1.0.3/fix/rtofs_alaska_weights.nc

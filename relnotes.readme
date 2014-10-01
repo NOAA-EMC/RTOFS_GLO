@@ -2,33 +2,33 @@ Routine change
 
 DESCRIPTION OF CHANGE:  
 
-This is RTOFS-GLOBAL v1.0.5.
+This is RTOFS-GLOBAL v1.0.6.
 
-This version includes changes to regional surface GRIB2  files. The changes are:
-
-1. New WMO headers for nowcast files.
-2. Extended Baffin-Hudson Bay sub-region.
-3. SST in deg K instead of deg C.
+This version replaced GDAS/GFS GRIB1 forcing input with GDAS/GFS GRIB2 forcing and 
+will work with both current production and future T1534 version of GFS.
 
 BENEFIT OF CHANGE: 
 
-The new WMO headers will allow AWIPS2 users to distinguish between forecast
-and nowcast files. An extended Baffin-Hudson Bay sub-region will allow OPC
-to produce sea-spray products for a larger region. Deg K is WMO standard
-and used for all AWIPS2 temperatures.
-
+This change will allow RTOFS-Global to receive atmospheric forcing in 
+GRIB2 format. In addition, RTOFS-Global is prepared to run with the new GFS 
+implemenation.   
 
 USER IMPACT STATEMENT:
 
-Improved GRIB2 products for ingestion in AWIPS2..
+No use rimpact is expected.
 
 TECHNICAL IMPACT STATEMENT:
 
-No impact is expected.
+No technical impact is expected.
+See also IMPORTANT NOTE 1 in section VI.
 
 RISKS:
 
-No risks are anticipated.
+GDAS/GFS forcing files in GRIB2 format were not made available in EMC GFS T1534 parallel
+for our testing. All the test were made by converting GRIB1 files to GRIB2 files using cnvgrb 
+utility (which is significantly increasing CPU time for pre-processing steps). 
+Therefore, getges utility was not verified for the case where GRIB2 files already exist.
+Certain name convention for the GRIB2 files was assumed in getges utility but never tested. 
 
 PROPOSED IMPLEMENTATION
 DATE: 
@@ -36,38 +36,49 @@ TIME:
 
 IMPLEMENTATION INSTRUCTIONS:
 
+IMPORTANT NOTE 1: RTOFS-Global v.1.06 works with rtofs_lib v1.0.1. This library 
+                  should be implemented _before_ RTOFS-Global v.1.0.6. The 
+                  implementation instructions for the library are in
+                  https://svnemc.ncep.noaa.gov/projects/rtofs_shared/rtofs_lib/tags/IT-rtofs_lib.v1.0.1-20141001/relnotes.readme.
+
+IMPORTANT NOTE 2: The tests with T1534 version of GFS were performed using the following
+                  environment:
+
+                  export GETGES_COM=/global/noscrub/emc.glopara/com
+                  export envir=para
+
+                  which was declared in the launcher script at the level above JJOBS level.
+
+                  Production uses GETGES_COM=/com , envir=prod.
+
+                  These two environmental variables must be defined according to NCO set-up. 
+
 I. LOAD MODULES
 ---------------
 
-I.1) Please note that RTOFS_GLO modulefile for 
-     version v1.0.5 should be created in /nwprod/modulefiles. There is no 
-     change in the modulefile other than version number. The corresponding
-     .version file (specifying default version) should be upgraded to v1.0.5.
-     The sample module file for rtofs_glo.v1.0.5 is also available at
-     https://svnemc.ncep.noaa.gov/projects/rtofs_shared/modulefiles/RTOFS_GLO/v1.0.5
-I.2) module use -a /nwprod/modulefiles
-     module load RTOFS_GLO
+I.1) check out https://svnemc.ncep.noaa.gov/projects/rtofs_shared/modulefiles/RTOFS_GLO/v1.0.6
+    into /nw${envir}/modulefiles .
+I.2) Replace NCEPLIB value in /nw${envir}/modulefiles/RTOFS_GLO/v1.0.6 to /nw${envir}/modulefiles.
+I.3) Replace default ModulesVersion value in the RTOFS_GLO version file 
+    /nw${envir}/modulefiles/RTOFS_GLO/.version from v1.0.3 to v1.0.6
+I.4) module use -a /nw${envir}/modulefiles
+     module load RTOFS_GLO/v1.0.6
 
 I. BUILD A PROJECT
 -------------------
 
-II.1) mkdir /tmpnwprd/rtofs/rtofs_glo.v1.0.5
-
-II.2) cd /tmpnwprd/rtofs/rtofs_glo.v1.0.5
-
-II.3) Check out RTOFS_GLOBAL:
-     https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/tags/IT-rtofs_glo.v1.0.5-20140523
+II.1) Check out RTOFS_GLOBAL:
+     https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/tags/IT-rtofs_glo.v1.0.6-20141001
      into/nw${envir}
      The result will be the directory 
-     /nw${envir}/IT-rtofs_glo.v1.0.5-20140523
-
-II.4) Create the directory structure
-      mv  /nw${envir}/IT-rtofs_glo.v1.0.5-20140523  /nw${envir}/rtofs_glo.v1.0.5
+     /nw${envir}/IT-rtofs_glo.v1.0.6-20141001
+II.2) Rename the directory
+      mv  /nw${envir}/IT-rtofs_glo.v1.0.6-20141001  /nw${envir}/rtofs_glo.v1.0.6
 
 III. COMPILE PROJECT SOURCE CODES
 --------------------------------
 
-For each CDIR= /nw${envir}/rtofs_glo.v1.0.5/sorc/rtofs_*.fd directory:
+For each CDIR= /nw${envir}/rtofs_glo.v1.0.6/sorc/rtofs_*.fd directory:
        cd $CDIR
        make clean ; make
        mv rtofs_* ../../exec/.
@@ -76,10 +87,9 @@ For each CDIR= /nw${envir}/rtofs_glo.v1.0.5/sorc/rtofs_*.fd directory:
 IV. SET-UP FIX FILES
 ---------------------
 
-cp -p  /ocean/noscrub/Ilya.Rivin/hycom_glo/fix.v1.0.5 /nw${envir}/rtofs_glo.v1.0.5/fix/.
-NOTE: check  https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/tags/IT-rtofs_glo.v1.0.5-20140523/fix.README
-      for more instructions.
-NOTE: fix files are too big o be part of SVN repository. 
+Fix files have not been changed. 
+cp -p  /nwprod/rtofs_glo.v1.0.5/fix/* /nw${envir}/rtofs_glo.v1.0.6/fix/.
+NOTE: fix files are too big to be part of SVN repository. 
 
 V. SET-UP INITIAL CONDITIONS
 ----------------------------
@@ -89,34 +99,30 @@ ONLY if creating a parallel or test run
 V.1) mkdir /com/rtofs/${envir] if necessary
 V.2) ln -s /com/rtofs/prod/rtofs.YYYYMMDD /com/rtofs/${envir]/rtofs.YYYYMMDD for yesterday ($PDYm1)
 
-
 VI. COMPUTER RESOURCES AND RUN-TIME ENVIRONMENT
 ------------------------------------------------
 
 Computer resources and run-time environment DO NOT CHANGE
-for rtofs_glo v.1.0.3, v1.0.4, and 1.0.5.
+for rtofs_glo v.1.0.3, v1.0.4, , v1.0.5, and 1.0.6.
+
+IMPORTANT NOTE: This assumes that GDAS/GFS surface files are available in
+                GRIB2 format. If not, GRIB1 files will be converted to
+                GRIB2 format as part of RTOFS-Global v.1.0.6 pre-processing
+                which will increase CPU time for pre-processing steps by 2.5-3 times. 
 
 Computer resources and sample LSF command files  are in
 https://svnemc.ncep.noaa.gov/projects/rtofs_glo/prod/tools/RB-1.0.3_tools/rtofs_job_command*.lsf
     
-VI.1) All resources for pre-processing (PRE) steps (anal, fcst_step1, fcst_step2, fcst_step3) are
-      the same as now in production
+VI.1) If GDAS/GFS surface GRIB2 files are available, all resources for pre-processing (PRE) 
+      steps (anal, fcst_step1, fcst_step2) are the same as now in production
 
 VI.2) All resources for post-processing (POST) steps (anal_post, fcst_post) are 
       the same as now in production.      
 
 VI.3) Resources for GRIB post-processing steps (anal_grib_post, fcst_grib_post) are
+      the same as now in production.      
+    
      
-      #BSUB -n 11
-      #BSUB -R span[ptile=4]
-      #BSUB -R "rusage[mem=6900]" -R "affinity[core]"
-
-      CPU time:
-               anal:       ~45 min
-               fcst_step1: ~135 min 
-               fcst_step2: ~45 min
-
-
 VI. JOB DEPENDENCIES
 -------------------
 
