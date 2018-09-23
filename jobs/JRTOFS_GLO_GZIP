@@ -1,0 +1,58 @@
+#!/bin/sh
+# #################################
+# SETUP SHELL  PROCESSING VARIABLES
+# #################################
+export PS4='$SECONDS + '
+date
+env
+set -xa
+
+export DATA=${DATA:-${DATAROOT}/${jobid}}
+mkdir $DATA
+cd $DATA
+
+#######################################
+# Specify NET and RUN Name and model ID
+#######################################
+export NET=rtofs
+export RUN=rtofs
+export modID=glo
+export RUN_MODE=gzip
+export HOMErtofs=${HOMErtofs:-${NWROOT:?}/rtofs_glo.${rtofs_glo_ver}}
+
+
+####################################
+# Determine Job Output Name on System
+####################################
+export pgmout="OUTPUT.$$"
+export cycle=t${cyc}z
+export CYC=$cyc       # remove and use $cyc in scripts/exrtofs_glo_gzip.sh.ecf !
+
+#############################
+# Set up the UTILITIES
+##############################
+export USHutil=${UTILROOT:?}/ush
+export EXECutil=${UTILROOT:?}/exec
+export utilexec=$EXECutil    # needed by some scripts in USHutil
+
+###########################################################
+# Run setpdy and initialize PDY variables
+# For any retrospecitve run, set the PDY in the ECF script
+###########################################################
+setpdy.sh
+. PDY
+
+####################
+# execute the script
+####################
+${HOMErtofs}/scripts/exrtofs_glo_gzip.sh.ecf
+
+msg="JOB $job HAS COMPLETED NORMALLY." 
+postmsg "$jlogfile" "$msg"
+
+cd $DATAROOT
+if [ "$KEEPDATA" != YES ]; then
+    rm -rf $DATA
+fi
+
+date

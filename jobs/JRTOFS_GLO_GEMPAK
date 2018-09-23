@@ -1,0 +1,62 @@
+#!/bin/sh
+# #################################
+# SETUP SHELL  PROCESSING VARIABLES
+# #################################
+export PS4='$SECONDS + '
+date
+env
+set -xa
+
+export DATA=${DATA:-${DATAROOT}/${jobid}}
+mkdir $DATA
+cd $DATA
+
+#######################################
+# Specify NET and RUN Name and model ID
+#######################################
+export NET=rtofs
+export RUN=rtofs
+export modID=glo
+export RUN_MODE=gempak
+export HOMErtofs=${HOMErtofs:-${NWROOT:?}/rtofs_glo.${rtofs_glo_ver}}
+export GEMPAKrtofs=${HOMErtofs}/gempak
+
+####################################
+# Determine Job Output Name on System
+####################################
+export pgmout="OUTPUT.$$"
+export cycle=t${cyc}z
+
+#############################
+# Set up the UTILITIES
+##############################
+export USHutil=${UTILROOT:?}/ush
+export EXECutil=${UTILROOT:?}/exec
+export utilexec=$EXECutil    # needed by some scripts in USHutil
+
+###########################################################
+# Run setpdy and initialize PDY variables
+# For any retrospecitve run, set the PDY in the ECF script
+###########################################################
+setpdy.sh
+. PDY
+
+export COMIN=$COMROOT/${NET}/${envir}/${NET}.${PDY}
+export COMOUT=$COMROOT/nawips/${envir}/${NET}.${PDY}
+mkdir -p -m 775 $COMOUT
+export DBN_ALERT_TYPE=RTOFS_GLO_GEMPAK
+
+####################
+# execute the script
+####################
+${HOMErtofs}/scripts/exrtofs_glo_gempak.sh.ecf
+
+msg="JOB $job HAS COMPLETED NORMALLY." 
+postmsg "$jlogfile" "$msg"
+
+cd $DATAROOT
+if [ "$KEEPDATA" != YES ]; then
+    rm -rf $DATA
+fi
+
+date

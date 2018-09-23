@@ -1,0 +1,31 @@
+files that could be (incorrectly) alerted twice
+the list is used by:
+ scripts/exrtofs_glo_grib2_post.sh.ecf
+ scripts/exrtofs_glo_post_2.sh.ecf
+
+rtofs_glo_2ds_f024_1hrly_diag.nc
+rtofs_glo_2ds_f024_1hrly_prog.nc
+rtofs_glo_2ds_f024_3hrly_diag.nc
+rtofs_glo_2ds_f024_3hrly_prog.nc
+rtofs_glo_2ds_f024_daily_diag.nc
+rtofs_glo_2ds_f024_daily_prog.nc
+rtofs_glo_2ds_f048_1hrly_diag.nc
+rtofs_glo_2ds_f048_1hrly_prog.nc
+rtofs_glo_2ds_f048_3hrly_diag.nc
+rtofs_glo_2ds_f048_3hrly_prog.nc
+rtofs_glo_2ds_f048_daily_diag.nc
+rtofs_glo_2ds_f048_daily_prog.nc
+rtofs_glo_2ds_f072_3hrly_diag.nc
+rtofs_glo_2ds_f072_3hrly_prog.nc
+rtofs_glo_2ds_f072_daily_diag.nc
+rtofs_glo_2ds_f072_daily_prog.nc
+rtofs_glo_2ds_f144_3hrly_diag.nc
+rtofs_glo_2ds_f144_3hrly_prog.nc
+rtofs_glo_2ds_f144_daily_diag.nc
+rtofs_glo_2ds_f144_daily_prog.nc
+rtofs_glo_2ds_n024_1hrly_diag.nc
+rtofs_glo_2ds_n024_1hrly_prog.nc
+rtofs_glo_2ds_n024_3hrly_diag.nc
+rtofs_glo_2ds_n024_3hrly_prog.nc
+rtofs_glo_2ds_n024_daily_diag.nc
+rtofs_glo_2ds_n024_daily_prog.nc

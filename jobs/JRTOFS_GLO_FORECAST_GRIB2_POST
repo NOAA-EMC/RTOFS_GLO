@@ -1,0 +1,134 @@
+#!/bin/sh
+
+####################################
+# Ensure environment is defined.
+####################################
+set +x
+echo cyc is ${cyc:?} 
+echo envir is ${envir:?} 
+echo rtofs_glo_ver is ${rtofs_glo_ver:?}
+echo rtofs_code_ver is ${rtofs_code_ver:?}
+echo rtofs_cdo_ver is ${rtofs_cdo_ver:?}
+
+export PS4='$SECONDS + '
+date
+set -xa
+
+#######################################
+# Specify NET and RUN Name and model ID
+#######################################
+export NET=rtofs
+export RUN=rtofs
+export modID=glo
+export RUN_MODE=forecast
+export HYCOM_EXPT=930
+
+export mycyc='00'
+export cycle=t${cyc}z
+
+##########################################################
+ # obtain unique process id (pid) and make temp directories
+##########################################################
+export DATA=${DATA:-${DATAROOT}/${jobid}}
+export DATA_opc=$DATA/opc
+mkdir $DATA
+mkdir ${DATA_opc}
+cd $DATA
+
+####################################
+# Determine Job Output Name on System
+####################################
+export pgmout="OUTPUT.$$"
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
+export CODErtofs=${CODErtofs:-${NWROOT:?}/${RUN}_code.${rtofs_code_ver}}
+export CDOrtofs=${CDOrtofs:-${NWROOT:?}/${RUN}_shared/${RUN}_cdo.${rtofs_cdo_ver}}
+export EXECrtofs=${HOMErtofs}/exec
+export PARMrtofs=${HOMErtofs}/parm
+export FIXrtofs=${HOMErtofs}/fix
+export USHrtofs=${HOMErtofs}/ush
+export EXECcode=${CODErtofs}/exec
+export cdo_r=${CDOrtofs}/bin/cdo
+
+#############################
+# Set up the UTILITIES
+##############################
+export USHutil=/nwprod/util/ush
+export EXECutil=/nwprod/util/exec
+export utilexec=$EXECutil    # needed by some scripts in USHutil
+
+###########################################################
+# Run setpdy and initialize PDY variables
+# For any retrospecitve run, set the PDY in the ECF script
+###########################################################
+setpdy.sh
+. PDY
+
+###################
+# Define model gird
+###################
+export inputgrid=navy_0.08
+
+##################################################################
+# Run the config file to set up specific model variables if needed
+##################################################################
+. $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
+
+##############################################
+# Define Input/Output/Restart directories
+##############################################
+export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
+export COMOUT=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
+export GESdir=${GESROOT}/${envir}/${RUN}.${PDY}
+export pcom=${PCOMROOT}/${NET}
+test -d $GESdir || mkdir -m 775 -p $GESdir
+test -d $COMOUT || mkdir -m 775 -p $COMOUT
+test -d $pcom || mkdir -m 775 -p $pcom
+
+############################################
+# Set up forecast post-processing parameters
+############################################
+## This assumes that the $job has the name structure of the type job_*NN
+## where NN is two-digit number
+export postday=`echo $job | rev |cut -c1-2 | rev`
+export digitest=`echo $postday |cut -c1`
+if [ $digitest -eq 0 ]; then
+  export postday=`echo $postday|cut -c2`
+fi
+export startdate=`${EXECutil}/ndate \`expr 24 \* \( $postday \- 1 \) \` $PDY$mycyc |cut -c1-8`
+#export startdate=${startdate:-${PDY}}
+export fcstdays_before_thisstep=` expr \` $EXECutil/nhour $startdate$mycyc $PDY$mycyc \` \/ 24 `
+if [ ${fcstdays_before_thisstep} -lt 3 ]
+then
+  eval fcstdays="\$fcst_post_ndays"
+else
+  fcstdays=3
+fi
+export fcstdays
+
+################################################################
+# Send a message to the jlogfile indicating the start of the job
+################################################################
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+####################
+# execute the script
+####################
+ksh ${HOMErtofs}/scripts/exrtofs_glo_grib2_post.sh.ecf
+
+cat $pgmout
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.forecast_d1-3_grib_post.`basename $pgmout`
+
+msg="JOB $job HAS COMPLETED NORMALLY." 
+postmsg "$jlogfile" "$msg"
+
+cd $DATAROOT
+if [ "$KEEPDATA" != YES ]; then
+  rm -rf $DATA
+fi
+
+date
