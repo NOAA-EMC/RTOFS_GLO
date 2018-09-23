@@ -1,0 +1,58 @@
+The files are the same as in /nwprod22/rtofs_glo.v1.1.4/fix
+Another copy is in /ocean/noscrub/Ilya.Rivin/hycom_glo/projects/RB-1.2.0/fix
+total 104035456
+lrwxrwxrwx 1 Ilya.Rivin marine        52 May 23 19:32 rtofs_alaska_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_alaska_weights.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        52 May 23 19:32 rtofs_arctic_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_arctic_weights.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        52 May 23 19:32 rtofs_bering_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_bering_weights.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        63 May 23 19:32 rtofs_glo.navy_0.08.forcing.kpar.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.forcing.kpar.a
+lrwxrwxrwx 1 Ilya.Rivin marine        63 May 23 19:32 rtofs_glo.navy_0.08.forcing.kpar.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.forcing.kpar.b
+lrwxrwxrwx 1 Ilya.Rivin marine        65 May 23 19:32 rtofs_glo.navy_0.08.forcing.offlux.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.forcing.offlux.a
+lrwxrwxrwx 1 Ilya.Rivin marine        65 May 23 19:32 rtofs_glo.navy_0.08.forcing.offlux.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.forcing.offlux.b
+lrwxrwxrwx 1 Ilya.Rivin marine        65 May 23 19:32 rtofs_glo.navy_0.08.forcing.rivers.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.forcing.rivers.a
+lrwxrwxrwx 1 Ilya.Rivin marine        65 May 23 19:32 rtofs_glo.navy_0.08.forcing.rivers.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.forcing.rivers.b
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.iso.sigma.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.iso.sigma.a
+lrwxrwxrwx 1 Ilya.Rivin marine        69 May 23 19:32 rtofs_glo.navy_0.08.iso.sigma.a.20101005 -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.iso.sigma.a.20101005
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.iso.sigma.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.iso.sigma.b
+lrwxrwxrwx 1 Ilya.Rivin marine        69 May 23 19:32 rtofs_glo.navy_0.08.iso.sigma.b.20101006 -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.iso.sigma.b.20101006
+lrwxrwxrwx 1 Ilya.Rivin marine        65 May 23 19:32 rtofs_glo.navy_0.08.regional.depth.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.regional.depth.a
+lrwxrwxrwx 1 Ilya.Rivin marine        65 May 23 19:32 rtofs_glo.navy_0.08.regional.depth.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.regional.depth.b
+lrwxrwxrwx 1 Ilya.Rivin marine        64 May 23 19:32 rtofs_glo.navy_0.08.regional.grid.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.regional.grid.a
+lrwxrwxrwx 1 Ilya.Rivin marine        64 May 23 19:32 rtofs_glo.navy_0.08.regional.grid.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.regional.grid.b
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.relax_int.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.relax_int.a
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.relax_int.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.relax_int.b
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.relax_sal.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.relax_sal.a
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.relax_sal.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.relax_sal.b
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.relax_ssh.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.relax_ssh.a
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.relax_ssh.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.relax_ssh.b
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.relax_tem.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.relax_tem.a
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_glo.navy_0.08.relax_tem.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.relax_tem.b
+lrwxrwxrwx 1 Ilya.Rivin marine        57 May 23 19:32 rtofs_glo.navy_0.08.tbaric.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.tbaric.a
+lrwxrwxrwx 1 Ilya.Rivin marine        57 May 23 19:32 rtofs_glo.navy_0.08.tbaric.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.tbaric.b
+lrwxrwxrwx 1 Ilya.Rivin marine        57 May 23 19:32 rtofs_glo.navy_0.08.thkdf4.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.thkdf4.a
+lrwxrwxrwx 1 Ilya.Rivin marine        57 May 23 19:32 rtofs_glo.navy_0.08.thkdf4.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.thkdf4.b
+lrwxrwxrwx 1 Ilya.Rivin marine        57 May 23 19:32 rtofs_glo.navy_0.08.veldf2.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.veldf2.a
+lrwxrwxrwx 1 Ilya.Rivin marine        57 May 23 19:32 rtofs_glo.navy_0.08.veldf2.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.veldf2.b
+lrwxrwxrwx 1 Ilya.Rivin marine        57 May 23 19:32 rtofs_glo.navy_0.08.veldf4.a -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.veldf4.a
+lrwxrwxrwx 1 Ilya.Rivin marine        57 May 23 19:32 rtofs_glo.navy_0.08.veldf4.b -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_glo.navy_0.08.veldf4.b
+lrwxrwxrwx 1 Ilya.Rivin marine        50 May 23 19:32 rtofs_grid_alaska.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_alaska.des
+lrwxrwxrwx 1 Ilya.Rivin marine        50 May 23 19:32 rtofs_grid_arctic.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_arctic.des
+lrwxrwxrwx 1 Ilya.Rivin marine        50 May 23 19:32 rtofs_grid_bering.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_bering.des
+lrwxrwxrwx 1 Ilya.Rivin marine        54 May 23 19:32 rtofs_grid_global1-10.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_global1-10.des
+lrwxrwxrwx 1 Ilya.Rivin marine        53 May 23 19:32 rtofs_grid_global1-8.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_global1-8.des
+lrwxrwxrwx 1 Ilya.Rivin marine        48 May 23 19:32 rtofs_grid_guam.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_guam.des
+lrwxrwxrwx 1 Ilya.Rivin marine        55 May 23 19:32 rtofs_grid_gulf_alaska.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_gulf_alaska.des
+lrwxrwxrwx 1 Ilya.Rivin marine        52 May 23 19:32 rtofs_grid_honolulu.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_honolulu.des
+-rw-r--r-- 1 Ilya.Rivin marine       291 May  5 15:07 rtofs_grid_hudson_baffin.des
+lrwxrwxrwx 1 Ilya.Rivin marine        49 May 23 19:32 rtofs_grid_samoa.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_samoa.des
+lrwxrwxrwx 1 Ilya.Rivin marine        60 May 23 19:32 rtofs_grid_trop_paci_lowres.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_trop_paci_lowres.des
+lrwxrwxrwx 1 Ilya.Rivin marine        52 May 23 19:32 rtofs_grid_west_atl.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_west_atl.des
+lrwxrwxrwx 1 Ilya.Rivin marine        54 May 23 19:32 rtofs_grid_west_conus.des -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_grid_west_conus.des
+lrwxrwxrwx 1 Ilya.Rivin marine        50 May 23 19:32 rtofs_guam_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_guam_weights.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        57 May 23 19:32 rtofs_gulf_alaska_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_gulf_alaska_weights.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        54 May 23 19:32 rtofs_honolulu_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_honolulu_weights.nc
+-rw-r--r-- 1 Ilya.Rivin marine 557507320 May  5 15:08 rtofs_hudson_baffin_weights.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        51 May 23 19:32 rtofs_samoa_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_samoa_weights.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        62 May 23 19:32 rtofs_trop_paci_lowres_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_trop_paci_lowres_weights.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        47 May 23 19:32 rtofs_weights_8.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_weights_8.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        54 May 23 19:32 rtofs_west_atl_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_west_atl_weights.nc
+lrwxrwxrwx 1 Ilya.Rivin marine        56 May 23 19:32 rtofs_west_conus_weights.nc -> /nwprod2/rtofs_glo.v1.1.4/fix/rtofs_west_conus_weights.nc
