@@ -29,10 +29,10 @@
 #
 FC            = ifort
 FCFFLAGS      = -fixed -assume byterecl -convert big_endian $(NETCDF_FFLAGS)
-CC            = cc
+CC            = icc
 CCFLAGS       =
 CPP           = /usr/bin/cpp 
-CPPFLAGS      = -C -P -traditional-cpp -DREAL4
+CPPFLAGS      = -P -traditional-cpp -DREAL4
 LD            = $(FC)
 LDFLAGS       = 
 BINDIR= ../../exec

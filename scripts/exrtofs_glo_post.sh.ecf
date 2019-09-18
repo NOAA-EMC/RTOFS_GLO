@@ -63,14 +63,14 @@ if [ ${RUN_MODE} = 'analysis' ]
 then
   export fcstdays=${fcstdays:-2}
   export enddate=${analysis_end:-$PDY}
-  export startdate=`$EXECutil/ndate -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
+  export startdate=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
   export ENDHOUR=`expr $fcstdays \* 24`
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
   export fcstdays=${fcstdays:-1}
   export startdate=${startdate:-${PDY}}
-  export enddate=`$EXECutil/ndate \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
+  export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
   export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24 `
 fi
 
@@ -239,7 +239,8 @@ do
        echo "${USHrtofs}/${RUN}_glo3z_6hrly.sh $reg " >> cmdfile
       done
       chmod +x cmdfile
-      mpirun.lsf cfp cmdfile > mpirun_6hrly.out
+      #mpirun.lsf cfp cmdfile > mpirun_6hrly.out
+      mpirun cfp cmdfile > mpirun_6hrly.out
       export err=$?; err_chk
 ## Copy all the regions to com
       for reg in hvr_US_east hvr_US_west hvr_alaska
@@ -272,9 +273,9 @@ then
     then
       cd $COMOUT
       # need definition of files
-      for gfile in *.grb
+      for gfile in *.grb2
       do
-        md5 $gfile >> $DATA/csum.$PDY$mycyc
+        $md5 $gfile >> $DATA/csum.$PDY$mycyc
       done
       for gfile in `ls -C1 ${RUN}_${modID}.t${mycyc}z.[FN]???.3d.grb ${RUN}_${modID}.t${mycyc}z.[fn]???.grb`
       do

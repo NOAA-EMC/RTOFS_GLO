@@ -39,7 +39,7 @@ export utilexec=$EXECutil    # needed by some scripts in USHutil
 # For any retrospecitve run, set the PDY in the ECF script
 ###########################################################
 setpdy.sh
-. PDY
+. ./PDY
 
 export COMIN=$COMROOT/${NET}/${envir}/${NET}.${PDY}
 export COMOUT=$COMROOT/nawips/${envir}/${NET}.${PDY}

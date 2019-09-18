@@ -429,7 +429,7 @@ PROGRAM atmforcing
 !       write(*,*)'"BEFORE 2nd rdgrib: kpds=',kpds
 !       write(*,*)'"BEFORE 2nd rdgrib: jpdtno,jdiscno=',jpdtno,jdiscno
 !       write(*,*)'"BEFORE 2nd rdgrib: xpts,ypts=',xpts,ypts
-       CALL rdgrib(82,TRIM(atmnames(m)),xgfld,kpds,jpdtno,jdiscno,1,xpts,ypts)  
+       CALL rdgrib(82+m,TRIM(atmnames(m)),xgfld,kpds,jpdtno,jdiscno,1,xpts,ypts)  
 !       write(*,*)" After 2nd rdgrib: kpds ",kpds,jpdtno,jdiscno
         atmflx=reshape(source=xgfld,shape=SHAPE(atmflx))
         IF (mapflg==mapflg_tripol) THEN

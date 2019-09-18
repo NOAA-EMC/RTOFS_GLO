@@ -58,8 +58,8 @@ export EXECcode=${CODErtofs}/exec
 #############################
 # Set up the UTILITIES
 ##############################
-export USHutil=/nwprod/util/ush
-export EXECutil=/nwprod/util/exec
+export USHutil=${UTILROOT:?}/ush
+export EXECutil=${UTILROOT:?}/exec
 export utilexec=$EXECutil    # needed by some scripts in USHutil
 
 ###########################################################
@@ -67,16 +67,16 @@ export utilexec=$EXECutil    # needed by some scripts in USHutil
 # For any retrospecitve run, set the PDY in the ECF script
 ###########################################################
 setpdy.sh
-. PDY
+. ./PDY
 
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export GETGES_COM=${GETGES_COM:-${COMROOThps}}
+export GETGES_COM=${GETGES_COM:-$(dirname $(compath.py gfs))}
 export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
 export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
-export GESdir=${GESROOT}/${envir}/${RUN}.${PDY}
+export GESdir=${GESROOTp3}/${envir}/${RUN}.${PDY}
 mkdir -m 775 -p $COMOUT
 test -d $GESdir || mkdir -p $GESdir
 test -d $COMOUT || mkdir -p $COMOUT
@@ -115,7 +115,7 @@ do
    fcstdays_before_thisstep=`expr \${fcstdays_before_thisstep} + ${daysadd}`
    cnum=`expr ${cnum} + 1`
 done
-export startdate=`$EXECutil/ndate \` expr \${fcstdays_before_thisstep} \* 24 \`  ${PDY}${mycyc} | cut -c1-8`
+export startdate=`$NDATE \` expr \${fcstdays_before_thisstep} \* 24 \`  ${PDY}${mycyc} | cut -c1-8`
 
 eval fcstdays="\$fcstdays_step$stepnum"
 eval SAVE_RESTART="\$SAVE_RESTART_FORECAST_STEP$stepnum"

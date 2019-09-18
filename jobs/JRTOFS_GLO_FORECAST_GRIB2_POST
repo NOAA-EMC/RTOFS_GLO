@@ -56,8 +56,8 @@ export cdo_r=${CDOrtofs}/bin/cdo
 #############################
 # Set up the UTILITIES
 ##############################
-export USHutil=/nwprod/util/ush
-export EXECutil=/nwprod/util/exec
+export USHutil=${UTILROOT:?}/ush
+export EXECutil=${UTILROOT:?}/exec
 export utilexec=$EXECutil    # needed by some scripts in USHutil
 
 ###########################################################
@@ -65,7 +65,7 @@ export utilexec=$EXECutil    # needed by some scripts in USHutil
 # For any retrospecitve run, set the PDY in the ECF script
 ###########################################################
 setpdy.sh
-. PDY
+. ./PDY
 
 ###################
 # Define model gird
@@ -82,7 +82,7 @@ export inputgrid=navy_0.08
 ##############################################
 export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
-export GESdir=${GESROOT}/${envir}/${RUN}.${PDY}
+export GESdir=${GESROOTp3}/${envir}/${RUN}.${PDY}
 export pcom=${PCOMROOT}/${NET}
 test -d $GESdir || mkdir -m 775 -p $GESdir
 test -d $COMOUT || mkdir -m 775 -p $COMOUT
@@ -98,9 +98,9 @@ export digitest=`echo $postday |cut -c1`
 if [ $digitest -eq 0 ]; then
   export postday=`echo $postday|cut -c2`
 fi
-export startdate=`${EXECutil}/ndate \`expr 24 \* \( $postday \- 1 \) \` $PDY$mycyc |cut -c1-8`
+export startdate=`${NDATE} \`expr 24 \* \( $postday \- 1 \) \` $PDY$mycyc |cut -c1-8`
 #export startdate=${startdate:-${PDY}}
-export fcstdays_before_thisstep=` expr \` $EXECutil/nhour $startdate$mycyc $PDY$mycyc \` \/ 24 `
+export fcstdays_before_thisstep=` expr \` $NHOUR $startdate$mycyc $PDY$mycyc \` \/ 24 `
 if [ ${fcstdays_before_thisstep} -lt 3 ]
 then
   eval fcstdays="\$fcst_post_ndays"

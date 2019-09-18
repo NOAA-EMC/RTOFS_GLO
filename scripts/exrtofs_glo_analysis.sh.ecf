@@ -30,7 +30,7 @@ postmsg "$jlogfile" "$msg"
 
   export fcstdays=${fcstdays:-2}
   export enddate=${analysis_end:-$PDY}
-  export startdate=`$EXECutil/ndate -\` expr $fcstdays \* 24 \`  ${enddate}${mycyc} | cut -c1-8`
+  export startdate=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}${mycyc} | cut -c1-8`
   export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #
@@ -53,7 +53,7 @@ postmsg "$jlogfile" "$msg"
 
   if [ $RESTART = YES ]
   then
-     anal_hour=`${EXECutil}/nhour ${enddate}${mycyc} ${PDY}${mycyc}`
+     anal_hour=`${NHOUR} ${enddate}${mycyc} ${PDY}${mycyc}`
      while [ $anal_hour -ge $LEAD ]
      do       
        if [ -s $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart}.b ]
@@ -66,7 +66,7 @@ postmsg "$jlogfile" "$msg"
               " and ${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart_cice"
 
        # replace limits file
-         sday=`$USHutil/date_normal2hycom.sh \` ${EXECutil}/ndate +$anal_hour ${PDY}${mycyc} \` `
+         sday=`$USHutil/date_normal2hycom.sh \` ${NDATE} +$anal_hour ${PDY}${mycyc} \` `
          echo "  $sday $eday false false  " > limits
          break
 
@@ -101,7 +101,7 @@ postmsg "$jlogfile" "$msg"
     echo "Initial restart files copied"
     basetime=1900123100
     hdate=`awk '{  if (NR==2) { print $5 } }'  < restart_in.b | cut -d. -f1 `
-    dater=`$EXECutil/ndate \` expr $hdate \* 24 \`  ${basetime}`
+    dater=`$NDATE \` expr $hdate \* 24 \`  ${basetime}`
     if [ ${dater} -ne ${startdate}${mycyc} ] 
     then 
       $USHrtofs/${RUN}_abort.sh  "RESTAERT DATES: expected=${startdate}${mycyc} actual=$dater" \

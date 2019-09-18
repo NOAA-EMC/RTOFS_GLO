@@ -29,13 +29,13 @@ if [ $# -lt 3 ] ; then
   exit 2
 fi
 
-sh ${USHutil}/setup.sh
+#sh ${USHutil}/setup.sh
 
 sdate=$1
 edate=$2
 intvl=$3
-sdate=`${EXECutil}/ndate -3 $sdate`
-edate=`${EXECutil}/ndate 3 $edate`
+sdate=`$NDATE -3 $sdate`
+edate=`$NDATE 3 $edate`
 
 # to incorporate sea level pressure
 export sea_lev_pres=PRMSL
@@ -74,7 +74,7 @@ do
      echo $USHrtofs/${RUN}_atmforcing_stage.sh $idate >> cmdfile_tmp
    fi
    NTIME=`expr $NTIME + 1`
-   idate=`${EXECutil}/ndate $intvl $idate` 
+   idate=`$NDATE $intvl $idate` 
 done
 
 if [ $NPROCS -gt 1 ] 

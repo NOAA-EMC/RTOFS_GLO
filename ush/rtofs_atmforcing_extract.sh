@@ -60,18 +60,18 @@ for stuff in  \
   "FLUX=LAND LEVEL=sfc TYPE=$TYPEi"
 do 
   eval $stuff 
-  $EXECutil/wgrib $sfluxgrb \
+  $WGRIB $sfluxgrb \
      | grep ${FLUX} | grep "${LEVEL}" | grep "${TYPE}" \
-     | $EXECutil/wgrib  $sfluxgrb -i -grib -append \
+     | $WGRIB  $sfluxgrb -i -grib -append \
     -o $sfluxgrbout
 done
 #
 # Extract forcing from pgrb
 if [ $# -eq 4 ] ; then
   test -f $pgrbout && mv $pgrbout $pgrbout.$$
-  $EXECutil/wgrib $pgrb \
+  $WGRIB $pgrb \
     | grep PRMSL \
-    | $EXECutil/wgrib $pgrb -i -grib -append \
+    | $WGRIB $pgrb -i -grib -append \
     -o $pgrbout
 fi
 

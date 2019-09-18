@@ -30,7 +30,7 @@ postmsg "$jlogfile" "$msg"
 
   export fcstdays=${fcstdays:-8}
   export startdate=${startdate:-`echo $PDY | cut -c1-8`}
-  export enddate=`$EXECutil/ndate \` expr $fcstdays \* 24 \`  ${startdate}'00' | cut -c1-8`
+  export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}'00' | cut -c1-8`
   export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #

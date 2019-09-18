@@ -91,7 +91,8 @@ then
     echo sh ./run_script.sh uvl >> scp.sh
     echo sh ./run_script.sh vvl >> scp.sh
     chmod +x scp.sh
-    mpirun.lsf cfp scp.sh > mpirun_daily.out
+    #mpirun.lsf cfp scp.sh > mpirun_daily.out
+    mpirun cfp scp.sh > mpirun_daily.out
     export err=$?; err_chk
 
 else

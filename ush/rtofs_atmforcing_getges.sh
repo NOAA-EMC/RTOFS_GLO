@@ -74,8 +74,8 @@
 fhbeg=01                         # hour to begin searching backward for guess
 fhinc=01                         # hour to increment backward in search
 fhend=384                        # hour to end searching backward for guess
-ndate=/nwprod/util/exec/ndate
-nhour=/nwprod/util/exec/nhour
+ndate=$NDATE
+nhour=$NHOUR
 
 #-------------------------------------------------------------------------------
 # Get options and arguments.
@@ -260,7 +260,7 @@ if [[ $netwk = gdas ]];then
    fhinc=01
    ;;
   sfcflxfv3) geslist='
-   $GETGES_COM/gdas.$day/${cyc}/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2'
+   $GETGES_COM/gfs/${envir}/gdas.$day/${cyc}/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2'
    fhinc=01
    ;;
   pgbges) geslist='
@@ -436,7 +436,7 @@ elif [[ $netwk = gfs ]];then
    $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.sfluxgrbf${fh}.grib2'
    ;;
   sfcflxfv3) geslist='
-   $GETGES_COM/gfs.$day/${cyc}/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
+   $GETGES_COM/gfs/${envir}/gfs.$day/${cyc}/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
    ;;
   pgbges) geslist='
    $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.pgrbf$fh'
@@ -609,7 +609,7 @@ elif [[ $netwk = gfs ]];then
    $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.sfluxgrbf${fh}.grib2'
    ;;
   sfcflxfv3) geslist='
-   $GETGES_COM/gfs.$day/${cyc}/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
+   $GETGES_COM/gfs/${envir}/gfs.$day/${cyc}/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
    ;;
   pgbges) geslist='
    $GETGES_COM/gfs/$envir/gfs.$day/gfs.t${cyc}z.pgrbf$fh'

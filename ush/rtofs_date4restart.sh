@@ -35,7 +35,7 @@ let dv2=dv/2
 let r2=r2*24+dv2
 let r2=r2/dv
 let r=r1+r2
-normaldate=`${EXECutil}/ndate \` expr $r \`  ${basetime}`
+normaldate=`$NDATE \` expr $r \`  ${basetime}`
 echo $normaldate
 
 ##>  dont !!!

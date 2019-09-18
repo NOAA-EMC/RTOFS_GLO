@@ -66,10 +66,10 @@ fi # fn1 loop
 fi # useslp loop
 ##cp -p $forcefile $fflxfile
 ##.. prsfile=$pgrbfile 
-${EXECutil}/grbindex $flxfile $flxfile.idx
+$GRBINDEX $flxfile $flxfile.idx
 if [ $useslp = YES ] 
 then
-  ${EXECutil}/grbindex $prsfile $prsfile.idx
+  $GRBINDEX $prsfile $prsfile.idx
 fi
 # Shift grid 
 
@@ -102,16 +102,16 @@ then
   # NOTE: this extraction is important if $pgrbfile file is used instead of $prsfile.
   #       prs file is supposed to have only pressure field. Still, retained for 
   #       safety reasons. 
-  rec_number=`${EXECutil}/wgrib -v ${prsfile} | grep ${sea_lev_pres} | cut -c1-3`
-  ${EXECutil}/wgrib -d ${rec_number} -grib ${prsfile} -o ${DATA}/${idate}/dump.grb 
-  ${EXECutil}/copygb -g"$atmgds" -x -a -i0 ${DATA}/${idate}/dump.grb $flxfile 
+  rec_number=`$WGRIB -v ${prsfile} | grep ${sea_lev_pres} | cut -c1-3`
+  $WGRIB-d ${rec_number} -grib ${prsfile} -o ${DATA}/${idate}/dump.grb 
+  $COPYGB -g"$atmgds" -x -a -i0 ${DATA}/${idate}/dump.grb $flxfile 
 fi
 
 test -f $flxfile.idx && rm -f $flxfile.idx 
 test -f $prsfile.idx && rm -f $prsfile.idx 
 test -f ${DATA}/${idate}/dump.grb && rm -f ${DATA}/${idate}/dump.grb 
 
-${EXECutil}/grbindex $flxfile $flxfile.idx
+$GRBINDEX $flxfile $flxfile.idx
 
 if [ $useslp = YES ] 
 then

@@ -30,7 +30,7 @@ postmsg "$jlogfile" "$msg"
 
   export fcstdays=${fcstdays:-6}
   export startdate=${startdate:-${PDY}}
-  export enddate=`$EXECutil/ndate \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
+  export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
   export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #
@@ -47,20 +47,20 @@ postmsg "$jlogfile" "$msg"
 
   if [ $RESTART = YES ]
   then
-     fcst_hour=`${EXECutil}/nhour ${enddate}${mycyc} ${PDY}${mycyc}`
+     fcst_hour=`$NHOUR ${enddate}${mycyc} ${PDY}${mycyc}`
      while [ $fcst_hour -ge 0 ]
      do       
        if [ -s $GESdir/${RUN}_${modID}.t${mycyc}z.restart_f${fcst_hour}.b ]
        then
          # find most recent forecast restart
-         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.restar_f${fcst_hour}.b restart_in.b
+         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.restart_f${fcst_hour}.b restart_in.b
          ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.restart_f${fcst_hour}.a restart_in.a
          ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.restart_cice_f${fcst_hour} cice.restart_in
          echo "Forecast is started from restart: $GESdir/${RUN}_${modID}.t${mycyc}z.restart_f${fcst_hour}.[ab]" \
               " and $GESdir/${RUN}_${modID}.t${mycyc}z.restart_cice_f${fcst_hour} ."
 
        # replace limits file
-         sday=`$USHutil/date_normal2hycom.sh \` ${EXECutil}/ndate +$fcst_hour ${PDY}${mycyc} \` `
+         sday=`$USHutil/date_normal2hycom.sh \` $NDATE +$fcst_hour ${PDY}${mycyc} \` `
          echo "  $sday $eday false false  " > limits
          break
 
@@ -84,7 +84,7 @@ postmsg "$jlogfile" "$msg"
     else
       #
       # Restart from previous forecast step restart
-      LEAD=`${EXECutil}/nhour ${startdate}${mycyc} ${PDY}${mycyc}`
+      LEAD=`$NHOUR ${startdate}${mycyc} ${PDY}${mycyc}`
       HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart
       CICErestTplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart_cice
     fi
@@ -110,7 +110,7 @@ postmsg "$jlogfile" "$msg"
     echo "Initial restart files copied"
     basetime=1900123100
     hdate=`awk '{  if (NR==2) { print $5 } }'  < restart_in.b | cut -d. -f1 `
-    dater=`$EXECutil/ndate \` expr $hdate \* 24 \`  ${basetime}`
+    dater=`$NDATE \` expr $hdate \* 24 \`  ${basetime}`
     if [ ${dater} -ne ${startdate}${mycyc} ] 
     then 
       $USHrtofs/${RUN}_abort.sh  "RESTAERT DATES: expected=${startdate}${mycyc} actual=$dater" \
@@ -149,7 +149,7 @@ postmsg "$jlogfile" "$msg"
           rfile=${DATA}/restart_out1.b
           cdate=${date_out1}
         fi
-        LEAD=`${EXECutil}/nhour ${cdate} ${PDY}${mycyc}`
+        LEAD=`$NHOUR ${cdate} ${PDY}${mycyc}`
         YYYY=`echo $cdate | cut -c1-4`
         MM=`echo $cdate | cut -c5-6`
         DD=`echo $cdate | cut -c7-8`

@@ -43,9 +43,13 @@ CF =		ifort
 
 INC1   = ${RTOFS_LIB_INC}/rtofs_serial_mods_4 
 INC2   = ${RTOFS_LIB_INC}/rtofs_hycomiot_mods_4
-INC3	= /nwprod/lib/incmod/g2_4
+#INC3	= ${NW_LIB}/lib/incmod/g2
+#LIBS  = -L${RTOFS_LIB} -lrtofs_serial_mods_4 -lrtofs_hycomiot_4 \
+#         -L${NW_LIB}/lib  -lg2 -lw3nco -lbacio -ljasper -lpng -lz
+INC3	= ${G2_INC4}
 LIBS  = -L${RTOFS_LIB} -lrtofs_serial_mods_4 -lrtofs_hycomiot_4 \
-         -L/nwprod/lib  -lg2_4 -lw3nco_4 -lbacio_4 -ljasper -lpng -lz
+         ${G2_LIB4}  ${BACIO_LIB4} ${W3NCO_LIB4} ${JASPER_LIB} \
+         ${PNG_LIB} ${Z_LIB}  
 BINDIR= ../../exec
 CMD   =		rtofs_atmforcing
 PROFLIB =	-lprof

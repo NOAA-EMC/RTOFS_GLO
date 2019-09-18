@@ -92,14 +92,14 @@ if [ ${RUN_MODE} = 'analysis' ]
 then
   export startdate=${startdate:-${PDYm2}}
   # export enddate=${analysis_end:-$PDY}
-  # export startdate=`$EXECutil/ndate -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
+  # export startdate=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
   # export ENDHOUR=`expr $fcstdays \* 24`
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
   export startdate=${startdate:-${PDY}}
 fi
-  export enddate=`$EXECutil/ndate \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
+  export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
   export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24 `
 
 # define what functions to do (default to operational settings)
@@ -452,7 +452,7 @@ if [ $SENDCOM = 'YES' ]
           cname=`basename $cfile`
           cp -f -p $cfile  ${COMOUT}/.
           file=`echo $cfile |awk -F/ '{print $5}'`
-          fhour=`echo $file | cut -c17-19`
+          fhour=`echo $cname | cut -c17-19`
 
           ####################################
           # Processing GRIB2 RTOFS for AWIPS
@@ -464,7 +464,7 @@ if [ $SENDCOM = 'YES' ]
           export FORT11=$ftype/${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std.grb2
           export FORT31=" "
           export FORT51=grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
-          $EXECutil/tocgrib2 < $PARMrtofs/grib2_rtofs_glo_${mode}${fhour}_${ftype}_std
+          $TOCGRIB2 < $PARMrtofs/grib2_rtofs_glo_${mode}${fhour}_${ftype}_std
 
           err=$?;export err ;err_chk
           echo " error from tocgrib2=",$err
@@ -511,7 +511,7 @@ then
       # need definition of files
       for gfile in *.grb2
       do
-        md5 $gfile >> $DATA/csum.$PDY$mycyc
+        $md5 $gfile >> $DATA/csum.$PDY$mycyc
       done
       for gfile in `ls -C1 ${RUN}_${modID}.t${mycyc}z.[fn]*_std.grb2`
       do

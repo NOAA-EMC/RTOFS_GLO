@@ -32,7 +32,7 @@ fi
 
 cd $DATA
 
-sh ${USHutil}/setup.sh
+#sh ${USHutil}/setup.sh
 
 if [ ${RUN_MODE} = "analysis" ]
 then

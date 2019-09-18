@@ -40,7 +40,7 @@ export utilexec=$EXECutil    # needed by some scripts in USHutil
 # For any retrospecitve run, set the PDY in the ECF script
 ###########################################################
 setpdy.sh
-. PDY
+. ./PDY
 
 ####################
 # execute the script

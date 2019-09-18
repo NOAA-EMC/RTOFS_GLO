@@ -62,7 +62,7 @@ do
     rfrac=`awk '{  if (NR==2) { print $5 } }'  < $restb | cut -d. -f2 | cut -c1-4 `
     idate=`$EXECrtofs/${RUN}_cice_stat ${restb%.b}_cice | awk '{print $4}' | cut -d. -f1 `
     ifrac=`$EXECrtofs/${RUN}_cice_stat ${restb%.b}_cice | awk '{print $4}' | cut -d. -f2 | cut -c1-4 `
-    dater=`$EXECutil/ndate \` expr $rdate \* 24 \+ $rfrac \* 24 \/ 10000 \`  ${basetime}`
+    dater=`$NDATE \` expr $rdate \* 24 \+ $rfrac \* 24 \/ 10000 \`  ${basetime}`
     if [ $rdate -eq $idate ] && [ $rfrac -eq $ifrac ] 
     then
       test $dater -eq $YMDH && \

@@ -50,7 +50,7 @@ do
   YYYYMMDD=`${USHutil}/date2jday.sh ${YYYY}${DDD}`
   MM=`echo $YYYYMMDD | cut -c5-6`
   DD=`echo $YYYYMMDD | cut -c7-8`
-  LEAD=`${EXECutil}/nhour ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
+  LEAD=`$NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
   arch=`echo $cfile | cut -d. -f1`
   HYCOMarchTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.${arch}
   if [ $arch = "archv" ] ; then
@@ -70,7 +70,7 @@ do
  DD=`echo $cfile | cut -c19-20`
  SSSSS=`echo $cfile | cut -c22-26`
  HH=`expr $SSSSS \/ 3600`
- LEAD=`${EXECutil}/nhour ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
+ LEAD=`$NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
  echo "cp -p -f $cfile ${COMOUT}/${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.cice_inst" >> cmdfile_tmp_c # dont work w/ hourly
 done
 #
@@ -88,7 +88,7 @@ do
   MM=`echo $YYYYMMDD | cut -c5-6`
   DD=`echo $YYYYMMDD | cut -c7-8`
   SSSSS=`expr $HH \* 3600`
-  LEAD=`${EXECutil}/nhour ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
+  LEAD=`$NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
   HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart
   CICErestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart_cice
   CICEworkRestTplate=cice.restart.${YYYY}-${MM}-${DD}-${SSSSS}
@@ -137,7 +137,8 @@ do
       module load ibmpe
       export MP_LABELIO=yes
       export MP_CMDFILE=./$cfile
-      mpirun.lsf >>$pgmout 2>>errfile ### < my_stdin > my_stdout
+      #mpirun.lsf >>$pgmout 2>>errfile ### < my_stdin > my_stdout
+      mpirun >>$pgmout 2>>errfile ### < my_stdin > my_stdout
       exit=$?
     done
     #dbgz
