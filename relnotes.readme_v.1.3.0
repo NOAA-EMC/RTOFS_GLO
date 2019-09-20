@@ -31,14 +31,12 @@ IMPLEMENTATION INSTRUCTIONS:
 I. LOAD MODULES
 ---------------
 
-I.1) git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_rtofs_shared  
-     The result will be the directory EMC_rtofs_shared/modulefiles
-     mv EMC_rtofs_shared/modulelifies /nw${envir}2/modulefiles.  
-I.2) Replace RTOFS_GLO value in /nw${envir}2/modulefiles/RTOFS_GLO/v1.2.0 to /nw${envir}2/modulefiles.
-I.3) Replace default ModulesVersion value in the RTOFS_GLO version file 
-     /nw${envir}2/modulefiles/RTOFS_GLO/.version to v1.2.0
-I.4) module use -a /nw${envir}2/modulefiles
-     module load RTOFS_GLO/v1.2.0
+I.1) git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_rtofs_shared_lib
+     The result will be the directory EMC_rtofs_shared_lib/modulefiles
+     mv EMC_rtofs_shared/modulelifies [newplace[/modulefiles.  
+I.2) Replace RTOFS_GLO value in [newplace]/modulefiles/RTOFS_GLO/v1.3.0 to the location of the rtofs codes (see II below)
+I.3) module use -a [newplace]/modulefiles
+     module load RTOFS_GLO/v1.3.0
 
 IMPORTANT NOTE I.1: If the set-up will be first tested with envir=para or envir=test, then 
                     after switching to prod, the location of modulefiles and paths set-up 
@@ -49,12 +47,12 @@ II. BUILD A PROJECT
 -------------------
 
 II.1)  Check out RTOFS_GLOBAL:
-       git clone -b RB-1.3.0 ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_rtofs_glo
-       into /gpfs/hps/nco/ops/nwprod/
+       git clone -b RB-1.3.0 ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_rtofs_glo_prod
+       into /gpfs/dell1/nco/ops/nwprod/
        The result will be the directory 
-       /gpfs/hps/nco/ops/nwprod/RB-1.3.0
+       /gpfs/dell1/nco/ops/nwprod/EMC_rtofs_glo_prod
 II.2)  Rename the directory
-       mv  RB-1.3.0  rtofs_glo.v1.3.0
+       mv  EMC_rtofs_glo_prod rtofs_glo.v1.3.0
 II.3)  cd rtofs_glo.v1.3.0
        mkdir -p exec fix
 
