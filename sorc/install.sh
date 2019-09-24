@@ -1,6 +1,10 @@
 #!/bin/sh
 set -x
 
+# replace RTOFS_LIB with the location of the rtofs libraries (eg librtofs_hycomiot_4.a)
+export RTOFS_LIB=/location/of/rtofs_lib/libraries
+export RTOFS_LIB_INC=$RTOFS_LIB/incmod
+
 rm -f ../exec/*
 
 module purge
@@ -15,9 +19,6 @@ module load HDF5-serial/1.8.20
 module load jasper/1.900.1
 module load libpng/1.2.59
 module load zlib/1.2.11
-
-export RTOFS_LIB=/gpfs/dell2/emc/modeling/noscrub/Dan.Iredell/gt/EMC_rtofs_shared/rtofs_lib.v1.1.0
-export RTOFS_LIB_INC=/gpfs/dell2/emc/modeling/noscrub/Dan.Iredell/gt/EMC_rtofs_shared/rtofs_lib.v1.1.0/incmod
 
 make > rtofsglo.compile.log 2>&1
 

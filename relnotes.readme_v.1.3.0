@@ -27,23 +27,7 @@ TIME:
 
 IMPLEMENTATION INSTRUCTIONS:
 
-
-I. LOAD MODULES
----------------
-
-I.1) git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_rtofs_shared_lib
-     The result will be the directory EMC_rtofs_shared_lib/modulefiles
-     mv EMC_rtofs_shared/modulelifies [newplace[/modulefiles.  
-I.2) Replace RTOFS_GLO value in [newplace]/modulefiles/RTOFS_GLO/v1.3.0 to the location of the rtofs codes (see II below)
-I.3) module use -a [newplace]/modulefiles
-     module load RTOFS_GLO/v1.3.0
-
-IMPORTANT NOTE I.1: If the set-up will be first tested with envir=para or envir=test, then 
-                    after switching to prod, the location of modulefiles and paths set-up 
-                    in the modulefiles should be adjusted.
- 
-
-II. BUILD A PROJECT
+I. BUILD A PROJECT
 -------------------
 
 II.1)  Check out RTOFS_GLOBAL:
@@ -56,22 +40,21 @@ II.2)  Rename the directory
 II.3)  cd rtofs_glo.v1.3.0
        mkdir -p exec fix
 
-III. COMPILE PROJECT SOURCE CODES
+II. COMPILE PROJECT SOURCE CODES
 --------------------------------
 
-cd rtofs_glo.v1.3.0
-For each CDIR= sorc/rtofs_*.fd directory:
-       cd $CDIR
-       make install
+cd rtofs_glo.v1.3.0/sorc
+In ./install.sh, modify the location of RTOFS_LIB
+./install.sh
 
-IV. SET-UP FIX FILES
+III. SET-UP FIX FILES
 ---------------------
 
-NOTE IV.1: fix files are too big to be part of the repository. 
+NOTE III.1: fix files are too big to be part of the repository. 
 
  cp -p  /gpfs/dell2/emc/modeling/noscrub/Dan.Iredell/rtofs_global/fix/* rtofs_glo.v1.3.0/fix/.
 
-V. SET-UP INITIAL CONDITIONS
+IV. SET-UP INITIAL CONDITIONS
 ----------------------------
 
 V.1) module load prod_envir/1.0.3
@@ -80,7 +63,7 @@ V.3) ln -s $COMROOTp2/rtofs/prod/rtofs.YYYYMMDD  $COMROOTp3/rtofs/$envir/rtofs.Y
 V.4) mkdir -p $GESROOTp3/rtofs/$envir
 V.5) ln -s $GESROOTp2/rtofs/prod/rtofs.YYYYMMDD  $GESROOTp3/rtofs/$envir/rtofs.YYYYMMDD  (for PDYm1 and PDYm2)
 
-VI. COMPUTER RESOURCES AND RUN-TIME ENVIRONMENT
+V. COMPUTER RESOURCES AND RUN-TIME ENVIRONMENT
 ------------------------------------------------
 
 Computer resources and sample LSF command files  the same as for rtofs_glo.v1.1.4 currently in production. 
@@ -102,26 +85,26 @@ fcst_post_2:                             CPU time: 5 min.  Max. Memory: 3499 MB 
 fcst_grib2_post.04 - fcst_grib2_post.06: CPU time: 29 min. Max. Memory: 8582 MB     Resources: rtofs_job_command_fcst_grib_post.lsf
 
      
-VII. JOB DEPENDENCIES
+VI. JOB DEPENDENCIES
 -------------------
 
-VII.1a) anal_pre:                                after GFS 00Z cycle is completed. 
-VII.1b) anal:                                    after 1a is completed
-VII.1c) anal_post:                               after 1b is completed
-VII.1d) anal_grib2_post:                         after 1b is completed
+VI.1a) anal_pre:                                after GFS 00Z cycle is completed. 
+VI.1b) anal:                                    after 1a is completed
+VI.1c) anal_post:                               after 1b is completed
+VI.1d) anal_grib2_post:                         after 1b is completed
 
-VII.2a) fcst_step1_pre:                          after GFS 00Z cycle is completed.
-VII.2b) fcst_step1:                              after 1b is completed
-VII.2c) fcst_post.01 - fcst_post.04:             after 2b is completed
-VII.2d) fcst_grib2_post.01 - fcst_grib2_post.03: after 2b is completed
+VI.2a) fcst_step1_pre:                          after GFS 00Z cycle is completed.
+VI.2b) fcst_step1:                              after 1b is completed
+VI.2c) fcst_post.01 - fcst_post.04:             after 2b is completed
+VI.2d) fcst_grib2_post.01 - fcst_grib2_post.03: after 2b is completed
 
-VII.3a) fcst_step2_pre:                          after GFS 00Z cycle is completed.
-VII.3b) fcst_step2:                              after 2b is completed
-VII.3c) fcst_post.0 - fcst_post.08:              after 3b is completed
-VII.3d) fcst_grib2_post.04 - fcst_grib2_post.06: after 3b is completed
-VII.3f) fcst_post_2                              after 3b is completed
+VI.3a) fcst_step2_pre:                          after GFS 00Z cycle is completed.
+VI.3b) fcst_step2:                              after 2b is completed
+VI.3c) fcst_post.0 - fcst_post.08:              after 3b is completed
+VI.3d) fcst_grib2_post.04 - fcst_grib2_post.06: after 3b is completed
+VI.3f) fcst_post_2                              after 3b is completed
 
-NOTE VII.1: At is assumed that for all post-processing jobs $job has the name structure 
+NOTE VI.1: At is assumed that for all post-processing jobs $job has the name structure 
              of the type job_*NN, where NN is two-digit number.
-NOTE VII.2: GRIB2 post-processing for forecast is done only for the first 6 days.
+NOTE VI.2: GRIB2 post-processing for forecast is done only for the first 6 days.
 
