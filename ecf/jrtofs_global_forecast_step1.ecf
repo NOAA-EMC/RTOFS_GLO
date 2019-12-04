@@ -1,0 +1,64 @@
+#BSUB -J %E%rtofs_global_forecast_step1
+#BSUB -o /%COM%/output/%ENVIR%/today/rtofs_global_forecast_step1.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/rtofs_global_forecast_step1.o%J
+#BSUB -L /bin/sh
+#BSUB -q %QUEUE%
+#BSUB -W 02:00
+#BSUB -cwd /tmpnwprd
+#BSUB -x
+#BSUB -R "span[ptile=%PTILE%]"
+#BSUB -n 1800
+#BSUB -P %PROJ%
+#BSUB -a poe
+
+%include <head.h>
+%include <envir-p2.h>
+
+# EXPORT list here
+set -x
+export cyc=%CYC%
+export NPROCS=1800  # changed by dcs at request of MMAB
+
+# CALL executable job script here
+
+ulimit -s unlimited
+ulimit -c 0
+
+export LANG=en_US
+export MP_EUIDEVELOP=min
+export MPICH_ALLTOALL_THROTTLE=0
+export MP_EAGER_LIMIT=65536
+export MP_USE_BULK_XFER=yes
+export MP_EUILIB=us
+export MP_EUIDEVICE=sn_all
+export MP_SINGLE_THREAD=yes
+export MP_MPILIB=mpich2
+export MP_LABELIO=yes
+export MP_SHARED_MEMORY=yes
+
+VERSION_FILE=$NWROOT/versions/rtofs_glo.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+$NWROOT/rtofs_glo.${rtofs_glo_ver}/jobs/JRTOFS_GLO_FORECAST_STEP1
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: To execute the job that runs the global ocean model forecast
+#          on the IBMSP
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
+

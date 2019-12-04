@@ -1,0 +1,55 @@
+#BSUB -J %E%rtofs_global_forecast_post_d06
+#BSUB -o /%COM%/output/%ENVIR%/today/rtofs_global_forecast_post_d06.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/rtofs_global_forecast_post_d06.o%J
+#BSUB -L /bin/sh
+#BSUB -q %QUEUE%
+#BSUB -W 01:00
+#BSUB -x
+#BSUB -cwd /tmpnwprd
+#BSUB -n 4
+#BSUB -R "span[ptile=2]"
+#BSUB -R affinity[core]
+#BSUB -P %PROJ%
+#BSUB -a poe
+
+%include <head.h>
+%include <envir-p2.h>
+
+# EXPORT list here
+set -x
+export cyc=06
+
+module load NetCDF/3.6.3
+module load cfp
+
+export LANG=en_US
+
+export MP_CSS_INTERRUPT=yes
+# CALL executable job script here
+
+VERSION_FILE=$NWROOT/versions/rtofs_glo.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+$NWROOT/rtofs_glo.${rtofs_glo_ver}/jobs/JRTOFS_GLO_FORECAST_POST
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: To execute the job that runs the global ocean model forecast
+#          step1 post on the IBMSP
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
+

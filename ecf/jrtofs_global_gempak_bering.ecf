@@ -1,0 +1,55 @@
+#BSUB -J %E%rtofs_global_gempak_bering
+#BSUB -o /%COM%/output/%ENVIR%/today/rtofs_global_gempak_bering.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/rtofs_global_gempak_bering.o%J
+#BSUB -L /bin/sh
+#BSUB -q %QUEUE%
+#BSUB -W 00:20
+#BSUB -cwd /tmpnwprd
+#BSUB -R "span[ptile=%PTILE%]"
+#BSUB -R affinity[core]
+#BSUB -n %NTASK%
+#BSUB -P %PROJ%
+#BSUB -a poe
+#BSUB -x
+
+%include <head.h>
+%include <envir-p2.h>
+
+# EXPORT list here
+set -x
+module load cfp
+module load gempak
+module load grib_util
+export MP_CSS_INTERRUPT=yes
+export cyc=06
+export instr=bering
+export outstr=bering
+
+# CALL executable job script here
+
+VERSION_FILE=$NWROOT/versions/rtofs_glo.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+$NWROOT/rtofs_glo.${rtofs_glo_ver}/jobs/JRTOFS_GLO_GEMPAK
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: To execute the job that runs the global ocean model forecast
+#          on the IBMSP
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
+

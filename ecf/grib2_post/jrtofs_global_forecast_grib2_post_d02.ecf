@@ -1,0 +1,52 @@
+#BSUB -J %E%rtofs_global_forecast_grib2_post_d02
+#BSUB -o /%COM%/output/%ENVIR%/today/rtofs_global_forecast_grib2_post_d02.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/rtofs_global_forecast_grib2_post_d02.o%J
+#BSUB -L /bin/sh
+#BSUB -q %QUEUE%
+#BSUB -cwd /tmpnwprd
+#BSUB -W 01:10
+#BSUB -P %PROJ%
+#BSUB -n 11
+#BSUB -R "span[ptile=11]" -R "affinity[core]"
+#BSUB -a poe
+#BSUB -x
+
+%include <head.h>
+%include <envir-p2.h>
+
+# EXPORT list here
+set -x
+export cyc=06
+
+module load NetCDF/3.6.3
+
+export LANG=en_US
+
+# CALL executable job script here
+
+VERSION_FILE=$NWROOT/versions/rtofs_glo.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+$NWROOT/rtofs_glo.${rtofs_glo_ver}/jobs/JRTOFS_GLO_FORECAST_GRIB2_POST
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: To execute the job that runs the global ocean model reg post
+#          on the IBMSP
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
+
