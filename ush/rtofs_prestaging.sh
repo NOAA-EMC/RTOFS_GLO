@@ -32,8 +32,8 @@ fi
 
 # --------------------------------------------------------------------------- #
 # 1  Set up the start time and end time for the analysis or forecast
-  sday=`$USHutil/date_normal2hycom.sh $startdate$mycyc`
-  eday=`$USHutil/date_normal2hycom.sh $enddate$mycyc`
+  sday=`$USHrtofs/rtofs_date_normal2hycom.sh $startdate$mycyc`
+  eday=`$USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc`
   echo "  $sday $eday false false  " > limits
 
 # 2. Copy the necessary input files for the model forecast

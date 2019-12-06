@@ -60,7 +60,7 @@ postmsg "$jlogfile" "$msg"
               " and $GESdir/${RUN}_${modID}.t${mycyc}z.restart_cice_f${fcst_hour} ."
 
        # replace limits file
-         sday=`$USHutil/date_normal2hycom.sh \` $NDATE +$fcst_hour ${PDY}${mycyc} \` `
+         sday=`$USHrtofs/rtofs_date_normal2hycom.sh \` $NDATE +$fcst_hour ${PDY}${mycyc} \` `
          echo "  $sday $eday false false  " > limits
          break
 
