@@ -471,10 +471,10 @@ if [ $SENDCOM = 'YES' ]
 
           if [ $SENDCOM = "YES" ] ; then
           ##############################
-          # Post Files to PCOM
+          # Post Files to COMOUTwmo
           ##############################
 
-             cp  grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std  $pcom/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
+             cp  grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std  $COMOUTwmo/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
 
           fi
 
@@ -489,7 +489,7 @@ if [ $SENDCOM = 'YES' ]
             #    Distribute Data to TOC (AWIPS)
             #
             if [ $SENDDBN_NTC = YES ]; then
-                $DBNROOT/bin/dbn_alert NTC_LOW $NET $job  $pcom/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
+                $DBNROOT/bin/dbn_alert NTC_LOW $NET $job  $COMOUTwmo/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
             echo " "
             fi
           else

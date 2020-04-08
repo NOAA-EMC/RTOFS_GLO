@@ -42,9 +42,17 @@ export utilexec=$EXECutil    # needed by some scripts in USHutil
 setpdy.sh
 . ./PDY
 
+#################################
+# Define Input/Output directories
+#################################
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+mkdir -m 775 -p $COMOUT
+
 ####################
 # execute the script
 ####################
+export CFP_VERBOSE=1
 ${HOMErtofs}/scripts/exrtofs_glo_gzip.sh.ecf
 
 msg="JOB $job HAS COMPLETED NORMALLY." 

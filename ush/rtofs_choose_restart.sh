@@ -29,9 +29,9 @@ YMDH=$1
 # PDY=`echo $YMDH | cut -c1-8`
 # HOMEout=/ocean2/noscrub/Ilya.Rivin/simulations/hycom_glo/RB-1.1.0
 # COMIN=${HOMEout}/${NET}/${RUN}.${PDY}
-# GESdir=${HOMEout}/${NET}/nwges}/${RUN}.${PDY}
+# GESIN=${HOMEout}/${NET}/nwges}/${RUN}.${PDY}
 # # COMIN=${HOMEout}/com/${NET}/${envir}/${RUN}.${PDY}
-# # GESdir=${HOMEout}/nwges/${envir}/${RUN}.${PDY}
+# # GESIN=${HOMEout}/nwges/${envir}/${RUN}.${PDY}
 # DATA=/stmpp1/${USER}/`basename ${0%.sh}`
 # rm -rf $DATA ; mkdir -p $DATA 
 #-----------------------------------
@@ -51,7 +51,7 @@ test -f $rlist && rm -f $rlist
 test -f $rlistYMDH && rm -f $rlistYMDH
 test -f $rlistYMDHsorted && rm -f $rlistYMDHsorted
 find $DATA/ -name "${RUN}_${modID}.t??z.[nf]*.restart.b" > $rlist
-find `dirname $GESdir`/${RUN}.????????/ -name "${RUN}_${modID}.t??z.[nf]*.restart.b" >> $rlist
+find `dirname $GESIN`/${RUN}.????????/ -name "${RUN}_${modID}.t??z.[nf]*.restart.b" >> $rlist
 find `dirname $COMIN`/${RUN}.????????/ -name "${RUN}_${modID}.t??z.[nf]*.restart.b" >> $rlist
 test -s $rlist || exit 22
 for restb in `cat $rlist`

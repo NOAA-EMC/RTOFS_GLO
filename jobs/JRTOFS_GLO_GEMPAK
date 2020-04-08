@@ -41,9 +41,14 @@ export utilexec=$EXECutil    # needed by some scripts in USHutil
 setpdy.sh
 . ./PDY
 
-export COMIN=$COMROOT/${NET}/${envir}/${NET}.${PDY}
-export COMOUT=$COMROOT/nawips/${envir}/${NET}.${PDY}
-mkdir -p -m 775 $COMOUT
+#################################
+# Define Input/Output directories
+#################################
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMOUTgempak=${COMOUTgempak:-${COMOUT}/gempak}
+mkdir -p -m 775 $COMOUTgempak
+
 export DBN_ALERT_TYPE=RTOFS_GLO_GEMPAK
 
 ####################

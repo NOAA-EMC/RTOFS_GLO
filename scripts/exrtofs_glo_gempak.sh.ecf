@@ -46,10 +46,10 @@ for last in 24 48 72 ; do
 > mpirun.dat
     for stepnum in `seq -w $((last-23)) $last` # 01..24, 25..48, 49..72
     do
-	echo "gempak.sh $last $stepnum $instr $outstr $COMOUT > $instr.$stepnum.log" >> mpirun.dat
+	echo "./gempak.sh $last $stepnum $instr $outstr $COMOUTgempak > $instr.$stepnum.log" >> mpirun.dat
     done
     chmod 775 mpirun.dat
-    mpirun.lsf cfp mpirun.dat >> mpirun.log
+    mpirun cfp mpirun.dat >> mpirun.log
     export err=$?; err_chk
 done
 cat mpirun.log
@@ -129,9 +129,9 @@ GEM_gddiag
 done
 
 [  -s $gemfile ] || ( echo "FATAL ERROR: $gemfile was not generated"; export err=1; err_chk )
-cpfs $gemfile  $COMOUT
+cpfs $gemfile  $COMOUTgempak
 if [ $SENDDBN = YES ] ; then
-    ${DBNROOT}/bin/dbn_alert MODEL $DBN_ALERT_TYPE $job $COMOUT/$gemfile
+    ${DBNROOT}/bin/dbn_alert MODEL $DBN_ALERT_TYPE $job $COMOUTgempak/$gemfile
 fi
 
 #################################################

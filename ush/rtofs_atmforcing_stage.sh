@@ -57,7 +57,7 @@ then
 else
 if [ $fn1 == 'sfcflx' ]; then
 cp -p $forcefile $fflxfile
-/nwprod/util/exec/cnvgrib -g12 ${fflxfile} ${fflxfile}.grib2
+$CNVGRIB -g12 ${fflxfile} ${fflxfile}.grib2
 flxfile=${fflxfile}.grib2
 else
 cp -p $forcefile $fflxfile
@@ -103,7 +103,7 @@ then
   #       prs file is supposed to have only pressure field. Still, retained for 
   #       safety reasons. 
   rec_number=`$WGRIB -v ${prsfile} | grep ${sea_lev_pres} | cut -c1-3`
-  $WGRIB-d ${rec_number} -grib ${prsfile} -o ${DATA}/${idate}/dump.grb 
+  $WGRIB -d ${rec_number} -grib ${prsfile} -o ${DATA}/${idate}/dump.grb 
   $COPYGB -g"$atmgds" -x -a -i0 ${DATA}/${idate}/dump.grb $flxfile 
 fi
 

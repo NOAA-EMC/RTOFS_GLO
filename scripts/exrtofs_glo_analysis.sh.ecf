@@ -56,13 +56,13 @@ postmsg "$jlogfile" "$msg"
      anal_hour=`${NHOUR} ${enddate}${mycyc} ${PDY}${mycyc}`
      while [ $anal_hour -ge $LEAD ]
      do       
-       if [ -s $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart}.b ]
+       if [ -s $GESIN/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart}.b ]
        then
          # find most recent analysis restart
-         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.b restart_in.b
-         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.a restart_in.a
-         ln -s -f $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart_cice cice.restart_in
-         echo "Analysis is started from restart: $GESdir/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.[ab]" \
+         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.b restart_in.b
+         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.a restart_in.a
+         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart_cice cice.restart_in
+         echo "Analysis is started from restart: $GESIN/${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart.[ab]" \
               " and ${RUN}_${modID}.t${mycyc}z.n${anal_hour}.restart_cice"
 
        # replace limits file

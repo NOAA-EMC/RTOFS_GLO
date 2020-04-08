@@ -96,7 +96,7 @@ do
   then
     OUTDIR=$COMOUT
   else
-    OUTDIR=$GESdir
+    OUTDIR=$GESOUT
   fi
   copy_restart='t'
   if [ -f ${OUTDIR}/${HYCOMrestTplate}.b ] 
@@ -133,12 +133,12 @@ do
         echo 'sleep 1' >> $cfile
         cmdlen=`expr $cmdlen + 1`
       done
-     module load ics
-      module load ibmpe
-      export MP_LABELIO=yes
-      export MP_CMDFILE=./$cfile
+      #module load ics
+      #module load ibmpe
+      #export MP_LABELIO=yes
+      #export MP_CMDFILE=./$cfile
       #mpirun.lsf >>$pgmout 2>>errfile ### < my_stdin > my_stdout
-      mpirun >>$pgmout 2>>errfile ### < my_stdin > my_stdout
+      mpirun ./$cfile >>$pgmout 2>>errfile ### < my_stdin > my_stdout
       exit=$?
     done
     #dbgz

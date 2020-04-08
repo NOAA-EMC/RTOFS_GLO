@@ -78,13 +78,10 @@ export inputgrid=navy_0.08
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
-export GESdir=${GESROOTp3}/${envir}/${RUN}.${PDY}
-export pcom=${PCOMROOT}/${NET}
-test -d $GESdir || mkdir -m 775 -p $GESdir
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
 test -d $COMOUT || mkdir -m 775 -p $COMOUT
-test -d $pcom || mkdir -m 775 -p $pcom
 
 ############################################
 # Set up forecast post-processing parameters

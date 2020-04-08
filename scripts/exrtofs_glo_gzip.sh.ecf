@@ -3,7 +3,7 @@
 ###############################################################################
 ######################  UNIX Script Documentation Block  ######################
 #                                                                             #
-# Script name:         exrtofs_glo_post_gzip.sh.ecf                           #
+# Script name:         exrtofs_glo_gzip.sh.ecf                                #
 # Script description:                                                         #
 #                                                                             #
 # Authors: Floyd Fayton Org: PMB         Date: 2013-04-24                     #
@@ -12,17 +12,14 @@
 #                                                                             #
 # Imported variables:                                                         #
 #                    RUN                                                      #
-#                    PARMrtofs                                                #
-#                    USHrtofs                                                 #
+#                    modID                                                    #
 #                    DATA                                                     #
+#                    COMIN                                                    #
 #                    COMOUT                                                   #
-#                    RUN_MODE                                                 #
-#                    SENDCOM                                                  #
-#                    PDY                                                      #
 #                    CYC                                                      #
 #                                                                             #
 # Script history log:                                                         #
-# XXXX-XX-XXX  Joe Dow                                                        #
+# 2019-12-19  DCS - updated for Dell-p3 and added COMIN/COMOUT                #
 #                                                                             #
 ###############################################################################
 
@@ -39,29 +36,28 @@ cd $DATA
 msg="$job JOB has begun on `hostname` at `date`"
 postmsg "$jlogfile" "$msg"
 
-fdir=$COMROOT/${NET}/${envir}/${NET}.${PDY}
-filepre=${NET}_${modID}.t00z
+filepre=${RUN}_${modID}.t00z
 
 > $DATA/poescript
 
 case $CYC in 
     00)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo ${fdir}/${filepre}.n00.restart.a;  echo ${fdir}/${filepre}.n00.restart_cice;  echo ${fdir}/${filepre}.n-{06..48..6}.archv.a;  echo ${fdir}/${filepre}.n00.archv.a;  echo ${fdir}/${filepre}.n00.archs.a;  echo ${fdir}/${filepre}.n-{01..48}.archs.a`
+	for file in `echo ${COMIN}/${filepre}.n00.restart.a;  echo ${COMIN}/${filepre}.n00.restart_cice;  echo ${COMIN}/${filepre}.n-{06..48..6}.archv.a;  echo ${COMIN}/${filepre}.n00.archv.a;  echo ${COMIN}/${filepre}.n00.archs.a;  echo ${COMIN}/${filepre}.n-{01..48}.archs.a`
 	do
 	    if [ -s $file ]; then
 		filename=`basename $file`
-		echo "tar zcf $file.tgz -C ${fdir} $filename " >> $DATA/poescript
+		echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
 	    else
 		echo " $file missing, exiting now."
 		export err=1;err_chk
 	    fi
 	done
 	chmod 775 $DATA/poescript
-	mpirun.lsf cfp $DATA/poescript
+	mpirun cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
-	for tgzfile in `echo ${fdir}/${filepre}.n00.archs.a.tgz;  echo ${fdir}/${filepre}.n-{01..48}.archs.a.tgz;  echo ${fdir}/${filepre}.n00.archv.a.tgz;  echo ${fdir}/${filepre}.n-{06..48..6}.archv.a.tgz;  echo ${fdir}/${filepre}.n00.restart_cice.tgz;  echo ${fdir}/${filepre}.n00.restart.a.tgz`  
+	for tgzfile in `echo ${COMOUT}/${filepre}.n00.archs.a.tgz;  echo ${COMOUT}/${filepre}.n-{01..48}.archs.a.tgz;  echo ${COMOUT}/${filepre}.n00.archv.a.tgz;  echo ${COMOUT}/${filepre}.n-{06..48..6}.archv.a.tgz;  echo ${COMOUT}/${filepre}.n00.restart_cice.tgz;  echo ${COMOUT}/${filepre}.n00.restart.a.tgz`  
 	do
 	    if [ -s $tgzfile ]; then
 		if [ $SENDDBN = YES ] ; then
@@ -86,21 +82,21 @@ case $CYC in
 	;;
     06)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo  ${fdir}/${filepre}.f{06..96..6}.archv.a;  echo  ${fdir}/${filepre}.f{01..96}.archs.a `
+	for file in `echo  ${COMIN}/${filepre}.f{06..96..6}.archv.a;  echo  ${COMIN}/${filepre}.f{01..96}.archs.a `
 	do
 	    if [ -s $file ]; then
 		filename=`basename $file`
-		echo "tar zcf $file.tgz -C ${fdir} $filename " >> $DATA/poescript
+		echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
 	    else
 		echo " $file missing, exiting now."
 		export err=1;err_chk
 	    fi
 	done
 	chmod 775 $DATA/poescript
-	mpirun.lsf cfp $DATA/poescript
+	mpirun cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
-	for tgzfile in `echo ${fdir}/${filepre}.f{01..96}.archs.a.tgz;  echo ${fdir}/${filepre}.f{06..96..6}.archv.a.tgz`
+	for tgzfile in `echo ${COMOUT}/${filepre}.f{01..96}.archs.a.tgz;  echo ${COMOUT}/${filepre}.f{06..96..6}.archv.a.tgz`
 	do
 	    if [ -s $tgzfile ]; then
 		if [ $SENDDBN = YES ] ; then
@@ -120,21 +116,21 @@ case $CYC in
 	;;
     12)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo  ${fdir}/${filepre}.f{102..192..6}.archv.a;  echo ${fdir}/${filepre}.f{97..192}.archs.a `
+	for file in `echo  ${COMIN}/${filepre}.f{102..192..6}.archv.a;  echo ${COMIN}/${filepre}.f{97..192}.archs.a `
 	do
 	    if [ -s $file ]; then
 		filename=`basename $file`
-		echo "tar zcf $file.tgz -C ${fdir} $filename " >> $DATA/poescript
+		echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
 	    else
 		echo " $file missing, exiting now."
 		export err=1;err_chk
 	    fi
 	done
 	chmod 775 $DATA/poescript
-	mpirun.lsf cfp $DATA/poescript
+	mpirun cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
-	for tgzfile in `echo ${fdir}/${filepre}.f{97..192}.archs.a.tgz;  echo ${fdir}/${filepre}.f{102..196..6}.archv.a.tgz`
+	for tgzfile in `echo ${COMOUT}/${filepre}.f{97..192}.archs.a.tgz;  echo ${COMOUT}/${filepre}.f{102..196..6}.archv.a.tgz`
 	do
 	    if [ -s $tgzfile ]; then
 		if [ $SENDDBN = YES ] ; then
@@ -153,7 +149,7 @@ case $CYC in
 	done
 	;;
     *)
-  echo "Cycle not recognized RTOFS POST JOB, NO GZIPPED FILES ALERTED"
+  echo "Cycle not recognized RTOFS GZIP JOB, NO GZIPPED FILES ALERTED"
 ;;
 esac
 

@@ -1,47 +1,40 @@
 #BSUB -J %E%rtofs_global_forecast_post_d08
-#BSUB -o /%COM%/output/%ENVIR%/today/rtofs_global_forecast_post_d08.o%J
-#BSUB -e /%COM%/output/%ENVIR%/today/rtofs_global_forecast_post_d08.o%J
+#BSUB -o %COM%/output/%ENVIR%/today/rtofs_global_forecast_post_d08.o%J
+#BSUB -e %COM%/output/%ENVIR%/today/rtofs_global_forecast_post_d08.o%J
 #BSUB -L /bin/sh
 #BSUB -q %QUEUE%
 #BSUB -W 01:00
 #BSUB -x
-#BSUB -cwd /tmpnwprd
+#BSUB -cwd /tmp
 #BSUB -n 4
 #BSUB -R "span[ptile=2]"
 #BSUB -R affinity[core]
-#BSUB -P %PROJ%
-#BSUB -a poe
+#BSUB -P %PROJ%-%PROJENVIR%
 
 %include <head.h>
-%include <envir-p2.h>
+%include <envir-p3.h>
 
 # EXPORT list here
 set -x
 export cyc=06
 
-module load NetCDF/3.6.3
-module load cfp
+model=rtofs_glo
+%include <model_ver.h>
 
-export LANG=en_US
+module load ips/${ips_ver}
+module load impi/${impi_ver}
+module load HDF5-serial/${HDF5serial_ver}
+module load NetCDF/${NetCDF_ver}
+module load CFP/${CFP_ver}
+module list
 
-export MP_CSS_INTERRUPT=yes
-# CALL executable job script here
-
-VERSION_FILE=$NWROOT/versions/rtofs_glo.ver
-if [ -f $VERSION_FILE ]; then
-  . $VERSION_FILE
-else
-  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
-  ecflow_client --abort
-  exit
-fi
 $NWROOT/rtofs_glo.${rtofs_glo_ver}/jobs/JRTOFS_GLO_FORECAST_POST
 
 %include <tail.h>
 %manual
 ######################################################################
-# Purpose: To execute the job that runs the global ocean model forecast
-#          step1 post on the IBMSP
+# Purpose: Execute Global Real-Time Ocean Forecast System post
+#          processing on the WCOSS
 ######################################################################
 
 ######################################################################

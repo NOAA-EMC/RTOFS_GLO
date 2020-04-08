@@ -89,11 +89,12 @@ then
       echo 'sleep 1' >> $cfile
       cmdlen=`expr $cmdlen + 1`
     done
-    module load ics
-    module load ibmpe
-    export MP_LABELIO=yes
-    export MP_CMDFILE=./$cfile 
-    mpirun.lsf >>$pgmout 2>errfile 
+    #module load ics
+    #module load ibmpe
+    #export MP_LABELIO=yes
+    #export MP_CMDFILE=./$cfile 
+    #mpirun.lsf >>$pgmout 2>errfile 
+    mpirun ./$cfile >>$pgmout 2>errfile 
     exit=$?
     ## rm -f cmdfile.*
   done

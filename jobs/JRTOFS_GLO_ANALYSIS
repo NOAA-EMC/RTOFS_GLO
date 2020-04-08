@@ -66,11 +66,12 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}
-export GESdir=${GESROOTp3}/${envir}/${RUN}.${PDY}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
+export GESOUT=${GESOUT:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
-test -d $GESdir || mkdir -p $GESdir
+test -d $GESOUT || mkdir -p $GESOUT
 test -d $COMOUT || mkdir -p $COMOUT
 
 ###################
@@ -89,7 +90,7 @@ export DBL_THKDF=NO # YES or NO
 # Check for restart
 ##############################################
 restart_n=${RUN}_${modID}.t${cyc}z.restart_n
-if [ -s $GESdir/${restart_n}*.a -a -s $GESdir/${restart_n}*.b ]
+if [ -s $GESIN/${restart_n}*.a -a -s $GESIN/${restart_n}*.b ]
 then
     export RESTART=YES
 else
