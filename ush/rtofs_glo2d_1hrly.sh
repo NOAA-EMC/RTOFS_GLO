@@ -3,7 +3,7 @@
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         rtofs_glo2d_3hrly.sh                                   #
+# Script name:         rtofs_glo2d_1hrly.sh                                   #
 # Script description:                                                         #
 #                                                                             #
 # Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2011-07-20     #

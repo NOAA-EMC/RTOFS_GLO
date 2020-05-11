@@ -26,7 +26,7 @@ export HYCOM_EXPT=930
 #####################
 # SETUP RUN VARIABLES
 #####################
-export forcing_only=FALSE
+export forcing_only=TRUE
 
 export mycyc='00'
 export cycle=t${mycyc}z

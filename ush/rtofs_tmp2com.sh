@@ -41,7 +41,7 @@ fi
 #
 # Write archive files copying commands in CMD
 #
-for afile in `ls ${DATA}/archv.????_???_??.a ${DATA}/archs.????_???_??.a`
+for afile in `ls ${DATA}/archv.????_???_??.a ${DATA}/archs.????_???_??.a ${DATA}/arche.????_???_??.a`
 do
   cfile=`basename $afile`
   YYYY=`echo $cfile | cut -c7-10`
@@ -55,12 +55,20 @@ do
   HYCOMarchTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.${arch}
   if [ $arch = "archv" ] ; then
     echo "cp -p -f $afile ${COMOUT}/${HYCOMarchTplate}.a" >> cmdfile_tmp_v
+    cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
+    cp -p -f ${afile%.a}.txt ${COMOUT}/${HYCOMarchTplate}.txt
   fi
   if [ $arch = "archs" ] ; then
     echo "cp -p -f $afile ${COMOUT}/${HYCOMarchTplate}.a" >> cmdfile_tmp_s
+    cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
+    cp -p -f ${afile%.a}.txt ${COMOUT}/${HYCOMarchTplate}.txt
   fi
-  cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
-  cp -p -f ${afile%.a}.txt ${COMOUT}/${HYCOMarchTplate}.txt
+  if [ $arch = "arche" ] ; then
+    if [ ! -s ${COMOUT}/${HYCOMarchTplate}.a ] ; then
+      echo "cp -p -f $afile ${COMOUT}/${HYCOMarchTplate}.a" >> cmdfile_tmp_e
+      cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
+    fi
+  fi
 done
 for ifile in `ls ${DATA}/cice_inst.????-??-??-?????.nc`
 do
@@ -97,6 +105,7 @@ do
     OUTDIR=$COMOUT
   else
     OUTDIR=$GESOUT
+    OUTDIR=$COMOUT
   fi
   copy_restart='t'
   if [ -f ${OUTDIR}/${HYCOMrestTplate}.b ] 
@@ -117,36 +126,17 @@ done
 #
 # Copy restart and archive files in permanent location.
 #
-#dbgz 20130113
-NPROCS=1
-for ftype in s v c
-do 
-  if [ $NPROCS -gt 1 ] 
-  then
-    split -${NPROCS} cmdfile_tmp_${ftype} cmdfile.
-    ls -l cmdfile.*
-    for cfile in `ls cmdfile.*`
-    do
-      cmdlen=`cat $cfile | wc -l`
-      while [ $cmdlen -lt $NPROCS ]
-      do
-        echo 'sleep 1' >> $cfile
-        cmdlen=`expr $cmdlen + 1`
-      done
-      #module load ics
-      #module load ibmpe
-      #export MP_LABELIO=yes
-      #export MP_CMDFILE=./$cfile
-      #mpirun.lsf >>$pgmout 2>>errfile ### < my_stdin > my_stdout
-      mpirun ./$cfile >>$pgmout 2>>errfile ### < my_stdin > my_stdout
-      exit=$?
-    done
-    #dbgz
-    #rm -f cmdfile.*
-  else
-    sh cmdfile_tmp_${ftype}
-  fi
-done
-## rm -f cmdfile_tmp*
+cat cmdfile_tmp_v cmdfile_tmp_c cmdfile_tmp_e cmdfile_tmp_s > cmdfile_tmp_all
+chmod +x cmdfile_tmp_all
+
+if [ $NPROCS -gt 1 ]
+then
+  mpirun cfp ./cmdfile_tmp_all >> cptmp2out.out
+else
+  sh ./cmdfile_tmp_all >> cptmp2out.out
+fi
+err=$? ; export err ; err_chk
+
+exit
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

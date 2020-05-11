@@ -63,6 +63,8 @@ fi
 # 3.  Ending output
   if [ $modelstatus = 0 ]
   then
+    if compgen -G "probe_out_*" > /dev/null
+    then
        # Copy probes to /com
        for prb in `ls probe_out_*`
        do
@@ -73,7 +75,7 @@ fi
             cp -p $prb $COMOUT/${RUN}_${modID}.t${mycyc}z.${runmode}.${prb}
          fi
        done
-
+    fi
     echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.${runmode}.log
   else
     $USHrtofs/${RUN}_abort.sh "Abnormal model exit from ${RUN_MODE}" \

@@ -1,0 +1,290 @@
+#!/bin/sh
+set -xa
+###############################################################################
+####  UNIX Script Documentation Block                                         #
+#                                                                             #
+# Script name:         exrtofs_glo_ncoda_polar_var.sh.sms                      #
+# Script description:                                                         #
+#                                                                             #
+# Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
+#                                                                             #
+# Abstract: 
+#   this script runs a series of polar 2DVAR sea ice and sst analyses
+#   the analyses are performed on polar stereographic grids over the
+#   northern and southern hemisphere poles
+#   grid resolutions are 9 km
+#                                                                             #
+# Sub-scripts called:                                                         #
+#                                                                             #
+# Script history log:                                                         #
+# 2020-07-30  Dan Iredell                                                     #
+#                                                                             #
+###############################################################################
+
+export PS4='$SECONDS + '
+
+msg="RTOFS_GLO_NCODA_POLAR_VAR JOB has begun on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+cd $DATA
+
+# --------------------------------------------------------------------------- #
+
+# 1. Populate DATA/polar_var with polar_var files from COMINm1/ncoda
+echo timecheck RTOFS_GLO_POLAR start get at `date`
+
+mkdir -p $DATA/nhem_var/restart
+mkdir -p $DATA/shem_var/restart
+mkdir -p $DATA/nhem_var/work
+mkdir -p $DATA/shem_var/work
+mkdir -p $DATA/logs/nhem_var
+mkdir -p $DATA/logs/shem_var
+ddtg=${PDYm1}00
+
+rm -f cmdfile.cpin
+if compgen -G "$COMINm1/ncoda/nhem_var/restart/*" > /dev/null
+then
+  for nv in `ls $COMINm1/ncoda/nhem_var/restart/`; do
+    echo "cp -p -f $COMINm1/ncoda/nhem_var/restart/$nv $DATA/nhem_var/restart" >> cmdfile.cpin
+  done
+else
+  echo "Cold starting north polar var!"
+fi
+
+if compgen -G "$COMINm1/ncoda/shem_var/restart/*" > /dev/null
+then
+  for sv in `ls $COMINm1/ncoda/shem_var/restart/`; do
+    echo "cp -p -f $COMINm1/ncoda/shem_var/restart/$sv $DATA/shem_var/restart" >> cmdfile.cpin
+  done
+else
+  echo "Cold starting north polar var!"
+fi
+
+chmod +x cmdfile.cpin
+echo mpirun cfp ./cmdfile.cpin > cpin.out
+mpirun cfp ./cmdfile.cpin >> cpin.out
+err=$? ; export err ; err_chk
+date
+
+ln -sf $COMIN/ncoda/ocnqc $DATA
+
+# 2. Build common namelist
+
+cat << eof1 > nhem_var/oanl
+ &oanl
+  cluster(1)  = 2.,
+  cluster(2)  = 1.,
+  cluster(7)  = 1.,
+  debug(4)    = .true.,
+  deny        = 59, 60, 206, 153, 154, 155, 181, 182, 204,
+  hc_mdl(1)   = 'homo',
+  hc_mdl(2)   = 'rsby',
+  ice_asm     = .true.,
+  mask_opt    = '2D',
+  n_it        = 30,
+  qc_err(10)  = 4.,
+  rscl(1)     = 0.6,
+  rscl(2)     = 1.2,
+  rscl(7)     = 1.2,
+  rscl_cap    = 180.,
+  sss_asm     = .true.,
+  sss_lmt     = 90., 5., 6.,
+  sst_asm     = .true.,
+  upd_cyc     = 24,
+  vscl(1)     = 16.,
+  vscl(2)     = 12.,
+  vscl(7)     = 12.,
+  z_lvl       = 0., 99*0.,
+ &end
+eof1
+cp $DATA/nhem_var/oanl $DATA/shem_var/oanl
+echo timecheck RTOFS_GLO_POLAR finish build at `date`
+
+# 3. Run NHEM
+
+echo timecheck RTOFS_GLO_POLAR start nhem at `date`
+cd $DATA/nhem_var
+#   build local nhem namelist files
+rm -f odsetnl
+rm -f ogridnl
+rm -f omapnl
+
+cat << eof2 > ogridnl
+ &gridnl
+  delx  = 9000.,
+  dely  = 9000.,
+  iref  = 450,
+  jref  = 450,
+  kko   = 1,
+  m     = 900,
+  n     = 900,
+  nnest = 1,
+  nproj = 3,
+  phnt1 = 60.,
+  phnt2 = 60.,
+  rlat  = 90.,
+  rlon  = 0.,
+  alnnt = 300.,
+ &end
+eof2
+
+cat << eof3 > odsetnl
+ &dsetnl
+  dsoclim = '$FIXrtofs/codaclim'
+  dsogdem = '$FIXrtofs/gdem'
+  dsorff  = '$DATA/nhem_var/restart'
+  dsoudat = '$DATA/ocnqc'
+  dsowork = '$DATA/nhem_var/work'
+ &end
+eof3
+
+cat << eof4 > omapnl
+ &omapnl
+  do_data = .true.,
+  do_sss  = .true.,
+  do_sss_inc = .true.,
+  do_sst  = .true.,
+  do_sst_inc = .true.,
+  do_ice  = .true.,
+  do_ice_inc = .true.,
+  sss_min = 24.,
+  sss_del = 0.2,
+  sst_cnt = 1.,
+  sst_min = -2.,
+  sst_del = .25,
+ &end
+eof4
+
+$EXECncoda/ncoda_setup 2D ncoda ogridnl $ddtg > pout1
+mpirun -n  1 $EXECncoda/ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+mpirun -n 24 $EXECncoda/ncoda 2D ncoda ogridnl $ddtg > pout3
+mpirun -n 24 $EXECncoda/ncoda_post 2D ncoda ogridnl $ddtg > pout4
+
+#   rename local files
+mv fort.40 $DATA/logs/nhem_var/nhem_var.$ddtg.sus
+mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
+mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
+
+#   create graphics (offline)
+#export OCEAN_OUTPUT_DIR=$nhem_dir/restart
+#$exec_dir/ncoda_map $ddtg > pout5
+#mv gmeta $log_dir/nhem_var.$ddtg.gmeta
+
+cat pout* > $DATA/logs/nhem_var/nhem_var.$ddtg.out
+cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $pgmout
+echo timecheck RTOFS_GLO_POLAR finish nhem at `date`
+
+# 4. Run SHEM
+
+echo timecheck RTOFS_GLO_POLAR start shem at `date`
+cd $DATA/shem_var
+#   build local shem namelist files
+rm -f odsetnl
+rm -f ogridnl
+rm -f omapnl
+
+cat << eof5 > ogridnl
+ &gridnl
+  delx  = 9000.,
+  dely  = 9000.,
+  iref  = 450,
+  jref  = 450,
+  kko   = 1,
+  m     = 900,
+  n     = 900,
+  nnest = 1,
+  nproj = 3,
+  phnt1 = -60.,
+  phnt2 = -60.,
+  rlat  = -90.,
+  rlon  = 0.,
+  alnnt = 300.,
+ &end
+eof5
+
+cat << eof6 > odsetnl
+ &dsetnl
+  dsoclim = '$FIXrtofs/codaclim'
+  dsogdem = '$FIXrtofs/gdem'
+  dsorff  = '$DATA/shem_var/restart'
+  dsoudat = '$DATA/ocnqc'
+  dsowork = '$DATA/shem_var/work'
+ &end
+eof6
+
+#  sss_min = 30.,
+cat << eof7 > omapnl
+ &omapnl
+  do_data = .true.,
+  do_sss  = .true.,
+  do_sss_inc = .true.,
+  do_sst  = .true.,
+  do_sst_inc = .true.,
+  do_ice  = .true.,
+  do_ice_inc = .true.,
+  sss_min = 28.,
+  sss_del = 0.1,
+  sst_cnt = 1.,
+  sst_min = -2.,
+  sst_del = .25,
+ &end
+eof7
+
+$EXECncoda/ncoda_setup 2D ncoda ogridnl $ddtg > pout1
+mpirun -n  1 $EXECncoda/ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+mpirun -n 24 $EXECncoda/ncoda 2D ncoda ogridnl $ddtg > pout3
+mpirun -n 24 $EXECncoda/ncoda_post 2D ncoda ogridnl $ddtg > pout4
+
+mv fort.40 $DATA/logs/shem_var/nhem_var.$ddtg.sus
+mv fort.67 $DATA/logs/shem_var/nhem_var.$ddtg.obs
+mv fort.68 $DATA/logs/shem_var/nhem_var.$ddtg.grd
+
+#   create graphics (offline)
+#export OCEAN_OUTPUT_DIR=$nhem_dir/restart
+#$exec_dir/ncoda_map $ddtg > pout5
+#mv gmeta $log_dir/nhem_var.$ddtg.gmeta
+
+cat pout* > $DATA/logs/shem_var/shem_var.$ddtg.out
+cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $pgmout
+echo timecheck RTOFS_GLO_POLAR finish shem at `date`
+
+# 5. Copy data back to COMOUT/ncoda
+
+echo timecheck RTOFS_GLO_POLAR start put at `date`
+cd $DATA
+mkdir -p $COMOUT/ncoda/nhem_var/restart
+mkdir -p $COMOUT/ncoda/shem_var/restart
+rm -f cmdfile.cpout
+for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+  backymdh=$( $EXECncoda/dtg -d -$d ${PDY}00 )
+  backymd=${backymdh:0:8}
+  if compgen -G "$DATA/nhem_var/restart/*${backymd}*" > /dev/null
+  then
+     echo "cp -p -f $DATA/nhem_var/restart/*${backymd}*" $COMOUT/ncoda/nhem_var/restart >> cmdfile.cpout
+  fi
+  if compgen -G "$DATA/shem_var/restart/*${backymd}*" > /dev/null
+  then
+     echo "cp -p -f $DATA/shem_var/restart/*${backymd}*" $COMOUT/ncoda/shem_var/restart >> cmdfile.cpout
+  fi
+done
+
+chmod +x cmdfile.cpout
+echo mpirun cfp ./cmdfile.cpout > cpout.out
+mpirun cfp ./cmdfile.cpout >> cpout.out
+err=$? ; export err ; err_chk
+
+mkdir -p $COMOUT/ncoda/logs/nhem_var
+mkdir -p $COMOUT/ncoda/logs/shem_var
+cp -p -f $DATA/logs/nhem_var/*.$ddtg.* $COMOUT/ncoda/logs/nhem_var
+cp -p -f $DATA/logs/shem_var/*.$ddtg.* $COMOUT/ncoda/logs/shem_var
+
+echo timecheck RTOFS_GLO_POLAR finish put at `date`
+
+date
+
+#################################################
+msg="THE RTOFS_GLO_NCODA_POLAR_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################
+

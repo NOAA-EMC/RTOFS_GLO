@@ -90,7 +90,7 @@ typeset -Z3 lasthr
 export fcstdays=${fcstdays:-1}
 if [ ${RUN_MODE} = 'analysis' ]
 then
-  export startdate=${startdate:-${PDYm2}}
+  export startdate=${startdate:-${PDYm1}}
   # export enddate=${analysis_end:-$PDY}
   # export startdate=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
   # export ENDHOUR=`expr $fcstdays \* 24`
@@ -231,9 +231,9 @@ do
     ln -s -f $COMOUT/${arfile_tplate}.b archv.b
    else
      if [ $fhr -eq 00 ]; then
-# This is for n00 or n-48 nowcast 
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-48.archs.a archv.a
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-48.archs.b archv.b
+# This is for n00 or n-24 nowcast 
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.archs.a archv.a
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.archs.b archv.b
    else
     echo Missing archs file $COMOUT/${arfile_tplate}. >>${RUN}_${modID}.t${mycyc}z.nav.log
     echo "NOTdone due to missing archs file" >>${RUN}_${modID}.t${mycyc}z.nav.log

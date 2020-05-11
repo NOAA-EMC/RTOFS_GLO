@@ -2,16 +2,19 @@
     days_per_year= 366
   , year_init    = 1901
   , istep0       = 0
-  , dt           = 450.0
+  , dt           = 225.0
   , npt          = -1 
   , ndyn_dt      = 1
+  , inserthr     = 0
   , runtype      = 'continue'
   , ice_ic       = 'default'
   , restart      = .true.
   , restart_dir  = './'
   , restart_file = 'cice.restart'
   , pointer_file = './cice.restart_file'
-  , dumpfreq     = 'd'
+  , histfreq     = 'd'
+  , histfreq_n   =  1
+  , dumpfreq     = '1'
   , dumpfreq_n   = 1
   , diagfreq     = 8
   , diag_type    = 'stdout'
@@ -84,6 +87,7 @@
   , oceanmixed_file= 'pop_frc.gx1v3.051202.nc'
   , restore_sst  = .true.
   , insert_ssmi  = .false.
+  , insert_sih   = .false.
   , trestore     =  1 
   , atm_netrad   = .false.
   , albnetrad    = 0.00
@@ -109,7 +113,7 @@
   , f_vvel      = .true. 
   , f_fswdn     = .true. 
   , f_flwdn     = .true.
-  , f_snow      = .false. 
+  , f_snow      = .true. 
   , f_snow_ai   = .true. 
   , f_rain      = .false. 
   , f_rain_ai   = .true. 
@@ -118,7 +122,7 @@
   , f_uocn      = .true. 
   , f_vocn      = .true. 
   , f_frzmlt    = .true.
-  , f_fswabs    = .false. 
+  , f_fswabs    = .true. 
   , f_fswabs_ai = .true. 
   , f_albsni    = .true. 
   , f_alvdr     = .false.

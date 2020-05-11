@@ -1,0 +1,295 @@
+#!/bin/sh
+set -xa
+###############################################################################
+####  UNIX Script Documentation Block                                         #
+#                                                                             #
+# Script name:         exrtofs_glo_ncoda_hycom_var.sh.sms                     #
+# Script description:                                                         #
+#                                                                             #
+# Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
+#                                                                             #
+# Abstract: 
+#   this script runs a global 3DVAR multivariate analysis
+#   the analysis is performed on the global HYCOM tri-polar grid
+#   grid resoltuion is 8 km at the equator
+#                                                                             #
+# Sub-scripts called:                                                         #
+#                                                                             #
+# Script history log:                                                         #
+# 2020-07-30  Dan Iredell                                                     #
+#                                                                             #
+###############################################################################
+
+export PS4='$SECONDS + '
+
+msg="RTOFS_GLO_NCODA_HYCOM_VAR JOB has begun on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+cd $DATA
+
+# --------------------------------------------------------------------------- #
+
+# 1.a Populate DATA/hycom_var with hycom_var files from COMINm1/ncoda
+echo timecheck RTOFS_GLO_HYCOM start get at `date`
+
+mkdir -p $DATA/restart
+mkdir -p $DATA/work
+rm -f cmdfile.cpin
+if compgen -G "$COMINm1/ncoda/hycom_var/restart/*" > /dev/null
+then
+  for hv in `ls $COMINm1/ncoda/hycom_var/restart/`; do
+    echo "cp -p -f $COMINm1/ncoda/hycom_var/restart/$hv $DATA/restart" >> cmdfile.cpin
+  done
+else
+  echo "Cold starting hycom var!"
+fi
+
+chmod +x cmdfile.cpin
+echo mpirun cfp ./cmdfile.cpin > cpin.out
+mpirun cfp ./cmdfile.cpin >> cpin.out
+err=$? ; export err ; err_chk
+date
+
+ln -sf $COMIN/ncoda/ocnqc $DATA
+
+# 1.b link in topo files
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a ${DATA}/regional.grid.a
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b ${DATA}/regional.grid.b
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
+
+# build links needed for hycom_var ... some names are mismatched so this is klugey
+# also - this is missing archives from previous runs:
+# PDYm2 f24
+# PDYm3 f48
+# etc
+
+mkdir -p rtofs/data_${PDYm1}00
+mkdir -p rtofs/data_${PDYm2}00
+ln -s $COMINm1/rtofs_glo.t00z.n00.restart.a rtofs/data_${PDYm1}00/restart_r${PDY}00.a
+ln -s $COMINm1/rtofs_glo.t00z.n00.restart.b rtofs/data_${PDYm1}00/restart_r${PDY}00.b
+ln -s $COMINm1/rtofs_glo.t00z.n00.restart.a rtofs/data_${PDYm2}00/restart_r${PDYm1}00.a
+ln -s $COMINm1/rtofs_glo.t00z.n00.restart.b rtofs/data_${PDYm2}00/restart_r${PDYm1}00.b
+mkdir -p rtofs/rtofs.$PDYm1
+ln -s $COMINm1/rtofs_glo.t00z.n00.archs.a rtofs/rtofs.$PDYm1/rtofs_glo.t00z.f0.archs.a
+ln -s $COMINm1/rtofs_glo.t00z.n00.archs.b rtofs/rtofs.$PDYm1/rtofs_glo.t00z.f0.archs.b
+ln -s $COMINm1/rtofs_glo.t00z.n00.arche.a rtofs/rtofs.$PDYm1/rtofs_glo.t00z.f0.arche.a
+ln -s $COMINm1/rtofs_glo.t00z.n00.arche.b rtofs/rtofs.$PDYm1/rtofs_glo.t00z.f0.arche.b
+ln -s $COMINm1/rtofs_glo.t00z.n00.archv.a rtofs/rtofs.$PDYm1/rtofs_glo.t00z.f0.archv.a
+ln -s $COMINm1/rtofs_glo.t00z.n00.archv.b rtofs/rtofs.$PDYm1/rtofs_glo.t00z.f0.archv.b
+mkdir -p rtofs/rtofs.$PDYm2
+COMINm2=${COMINm2:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm2}}
+ln -s $COMINm2/rtofs_glo.t00z.n00.archs.a rtofs/rtofs.$PDYm2/rtofs_glo.t00z.f0.archs.a
+ln -s $COMINm2/rtofs_glo.t00z.n00.archs.b rtofs/rtofs.$PDYm2/rtofs_glo.t00z.f0.archs.b
+ln -s $COMINm2/rtofs_glo.t00z.n00.arche.a rtofs/rtofs.$PDYm2/rtofs_glo.t00z.f0.arche.a
+ln -s $COMINm2/rtofs_glo.t00z.n00.arche.b rtofs/rtofs.$PDYm2/rtofs_glo.t00z.f0.arche.b
+ln -s $COMINm2/rtofs_glo.t00z.n00.archv.a rtofs/rtofs.$PDYm2/rtofs_glo.t00z.f0.archv.a
+ln -s $COMINm2/rtofs_glo.t00z.n00.archv.b rtofs/rtofs.$PDYm2/rtofs_glo.t00z.f0.archv.b
+
+# 2. build namelists
+
+rm -f odsetnl
+rm -f ogridnl
+rm -f oanl
+
+#  deny metop-a: 110, 111, 112
+#  deny metop-b: 115, 116, 117
+
+cat << eof1 > odsetnl
+ &dsetnl
+  dsoclim = '$FIXrtofs/codaclim'
+  dsogdem = '$FIXrtofs/gdem'
+  dsomrff = '$DATA/rtofs'
+  dsomfix = '$DATA'
+  dsorff  = '$DATA/restart'
+  dsoudat = '$DATA/ocnqc'
+  dsowork = '$DATA/work'
+ &end
+eof1
+
+cat << eof2 > ogridnl
+ &gridnl
+  delx(1) = 8896.78809,
+  dely(1) = 8895.59277,
+  kko     = 41,
+  m       = 4500,
+  n       = 3298,
+  nnest   = 1,
+  nproj   = -1,
+  rlat    = 70.2,
+ &end
+eof2
+
+cat << eof3 > oanl
+ &oanl
+  argo_bias   = .true.,
+  bio_asm     = .false.,
+  cluster(2)  = 2.,
+  cluster(3)  = 3.,
+  cluster(6)  = 2.,
+  conflict(1) = .false.,
+  corr_mdl(2) = 1,
+  debug(1)    = .true.,
+  debug(2)    = .true.,
+  debug(3)    = .true.,
+  debug(5)    = .true.,
+  debug(6)    = .true.,
+  debug(7)    = .true.,
+  debug(9)    = .true.,
+  debug(10)   = .true.,
+  deny        = 59, 60, 206, 115, 116, 117, 153, 154, 155, 181, 182, 204,
+  dh_flow     = 'SSH',
+  direct      = .true.,
+  drct_rej_ts = .true.,
+  dv_dz       = 0.15,
+  err_cyc     = 1,
+  fcst(1)     = .true.,
+  fcst(2)     = .true.,
+  fcst(3)     = .true.,
+  fcst(4)     = .true.,
+  fcst(6)     = .true.,
+  fgat        = 1,  1,  1, -1,
+  fgat_rec    = 8, 16, 17, -1,
+  global      = .true.,
+  himem       = .true.,
+  hycom_name  = 'ops'
+  ice_asm     = .true.,
+  ice_rec     = 8, 15, 16, 1,
+  lndz        = 1.99,
+  lvl_nmo     = 2000.,
+  mask_opt    = '3D',
+  mld_rec     = 425,
+  mld_src     = 'modl',
+  n_pass      = 2,
+  offset      = 40., 0., 0., 0.,
+  ohc         = .true.,
+  over(2)     = 1.,
+  over(3)     = 1.,
+  over(4)     = 3.,
+  over(6)     = 1.,
+  prf_hrs     = 120,
+  prf_slct(1) = 4.,
+  prf_slct(9) = 30.0,
+  prf_slct(10) = 12.0,
+  prf_time    = 'rcpt',
+  pt_anl      = .true.,
+  rscl        = 1.5, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2,
+  rscl_cap    = 180.,
+  ssh_asm     = .true.,
+  ssh_del     = 0.02,
+  ssh_hrs     = 120,
+  ssh_time    = 'rcpt',
+  sss_asm     = .true.,
+  sss_lmt     = 90., 5.,
+  sss_time    = 'obst',
+  sst_asm     = .true.,
+  sst_time    = 'obst',
+  upd_cyc     = 24,
+  vc_adj      = 0.3,
+  vc_mdl      = 'dens',
+  vc_src      = 'clim',
+  vscl(1)     = 12.,
+  vscl(2)     = 3.,
+  vscl(3)     = 3.,
+  vscl(4)     = 3.,
+  vscl(6)     = 3.,
+  z_lvl       =  0.,    5.,   10.,   17.5,  25.,  32.5,   40.,   50.,   62.5,  75.,
+               100.,  125. , 150.,  200.,  250.,  300.,  350.,  400.,  450.,  500.,
+               550.,  600.,  700.,  800.,  900., 1000., 1100., 1200., 1300., 1400.,
+              1500., 1600., 1700., 1800., 1900., 2000., 2100., 2250., 2500., 2750.,
+              3000., 59*0,
+  z_opt       = 'hycom',
+ &end
+eof3
+
+cat << eof4 > omapnl
+ &omapnl
+  do_data      = .true.,
+  do_data_raw  = .true.,
+ &end
+eof4
+echo timecheck RTOFS_GLO_HYCOM finish build at `date`
+
+# 3. Run Hycom var
+
+ddtg=${PDYm1}00
+log_dir=$DATA/logs
+mkdir -p $log_dir
+
+echo timecheck RTOFS_GLO_HYCOM start setup at `date`
+$EXECncoda/ncoda_setup 3D hycom ogridnl $ddtg > pout1
+echo timecheck RTOFS_GLO_HYCOM start prep at `date`
+mpirun -n  72 $EXECncoda/ncoda_prep 3D hycom ogridnl $ddtg > pout2
+echo timecheck RTOFS_GLO_HYCOM start ncoda3d at `date`
+mpirun -n 360 $EXECncoda/ncoda 3D hycom ogridnl $ddtg > pout3
+echo timecheck RTOFS_GLO_HYCOM start post at `date`
+mpirun -n 360 $EXECncoda/ncoda_post 3D hycom ogridnl $ddtg relax > pout4
+echo timecheck RTOFS_GLO_HYCOM finish post at `date`
+
+#   rename local files
+mv fort.32 $log_dir/hycom_var.$ddtg.rej
+mv fort.33 $log_dir/hycom_var.$ddtg.prf
+mv fort.34 $log_dir/hycom_var.$ddtg.gpt
+mv fort.36 $log_dir/hycom_var.$ddtg.mvo
+mv fort.37 $log_dir/hycom_var.$ddtg.drc
+mv fort.38 $log_dir/hycom_var.$ddtg.lyp
+mv fort.39 $log_dir/hycom_var.$ddtg.fix
+mv fort.40 $log_dir/hycom_var.$ddtg.sus
+mv fort.41 $log_dir/hycom_var.$ddtg.dup
+mv fort.42 $log_dir/hycom_var.$ddtg.ssh
+mv fort.67 $log_dir/hycom_var.$ddtg.obs
+mv fort.68 $log_dir/hycom_var.$ddtg.grd
+mv fort.69 $log_dir/hycom_var.$ddtg.via
+
+#   create data coverage graphics
+#export OCEAN_OUTPUT_DIR=$hycom_dir/restart
+#export OCEAN_CLIM_DIR=$stat_dir/codaclim
+#$exec_dir/ncoda_map $ddtg > pout5
+#mv gmeta $log_dir/hycom_var.$ddtg.gmeta
+
+#   combine and remove work files
+cat pout* > $log_dir/hycom_var.$ddtg.out
+
+# 4. Copy last 15 days of data back to COMOUT/ncoda
+echo timecheck RTOFS_GLO_HYCOM start put at `date`
+
+mkdir -p $COMOUT/ncoda/hycom_var/restart
+rm -f cmdfile.cpout
+for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+  backymdh=$( $EXECncoda/dtg -d -$d ${PDY}00 )
+  backymd=${backymdh:0:8}
+  if compgen -G "$DATA/restart/[a-r]*${backymd}*" > /dev/null
+  then
+    echo "cp -p -f $DATA/restart/[a-r]*${backymd}* $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
+  fi
+  if compgen -G "$DATA/restart/s[a-d]*${backymd}*" > /dev/null
+  then
+    echo "cp -p -f $DATA/restart/s[a-d]*${backymd}* $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
+  fi
+  if compgen -G "$DATA/restart/s[e-z]*${backymd}*" > /dev/null
+  then
+    echo "cp -p -f $DATA/restart/s[e-z]*${backymd}* $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
+  fi
+  if compgen -G "$DATA/restart/[t-z]*${backymd}*" > /dev/null
+  then
+    echo "cp -p -f $DATA/restart/[t-z]*${backymd}* $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
+  fi
+done
+
+chmod +x cmdfile.cpout
+echo mpirun cfp ./cmdfile.cpout > cpout.out
+mpirun cfp ./cmdfile.cpout >> cpout.out
+err=$? ; export err ; err_chk
+date
+
+mkdir -p $COMOUT/ncoda/logs/hycom_var
+cp -p -f $DATA/logs/*.$ddtg.* $COMOUT/ncoda/logs/hycom_var
+
+echo timecheck RTOFS_GLO_HYCOM finish put at `date`
+
+#################################################
+msg="THE RTOFS_GLO_NCODA_HYCOM_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################
+

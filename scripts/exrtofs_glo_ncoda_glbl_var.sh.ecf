@@ -1,0 +1,210 @@
+#!/bin/sh
+set -xa
+###############################################################################
+####  UNIX Script Documentation Block                                         #
+#                                                                             #
+# Script name:         exrtofs_glo_ncoda_glbl_var.sh.sms                      #
+# Script description:                                                         #
+#                                                                             #
+# Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
+#                                                                             #
+# Abstract: 
+#   this script runs global 2DVAR sea ice, sss and sst analyses
+#   the analyses are performed on a near global mercator grid
+#   grid resoltuion is 12 km at the equator, 8 km mid-latitude
+#                                                                             #
+# Sub-scripts called:                                                         #
+#                                                                             #
+# Script history log:                                                         #
+# 2020-07-30  Dan Iredell                                                     #
+#                                                                             #
+###############################################################################
+
+export PS4='$SECONDS + '
+
+msg="RTOFS_GLO_NCODA_GLBL_VAR JOB has begun on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+cd $DATA
+
+# --------------------------------------------------------------------------- #
+
+# 1. Populate DATA with glbl_var files from COMINm1/ncoda
+echo timecheck RTOFS_GLO_GLBL start get at `date`
+
+mkdir -p $DATA/restart
+mkdir -p $DATA/work
+rm -f cmdfile.cpin
+if compgen -G "$COMINm1/ncoda/glbl_var/restart/*" > /dev/null
+then
+  for gv in `ls $COMINm1/ncoda/glbl_var/restart/`; do
+    echo "cp -p -f $COMINm1/ncoda/glbl_var/restart/$gv $DATA/restart" >> cmdfile.cpin
+  done
+else
+  echo "cold starting global var!"
+fi
+
+chmod +x cmdfile.cpin
+echo mpirun cfp ./cmdfile.cpin > cpin.out
+mpirun cfp ./cmdfile.cpin >> cpin.out
+err=$? ; export err ; err_chk
+date
+
+ln -sf $COMIN/ncoda/ocnqc $DATA
+echo timecheck RTOFS_GLO_GLBL finish get at `date`
+
+# 2. build namelists
+
+rm -f odsetnl
+rm -f ogridnl
+rm -f oanl
+rm -f omapnl
+
+#  deny metop-a: 110, 111, 112
+#  deny metop-b: 115, 116, 117
+
+cat << eof1 > odsetnl
+ &dsetnl
+  dsoclim = '$FIXrtofs/codaclim'
+  dsogdem = '$FIXrtofs/gdem'
+  dsorff  = '$DATA/restart'
+  dsoudat = '$DATA/ocnqc'
+  dsowork = '$DATA/work'
+ &end
+eof1
+
+cat << eof2 > ogridnl
+ &gridnl
+  alnnt = 180.,
+  delx  = 12355.43554688,
+  dely  = 12355.43554688,
+  iref  = 1621,
+  jref  = 1221,
+  kko   = 1,
+  m     = 3241,
+  n     = 2441,
+  nnest = 1,
+  nproj = 1,
+  phnt1 = 0.,
+  phnt2 = 0.,
+  rlat  = 0.,
+  rlon  = 180.,
+ &end
+eof2
+
+# using cluster (1,2,6) 1.5 instead of 1 as in hera's run, and set cluster(7) to default (biology)
+# mask_opt set to 2D instead of 0D
+# rscl(7) changed to rscl(6)
+# vscl(7) changed to rscl(6)
+cat << eof3 > oanl
+ &oanl
+  bio_asm     = .false.,
+  cluster(1)  = 1.5,
+  cluster(2)  = 1.5,
+  cluster(6)  = 1.5,
+  debug(4)    = .true.,
+  deny        = 59, 60, 206, 153, 154, 155, 181, 182, 204, 115, 116, 117,
+  global      = .true.,
+  hc_mdl(1)   = 'homo',
+  hc_mdl(2)   = 'rsby',
+  ice_asm     = .true.,
+  mask_opt    = '2D',
+  n_it        = 30,
+  nsr_inf     = 1.,
+  qc_err(10)  = 4.,
+  rscl(1)     = 0.6,
+  rscl(2)     = 1.2,
+  rscl(6)     = 1.2,
+  rscl_cap    = 180.,
+  sss_asm     = .true.,
+  sss_hrs     = 120,
+  sss_time    = 'cycl',
+  sst_asm     = .true.,
+  upd_cyc     = 24,
+  vscl(1)     = 16.,
+  vscl(2)     = 4.,
+  vscl(6)     = 4.,
+  z_lvl       = 0., 99*0.,
+ &end
+eof3
+
+cat << eof4 > omapnl
+ &omapnl
+  do_data_raw = .true.,
+  do_data = .true.
+  do_sss  = .true.,
+  do_sss_inc = .true.,
+  do_sst  = .true.,
+  do_sst_inc = .true.,
+  do_ice  = .true.,
+  do_ice_inc = .true.,
+  sss_cnt = 1.,
+  sss_min = 28.,
+  sss_del = 0.2,
+  sst_cnt = 1.,
+  sst_min = 0.,
+  sst_del = .5,
+ &end
+eof4
+
+# 3 run global var
+
+ddtg=${PDYm1}00
+log_dir=$DATA/logs
+mkdir -p $log_dir
+
+#   execute ncoda variational programs
+echo timecheck RTOFS_GLO_GLBL start setup at `date`
+$EXECncoda/ncoda_setup 2D ncoda ogridnl $ddtg > pout1
+mpirun -n 24 $EXECncoda/ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+mpirun -n 72 $EXECncoda/ncoda 2D ncoda ogridnl $ddtg > pout3
+mpirun -n 72 $EXECncoda/ncoda_post 2D ncoda ogridnl $ddtg > pout4
+echo timecheck RTOFS_GLO_GLBL finish post at `date`
+
+#   rename local files
+mv fort.40 $log_dir/glbl_var.$ddtg.sus
+mv fort.67 $log_dir/glbl_var.$ddtg.obs
+mv fort.68 $log_dir/glbl_var.$ddtg.grd
+
+#   create graphics
+#export OCEAN_OUTPUT_DIR=$glbl_dir/restart
+#$EXECncoda/ncoda_map $ddtg > pout5
+#mv gmeta $log_dir/glbl_var.$ddtg.gmeta
+#
+#   combine work files
+cat pout* > $log_dir/glbl_var.$ddtg.out
+cat $log_dir/glbl_var.$ddtg.out >> $pgmout
+
+# 4. Copy last 15 days of data back to COMOUT/ncoda
+echo timecheck RTOFS_GLO_GLBL start put at `date`
+
+mkdir -p $COMOUT/ncoda/glbl_var/restart
+rm -f cmdfile.cpout
+for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+  backymdh=$( $EXECncoda/dtg -d -$d ${PDY}00 )
+  backymd=${backymdh:0:8}
+  if compgen -G "$DATA/restart/*${backymd}*" > /dev/null
+  then
+     for gv in `ls $DATA/restart/*${backymd}*`; do
+         echo "cp -p -f $gv $COMOUT/ncoda/glbl_var/restart" >> cmdfile.cpout
+     done
+#     echo "cp -p -f $DATA/restart/*${backymd}* $COMOUT/ncoda/glbl_var/restart" >> cmdfile.cpout
+  fi
+done
+
+chmod +x cmdfile.cpout
+echo mpirun cfp ./cmdfile.cpout > cpout.out
+mpirun cfp ./cmdfile.cpout >> cpout.out
+err=$? ; export err ; err_chk
+date
+
+mkdir -p $COMOUT/ncoda/logs/glbl_var
+cp -p -f $DATA/logs/*.$ddtg.* $COMOUT/ncoda/logs/glbl_var
+echo timecheck RTOFS_GLO_GLBL finish put at `date`
+
+#################################################
+msg="THE RTOFS_GLO_NCODA_GLBL_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################
+

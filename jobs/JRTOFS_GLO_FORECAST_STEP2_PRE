@@ -81,7 +81,7 @@ mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT
 
 ###################
-# Define model gird
+# Define model grid
 ###################
 export inputgrid=navy_0.08
 export useslp=NO # YES or NO, use sea level pressure

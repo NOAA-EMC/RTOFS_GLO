@@ -1,9 +1,9 @@
-0.5a NAVGEM wind, thermal, precip 3-hrly forcing ; LWcorr; GDEM42 SSS relax;
+0.281c NAVGEM wind, thermal, precip 3-hrly forcing ; LWcorr; GDEM42 SSS relax;
 17T Sigma2*; GDEM4 Jan init; KPP; SeaWiFS KPAR; HYCOM+CICE; A=20;Smag=.05;
 Z(7):1-7,Z(16):8,Z(2):10-16,Z(13):dp00/f/x=36/1.18/262;Z(3):400-600m; NOGAPSsnow
-sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.86C2p0i-sm-sse-900d
+sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
   22	  'iversn' = hycom version number x10
- 924	  'iexpt ' = experiment number x10
+ 928	  'iexpt ' = experiment number x10
 4500	  'idm   ' = longitudinal array size
 3298	  'jdm   ' = latitudinal  array size
  555	  'itest ' = grid point where detailed diagnostics are desired
@@ -116,22 +116,22 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.86C2p0i-sm-sse-900d
   37.30   'sigma ' = layer 31 isopycnal target density (sigma units)
   37.42   'sigma ' = layer 32 isopycnal target density (sigma units)
    2	  'iniflg' = initial state flag (0=levl, 1=zonl, 2=clim)
-  -1      'jerlv0' = initial jerlov water type (1 to 5; 0 for KPAR, -1 for CHL) 
+  -1	  'jerlv0' = initial jerlov water type (1 to 5; 0 for KPAR, -1 for CHL)
    3	  'yrflag' = days in year flag (0=360,  1=366,  2=366J1, 3=actual)
    1	  'sshflg' = diagnostic SSH flag (0=SSH,1=SSH&stericSSH)
 .04166667 'dsurfq' = number of days between model diagnostics at the surface
-  -0.250  'diagfq' = number of days between model diagnostics
+  -0.125  'diagfq' = number of days between model diagnostics
    0.0    'proffq' = number of days between model diagnostics at selected locs
    0.0    'tilefq' = number of days between model diagnostics on selected tiles
-   0.0    'meanfq' = number of days between model diagnostics (time averaged)
-   1.0    'rstrfq' = number of days between model restart output
+   0.0	  'meanfq' = number of days between model diagnostics (time averaged)
+ 0.1250   'rstrfq' = number of days between model restart output
    0.0	  'bnstfq' = number of days between baro nesting archive input
    0.0	  'nestfq' = number of days between 3-d  nesting archive input
 .04166667 'cplifq' = number of days (or time steps) between sea ice coupling
-  80.0	  'baclin' = baroclinic time step (seconds), int. divisor of 86400
-6.6666667 'batrop' = barotropic time step (seconds), int. div. of baclin/2
-   0      'incflg' = incremental update flag (0=no, 1=yes, 2=full-velocity)
- 120      'incstp' = no. timesteps for full update (1=direct insertion)
+ 120.0	  'baclin' = baroclinic time step (seconds), int. divisor of 86400
+ 6.6666667  'batrop' = barotropic time step (seconds), int. div. of baclin/2
+   0      'incflg' = incremental update flag (-ve for inc) (0=no, 1=yes, 2=full-velocity)
+  90      'incstp' = no. timesteps for full update (1=direct insertion)
    1      'incupf' = number of days of incremental updating input
    0.125  'ra2fac' = weight for Robert-Asselin time filter
    0.125  'wbaro ' = weight for time smoothing of barotropic fields
@@ -174,6 +174,7 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.86C2p0i-sm-sse-900d
    0.0    'ticegr' = ENLN: temp. grad. inside ice (deg/m); =0 use surtmp
    0.5    'hicemn' = ENLN: minimum ice thickness (m)
   99.0    'hicemx' = ENLN: maximum ice thickness (m)
+   0      'ishelf' = ice shelf flag    (0=none,1=ice shelf over ocean)
    0	  'ntracr' = number of tracers (0=none,negative to initialize)
    0	  'trcflg' = tracer flags      (one digit per tr, most sig. replicated)
  180      'tsofrq' = number of time steps between anti-drift offset calcs
@@ -198,7 +199,6 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.86C2p0i-sm-sse-900d
    1	  'shinst' = KPP:     activate shear instability mixing (0=F,1=T)
    1	  'dbdiff' = KPP:     activate double diffusion  mixing (0=F,1=T)
    1	  'nonloc' = KPP:     activate nonlocal b. layer mixing (0=F,1=T)
-   0      'langmr' = KPP:     activate Langmuir turb. factor    (0=F,1=T)
    0	  'botdiw' = K-PROF:  activate bot.enhan.int.wav mixing (0=F,1=T)
    0	  'difout' = K-PROF:  output visc/diff coffs in archive (0=F,1=T)
   14	  'difsmo' = K-PROF:  number of layers with horiz smooth diff coeffs
@@ -214,6 +214,7 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.86C2p0i-sm-sse-900d
    5.0	  'c11   ' = KPP:     value for turb velocity scale
    2	  'hblflg' = KPP:     b. layer interp. flag (0=const.,1=linear,2=quad.)
    2	  'niter ' = KPP:     iterations for semi-implicit soln. (2 recomended)
+   0      'langmr' = KPP:     Langmuir flag (0=no;1=Sul;2=Smy;3=Har;4=Tak)
    0      'fltflg' = FLOATS: synthetic float flag (0=no; 1=yes)
    4      'nfladv' = FLOATS: advect every nfladv bacl. time steps (even, >=4)
    1      'nflsam' = FLOATS: output (0=every nfladv steps; >0=no. of days)
@@ -236,17 +237,19 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.86C2p0i-sm-sse-900d
   12	  'clmflg' = climatology frequency flag   (6=bimonthly, 12=monthly)
    4	  'wndflg' = wind stress input flag (0=none,1=u/v-grid,2,3=p-grid,4=10m)
    4      'ustflg' = ustar   forcing   flag        (3=input,1,2=wndspd,4=stress)
-   4	  'flxflg' = thermal forcing   flag (0=none,3=net-flux,1,2,4=sst-based)
-   4      'empflg' = E-P     forcing   flag (0=none,3=net_E-P, 1,2,4=sst-bas_E)
+   4      'flxflg' = thermal forcing   flag (0=none,3=net_flx,1-2,4-6=sst-based)
+   4      'empflg' = E-P     forcing   flag (0=none,3=net_E-P,1-2,4-6=sst-bas_E)
    0      'dswflg' = diurnal shortwave flag (0=none,1=daily to diurnal corr.)
-   0      'albflg' = ocean albedo    flag (0=none,1=.06,2=L&Y)
+   0      'albflg' = ocean albedo      flag (0=none,1=const,2=L&Y)
   -1	  'sssflg' = SSS relaxation flag (0=none,1=clim,-1=clim&rmx)
-   2	  'lwflag' = longwave (SST) flag (0=none,1=clim,2=atmos)
+   2	  'lwflag' = longwave (SST) flag (0=none,1=clim,2=nwp,-1=lwdn)
    2	  'sstflg' = SST relaxation flag (0=none,1=clim,2=atmos,3=observed)
    3	  'icmflg' = ice mask       flag (0=none,1=clim,2=atmos,3=obs/coupled)
-   0      'stroff' = net stress offset flag (0=F,1=T)
-   1      'flxoff' = net flux offset flag   (0=F,1=T)
-   0	  'flxsmo' = smooth surface fluxes  (0=F,1=T)
+1.e5      'prsbas' = msl pressure is input field + prsbas (Pa)
+   0      'mslprf' = msl pressure forcing flag            (0=F,1=T)
+   0      'stroff' = net strs offset flag                 (0=F,1=T)
+   1      'flxoff' = net flux offset flag                 (0=F,1=T)
+   0	  'flxsmo' = smooth surface fluxes                (0=F,1=T)
    0	  'relax ' = activate lateral boundary nudging    (0=F,1=T)
    0	  'trcrlx' = activate lat. bound. tracer nudging  (0=F,1=T)
    1	  'priver' = rivers as a precipitation bogas      (0=F,1=T)

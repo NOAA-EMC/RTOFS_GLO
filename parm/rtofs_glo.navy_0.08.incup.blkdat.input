@@ -120,7 +120,7 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
    3	  'yrflag' = days in year flag (0=360,  1=366,  2=366J1, 3=actual)
    1	  'sshflg' = diagnostic SSH flag (0=SSH,1=SSH&stericSSH)
 .04166667 'dsurfq' = number of days between model diagnostics at the surface
-  -0.250  'diagfq' = number of days between model diagnostics
+  -0.125  'diagfq' = number of days between model diagnostics
    0.0    'proffq' = number of days between model diagnostics at selected locs
    0.0    'tilefq' = number of days between model diagnostics on selected tiles
    0.0	  'meanfq' = number of days between model diagnostics (time averaged)
@@ -130,7 +130,7 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
 .04166667 'cplifq' = number of days (or time steps) between sea ice coupling
  120.0	  'baclin' = baroclinic time step (seconds), int. divisor of 86400
  6.6666667  'batrop' = barotropic time step (seconds), int. div. of baclin/2
-   0      'incflg' = incremental update flag (-ve for inc) (0=no, 1=yes, 2=full-velocity)
+  -2      'incflg' = incremental update flag (-ve for inc) (0=no, 1=yes, 2=full-velocity)
   90      'incstp' = no. timesteps for full update (1=direct insertion)
    1      'incupf' = number of days of incremental updating input
    0.125  'ra2fac' = weight for Robert-Asselin time filter

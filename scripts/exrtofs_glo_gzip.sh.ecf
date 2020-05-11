@@ -43,7 +43,7 @@ filepre=${RUN}_${modID}.t00z
 case $CYC in 
     00)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo ${COMIN}/${filepre}.n00.restart.a;  echo ${COMIN}/${filepre}.n00.restart_cice;  echo ${COMIN}/${filepre}.n-{06..48..6}.archv.a;  echo ${COMIN}/${filepre}.n00.archv.a;  echo ${COMIN}/${filepre}.n00.archs.a;  echo ${COMIN}/${filepre}.n-{01..48}.archs.a`
+	for file in `echo ${COMIN}/${filepre}.n00.restart.a;  echo ${COMIN}/${filepre}.n00.restart_cice;  echo ${COMIN}/${filepre}.n-{03..24..3}.archv.a;  echo ${COMIN}/${filepre}.n00.archv.a;  echo ${COMIN}/${filepre}.n00.arche.a;  echo ${COMIN}/${filepre}.n-{01..24}.arche.a;  echo ${COMIN}/${filepre}.n00.archs.a;  echo ${COMIN}/${filepre}.n-{01..24}.archs.a`
 	do
 	    if [ -s $file ]; then
 		filename=`basename $file`
@@ -57,7 +57,7 @@ case $CYC in
 	mpirun cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
-	for tgzfile in `echo ${COMOUT}/${filepre}.n00.archs.a.tgz;  echo ${COMOUT}/${filepre}.n-{01..48}.archs.a.tgz;  echo ${COMOUT}/${filepre}.n00.archv.a.tgz;  echo ${COMOUT}/${filepre}.n-{06..48..6}.archv.a.tgz;  echo ${COMOUT}/${filepre}.n00.restart_cice.tgz;  echo ${COMOUT}/${filepre}.n00.restart.a.tgz`  
+	for tgzfile in `echo ${COMOUT}/${filepre}.n00.archs.a.tgz;  echo ${COMOUT}/${filepre}.n-{01..24}.archs.a.tgz;  echo ${COMOUT}/${filepre}.n00.archv.a.tgz;  echo ${COMOUT}/${filepre}.n-{06..24..6}.archv.a.tgz;  echo ${COMOUT}/${filepre}.n00.restart_cice.tgz;  echo ${COMOUT}/${filepre}.n00.restart.a.tgz`  
 	do
 	    if [ -s $tgzfile ]; then
 		if [ $SENDDBN = YES ] ; then

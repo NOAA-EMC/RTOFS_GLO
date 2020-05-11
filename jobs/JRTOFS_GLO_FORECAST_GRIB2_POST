@@ -68,7 +68,7 @@ setpdy.sh
 . ./PDY
 
 ###################
-# Define model gird
+# Define model grid
 ###################
 export inputgrid=navy_0.08
 
