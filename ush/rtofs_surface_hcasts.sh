@@ -8,7 +8,7 @@
 # for days 1-3 for the U.S. Coast Guard and post to ftp.
 #
 # Input Files:
-#          /com/rtofs/prod/rtofs.${yyyymmdd}/rtofs_glo_2ds_${fcast}_3hrly_prog.nc for
+#          /com/rtofs/prod/rtofs.${yyyymmdd}/rtofs_glo_2ds_${fcast}_1hrly_prog.nc4 for
 #          fcast = 00 through 72 hours at 3 hour time-step
 #
 # B.Daniels/OPC         05/10/13 modified file to work on WCOSS
@@ -21,27 +21,27 @@ cd ${DATA_opc}
 
 yyyymmdd=${PDY}
 
-/bin/rm -rf *nc
+/bin/rm -rf *.nc4 *.nc
 
-for fcast in n024 n027 n030 n033 n036 n039 n042 n045 n048; do
-ln -sf  ${COMOUT}/rtofs_glo_2ds_${fcast}_3hrly_prog.nc ${DATA_opc}/.
-${cdo_r} splitname rtofs_glo_2ds_${fcast}_3hrly_prog.nc rtofs_glo_2ds_${fcast}_3hrly_
+for fcast in n000 n003 n006 n009 n012 n015 n018 n021 n024; do
+ln -sf  ${COMOUT}/rtofs_glo_2ds_${fcast}_1hrly_prog.nc ${DATA_opc}/.
+${cdo_r} splitname rtofs_glo_2ds_${fcast}_1hrly_prog.nc rtofs_glo_2ds_${fcast}_1hrly_
 done
 
 
-${cdo_r} mergetime rtofs_glo_2ds_n024_3hrly_sst.nc rtofs_glo_2ds_n027_3hrly_sst.nc rtofs_glo_2ds_n030_3hrly_sst.nc rtofs_glo_2ds_n033_3hrly_sst.nc rtofs_glo_2ds_n036_3hrly_sst.nc rtofs_glo_2ds_n039_3hrly_sst.nc rtofs_glo_2ds_n042_3hrly_sst.nc rtofs_glo_2ds_n045_3hrly_sst.nc rtofs_glo_2ds_n048_3hrly_sst.nc rtofs_glo_2ds_3hrly_sst_${yyyymmdd}_hcasts.nc 
+${cdo_r} mergetime rtofs_glo_2ds_n000_1hrly_sst.nc4 rtofs_glo_2ds_n003_1hrly_sst.nc4 rtofs_glo_2ds_n006_1hrly_sst.nc4 rtofs_glo_2ds_n009_1hrly_sst.nc4 rtofs_glo_2ds_n012_1hrly_sst.nc4 rtofs_glo_2ds_n015_1hrly_sst.nc4 rtofs_glo_2ds_n018_1hrly_sst.nc4 rtofs_glo_2ds_n021_1hrly_sst.nc4 rtofs_glo_2ds_n024_1hrly_sst.nc4 rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_hcasts.nc
 
-mv rtofs_glo_2ds_3hrly_sst_${yyyymmdd}_hcasts.nc grtofs_sst_${yyyymmdd}_hcasts.nc
+mv rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_hcasts.nc grtofs_sst_${yyyymmdd}_hcasts.nc
 gzip grtofs_sst_${yyyymmdd}_hcasts.nc
 
 
-${cdo_r} mergetime rtofs_glo_2ds_n024_3hrly_u_velocity.nc rtofs_glo_2ds_n027_3hrly_u_velocity.nc rtofs_glo_2ds_n030_3hrly_u_velocity.nc rtofs_glo_2ds_n033_3hrly_u_velocity.nc rtofs_glo_2ds_n036_3hrly_u_velocity.nc rtofs_glo_2ds_n039_3hrly_u_velocity.nc rtofs_glo_2ds_n042_3hrly_u_velocity.nc rtofs_glo_2ds_n045_3hrly_u_velocity.nc rtofs_glo_2ds_n048_3hrly_u_velocity.nc rtofs_glo_2ds_3hrly_u_velocity_${yyyymmdd}_hcasts.nc
+${cdo_r} mergetime rtofs_glo_2ds_n000_1hrly_u_velocity.nc4 rtofs_glo_2ds_n003_1hrly_u_velocity.nc4 rtofs_glo_2ds_n006_1hrly_u_velocity.nc4 rtofs_glo_2ds_n009_1hrly_u_velocity.nc4 rtofs_glo_2ds_n012_1hrly_u_velocity.nc4 rtofs_glo_2ds_n015_1hrly_u_velocity.nc4 rtofs_glo_2ds_n018_1hrly_u_velocity.nc4 rtofs_glo_2ds_n021_1hrly_u_velocity.nc4 rtofs_glo_2ds_n024_1hrly_u_velocity.nc4 rtofs_glo_2ds_1hrly_u_velocity_${yyyymmdd}_hcasts.nc
 
-${cdo_r} mergetime rtofs_glo_2ds_n024_3hrly_v_velocity.nc rtofs_glo_2ds_n027_3hrly_v_velocity.nc rtofs_glo_2ds_n030_3hrly_v_velocity.nc rtofs_glo_2ds_n033_3hrly_v_velocity.nc rtofs_glo_2ds_n036_3hrly_v_velocity.nc rtofs_glo_2ds_n039_3hrly_v_velocity.nc rtofs_glo_2ds_n042_3hrly_v_velocity.nc rtofs_glo_2ds_n045_3hrly_v_velocity.nc rtofs_glo_2ds_n048_3hrly_v_velocity.nc rtofs_glo_2ds_3hrly_v_velocity_${yyyymmdd}_hcasts.nc
+${cdo_r} mergetime rtofs_glo_2ds_n000_1hrly_v_velocity.nc4 rtofs_glo_2ds_n003_1hrly_v_velocity.nc4 rtofs_glo_2ds_n006_1hrly_v_velocity.nc4 rtofs_glo_2ds_n009_1hrly_v_velocity.nc4 rtofs_glo_2ds_n012_1hrly_v_velocity.nc4 rtofs_glo_2ds_n015_1hrly_v_velocity.nc4 rtofs_glo_2ds_n018_1hrly_v_velocity.nc4 rtofs_glo_2ds_n021_1hrly_v_velocity.nc4 rtofs_glo_2ds_n024_1hrly_v_velocity.nc4 rtofs_glo_2ds_1hrly_v_velocity_${yyyymmdd}_hcasts.nc
 
-${cdo_r} merge rtofs_glo_2ds_3hrly_u_velocity_${yyyymmdd}_hcasts.nc rtofs_glo_2ds_3hrly_v_velocity_${yyyymmdd}_hcasts.nc rtofs_glo_2ds_3hrly_uv_${yyyymmdd}_hcasts.nc
+${cdo_r} merge rtofs_glo_2ds_1hrly_u_velocity_${yyyymmdd}_hcasts.nc rtofs_glo_2ds_1hrly_v_velocity_${yyyymmdd}_hcasts.nc rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_hcasts.nc
 
-mv rtofs_glo_2ds_3hrly_uv_${yyyymmdd}_hcasts.nc grtofs_uv_${yyyymmdd}_hcasts.nc
+mv rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_hcasts.nc grtofs_uv_${yyyymmdd}_hcasts.nc
 
 gzip grtofs_uv_${yyyymmdd}_hcasts.nc
 

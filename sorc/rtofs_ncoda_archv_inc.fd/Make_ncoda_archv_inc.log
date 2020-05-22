@@ -1,0 +1,19 @@
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c ncoda_archv_inc.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c bigrid.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c blkin.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c extrct.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c fordate.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c getdat.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c getdepth.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c putdat.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c indxi.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c indxj.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c psmoo.f
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c zebra.f
+ifort -DIA32 -DREAL4 -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c zh.F
+ifort             -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -c dum_gks.f
+ifort -V -traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212 -o ncoda_archv_inc  ncoda_archv_inc.o  mod_plot.o mod_xc.o mod_za.o               wtime.o bigrid.o blkin.o extrct.o          fordate.o getdat.o          getdepth.o putdat.o indxi.o  indxj.o             psmoo.o zebra.o   zh.o    dum_gks.o 
+Intel(R) Fortran Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 18.0.1.163 Build 20171018
+Copyright (C) 1985-2017 Intel Corporation.  All rights reserved.
+
+GNU ld version 2.27-41.base.el7

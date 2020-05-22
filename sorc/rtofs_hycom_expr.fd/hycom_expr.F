@@ -9,10 +9,11 @@ C                   For fin2.a=="SQSQ":      (s1*a1 + s2)**4
 C                   For fin2.a=="SQRT":  sqrt(s1*a1 + s2)
 C                   For fin2.a=="ABS":    abs(s1*a1 + s2)
 C                   For fin2.a=="LOG":  log10(s1*a1 + s2)
-C                   For fin2.a=="INV":  s2/(s1*a1)
-C                   For fin2.a=="ONE":  s1*a1 + s2
-C                   For s1==s2==0.0:       a1 * a2
-C                   Otherwise:          s1*a1 + s2*a2
+C                   For fin2.a=="INT":   nint(s1*a1 + s2)
+C                   For fin2.a=="ONE":        s1*a1 + s2
+C                   For fin2.a=="INV":    s2/(s1*a1)
+C                   For s1==s2==0.0:             a1 * a2
+C                   Otherwise:                s1*a1 + s2*a2
 C
 C  Note that s2*a2/s1*a1 requires two invokations and a temporary file:
 C    hycom_expr fin1.a "INV"  idm jdm s1  s2  finv.a
@@ -117,6 +118,7 @@ C
 C
       LMULT = S1.EQ.0.0 .AND. S2.EQ.0.0 .AND.
      +        CFILE2.NE."ONE"  .AND.
+     +        CFILE2.NE."INT"  .AND.
      +        CFILE2.NE."SQ"   .AND.
      +        CFILE2.NE."SQSQ" .AND.
      +        CFILE2.NE."SQRT" .AND.
@@ -190,6 +192,7 @@ C
         CALL EXIT(3)
       ENDIF
       IF     (CFILE2.NE."ONE"  .AND.
+     +        CFILE2.NE."INT"  .AND.
      +        CFILE2.NE."SQ"   .AND.
      +        CFILE2.NE."SQSQ" .AND.
      +        CFILE2.NE."SQRT" .AND.
@@ -216,7 +219,7 @@ C
         CALL EXIT(3)
       ENDIF
 C
-      DO 110 K= 1,999999
+      numrecloop: DO K= 1,999999
         READ(11,REC=K,IOSTAT=IOS) A
 #ifdef ENDIAN_IO
         CALL ENDIAN_SWAP(A,IDM*JDM)
@@ -226,10 +229,11 @@ C
             WRITE(6,*) 'can''t read ',CFILE1(1:LEN_TRIM(CFILE1))
             CALL EXIT(4)
           ELSE
-            GOTO 1110
+            exit numrecloop
           ENDIF
         ENDIF
         IF     (CFILE2.NE."ONE"  .AND.
+     +          CFILE2.NE."INT"  .AND.
      +          CFILE2.NE."SQ"   .AND.
      +          CFILE2.NE."SQSQ" .AND.
      +          CFILE2.NE."SQRT" .AND.
@@ -246,7 +250,7 @@ C
                 WRITE(6,*) 'can''t read ',CFILE2(1:LEN_TRIM(CFILE2))
                 CALL EXIT(4)
               ELSE
-                GOTO 1110
+                exit numrecloop
               ENDIF
             ENDIF
           ENDIF
@@ -271,6 +275,32 @@ C
               IF     (A(I,J).NE.SPVAL .AND.
      &                B(I,J).NE.SPVAL      ) THEN
                 A(I,J) = A(I,J) * B(I,J)
+                AMN = MIN( AMN, A(I,J) )
+                AMX = MAX( AMX, A(I,J) )
+              ELSE
+                A(I,J) = SPVAL
+              ENDIF
+#endif
+            ENDDO
+          ENDDO
+        ELSEIF (CFILE2.EQ."INT") THEN !nint(s1*a1 + s2)
+          AMN =  SPVAL
+          AMX = -SPVAL
+          DO J= 1,JDM
+            DO I= 1,IDM
+#ifdef sun
+              IF     (IR_ISNAN(A(I,J)).NE.1) THEN
+                IF     (A(I,J).NE.SPVAL) THEN
+                  A(I,J) = NINT( S1*A(I,J) + S2 )
+                  AMN = MIN( AMN, A(I,J) )
+                  AMX = MAX( AMX, A(I,J) )
+                ELSE
+                  A(I,J) = SPVAL
+                ENDIF
+              ENDIF
+#else
+              IF     (A(I,J).NE.SPVAL) THEN
+                A(I,J) = NINT( S1*A(I,J) + S2 )
                 AMN = MIN( AMN, A(I,J) )
                 AMX = MAX( AMX, A(I,J) )
               ELSE
@@ -456,8 +486,7 @@ C
         ENDIF
         WRITE(6,'(a,1p2g16.8)')
      &     'min, max = ',AMN,AMX
-  110 CONTINUE
- 1110 CONTINUE
+      enddo numrecloop
       WRITE(6,*) 
       WRITE(6,*) K-1,' FIELDS PROCESSED'
       WRITE(6,*) 

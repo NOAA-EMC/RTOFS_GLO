@@ -8,7 +8,7 @@
 #                                                                             #
 # Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2013-08-20     #
 #                                                                             #
-# Abstract: This script creates the hourly grib2 files from global nc files   #
+# Abstract: This script creates the hourly grib2 files from global nc4 files   #
 #           for 11 sub regions (except after 72 hours the forecast files are  #
 #           3 hourlies) . The regions are:                                    #
 #           alaska arctic bering guam gulf_alaska honolulu hudson_baffin      #
@@ -120,47 +120,47 @@ do
     $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_1hrly_prog.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_
   fi
 
-  # Some housekeeping
+# Some housekeeping
   touch ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
-  touch sst_std.nc sss_std.asc u_velocity_std.nc v_velocity_std.nc ssh_std.nc ubaro_std.asc vbaro_std.asc
-  test -f sst_std.nc && rm sst_std.nc
+  touch sst_std.nc4 sss_std.asc u_velocity_std.nc4 v_velocity_std.nc4 ssh_std.nc4 ubaro_std.asc vbaro_std.asc
+  test -f sst_std.nc4 && rm sst_std.nc4
   test -f sss_std.asc && rm sss_std.asc
-  test -f u_velocity_std.nc && rm u_velocity_std.nc
-  test -f v_velocity_std.nc && rm v_velocity_std.nc
-  test -f ssh_std.nc && rm ssh_std.nc
+  test -f u_velocity_std.nc4 && rm u_velocity_std.nc4
+  test -f v_velocity_std.nc4 && rm v_velocity_std.nc4
+  test -f ssh_std.nc4 && rm ssh_std.nc4
   test -f ubaro_std.asc && rm ubaro_std.asc
   test -f vbaro_std.asc && rm vbaro_std.asc
 
   # Interpolate the global grid netCDF to latlon grid asc file
 
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc sst_std_${region}.nc
-  $cdo_r outputf,%8.4f,1 sst_std_${region}.nc > sst_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc4 sst_std_${region}.nc4
+  $cdo_r outputf,%8.4f,1 sst_std_${region}.nc4 > sst_std_${region}.asc
+  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc4
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc sss_std_${region}.nc
-  $cdo_r outputf,%8.4f,1 sss_std_${region}.nc > sss_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc4 sss_std_${region}.nc4
+  $cdo_r outputf,%8.4f,1 sss_std_${region}.nc4 > sss_std_${region}.asc
+  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc4
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc u_velocity_std_${region}.nc
-  $cdo_r outputf,%8.4f,1 u_velocity_std_${region}.nc > u_velocity_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc4 u_velocity_std_${region}.nc4
+  $cdo_r outputf,%8.4f,1 u_velocity_std_${region}.nc4 > u_velocity_std_${region}.asc
+  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc4
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc v_velocity_std_${region}.nc
-  $cdo_r outputf,%8.4f,1 v_velocity_std_${region}.nc > v_velocity_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc4 v_velocity_std_${region}.nc4
+  $cdo_r outputf,%8.4f,1 v_velocity_std_${region}.nc4 > v_velocity_std_${region}.asc
+  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc4
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc ssh_std_${region}.nc
-  $cdo_r outputf,%8.4f,1 ssh_std_${region}.nc > ssh_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc4 ssh_std_${region}.nc4
+  $cdo_r outputf,%8.4f,1 ssh_std_${region}.nc4 > ssh_std_${region}.asc
+  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc4
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic_velocity.nc ubaro_std_${region}.nc
-  $cdo_r outputf,%8.4f,1 ubaro_std_${region}.nc > ubaro_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic_velocity.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic_velocity.nc4 ubaro_std_${region}.nc4
+  $cdo_r outputf,%8.4f,1 ubaro_std_${region}.nc4 > ubaro_std_${region}.asc
+  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic_velocity.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic_velocity.nc4
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic_velocity.nc vbaro_std_${region}.nc
-  $cdo_r outputf,%8.4f,1 vbaro_std_${region}.nc > vbaro_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic_velocity.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic_velocity.nc4 vbaro_std_${region}.nc4
+  $cdo_r outputf,%8.4f,1 vbaro_std_${region}.nc4 > vbaro_std_${region}.asc
+  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic_velocity.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic_velocity.nc4
 
   #************
   # Pack the variables in GRIB 
@@ -206,18 +206,18 @@ done
 
 # More cleaning up and housekeeping 
 
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_layer_density.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_layer_density.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_coverage.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_coverage.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_thickness.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_thickness.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_mixed_layer_thickness.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_mixed_layer_thickness.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_surface_boundary_layer_thickness.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_surface_boundary_layer_thickness.nc
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_layer_density.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_layer_density.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_coverage.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_coverage.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_thickness.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_thickness.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_mixed_layer_thickness.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_mixed_layer_thickness.nc4
+test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_surface_boundary_layer_thickness.nc4 && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_surface_boundary_layer_thickness.nc4
 
 #done
 

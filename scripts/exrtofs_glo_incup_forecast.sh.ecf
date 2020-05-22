@@ -103,7 +103,6 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf2.b           veldf2.b
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf4.a           veldf4.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf4.b           veldf4.b
 
-#HERE
 mkdir incup
 ln -sf $COMIN/rtofs_glo.incupd.$archday2.a incup/incupd.$archday2.a
 ln -sf $COMIN/rtofs_glo.incupd.$archday2.b incup/incupd.$archday2.b

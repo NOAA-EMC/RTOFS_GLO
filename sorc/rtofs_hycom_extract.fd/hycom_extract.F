@@ -184,7 +184,7 @@ C
       ELSE
         NUMR = NUMREC
       ENDIF
-      DO 110 NR= 1,NUMR
+      numrecloop: DO NR= 1,NUMR
         DO K= 1,KDM
           IF     (ITLREC.EQ.-1) THEN
             READ(99,*,IOSTAT=IOS) IR
@@ -193,7 +193,7 @@ C
                 WRITE(6,*) 'can''t read ',TRIM(CFILER)
                 CALL EXIT(4)
               ELSE
-                GOTO 1110  !end of record input
+                exit numrecloop
               ENDIF
             ENDIF
           ELSE
@@ -209,7 +209,7 @@ C
               CALL EXIT(4)
             ELSEIF (NUMREC.EQ.0) THEN
               IF     (K.EQ.1) THEN
-                GOTO 1110
+                exit numrecloop
               ELSE
                 WRITE(6,*) TRIM(CFILE1),
      +                     ' not a multiple of ',KDM,' records long'
@@ -241,8 +241,7 @@ C
           ENDIF
           WRITE(6,'(i5,3x,a,1p2g16.8)') IR,'min, max = ',AMN,AMX
         ENDDO
-  110 CONTINUE
- 1110 CONTINUE
+      enddo numrecloop
       CLOSE(UNIT=11)
       CLOSE(UNIT=21)
       WRITE(6,*)

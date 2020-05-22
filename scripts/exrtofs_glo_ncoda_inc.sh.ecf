@@ -44,11 +44,12 @@ echo dtg12 $dtg $dtgm1 $dtgm2
 echo hday $hday $hday2 jday $jday $jday2
 echo archday $archday $archday2
 
-SIZN="4500x3298"
-i1stn=1
-j1stn=1
-idmn=4500
-jdmn=3298
+mode=incup
+BLKDATA_FILE=${PARMrtofs}/${RUN}_${modID}.${inputgrid}.${mode}.blkdat.input
+IDM=`cat ${BLKDATA_FILE} | grep idm | cut -d' ' -f1 | tr -d '[:space:]'`
+JDM=`cat ${BLKDATA_FILE} | grep jdm | cut -d' ' -f1 | tr -d '[:space:]'`
+JDMA=`expr ${JDM} \- 1`
+SIZN="${IDM}x${JDM}"
 
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a  regional.grid.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b  regional.grid.b
@@ -80,14 +81,14 @@ ln -sf  $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ./lypr_${dtg
 ln -sf  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ./icecov_${dtg}_analfld
 
 rm -f ssmi1.a ssmi2.a ssmi.$dtg.r
-$EXECrtofs/raw2hycom icecov_${dtg}_analfld 4500 3298 999.00 ssmi1.a > ssmi1.b
-$EXECrtofs/hycom_expr ssmi1.a "ONE" 4500 3298  0.01 0 ssmi2.a > ssmi2.b
-$EXECrtofs/hycom2raw8 ssmi2.a 4500 3298 1 1 4500 3297 ssmi.$dtg.r
-rm -f ssmi1.? ssmi2.?
+$EXECrtofs/rtofs_raw2hycom icecov_${dtg}_analfld $IDM $JDM 999.00 ssmi1.a > ssmi1.b
+$EXECrtofs/rtofs_hycom_expr ssmi1.a "ONE" $IDM $JDM  0.01 0 ssmi2.a > ssmi2.b
+$EXECrtofs/rtofs_hycom2raw8 ssmi2.a $IDM $JDM 1 1 $IDM $JDMA ssmi.$dtg.r
 
 ar=archv_1_inc.${archday}
 rm -f $ar.[a,b]
-$EXECrtofs/ncoda_archv_inc <<E-o-D
+
+cat << E-o-D > ncoda_archv.input
 archv.${archday}.a
 $ar.a
    0      'intflg' = vertical interpolation flag (0=T&S, 1=th&S)
@@ -95,8 +96,8 @@ $ar.a
    1      'nddflg' = ncoda density displcment flag (0=no,1=flnm_p,2=flnm_p+T&S)
  000	  'iexpt ' = experiment number x10 (000=from archive file)
    3	  'yrflag' = days in year flag (0=360,  1=366,  2=366J1, 3=actual)
-$idmn     'idm   ' = longitudinal array size
-$jdmn     'jdm   ' = latitudinal  array size
+$IDM     'idm   ' = longitudinal array size
+$JDM     'jdm   ' = latitudinal  array size
 2224     'itest ' = longitudinal test point (optional, default 0)
 1449     'jtest ' = latitudinal  test point (optional, default 0)
   41	  'kdm   ' = number of layers
@@ -215,11 +216,12 @@ NONE
 NONE
 1  'i1stn ' = i-origin of ncoda subregion
 1  'j1stn ' = j-origin of ncoda subregion
-${idmn}  'idmn  ' = i-extent of ncoda subregion (<=idm; 0 implies idm)
-${jdmn}  'jdmn  ' = j-extent of ncoda subregion (<=jdm; 0 implies jdm)
+${IDM}  'idmn  ' = i-extent of ncoda subregion (<=idm; 0 implies idm)
+${JDM}  'jdmn  ' = j-extent of ncoda subregion (<=jdm; 0 implies jdm)
 41 'kncoda' = number   of ncoda levels
 NONE
 E-o-D
+$EXECrtofs/ncoda_archv_inc < ncoda_archv.input
 
 #
 # calculate increment file for assimilation

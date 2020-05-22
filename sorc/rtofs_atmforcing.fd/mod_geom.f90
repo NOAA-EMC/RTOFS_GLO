@@ -427,21 +427,22 @@ CONTAINS
        !
        !         -determine the value of the ordinary legendre polynomial for
        !         -the current guess root
-30     CALL lgord( g, cosc(i), nlat )
-       !
-       !         -determine the derivative of the polynomial at this point
-       CALL lgord( gm, cosc(i), nlat-1 )
-       CALL lgord( gp, cosc(i), nlat+1 )
-       gt = (cosc(i)*cosc(i)-1.0) / (a*gp-b*gm)
-       !
-       !         -update the estimate of the root
-       delta   = g*gt
-       cosc(i) = cosc(i) - delta
-       !
-       !         -if convergence criterion has not been met, keep trying
-       j = j+1
-       IF( ABS(delta).GT.xlim ) go to 30
-       !     print*,' lat no.',i,j,' iterations'
+       delta=xlim+1 
+       do while (ABS(delta).GT.xlim)
+          CALL lgord( g, cosc(i), nlat )
+          !
+          !         -determine the derivative of the polynomial at this point
+          CALL lgord( gm, cosc(i), nlat-1 )
+          CALL lgord( gp, cosc(i), nlat+1 )
+          gt = (cosc(i)*cosc(i)-1.0) / (a*gp-b*gm)
+          !
+          !         -update the estimate of the root
+          delta   = g*gt
+          cosc(i) = cosc(i) - delta
+          !
+          !         -if convergence criterion has not been met, keep trying
+          j = j+1
+       enddo
        !
        !         -determine the gaussian weights
        c      = 2.0 *( 1.0-cosc(i)*cosc(i) )

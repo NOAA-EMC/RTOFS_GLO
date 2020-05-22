@@ -219,7 +219,7 @@ C
         CALL EXIT(3)
       ENDIF
 C
-      DO 110 K= 1,9999
+      numrecloop: DO K= 1,9999
         READ(11,REC=K,IOSTAT=IOS) A4
 #ifdef ENDIAN_IO
         CALL ENDIAN_SWAP(A4,IDM*JDM)
@@ -229,7 +229,7 @@ C
             WRITE(6,*) 'can''t read ',TRIM(CFILE1)
             CALL EXIT(4)
           ELSE
-            GOTO 1110
+            exit numrecloop
           ENDIF
         ENDIF
         AMN =  SPVALH4
@@ -268,8 +268,7 @@ C
         WRITE(21,REC=K,IOSTAT=IOS) A8
         WRITE(6,'(a,1p2g16.8)')
      &     'min, max = ',AMN,AMX
-  110 CONTINUE
- 1110 CONTINUE
+      enddo numrecloop
       WRITE(6,*) 
       WRITE(6,*) K-1,' FIELDS PROCESSED'
       WRITE(6,*) 

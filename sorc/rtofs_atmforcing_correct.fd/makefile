@@ -63,7 +63,7 @@ install:: clean $(CMD)  moveexe finish
 #
 #
 clean:
-	-rm ${OBJS} *.x *.mod *.F.f $(CMD) 
+	-rm -f ${OBJS} *.x *.mod *.F.f $(CMD) 
         
 finish:
 	-rm ${OBJS} *.mod 
