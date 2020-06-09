@@ -221,7 +221,7 @@ ${JDM}  'jdmn  ' = j-extent of ncoda subregion (<=jdm; 0 implies jdm)
 41 'kncoda' = number   of ncoda levels
 NONE
 E-o-D
-$EXECrtofs/ncoda_archv_inc < ncoda_archv.input
+$EXECrtofs/rtofs_ncoda_archv_inc < ncoda_archv.input
 
 #
 # calculate increment file for assimilation
@@ -240,7 +240,7 @@ Z(7):1-7,Z(16):8,Z(2):10-16,Z(13):dp00/f/x=36/1.18/262;Z(3):400-600m; GPCPsnow
 sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
 E-o-D
 date
-$EXECrtofs/hycom_diff < hycom_diff.input
+$EXECrtofs/rtofs_hycom_diff < hycom_diff.input
 
 #
 # change time on archd*.b file

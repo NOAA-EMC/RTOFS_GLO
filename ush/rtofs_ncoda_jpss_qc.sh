@@ -17,6 +17,7 @@ export ATM_MODEL_DIR=$COMIN
 export CODA_CLIM_DIR=$FIXrtofs/codaclim
 export CRTM_COEF_DIR=$FIXrtofs/crtmclim
 export GDEM_CLIM_DIR=$FIXrtofs/gdem
+export HYCOM_FIX_DIR=$FIXrtofs
 export LSEA_CLIM_DIR=$FIXrtofs/codaclim
 export MODAS_CLIM_DIR=$FIXrtofs/modas
 export OCN_DATA_DIR=$run_dir/ocnqc
@@ -24,7 +25,7 @@ mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/viirs
 
 #   set paths to NCEP netCDF files
-export SST_DATA_DIR=$DCOMROOT/dev
+export SST_DATA_DIR=$DCOMROOT/$dataloc
 
 #   set path to BUFR dump files
 export BUFR_DATA_DIR=$DATA/dump
@@ -118,7 +119,6 @@ $EXECncoda/ncoda_qc $cut_dtg jpss > jpss_qc.$cut_dtg.out
 mv fort.44 jpss_qc.$cut_dtg.rej
 
 #   cleanup
-#rm -f n20_*.*
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
 

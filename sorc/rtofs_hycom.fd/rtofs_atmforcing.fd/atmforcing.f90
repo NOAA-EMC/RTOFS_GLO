@@ -189,7 +189,7 @@ PROGRAM atmforcing
   DO i =1,ntime 
      CALL hytime(ctime(i),htime(i)) 
      WRITE (*,*) htime(i), ctime(i) 
-  END DO
+  ENDDO
 
   !allocate   offset of time marks
   ALLOCATE(off_time(1:nhycom),ftime_prev(1:nhycom))
@@ -443,7 +443,7 @@ PROGRAM atmforcing
         !180! atmflxs(1:nxatm2      ,:,i)=atmflx(nxatm2+1:nxatm,:)
         !180! atmflxs(nxatm2+1:nxatm,:,i)=atmflx(1:nxatm2      ,:)
         PRINT*,'GFS fluxes: i,min,max=',i,MINVAL(atmflxs(:,:,i)),MAXVAL(atmflxs(:,:,i))
-     END DO
+     ENDDO
      !
      !   Intermediate ATM fluxes 
      !

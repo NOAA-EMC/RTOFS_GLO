@@ -16,6 +16,7 @@ export ATM_MODEL_DIR=$COMIN
 export CODA_CLIM_DIR=$FIXrtofs/codaclim
 export CRTM_COEF_DIR=$FIXrtofs/crtmclim
 export GDEM_CLIM_DIR=$FIXrtofs/gdem
+export HYCOM_FIX_DIR=$FIXrtofs
 export LSEA_CLIM_DIR=$FIXrtofs/codaclim
 export MODAS_CLIM_DIR=$FIXrtofs/modas
 export OCN_DATA_DIR=$run_dir/ocnqc
@@ -23,7 +24,7 @@ mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/ssh
 
 #   set paths to NCEP netCDF files
-export SSH_DATA_DIR=$DCOMROOT/dev
+export SSH_DATA_DIR=$DCOMROOT/$dataloc
 
 echo "current date/time is " $( date)
 echo "data cut date time group is " $cut_dtg

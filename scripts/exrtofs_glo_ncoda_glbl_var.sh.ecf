@@ -102,6 +102,7 @@ cat << eof3 > oanl
   cluster(1)  = 1.5,
   cluster(2)  = 1.5,
   cluster(6)  = 1.5,
+  cluster(7)  = 1.5,
   debug(4)    = .true.,
   deny        = 59, 60, 206, 153, 154, 155, 181, 182, 204, 115, 116, 117,
   global      = .true.,
@@ -115,6 +116,7 @@ cat << eof3 > oanl
   rscl(1)     = 0.6,
   rscl(2)     = 1.2,
   rscl(6)     = 1.2,
+  rscl(7)     = 1.2,
   rscl_cap    = 180.,
   sss_asm     = .true.,
   sss_hrs     = 120,
@@ -124,6 +126,7 @@ cat << eof3 > oanl
   vscl(1)     = 16.,
   vscl(2)     = 4.,
   vscl(6)     = 4.,
+  vscl(7)     = 4.,
   z_lvl       = 0., 99*0.,
  &end
 eof3
@@ -131,19 +134,6 @@ eof3
 cat << eof4 > omapnl
  &omapnl
   do_data_raw = .true.,
-  do_data = .true.
-  do_sss  = .true.,
-  do_sss_inc = .true.,
-  do_sst  = .true.,
-  do_sst_inc = .true.,
-  do_ice  = .true.,
-  do_ice_inc = .true.,
-  sss_cnt = 1.,
-  sss_min = 28.,
-  sss_del = 0.2,
-  sst_cnt = 1.,
-  sst_min = 0.,
-  sst_del = .5,
  &end
 eof4
 
@@ -167,9 +157,11 @@ mv fort.67 $log_dir/glbl_var.$ddtg.obs
 mv fort.68 $log_dir/glbl_var.$ddtg.grd
 
 #   create graphics
-#export OCEAN_OUTPUT_DIR=$glbl_dir/restart
-#$EXECncoda/ncoda_map $ddtg > pout5
-#mv gmeta $log_dir/glbl_var.$ddtg.gmeta
+export OCEAN_OUTPUT_DIR=$DATA/restart
+export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
+$EXECncoda/ncoda_map $ddtg > pout5
+mv gmeta $log_dir/glbl_var.$ddtg.gmeta
+
 #
 #   combine work files
 cat pout* > $log_dir/glbl_var.$ddtg.out

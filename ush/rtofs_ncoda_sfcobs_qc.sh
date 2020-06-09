@@ -16,16 +16,24 @@ mkdir -p $log_dir
 cut_dtg=${PDYm1}00
 
 #   set QC environmental variables
+export ATM_MODEL_DIR=$COMIN
 export ATM_MODEL_DIR=$DATA
 export CODA_CLIM_DIR=$FIXrtofs/codaclim
 export CRTM_COEF_DIR=$FIXrtofs/crtmclim
 export GDEM_CLIM_DIR=$FIXrtofs/gdem
+export HYCOM_FIX_DIR=$FIXrtofs
+export HYCOM_FIX_DIR=$DATA
 export LSEA_CLIM_DIR=$FIXrtofs/codaclim
 export MODAS_CLIM_DIR=$FIXrtofs/modas
 export OCN_DATA_DIR=$run_dir/ocnqc
 mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/sfc
 mkdir -p $OCN_DATA_DIR/velocity
+
+# link in forcing.wndspd so that ncoda programs find it
+mkdir ./data_${PDYm1}00
+ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ./data_${PDYm1}00/forcing.wndspd.a
+ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ./data_${PDYm1}00/forcing.wndspd.b
 
 #   set path to BUFR dump files
 export BUFR_DATA_DIR=$DATA/dump

@@ -2,10 +2,10 @@
 set -x
 
 # replace RTOFS_LIB with the location of the rtofs libraries (eg librtofs_hycomiot_4.a)
-export RTOFS_LIB=/location/of/rtofs_lib/libraries
-export RTOFS_LIB_INC=$RTOFS_LIB/incmod
+#export RTOFS_LIB=/location/of/rtofs_lib/libraries
+#export RTOFS_LIB_INC=$RTOFS_LIB/incmod
 
-rm -f ../exec/*
+#rm -f ../exec/*
 
 module purge
 module load EnvVars/1.0.2

@@ -1,4 +1,4 @@
-#!/bin/sh
+/!/bin/sh
 set -xa
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
@@ -74,9 +74,9 @@ cat << eof1 > nhem_var/oanl
  &oanl
   cluster(1)  = 2.,
   cluster(2)  = 1.,
-  cluster(7)  = 1.,
+  cluster(6)  = 1.,
   debug(4)    = .true.,
-  deny        = 59, 60, 206, 153, 154, 155, 181, 182, 204,
+  deny        = 59, 60, 206, 115, 116, 117, 153, 154, 155, 181, 182, 204,
   hc_mdl(1)   = 'homo',
   hc_mdl(2)   = 'rsby',
   ice_asm     = .true.,
@@ -85,7 +85,7 @@ cat << eof1 > nhem_var/oanl
   qc_err(10)  = 4.,
   rscl(1)     = 0.6,
   rscl(2)     = 1.2,
-  rscl(7)     = 1.2,
+  rscl(6)     = 1.2,
   rscl_cap    = 180.,
   sss_asm     = .true.,
   sss_lmt     = 90., 5., 6.,
@@ -93,7 +93,7 @@ cat << eof1 > nhem_var/oanl
   upd_cyc     = 24,
   vscl(1)     = 16.,
   vscl(2)     = 12.,
-  vscl(7)     = 12.,
+  vscl(6)     = 12.,
   z_lvl       = 0., 99*0.,
  &end
 eof1
@@ -140,20 +140,10 @@ eof3
 
 cat << eof4 > omapnl
  &omapnl
-  do_data = .true.,
-  do_sss  = .true.,
-  do_sss_inc = .true.,
-  do_sst  = .true.,
-  do_sst_inc = .true.,
-  do_ice  = .true.,
-  do_ice_inc = .true.,
-  sss_min = 24.,
-  sss_del = 0.2,
-  sst_cnt = 1.,
-  sst_min = -2.,
-  sst_del = .25,
+  do_data_raw = .true.,
  &end
 eof4
+
 
 $EXECncoda/ncoda_setup 2D ncoda ogridnl $ddtg > pout1
 mpirun -n  1 $EXECncoda/ncoda_prep 2D ncoda ogridnl $ddtg > pout2
@@ -165,10 +155,11 @@ mv fort.40 $DATA/logs/nhem_var/nhem_var.$ddtg.sus
 mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
 mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
 
-#   create graphics (offline)
-#export OCEAN_OUTPUT_DIR=$nhem_dir/restart
-#$exec_dir/ncoda_map $ddtg > pout5
-#mv gmeta $log_dir/nhem_var.$ddtg.gmeta
+#   create graphics
+export OCEAN_OUTPUT_DIR=$DATA/nhem_var/restart
+export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
+$EXECncoda/ncoda_map $ddtg > pout5
+mv gmeta $DATA/logs/nhem_var/nhem_var.$ddtg.gmeta
 
 cat pout* > $DATA/logs/nhem_var/nhem_var.$ddtg.out
 cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $pgmout
@@ -215,34 +206,26 @@ eof6
 #  sss_min = 30.,
 cat << eof7 > omapnl
  &omapnl
-  do_data = .true.,
-  do_sss  = .true.,
-  do_sss_inc = .true.,
-  do_sst  = .true.,
-  do_sst_inc = .true.,
-  do_ice  = .true.,
-  do_ice_inc = .true.,
-  sss_min = 28.,
-  sss_del = 0.1,
-  sst_cnt = 1.,
-  sst_min = -2.,
-  sst_del = .25,
+  do_data_raw = .true.,
  &end
 eof7
+
 
 $EXECncoda/ncoda_setup 2D ncoda ogridnl $ddtg > pout1
 mpirun -n  1 $EXECncoda/ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 mpirun -n 24 $EXECncoda/ncoda 2D ncoda ogridnl $ddtg > pout3
 mpirun -n 24 $EXECncoda/ncoda_post 2D ncoda ogridnl $ddtg > pout4
 
+#   rename local files
 mv fort.40 $DATA/logs/shem_var/nhem_var.$ddtg.sus
 mv fort.67 $DATA/logs/shem_var/nhem_var.$ddtg.obs
 mv fort.68 $DATA/logs/shem_var/nhem_var.$ddtg.grd
 
-#   create graphics (offline)
-#export OCEAN_OUTPUT_DIR=$nhem_dir/restart
-#$exec_dir/ncoda_map $ddtg > pout5
-#mv gmeta $log_dir/nhem_var.$ddtg.gmeta
+#   create graphics
+export OCEAN_OUTPUT_DIR=$DATA/shem_var/restart
+export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
+$EXECncoda/ncoda_map $ddtg > pout5
+mv gmeta $DATA/logs/shem_var/shem_var.$ddtg.gmeta
 
 cat pout* > $DATA/logs/shem_var/shem_var.$ddtg.out
 cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $pgmout

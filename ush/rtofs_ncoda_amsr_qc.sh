@@ -1,12 +1,12 @@
 #!/bin/ksh
 
-#   this script runs NCODA pre_QC and NCODA QC for NPP
+#   this script runs NCODA pre_QC and NCODA QC for AMSR
 
 echo "*** Started script $0 on hostname "`hostname`' at time '`date`
 set -xa
 
 export run_dir=$DATA
-log_dir=$run_dir/logs/npp_qc
+log_dir=$run_dir/logs/amsr_qc
 mkdir -p $log_dir
 
 cut_dtg=${PDYm1}00
@@ -22,7 +22,7 @@ export LSEA_CLIM_DIR=$FIXrtofs/codaclim
 export MODAS_CLIM_DIR=$FIXrtofs/modas
 export OCN_DATA_DIR=$run_dir/ocnqc
 mkdir -p $OCN_DATA_DIR/incoming
-mkdir -p $OCN_DATA_DIR/viirs
+mkdir -p $OCN_DATA_DIR/amsr
 
 #   set paths to NCEP netCDF files
 export SST_DATA_DIR=$DCOMROOT/$dataloc
@@ -36,35 +36,35 @@ echo "previous date time group is " $prv_dtg
 
 #--------------------------------------------------------------------------------------
 echo " "
-echo "NCODA NPP pre_QC"
+echo "NCODA AMSR pre_QC"
 
-#   create list of NPP VIIRS sst netCDF files to process
+#   create list of ABI_G16 and ABI_G17 sst netCDF files to process
 cd $SST_DATA_DIR
 
 ymd=${prv_dtg:0:8}
 for k in 12 13 14 15 16 17 18 19 20 21 22 23
 do
-   cmd="$ymd/sst/$ymd$k*L2P*VIIRS_NPP*"
-   ls $cmd > $log_dir/npp_$k.$cut_dtg
+   cmd="$ymd/sst/$ymd$k*L2P*AMSR2*"
+   ls $cmd > $log_dir/amsr_$k.$cut_dtg
 done
 
 ymd=${cut_dtg:0:8}
 for k in 00 01 02 03 04 05 06 07 08 09 10 11
 do
-   cmd="$ymd/sst/$ymd$k*L2P*VIIRS_NPP*"
-   ls $cmd > $log_dir/npp_$k.$cut_dtg
+   cmd="$ymd/sst/$ymd$k*L2P*AMSR2*"
+   ls $cmd > $log_dir/amsr_$k.$cut_dtg
 done
 
 #   change to working directory
 cd $log_dir
-cat npp_*.$cut_dtg > acspo_sst_files.$cut_dtg
+cat amsr_*.$cut_dtg > acspo_sst_files.$cut_dtg
 
-#   execute ncoda pre_qc for NPP netCDF files
-$EXECncoda/ncoda_acspo_sst_nc npp $cut_dtg > npp_preqc.$cut_dtg.out
+#   execute ncoda pre_qc for AMSR netCDF files
+$EXECncoda/ncoda_acspo_sst_nc amsr $cut_dtg > amsr.$cut_dtg.out
 
 #--------------------------------------------------------------------------------------
 echo "  "
-echo "NCODA NPP QC"
+echo "NCODA AMSR SST QC"
 
 #   create prediction namelist file
 rm -f prednl
@@ -109,14 +109,14 @@ cat << eof1 > prednl
 eof1
 
 #   clear symbolic links
-rm -f $OCN_DATA_DIR/incoming/npp.a
-rm -f $OCN_DATA_DIR/incoming/npp.b
+rm -f $OCN_DATA_DIR/incoming/amsr.a
+rm -f $OCN_DATA_DIR/incoming/amsr.b
 
 #   execute ncoda qc
-ln -s $OCN_DATA_DIR/incoming/npp.a.$cut_dtg $OCN_DATA_DIR/incoming/npp.a
-ln -s $OCN_DATA_DIR/incoming/npp.b.$cut_dtg $OCN_DATA_DIR/incoming/npp.b
-$EXECncoda/ncoda_qc $cut_dtg npp > npp_qc.$cut_dtg.out
-mv fort.44 npp_qc.$cut_dtg.rej
+ln -s $OCN_DATA_DIR/incoming/amsr.a.$cut_dtg $OCN_DATA_DIR/incoming/amsr.a
+ln -s $OCN_DATA_DIR/incoming/amsr.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr.b
+$EXECncoda/ncoda_qc $cut_dtg amsr_sst > amsr_qc.$cut_dtg.out
+mv fort.44 amsr_qc.$cut_dtg.rej
 
 #   cleanup
 

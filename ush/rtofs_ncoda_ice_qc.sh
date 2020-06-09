@@ -19,6 +19,7 @@ export ATM_MODEL_DIR=$COMIN
 export CODA_CLIM_DIR=$FIXrtofs/codaclim
 export CRTM_COEF_DIR=$FIXrtofs/crtmclim
 export GDEM_CLIM_DIR=$FIXrtofs/gdem
+export HYCOM_FIX_DIR=$FIXrtofs
 export LSEA_CLIM_DIR=$FIXrtofs/codaclim
 export MODAS_CLIM_DIR=$FIXrtofs/modas
 export OCN_DATA_DIR=$run_dir/ocnqc
@@ -26,7 +27,8 @@ mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/ice
 
 #   set paths to NCEP netCDF files
-export ICE_DATA_DIR=$DATA/ice_nc
+export SSMI_ICE_DATA_DIR=$DATA/ice_nc
+export AMSR_ICE_DATA_DIR=$DCOMROOT/$dataloc
 
 echo "current date/time is " $( date)
 echo "data cut time group is " $cut_dtg
@@ -37,8 +39,9 @@ echo " "
 echo "NCODA ICE pre_QC"
 
 #   create lists of SSMI and AMSR ice netCDF files to process
-cd $ICE_DATA_DIR
+cd $SSMI_ICE_DATA_DIR
 
+# SSMI
 ymd=${prv_dtg:0:8}
 cmd="l2out*$ymd*"
 ls $cmd > $log_dir/ssmi_01.$cut_dtg
@@ -47,12 +50,14 @@ ymd=${cut_dtg:0:8}
 cmd="l2out*$ymd*"
 ls $cmd > $log_dir/ssmi_02.$cut_dtg
 
+# AMSR
+cd $AMSR_ICE_DATA_DIR
 ymd=${prv_dtg:0:8}
-cmd="AMSR2-SEAICE*s$ymd*"
+cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
 ls $cmd > $log_dir/amsr_01.$cut_dtg
 
 ymd=${cut_dtg:0:8}
-cmd="AMSR2-SEAICE*s$ymd*"
+cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
 ls $cmd > $log_dir/amsr_02.$cut_dtg
 
 #   change to working directory
@@ -128,8 +133,6 @@ $EXECncoda/ncoda_qc $cut_dtg amsr_ice > amsr_ice_qc.$cut_dtg.out
 mv fort.44 amsr_ice_qc.$cut_dtg.rej
 
 #   cleanup
-#rm -f ssmi_0*.*
-#rm -f amsr_0*.*
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
 

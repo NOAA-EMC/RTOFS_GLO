@@ -42,7 +42,7 @@ export interval=11.999
 export DUPC="off" #turn off duplicate check
 
 #SURFACE and SURFACE RESTRICTED, go back to $startdate_s
-for dtyp in shipsu ships; do
+for dtyp in shipsu ships shipub shipsb; do
 ADATE=${startdate_s}
 rm -f $dtyp.${enddate}
 rm -f $dtyp.out.${enddate}
@@ -92,7 +92,7 @@ done # dtyp
 ADATE=${startdate_p}
 export CenterTime=12
 export interval=$HHback
-for dtyp in subpfl bathy tesac; do
+for dtyp in subpfl bathy tesac xbtctd ; do
 ADATE=$enddate
   #------------------------------------------------------------------------
   #  dump data to current running directory
@@ -104,12 +104,12 @@ ADATE=$enddate
   mv $dtyp.out.$ADATE $DIROUT/.
 done #dtyp
 
- ##### this is so we can test with emc.ncodapa dumps
- #cd $DATAsave
- #mv dump dump.dan
- #mkdir dump
- #ln -s /gpfs/dell2/ptmp/emc.ncodapa/ncoda/dump/*20200427* dump/.
- ##### this is so we can test with emc.ncodapa dumps
+##### this is so we can test with emc.ncodapa dumps
+##cd $DATAsave
+##mv dump dump.dan
+##mkdir dump
+##ln -s /gpfs/dell2/emc/modeling/noscrub/Dan.Iredell/COMDIR/com/rtofs/prod/dump.$enddate/* dump/.
+##### this is so we can test with emc.ncodapa dumps
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
 
