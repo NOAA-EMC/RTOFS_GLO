@@ -88,7 +88,7 @@ export pgm="${RUN}_hycom_expr"
 startmsg
 ${EXECrtofs}/${RUN}_hycom_expr forcing.airtmp.a ONE ${IDM} ${JDM} 1.0 273.15 forcing.airtmpCice.a > forcing.airtmpCice.b
 err=$?; export err ; err_chk
-echo " error from third ${RUN}_hycom_expr=",$err
+echo " error from fifth ${RUN}_hycom_expr=",$err
 
 for cfield in airtmp glbrad lwdflx vapmix wndewd wndnwd
 do
@@ -106,6 +106,6 @@ do
   echo " error from ${RUN}_hycom2raw8=",$err
 
 done
-# End of genrating the ice forcing files
+# End of generating the ice forcing files
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
