@@ -1,0 +1,48 @@
+TITLE: 
+
+Climate Data Operators (CDO) for RTOFS
+
+CHANGE REQUEST CLASS:
+
+Minor change
+
+DESCRIPTION OF CHANGE:
+
+This is CDO v.1.6.0. 
+
+BENEFIT OF CHANGE: 
+
+Port to Dells.
+
+USER IMPACT STATEMENT:
+
+No user impact is anticipated.
+
+TECHNICAL IMPACT STATEMENT:
+
+No technical impact is anticipated. 
+
+RISKS:
+
+No risks are anticipated.
+
+PROPOSED IMPLEMENTATION
+DATE: 
+TIME:
+
+IMPLEMENTATION INSTRUCTIONS:
+
+I. CHECK-OUT CDO 
+1) Check out the rtofs_lib
+   git clone -b rtofs_cdo.v1.6.0 ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_rtofs_CDO
+   into /gpfs/dell1/nco/ops/nwprod/
+   The result will be the directory
+   /gpfs/dell1/nco/ops/nwprod/EMC_rtofs_CDO
+I.1) Rename the directory 
+   mkdir -p rtofs_shared
+   mv EMC_rtofs_CDO rtofs_shared/rtofs_cdo.v1.6.0
+
+III. BUILD CDO.
+cd rtofs_shared/rtofs_cdo.v1.6.0
+./rtofs_makecdo.sh > rtofs_makecdo.out
+
