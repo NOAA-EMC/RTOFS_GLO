@@ -30,7 +30,9 @@ postmsg "$jlogfile" "$msg"
 
   export fcstdays=${fcstdays:-2}
   export enddate=${analysis_end:-$PDY}
+# startdate for V2 is 24 hours, but get 48 hours for NCODA purposes (and bug on first record of forcings)
   export startdate=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
+  export startdate=`$NDATE -\` expr $fcstdays \* 48 \`  ${enddate}'00' | cut -c1-8`
   export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #

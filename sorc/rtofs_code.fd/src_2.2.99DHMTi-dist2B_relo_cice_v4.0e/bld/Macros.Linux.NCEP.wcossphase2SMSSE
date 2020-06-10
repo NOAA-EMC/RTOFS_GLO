@@ -1,0 +1,50 @@
+#==============================================================================
+# Makefile macros for "kilrain" a NAVO IBM iDataPlex cluster running Linux
+# version for Intel MPI, module mpi/intel/impi/4.1.0
+# Emulate SGI Altix ICE on IBM iDataPlex using -xSSE4.2
+#==============================================================================
+
+INCLDIR    := -I.
+SLIBS      := 
+ULIBS      := 
+CPP        := /usr/bin/cpp
+CPPFLAGS   := -P -traditional-cpp
+CPPDEFS    := -DLINUX 
+CFLAGS     := -c -traceback -xSSE4.2 -O2 -fPIC -m64 -mcmodel=small
+FIXEDFLAGS := -132
+FREEFLAGS  := 
+FC         := mpiifort
+#FC         := ifort
+#FFLAGS     := $(INCLDIR) -traceback -xSSE4.2 -O2 -fPIC -m64 -align all -w -ftz -convert big_endian -assume byterecl -mcmodel=small -lmpi
+FFLAGS     := $(INCLDIR) -traceback -xSSE4.2 -O2 -fPIC -m64 -align all -w -ftz -convert big_endian -assume byterecl -mcmodel=small 
+MOD_SUFFIX := mod
+LD         :=  $(FC)
+LDFLAGS    :=  $(FFLAGS) -v -mkl
+
+    CPPDEFS :=  $(CPPDEFS) -DNXGLOB=$(NXGLOB) -DNYGLOB=$(NYGLOB) \
+                -DBLCKX=$(BLCKX) -DBLCKY=$(BLCKY) -DMXBLCKS=$(MXBLCKS)
+#   CPPDEFS :=  $(CPPDEFS) -DAOMIP
+
+ifeq ($(COMMDIR), mpi)
+#   SLIBS   :=  $(SLIBS) -lmpich
+endif
+
+ifeq ($(DITTO), yes)
+   CPPDEFS :=  $(CPPDEFS) -DREPRODUCIBLE
+endif
+
+ifeq ($(NETCDF), yes)
+   CPPDEFS := $(CPPDEFS) -Dncdf
+#   INCLDIR := $(INCLDIR) -I/u/home/wallcraf/pkgs/netcdf-4.0.1_nc3_ifort_ifort_icpc/include
+   INCLDIR := $(INCLDIR) -I/usrx/local/NetCDF/4.2/serial/include
+#   SLIBS   := $(SLIBS)     /u/home/wallcraf/pkgs/netcdf-4.0.1_nc3_ifort_ifort_icpc/lib/libnetcdf.a
+   SLIBS   := $(SLIBS)     /usrx/local/NetCDF/4.2/serial/lib/libnetcdf.a
+endif
+
+ifeq ($(USE_ESMF), yes)
+   CPPDEFS :=  $(CPPDEFS) -DUSE_ESMF
+#   INCLDIR :=  $(INCLDIR) -I/u/home/wallcraf/pkgs/esmf/intelICE/intelmpi/4.0.0rp2/mod/modO
+   INCLDIR :=  $(INCLDIR) -I/usrx/local/esmf-4.0.0rp1/mod/modO/Linux.intel.64.intelmpi.default -I.
+#   SLIBS   :=  $(SLIBS)   -L/u/home/wallcraf/pkgs/esmf/intelICE/intelmpi/4.0.0rp2/lib/libO -L/u/home/wallcraf/pkgs/netcdf-4.0.1_nc3_ifort_ifort_icpc/lib -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -lnetcdf_c++ -lnetcdf
+   SLIBS   :=  $(SLIBS)   -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -lnetcdf_c++ -lnetcdf
+endif

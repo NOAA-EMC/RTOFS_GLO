@@ -1,0 +1,1 @@
+-Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lz -lsz -lnetcdf_c++4  -Bdynamic
