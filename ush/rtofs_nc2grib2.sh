@@ -113,11 +113,11 @@ do
   # Split the netCDF file into components
   if [ ${fcstdays_before_thisstep} -ge 3 ]
   then
-    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_diag.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_
-    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_prog.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_
+    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_diag.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_
+    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_prog.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_
   else
-    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_1hrly_diag.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_
-    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_1hrly_prog.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_
+    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_diag.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_
+    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_prog.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_
   fi
 
 # Some housekeeping

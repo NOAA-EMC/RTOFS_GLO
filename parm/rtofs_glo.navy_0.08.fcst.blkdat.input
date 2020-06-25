@@ -124,7 +124,7 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
    0.0    'proffq' = number of days between model diagnostics at selected locs
    0.0    'tilefq' = number of days between model diagnostics on selected tiles
    0.0	  'meanfq' = number of days between model diagnostics (time averaged)
- 0.1250   'rstrfq' = number of days between model restart output
+   1.0    'rstrfq' = number of days between model restart output
    0.0	  'bnstfq' = number of days between baro nesting archive input
    0.0	  'nestfq' = number of days between 3-d  nesting archive input
 .04166667 'cplifq' = number of days (or time steps) between sea ice coupling

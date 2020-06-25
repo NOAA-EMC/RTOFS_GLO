@@ -230,7 +230,7 @@ fi
       then
         for ftype in diag prog
         do
-          cfile=${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_${ftype}.nc
+          cfile=${RUN}_${modID}_2ds_${mode}${fhr}_${ftype}.nc
           cp -f -p $cfile  $COMOUT/.
           if [ $SENDDBN = 'YES' ]
           then
@@ -241,28 +241,6 @@ fi
             postmsg "$jlogfile" "$msg"
           fi
         done
-      fi
-     if [ $fhr -eq $hr_daily ]
-       then
-        for ftype in diag prog
-        do
-          cfile=${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_${ftype}.nc
-          cfile_daily=${RUN}_${modID}_2ds_${mode}${fhr}_daily_${ftype}.nc
-          cp ${cfile} ${cfile_daily}
-          if [ $SENDCOM = 'YES' ]; then
-            cp -f -p $cfile_daily $COMOUT/.
-          fi
-          if [ $SENDDBN = 'YES' ]
-          then
-#              $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile_daily
-	      ALERT_MAYBE RTOFS_GLO_NETCDF  $cfile_daily
-          else
-            msg="File $COMOUT/$cfile not posted to db_net."
-            postmsg "$jlogfile" "$msg"
-          fi
-        done
-       hr_daily=`expr $hr_daily + $intvl_daily`
-
       fi
      fi # end of sfc loop
  fi

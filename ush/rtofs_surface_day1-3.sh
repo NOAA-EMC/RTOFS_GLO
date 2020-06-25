@@ -23,9 +23,9 @@ yyyymmdd=${PDY}
 
 for fcast in f000 f003 f006 f009 f012 f015 f018 f021 f024 f027 f030 f033 f036 f039 f042 f045 f048 f051 f054 f057 f060 f063 f066 f069 f072; do
 
-ln -sf  ${COMOUT}/rtofs_glo_2ds_${fcast}_1hrly_prog.nc ${DATA_opc}/.
+ln -sf  ${COMOUT}/rtofs_glo_2ds_${fcast}_prog.nc ${DATA_opc}/.
 
-${cdo_r} splitname rtofs_glo_2ds_${fcast}_1hrly_prog.nc rtofs_glo_2ds_${fcast}_1hrly_
+${cdo_r} splitname rtofs_glo_2ds_${fcast}_prog.nc rtofs_glo_2ds_${fcast}_1hrly_
 done
 
 ${cdo_r} mergetime rtofs_glo_2ds_f000_1hrly_sst.nc4 rtofs_glo_2ds_f003_1hrly_sst.nc4 rtofs_glo_2ds_f006_1hrly_sst.nc4 rtofs_glo_2ds_f009_1hrly_sst.nc4 rtofs_glo_2ds_f012_1hrly_sst.nc4 rtofs_glo_2ds_f015_1hrly_sst.nc4 rtofs_glo_2ds_f018_1hrly_sst.nc4 rtofs_glo_2ds_f021_1hrly_sst.nc4 rtofs_glo_2ds_f024_1hrly_sst.nc4 rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_day1.nc  

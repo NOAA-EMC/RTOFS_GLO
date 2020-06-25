@@ -122,7 +122,15 @@ err=$? ; export err ; err_chk
 date
 echo timecheck RTOFS_GLO_NCODA_QC finish qc at `date`
 
-# 4. Copy last 15 days of qc data back to COMOUT/ncoda
+# 4. Run data alarm (counts)
+
+export OCN_DATA_DIR=$DATA/ocnqc
+echo "NCODA DATA ALARM"
+$EXECncoda/ncoda_alarm ${PDYm1}00
+mkdir $DATA/logs/alarm
+mv fort.61 $DATA/logs/alarm/ncoda_alarm.${PDYm1}00.out
+
+# 5. Copy last 15 days of qc data back to COMOUT/ncoda
 echo timecheck RTOFS_GLO_NCODA_QC start put at `date`
 
 mkdir -p $COMOUT/ncoda/ocnqc
@@ -148,7 +156,7 @@ date
 echo timecheck RTOFS_GLO_NCODA_QC finish put at `date`
 
 cd $DATA/logs
-for dtyp in amsr_qc goes_qc himawari_qc ice_qc jpss_qc metop_qc npp_qc profile_qc sfc_qc ssh_qc sss_qc ; do
+for dtyp in alarm amsr_qc goes_qc himawari_qc ice_qc jpss_qc metop_qc npp_qc profile_qc sfc_qc ssh_qc sss_qc ; do
   mkdir -p $COMOUT/ncoda/logs/$dtyp
   cp -p -f $dtyp/*.${PDYm1}00.* $COMOUT/ncoda/logs/$dtyp 
 done

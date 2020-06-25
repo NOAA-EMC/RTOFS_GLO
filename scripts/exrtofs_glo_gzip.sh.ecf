@@ -43,7 +43,7 @@ filepre=${RUN}_${modID}.t00z
 case $CYC in 
     00)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo ${COMIN}/${filepre}.n00.restart.a;  echo ${COMIN}/${filepre}.n00.restart_cice;  echo ${COMIN}/${filepre}.n-{03..24..3}.archv.a;  echo ${COMIN}/${filepre}.n00.archv.a;  echo ${COMIN}/${filepre}.n00.arche.a;  echo ${COMIN}/${filepre}.n-{01..24}.arche.a;  echo ${COMIN}/${filepre}.n00.archs.a;  echo ${COMIN}/${filepre}.n-{01..24}.archs.a`
+	for file in `echo ${COMIN}/${filepre}.n00.restart.a;  echo ${COMIN}/${filepre}.n00.restart_cice;  echo ${COMIN}/${filepre}.n-{06..24..6}.archv.a;  echo ${COMIN}/${filepre}.n-03.archv.a;  echo ${COMIN}/${filepre}.n00.archv.a;  echo ${COMIN}/${filepre}.n00.arche.a;  echo ${COMIN}/${filepre}.n-{01..24}.arche.a;  echo ${COMIN}/${filepre}.n00.archs.a;  echo ${COMIN}/${filepre}.n-{01..24}.archs.a`
 	do
 	    if [ -s $file ]; then
 		filename=`basename $file`
@@ -82,7 +82,7 @@ case $CYC in
 	;;
     06)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo  ${COMIN}/${filepre}.f{06..96..6}.archv.a;  echo  ${COMIN}/${filepre}.f{01..96}.archs.a `
+	for file in `echo  ${COMIN}/${filepre}.f{06..96..6}.archv.a;  echo  ${COMIN}/${filepre}.f{01..96}.archs.a; echo  ${COMIN}/${filepre}.f{01..96}.arche.a `
 	do
 	    if [ -s $file ]; then
 		filename=`basename $file`
@@ -116,7 +116,7 @@ case $CYC in
 	;;
     12)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo  ${COMIN}/${filepre}.f{102..192..6}.archv.a;  echo ${COMIN}/${filepre}.f{97..192}.archs.a `
+	for file in `echo  ${COMIN}/${filepre}.f{102..192..6}.archv.a;  echo ${COMIN}/${filepre}.f{97..192}.archs.a; echo ${COMIN}/${filepre}.f{97..192}.arche.a   `
 	do
 	    if [ -s $file ]; then
 		filename=`basename $file`

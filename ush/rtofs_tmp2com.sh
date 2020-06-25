@@ -100,12 +100,11 @@ do
   HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart
   CICErestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart_cice
   CICEworkRestTplate=cice.restart.${YYYY}-${MM}-${DD}-${SSSSS}
-  if [ $LEAD -eq 0 ]
+  if [[ $LEAD -eq 0 || $LEAD -eq -03 ]]
   then
     OUTDIR=$COMOUT
   else
     OUTDIR=$GESOUT
-    OUTDIR=$COMOUT
   fi
   copy_restart='t'
   if [ -f ${OUTDIR}/${HYCOMrestTplate}.b ] 

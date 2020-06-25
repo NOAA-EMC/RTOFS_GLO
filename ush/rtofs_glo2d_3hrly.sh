@@ -36,8 +36,8 @@ typeset -Z3 fhr
 
 echo "*** Started script $0 on hostname "`hostname`' at time '`date`
 
-export CDF030=${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_diag.nc
-export CDF031=${RUN}_${modID}_2ds_${mode}${fhr}_3hrly_prog.nc
+export CDF030=${RUN}_${modID}_2ds_${mode}${fhr}_diag.nc
+export CDF031=${RUN}_${modID}_2ds_${mode}${fhr}_prog.nc
 
 export pgm=${RUN}_archv2ncdf2d
 . prep_step

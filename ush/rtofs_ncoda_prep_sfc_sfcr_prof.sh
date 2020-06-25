@@ -21,6 +21,8 @@ cd $DIRTMP
 today=${PDY}00
 run_dtg=${PDYm1}00
 
+export LIST=${LIST:-"/gpfs/dell2/emc/modeling/noscrub/emc.ncodapa/ncoda_dump/ush/bufr_dumplist_ncoda"}
+
 export HHback=132  # monthly tanks look back (in hours)
 export HHbacks=48  # surface lookup back (in hours)
 export HHbackp=132  # profile lookup back (in hours)
