@@ -100,8 +100,10 @@ echo "$USHrtofs/rtofs_ncoda_sfcobs_qc.sh" >> runsurf.sh
 chmod +x runsurf.sh
 
 # 3. Put all scripts into command file for cfp
-export dataloc=
-export dataloc=dev
+export amsr_dataloc=dev
+export ssh_dataloc=dev
+export sss_dataloc=dev
+export sst_dataloc=prod
 
 date
 echo "./runiceqc.sh > ice.qc.out 2>&1" > cmdfile.qc

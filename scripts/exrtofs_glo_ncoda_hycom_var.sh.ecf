@@ -271,6 +271,10 @@ cat pout* > $log_dir/hycom_var.$ddtg.out
 # 4. Copy last 15 days of data back to COMOUT/ncoda
 echo timecheck RTOFS_GLO_HYCOM start put at `date`
 
+mkdir -p $DATA/nokeep
+mv $DATA/restart/*_01??_*fcstfld          $DATA/nokeep
+mv $DATA/restart/*_00[456789]?_*fcstfld   $DATA/nokeep
+
 mkdir -p $COMOUT/ncoda/hycom_var/restart
 rm -f cmdfile.cpout
 for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do

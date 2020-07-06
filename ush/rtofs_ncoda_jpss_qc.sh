@@ -25,7 +25,7 @@ mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/viirs
 
 #   set paths to NCEP netCDF files
-export SST_DATA_DIR=$DCOMROOT/$dataloc
+export SST_DATA_DIR=$DCOMROOT/$sst_dataloc
 
 #   set path to BUFR dump files
 export BUFR_DATA_DIR=$DATA/dump

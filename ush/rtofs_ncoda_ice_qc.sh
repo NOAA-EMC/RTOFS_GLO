@@ -28,7 +28,7 @@ mkdir -p $OCN_DATA_DIR/ice
 
 #   set paths to NCEP netCDF files
 export SSMI_ICE_DATA_DIR=$DATA/ice_nc
-export AMSR_ICE_DATA_DIR=$DCOMROOT/$dataloc
+export AMSR_ICE_DATA_DIR=$DCOMROOT/$amsr_dataloc
 
 echo "current date/time is " $( date)
 echo "data cut time group is " $cut_dtg

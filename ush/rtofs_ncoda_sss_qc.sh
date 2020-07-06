@@ -24,7 +24,7 @@ mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/sss
 
 #   set paths to NCEP netCDF files
-export SSS_DATA_DIR=$DCOMROOT/$dataloc
+export SSS_DATA_DIR=$DCOMROOT/$sss_dataloc
 
 echo "current date/time is " $( date)
 echo "data cut date time group is " $cut_dtg
