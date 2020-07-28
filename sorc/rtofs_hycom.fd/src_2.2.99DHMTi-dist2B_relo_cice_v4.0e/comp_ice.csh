@@ -1,7 +1,7 @@
-module purge
-module use ../../../modulefiles
-module load build_rtofs_code.module
-module list
+#module purge
+#module use ../../../modulefiles
+#module load build_rtofs_hycom.module
+#module list
 
 # #
 # DISTRIBUTION STATEMENT B: Distribution authorized to U.S. Government
