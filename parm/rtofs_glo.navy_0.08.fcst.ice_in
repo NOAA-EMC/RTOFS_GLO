@@ -14,7 +14,7 @@
   , pointer_file = './cice.restart_file'
   , histfreq     = 'd'
   , histfreq_n   =  1
-  , dumpfreq     = '1'
+  , dumpfreq     = 'd'
   , dumpfreq_n   = 1
   , diagfreq     = 8
   , diag_type    = 'stdout'

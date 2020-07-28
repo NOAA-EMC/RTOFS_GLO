@@ -9,7 +9,7 @@
 # Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2011-07-20     #
 #                                                                             #
 # Abstract: This is the post_grib for RTOFS_GLO                               #
-#           Writes out 3 hourly and daily netcdf files for day 7 and day 8    #
+#           Writes out 3hrly netcdf files for hrs 144-192                     #
 #                                                                             #
 # Sub-scripts called:                                                         # 
 #                    rtofs_glo2d_3hrly.sh                                     #
@@ -146,6 +146,7 @@ do
   if [ ${RUN_MODE} = 'forecast' ]
   then
     arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}${fhr2}.archs
+    arefile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}${fhr2}.arche
   fi
   if [ ${RUN_MODE} = 'analysis' ]
   then
@@ -158,6 +159,7 @@ do
       chr='-'${fhr3}
     fi
     arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}${chr}.archs
+    arefile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}${chr}.arche
   fi
 #*********************************
   if [ $run_parallel = 'YES' ]; then
@@ -183,10 +185,14 @@ do
 # n00:48hr  is same as f00 forecaast
      ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.archs.a archv.a
      ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.archs.b archv.b
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.arche.b arche.b
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.arche.a arche.a
   else
    if [ -s $COMOUT/${arfile_tplate}.a ]; then
     ln -s -f $COMOUT/${arfile_tplate}.a archv.a
     ln -s -f $COMOUT/${arfile_tplate}.b archv.b
+    ln -s -f $COMOUT/${arefile_tplate}.a arche.a
+    ln -s -f $COMOUT/${arefile_tplate}.b arche.b
    else
      if [ $fhr -eq 00 ]; then
 # This is for n00 or n-24 nowcast 
@@ -197,6 +203,16 @@ do
     echo "NOTdone due to missing archs file" >>${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk
   fi
+     if [ $fhr -eq 00 ]; then
+# This is for n00 or n-24 nowcast
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.arche.a arche.a
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.arche.b arche.b
+   else
+    echo Missing archs file $COMOUT/${arefile_tplate}. >>${RUN}_${modID}.t${mycyc}z.nav.log
+    echo "NOTdone due to missing arche file" >>${RUN}_${modID}.t${mycyc}z.nav.log
+    export err=1; err_chk
+  fi
+
  fi
 fi
   missing=no
@@ -225,10 +241,11 @@ fi
     hr_2d_3hrly=`expr $hr_2d_3hrly + $intvl_3hrly`
     if [ $surface_3hrly = 'YES' ]
     then
-      ksh ${USHrtofs}/${RUN}_glo2d_3hrly.sh
+      ksh ${USHrtofs}/${RUN}_glo2d.sh
+      ksh ${USHrtofs}/${RUN}_glo2d_ice.sh
       if [ $SENDCOM = 'YES' ]
       then
-        for ftype in diag prog
+        for ftype in diag prog ice
         do
           cfile=${RUN}_${modID}_2ds_${mode}${fhr}_${ftype}.nc
           cp -f -p $cfile  $COMOUT/.

@@ -70,34 +70,8 @@ ln -sf $COMIN/ncoda/ocnqc $DATA
 
 # 2. Build common namelist
 
-cat << eof1 > nhem_var/oanl
- &oanl
-  cluster(1)  = 2.,
-  cluster(2)  = 1.,
-  cluster(6)  = 1.,
-  debug(4)    = .true.,
-  deny        = 59, 60, 206, 115, 116, 117, 153, 154, 155, 181, 182, 204,
-  hc_mdl(1)   = 'homo',
-  hc_mdl(2)   = 'rsby',
-  ice_asm     = .true.,
-  mask_opt    = '2D',
-  n_it        = 30,
-  qc_err(10)  = 4.,
-  rscl(1)     = 0.6,
-  rscl(2)     = 1.2,
-  rscl(6)     = 1.2,
-  rscl_cap    = 180.,
-  sss_asm     = .true.,
-  sss_lmt     = 90., 5., 6.,
-  sst_asm     = .true.,
-  upd_cyc     = 24,
-  vscl(1)     = 16.,
-  vscl(2)     = 12.,
-  vscl(6)     = 12.,
-  z_lvl       = 0., 99*0.,
- &end
-eof1
-cp $DATA/nhem_var/oanl $DATA/shem_var/oanl
+cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./nhem_var/oanl
+cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./shem_var/oanl
 echo timecheck RTOFS_GLO_POLAR finish build at `date`
 
 # 3. Run NHEM

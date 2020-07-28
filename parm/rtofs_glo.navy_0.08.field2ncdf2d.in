@@ -1,0 +1,29 @@
+arche.a
+netCDF
+0     'iexpt ' = experiment number x10  (000=no expt number)
+4500  'idm   ' = longitudinal array size
+3298  'jdm   ' = latitudinal  array size
+1     'iorign' = i-origin of sampled subregion
+1     'jorign' = j-origin of sampled subregion
+0     'idmp  ' = i-extent of sampled subregion (<=idm; 0 implies idm)
+0     'jdmp  ' = j-extent of sampled subregion (<=jdm; 0 implies jdm)
+3     'yrflag' = days in year flag (0=360J16,1=366J16,2=366J01,3=actual)
+0     'time  ' = model day
+3     'yrflag' = days in year flag (0=360J16,1=366J16,2=366J01,3=actual)
+0     'time  ' = model day
+8 'nrec' 
+icecov|     |ice_coverage|ice_coverage [09.8H]| 
+1     'qscale'
+15 'nrec' 
+icetemp| degC|ice_temperature|ice_temperature [09.8H]| 
+1     'qscale'
+16 'nrec' 
+icethck| m|ice_thickness|ice_thickness [09.8H]| 
+1     'qscale'
+17 'nrec' 
+iceuvel| m/s |ice_uvelocity|ice_uvelocity [09.8H]| 
+1     'qscale'
+18 'nrec' 
+icevvel| m/s |ice_vvelocity|ice_vvelocity [09.8H]| 
+1     'qscale'
+-1    'nrec'

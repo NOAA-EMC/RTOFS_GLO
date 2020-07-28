@@ -2586,6 +2586,9 @@ while [[ $fh -le $fhend ]];do
  [[ -z $list ]]&&list=${geslist}
  for gestest in $list;do
   eval ges=$gestest
+  if [ xx$firstfile == xx  ];then
+    firstfile=$ges
+  fi
   [[ $quiet = NO ]]&&echo Checking: $ges >&2
   [[ -r $ges ]]&&break 2
  done
@@ -2594,6 +2597,7 @@ while [[ $fh -le $fhend ]];do
 done
 if [[ $fh -gt $fhend ]];then
  echo getges.sh: unable to find $netwk.$envir.$typef.$resol.$valid >&2
+ echo getges.sh: First file checked: $firstfile >&2 
  exit 8
 fi
 

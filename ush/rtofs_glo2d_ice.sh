@@ -3,13 +3,13 @@
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         rtofs_glo2d_3hrly.sh                                   #
+# Script name:         rtofs_glo2d_1hrly.sh                                   #
 # Script description:                                                         #
 #                                                                             #
-# Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2011-07-20     #
+# Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2020-07-02     #
 #                                                                             #
-# Abstract: This script creates the surface fields for RTOFS-Global           #
-#           every 3 hours in netCDF format                                    #
+# Abstract: This script creates the surface ice fields for RTOFS-Global       #
+#           every 1 or 3 hours in netCDF format                               #
 #                                                                             #
 # Sub-scripts called:                                                         #
 #                                                                             # 
@@ -36,14 +36,12 @@ typeset -Z3 fhr
 
 echo "*** Started script $0 on hostname "`hostname`' at time '`date`
 
-export CDF030=${RUN}_${modID}_2ds_${mode}${fhr}_diag.nc
-export CDF031=${RUN}_${modID}_2ds_${mode}${fhr}_prog.nc
+export CDF021=${RUN}_${modID}_2ds_${mode}${fhr}_ice.nc
 
-export pgm=${RUN}_archv2ncdf2d
+export pgm="rtofs_archv2ncdf2d"
 . prep_step
 startmsg
-${EXECrtofs}/${RUN}_archv2ncdf2d < ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv2ncdf2d_3hrly.in >> $pgmout 2>>errfile 
-export err=$?; err_chk
-
+${EXECrtofs}/rtofs_field2ncdf2d < ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.field2ncdf2d.in >> $pgmout 2>>errfile 
+export err=$? ; err_chk
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

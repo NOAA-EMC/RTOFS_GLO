@@ -12,7 +12,7 @@
 #           Writes out hourly netcdf files for nowcast and 1-72 hr forecast   #
 #           and 3-hrly from 72-144 hrs Surface forecast.                      #
 #           Also packs the netcdf files in GRIB2 format for 11 Regions        #
-#           These are surface only (2d) diag and prog files                   #
+#           These are surface only (2d) diag and prog and ice files           #
 #           Additonally puts out netcdf files for OPC                         #
 #                                                                             #
 # Sub-scripts called:                                                         # 
@@ -100,7 +100,7 @@ then
   export startdate=${startdate:-${PDY}}
 fi
   export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
-  export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24 `
+  export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24`
 
 # define what functions to do (default to operational settings)
 export running_realtime=${running_realtime:-NO}
@@ -188,6 +188,7 @@ do
   if [ ${RUN_MODE} = 'forecast' ]
   then
     arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}${fhr2}.archs
+    arefile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}${fhr2}.arche
   fi
   if [ ${RUN_MODE} = 'analysis' ]
   then
@@ -200,6 +201,7 @@ do
       chr='-'${fhr3}
     fi
     arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}${chr}.archs
+    arefile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}${chr}.arche
   fi
 #*********************************
   if [ $run_parallel = 'YES' ]; then
@@ -225,10 +227,14 @@ do
 # n00:48hr  is same as f00 forecaast
      ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.archs.a archv.a
      ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.archs.b archv.b
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.arche.b arche.b
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.arche.a arche.a
   else
    if [ -s $COMOUT/${arfile_tplate}.a ]; then
     ln -s -f $COMOUT/${arfile_tplate}.a archv.a
     ln -s -f $COMOUT/${arfile_tplate}.b archv.b
+    ln -s -f $COMOUT/${arefile_tplate}.a arche.a
+    ln -s -f $COMOUT/${arefile_tplate}.b arche.b
    else
      if [ $fhr -eq 00 ]; then
 # This is for n00 or n-24 nowcast 
@@ -237,6 +243,15 @@ do
    else
     echo Missing archs file $COMOUT/${arfile_tplate}. >>${RUN}_${modID}.t${mycyc}z.nav.log
     echo "NOTdone due to missing archs file" >>${RUN}_${modID}.t${mycyc}z.nav.log
+    export err=1; err_chk
+  fi
+     if [ $fhr -eq 00 ]; then
+# This is for n00 or n-24 nowcast 
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.arche.a arche.a
+     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.arche.b arche.b
+   else
+    echo Missing archs file $COMOUT/${arefile_tplate}. >>${RUN}_${modID}.t${mycyc}z.nav.log
+    echo "NOTdone due to missing arche file" >>${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk
   fi
  fi
@@ -265,10 +280,11 @@ fi
     hr_2d_1hrly=`expr $hr_2d_1hrly + $intvl_1hrly`
     if [ $surface_1hrly = 'YES' ]
     then 
-      ksh ${USHrtofs}/${RUN}_glo2d_1hrly.sh
+      ksh ${USHrtofs}/${RUN}_glo2d.sh
+      ksh ${USHrtofs}/${RUN}_glo2d_ice.sh
       if [ $SENDCOM = 'YES' ]
       then
-        for ftype in diag prog
+        for ftype in diag prog ice
         do
           cfile=${RUN}_${modID}_2ds_${mode}${fhr}_${ftype}.nc
           cp -f -p $cfile  $COMOUT/.
@@ -290,10 +306,11 @@ fi
     hr_2d_3hrly=`expr $hr_2d_3hrly + $intvl_3hrly`
     if [ $surface_3hrly = 'YES' ]
     then
-      ksh ${USHrtofs}/${RUN}_glo2d_3hrly.sh
+      ksh ${USHrtofs}/${RUN}_glo2d.sh
+      ksh ${USHrtofs}/${RUN}_glo2d_ice.sh
       if [ $SENDCOM = 'YES' ]
       then
-        for ftype in diag prog
+        for ftype in diag prog ice
         do
           cfile=${RUN}_${modID}_2ds_${mode}${fhr}_${ftype}.nc
           cp -f -p $cfile  $COMOUT/.

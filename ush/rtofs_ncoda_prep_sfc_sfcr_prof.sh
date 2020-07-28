@@ -2,7 +2,7 @@
 #NOTE:############################################################################
 ##  This script gets the sub surface data from the bufr tank and then
 ##  writes out dump text files
-##  1. use ~/bin/dumpjb.ocean to dump BURF data to local directory
+##  1. use DUMPJB to dump BUFR data to local directory
 ##  this script should be followed by running a decoder.
 ##  Y. Hao  IMSG AT EMC/NCEP/NOAA  10/08/2018. Dump only: ZG May 2019
 ###################################################################################
@@ -21,7 +21,7 @@ cd $DIRTMP
 today=${PDY}00
 run_dtg=${PDYm1}00
 
-export LIST=${LIST:-"/gpfs/dell2/emc/modeling/noscrub/emc.ncodapa/ncoda_dump/ush/bufr_dumplist_ncoda"}
+export LIST=${LIST:-"/gpfs/dell2/emc/modeling/save/emc.ncodapa/rtofs_glo.v2.0.0/ush/bufr_dumplist"}
 
 export HHback=132  # monthly tanks look back (in hours)
 export HHbacks=48  # surface lookup back (in hours)

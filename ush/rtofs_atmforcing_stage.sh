@@ -40,10 +40,18 @@ done
 
 if [ -z $ffile ] || [ $ffile == 'none' ]
 then
-  $USHrtofs/${RUN}_abort.sh "Missing Atmosperic Forcing File" \
-    "ABNORMAL EXIT FORECAST: NO FILE sfcflx at $idate" 4
- 
+  $USHrtofs/${RUN}_abort.sh "Missing Atmospheric Forcing File " \
+    "ABNORMAL EXIT FORECAST: NO VALID FILE sfcflx for time $idate" 4
 fi
+# check on validity of file
+$WGRIB2 -checksum -1 $forcefile > /dev/null
+err=$?
+if [ $err -ne 0 ]
+then
+  $USHrtofs/${RUN}_abort.sh "Corrupted Atmospheric Forcing File " \
+    "ABNORMAL EXIT FORECAST: CORRUPTED FLUX FILE $forcefile" 4
+fi
+
 echo "forcefile $forcefile"
 
 fflxfile=${DATA}/${idate}/${RUN}'.'`basename $forcefile`
