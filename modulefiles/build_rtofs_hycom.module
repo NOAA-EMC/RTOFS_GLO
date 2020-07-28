@@ -15,22 +15,13 @@ setenv COMP intel
 
 set sys [uname sysname]
 
-module load EnvVars/1.0.3
+#module load EnvVars/1.0.3
 module load ips/18.0.1.163
 module load impi/18.0.1
-module load bacio/2.0.2
-module load w3nco/2.0.6
-module load jasper/1.900.29
-module load libpng/1.2.59
 module load zlib/1.2.11
-module load g2/3.1.0
-module load w3emc/2.3.0
-module load sigio/2.1.0
-module load sp/2.0.2
-module load bufr/11.3.1
-module load NetCDF/4.5.0
-module load HDF5-parallel/1.10.1
-module load NCL/6.4.0
-module load mmab/3.5.0
+#module load NetCDF/4.5.0
+module load NetCDF/3.6.3
 module load ESMF/4_0_0rp2
+#module load HDF5-parallel/1.10.1
+module load HDF5-serial/1.10.1
 
