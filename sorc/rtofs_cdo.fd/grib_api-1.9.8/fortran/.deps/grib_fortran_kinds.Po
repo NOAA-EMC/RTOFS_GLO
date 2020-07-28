@@ -1,6 +1,0 @@
-grib_fortran_kinds.o: grib_fortran_kinds.c /usr/include/stdc-predef.h \
- /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stddef.h
-
-/usr/include/stdc-predef.h:
-
-/usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stddef.h:
