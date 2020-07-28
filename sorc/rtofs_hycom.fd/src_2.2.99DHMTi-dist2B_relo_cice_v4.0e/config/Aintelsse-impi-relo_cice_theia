@@ -1,0 +1,62 @@
+# #
+# DISTRIBUTION STATEMENT B: Distribution authorized to U.S. Government
+# agencies based upon the reasons of possible Premature Distribution
+# and the possibility of containing Software Documentation as listed
+# on Table 1 of DoD Instruction 5230.24, Distribution Statements on
+# Technical Documents, of 23 August 2012. Other requests for this
+# document shall be made to Dr. Ruth H. Preller, Superintendent,
+# Oceanography Division, U.S. Naval Research Laboratory, DEPARTMENT
+# OF THE NAVY, John C. Stennis Space Center, MS 39529-5004; (228)
+# 688-4670 (voice); ruth.preller@nrlssc.navy.mil (e-mail).
+# #
+#
+# -----------------------------------------------------------------------------
+# common definitions for SGI Altix ICE, Intel MPI, small memory, real*8, ARCTIC
+# HYCOM+CICE using ESMF4; see http://www.esmf.ucar.edu/ for ESMF
+# -fp-model source to maintain bit for bit equality for all NMPI values
+# On IBM iDATAPlex, use the mpi/intel/impi module
+# Emulate SGI Altix ICE on IBM iDataPlex using -xSSE4.2
+# version that uses Serial I/O for HYCOM
+# relocatable version
+# -----------------------------------------------------------------------------
+#
+# MACROS      DESCRIPTIONS:
+#
+# FC:         Fortran 90 compiler.
+# FCFFLAGS:   Fortran 90 compilation flags.
+# CC:         C compiler.
+# CCFLAGS:    C compilation flags.
+# CPP:        cpp preprocessor (may be implied by FC).
+# CPPFLAGS:   cpp -D macro flags.
+# LD:         Loader.
+# LDFLAGS:    Loader flags.
+# EXTRALIBS:  Extra local libraries (if any).
+#
+FC            =	mpiifort
+INCLUDES      = -I${ESMF_DIR}/mod/modO/Linux.intel.64.intelmpi.default -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile -I/apps/hdf5/1.8.14-intel/include  -I/apps/zlib/1.2.8-intel-15.0.0/1.2.8/include -I/apps/szip/2.1/include 
+FCFFLAGS      = -traceback -xSSE4.2 -O3 -fp-model source -r8 -warn nogeneral $(INCLUDES)
+CC            =	icc
+CCFLAGS       =	-traceback -xSSE4.2 -O 
+CPP           =	cpp -P
+CPPFLAGS      =	-DUSE_ESMF -DIA32 -DREAL8 -DMPI -DSERIAL_IO -DENDIAN_IO -DTIMER  -DRELO -DARCTIC
+LD            =	$(FC)
+LDFLAGS       =	-V $(FCFFLAGS) -mkl
+EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L/apps/netcdf/4.3.0-intel/lib -L/apps/hdf5/1.8.14-intel/lib  -L/apps/zlib/1.2.8-intel-15.0.0/1.2.8/lib -L/apps/szip/2.1/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf  -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lz -lsz -lnetcdf_c++4  -Bdynamic
+#
+# --- generic make definitions
+#
+SHELL         = /bin/sh
+RM            = \rm -f
+
+#
+# rules.
+#
+
+.c.o:
+	$(CC) $(CPPFLAGS) $(CCFLAGS)  -c $*.c
+
+.f.o:
+	$(FC)             $(FCFFLAGS) -c $*.f
+
+.F.o:
+	$(FC) $(CPPFLAGS) $(FCFFLAGS) -c $*.F

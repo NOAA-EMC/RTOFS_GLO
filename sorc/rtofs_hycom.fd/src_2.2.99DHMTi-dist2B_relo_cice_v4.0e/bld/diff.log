@@ -1,0 +1,55 @@
+1,11d0
+< # #
+< # DISTRIBUTION STATEMENT B: Distribution authorized to U.S. Government
+< # agencies based upon the reasons of possible Premature Distribution
+< # and the possibility of containing Software Documentation as listed
+< # on Table 1 of DoD Instruction 5230.24, Distribution Statements on
+< # Technical Documents, of 23 August 2012. Other requests for this
+< # document shall be made to Dr. Ruth H. Preller, Superintendent,
+< # Oceanography Division, U.S. Naval Research Laboratory, DEPARTMENT
+< # OF THE NAVY, John C. Stennis Space Center, MS 39529-5004; (228)
+< # 688-4670 (voice); ruth.preller@nrlssc.navy.mil (e-mail).
+< # #
+13,15c2,5
+< # Makefile macros for "armstrong" a NAVO Cray XC30
+< # version for Intel Fortran, module switch PrgEnv-cray PrgEnv-intel
+< # Emulate SGI Altix ICE using -xSSE4.2
+---
+> # Modified from: Makefile macros for "kilrain" a NAVO IBM iDataPlex cluster running Linux
+> # version for Intel MPI, module mpi/intel/impi/4.1.0
+> # Emulate SGI Altix ICE on IBM iDataPlex using -xSSE4.2
+> #
+22c12
+< CPPFLAGS   := -P -traditional-cpp -DPOSIX
+---
+> CPPFLAGS   := -P -traditional-cpp
+24,25c14,15
+< CFLAGS     := -c -traceback -xSSE4.2 -O2 -fPIC -m64 -mcmodel=small
+< FIXEDFLAGS := -132
+---
+> CFLAGS     := -c -O2 -m64
+> FIXEDFLAGS := -Mfixed
+27,28c17
+< FC         := ftn
+< #FFLAGS     := $(INCLDIR) -O3 -byteswapio
+---
+> FC         := mpiifort
+31,32c20,21
+< LD         := ftn
+< LDFLAGS    := 
+---
+> LD         :=  $(FC)
+> LDFLAGS    :=  $(FFLAGS) -v
+48,49c37,39
+<    INCLDIR := $(INCLDIR) -I/p/home/wallcraf/pkgs/netcdf/intel/4.0.1/include
+<    SLIBS   := $(SLIBS)   -L/p/home/wallcraf/pkgs/netcdf/intel/4.0.1/lib -lnetcdf 
+---
+>    INCLDIR := $(INCLDIR) -I/apps/netcdf/4.3.0-intel/include
+>    SLIBS   := $(SLIBS) /apps/netcdf/4.3.0-intel/lib/libnetcdf.a /apps/netcdf/4.3.0-intel/lib/libnetcdff.a /apps/netcdf/4.3.0-intel/lib/libnetcdf_c++4.a /apps/hdf5/1.8.14-intel/lib/libhdf5_hl.a /apps/hdf5/1.8.14-intel/lib/libhdf5.a 
+> #/apps/hdf5/1.8.7/lib/libz.a
+54,55c44,45
+<    INCLDIR :=  $(INCLDIR) -I/p/home/wallcraf/pkgs/esmf/intel/4.0.0rp2/mod/modO
+<    SLIBS   :=  $(SLIBS)   -L/p/home/wallcraf/pkgs/esmf/intel/4.0.0rp2/lib/libO -lesmf   -lAtpSigHandler -lAtpSigHCommData -lpthread -liomp5 -limf -lm -lpthread -ldl -lsci_intel_mp -liomp5 -limf -lm -lpthread -ldl -lrt -lugni -lpthread -lpmi -limf -lm -ldl -lrt -lugni -lpthread -lpmi -limf -lm -ldl -ldmapp -lmpl -lpmi -lpthread -lalpslli -lpthread -lwlm_detect -lugni -lpthread -lalpsutil -lpthread -lrca -lxpmem -ludreg -limf -lm -lifcore -lifport -lpthread -limf -lsvml -lirng -lm -lipgo -ldecimal -lstdc++ -lgcc -lgcc_eh -lirc -lsvml -lgcc -lgcc_eh -lirc_s -ldl -lrt -ldl
+---
+>    INCLDIR :=  $(INCLDIR) -I/scratch4/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/mod/modO/Linux.intel.64.intelmpi.default -I/scratch4/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/lib/libO/Linux.intel.64.intelmpi.default
+>    SLIBS   :=  $(SLIBS)   -L/scratch4/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/lib/libO/Linux.intel.64.intelmpi.default/libesmf.so -L/scratch4/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/lib/libO/Linux.intel.64.intelmpi.defaultlibesmf.a  -lesmf  -lmpi -lmpi++ -limf -lsvml -lm -lipgo -ldecimal -liomp5 -lstdc++ -lgcc_s -lgcc -lirc -lpthread -lgcc_s -lgcc -lirc_s -ldl -lrt -ldl

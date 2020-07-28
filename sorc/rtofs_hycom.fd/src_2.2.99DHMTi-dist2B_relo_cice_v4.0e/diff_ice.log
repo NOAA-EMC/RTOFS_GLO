@@ -1,0 +1,556 @@
+setenv HC ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e
+foreach f ( comp_ice.csh */*.F90 */*/*.F90 )
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw comp_ice.csh ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/comp_ice.csh
+1,8d0
+< module purge
+< module load ips/18.0.1.163
+< module load impi/18.0.1                  
+< module load NetCDF/3.6.3
+< module load ESMF/4_0_0rp2
+< module load HDF5-serial/1.10.1
+< module load zlib/1.2.11
+< 
+25,33c17,24
+< setenv SITE NCEP.wcossphase3SMSSE
+< #unset echo
+< #module switch  intel intel/15.0.0.090
+< #module switch  cray-mpich cray-mpich/7.2.4
+< #module switch  cray-libsci cray-libsci/12.2.0
+< #module switch ics ics/12.1
+< #module load NetCDF/4.2/serial
+< module list
+< #set echo
+---
+> set echo
+> setenv SITE NOAA.theiaSMSSE
+> module load intel/14.0.2
+> module load hdf5
+> module load szip
+> module load impi
+> module load netcdf/4.3.0
+> 
+39c30
+< setenv SYSTEM_USERDIR /gpfs/dell2/emc/modeling/noscrub/Zulema.Garraffo/tmp
+---
+> setenv SYSTEM_USERDIR /scratch4/NCEPDEV/ocean/scrub/$user
+182,183c173,175
+< #    setenv ESMF_DIR /usrx/local/esmf-4.0.0rp1
+<     setenv ESMF_DIR /usrx/local/prod/packages/ips/18.0.1/impi/18.0.1/esmf/4_0_0rp2
+---
+> #    setenv ESMF_DIR ${BEI_HOME}/esmf/intel/4.0.0rp2
+>      setenv ESMF_DIR /scratch4/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi
+> 
+197d188
+< #setenv ARCH Axc40-intel-relo
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw csm_share/shr_orb_mod.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/csm_share/shr_orb_mod.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw mpi/ice_boundary.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/mpi/ice_boundary.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw mpi/ice_broadcast.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/mpi/ice_broadcast.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw mpi/ice_communicate.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/mpi/ice_communicate.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw mpi/ice_exit.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/mpi/ice_exit.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw mpi/ice_gather_scatter.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/mpi/ice_gather_scatter.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw mpi/ice_global_reductions.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/mpi/ice_global_reductions.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw mpi/ice_timers.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/mpi/ice_timers.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_age.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_age.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_atmo.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_atmo.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_blocks.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_blocks.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_calendar.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_calendar.F90
+278a279,280
+> !zg
+>          npt3hr                    , & ! time steps in 3 hours
+378a381
+>         npt3hr = nint(secday/dt)/8
+412,416c415,424
+< !zg write restart at hour 21 and 24
+<           if (istep == nint((21.d0*secday/24.d0)/dt) ) &
+<                 write_restart = 1  !21 hours into the run
+<           if (istep == 2*npt12hr)  &
+<                 write_restart = 1  !24 hours into the run
+---
+> !zg changed from write restart at hour 21, 24 
+> !zg write restart at end of run, and 3 hours from end of run
+>           if (istep == npt-npt3hr)  &
+>                 write_restart = 1  !3 hours before end of run
+>           if (istep >= npt)  &
+>                 write_restart = 1  !last time step
+> !         if (istep == nint((21.d0*secday/24.d0)/dt) ) &
+> !               write_restart = 1  !21 hours into the run
+> !          if (istep == 2*npt12hr)  &
+> !                write_restart = 1  !24 hours into the run
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_coupling.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_coupling.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_diagnostics.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_diagnostics.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_distribution.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_distribution.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_domain.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_domain.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_domain_size.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_domain_size.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_dyn_evp.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_dyn_evp.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_fileunits.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_fileunits.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_flux.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_flux.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_forcing.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_forcing.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_grid.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_grid.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_history.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_history.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_init.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_init.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_itd.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_itd.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_kinds_mod.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_kinds_mod.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_mechred.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_mechred.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_meltpond.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_meltpond.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_ocean.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_ocean.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_orbital.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_orbital.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_read_write.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_read_write.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_restart.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_restart.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_restoring.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_restoring.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_shortwave.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_shortwave.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_spacecurve.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_spacecurve.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_state.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_state.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_step_mod.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_step_mod.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_therm_itd.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_therm_itd.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_therm_vertical.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_therm_vertical.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_transport_driver.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_transport_driver.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_transport_remap.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_transport_remap.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw source/ice_work.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/source/ice_work.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw drivers/esmf/CICE_ComponentMod.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/drivers/esmf/CICE_ComponentMod.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw drivers/esmf/CICE_FinalMod.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/drivers/esmf/CICE_FinalMod.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw drivers/esmf/CICE_InitMod.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/drivers/esmf/CICE_InitMod.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw drivers/esmf/CICE_RunMod.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/drivers/esmf/CICE_RunMod.F90
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw drivers/esmf/ice_constants.F90 ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/drivers/esmf/ice_constants.F90
+end
+foreach f ( config/*_cice hycom/*.[Ffh] )
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw config/Aintelsse-impi_cice ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/config/Aintelsse-impi_cice
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw config/Aintelsse-impi-relo_cice ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/config/Aintelsse-impi-relo_cice
+2,11c2,11
+< ## DISTRIBUTION STATEMENT B: Distribution authorized to U.S. Government
+< ## agencies based upon the reasons of possible Premature Distribution
+< ## and the possibility of containing Software Documentation as listed
+< ## on Table 1 of DoD Instruction 5230.24, Distribution Statements on
+< ## Technical Documents, of 23 August 2012. Other requests for this
+< ## document shall be made to Dr. Ruth H. Preller, Superintendent,
+< ## Oceanography Division, U.S. Naval Research Laboratory, DEPARTMENT
+< ## OF THE NAVY, John C. Stennis Space Center, MS 39529-5004; (228)
+< ## 688-4670 (voice); ruth.preller@nrlssc.navy.mil (e-mail).
+< ## #
+---
+> # DISTRIBUTION STATEMENT B: Distribution authorized to U.S. Government
+> # agencies based upon the reasons of possible Premature Distribution
+> # and the possibility of containing Software Documentation as listed
+> # on Table 1 of DoD Instruction 5230.24, Distribution Statements on
+> # Technical Documents, of 23 August 2012. Other requests for this
+> # document shall be made to Dr. Ruth H. Preller, Superintendent,
+> # Oceanography Division, U.S. Naval Research Laboratory, DEPARTMENT
+> # OF THE NAVY, John C. Stennis Space Center, MS 39529-5004; (228)
+> # 688-4670 (voice); ruth.preller@nrlssc.navy.mil (e-mail).
+> # #
+14c14
+< # common definitions for SGI Altix ICE, Intel MPI, large memory, real*8, ARCTIC
+---
+> # common definitions for SGI Altix ICE, Intel MPI, small memory, real*8, ARCTIC
+36,38c36
+< #INCLUDES      = -I${ESMF_DIR}/mod/modO -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile
+< #INCLUDES      = -I${ESMF_DIR}/mod/modO/Linux.intel.64.intelmpi.default -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile -I/usrx/local/prod/packages/ips/18.0.1/impi/18.0.1/hdf5/1.10.1/include  -I/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/include
+< INCLUDES      = -I${ESMF_DIR}/mod/modO/Linux.intel.64.intelmpi.default -I${ESMF_DIR}/src/include -I${CICE_DIR}/esmf/compile -I/usrx/local/prod/packages/ips/18.0.1/impi/18.0.1/hdf5/1.10.1/include  -I/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/include
+---
+> INCLUDES      = -I${ESMF_DIR}/mod/modO/Linux.intel.64.intelmpi.default -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile -I/apps/hdf5/1.8.14-intel/include  -I/apps/zlib/1.2.8-intel-15.0.0/1.2.8/include -I/apps/szip/2.1/include 
+46,48c44
+< #EXTRALIBS     = -L${ESMF_DIR}/lib/libO -L/u/home/wallcraf/pkgs/netcdf-4.0.1_nc3_ifort_ifort_icpc/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdf -lnetcdf_c++ -Bdynamic
+< #EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L/usrx/local/prod/packages/ips/18.0.1/netcdf/3.6.3/lib -L/usrx/local/prod/packages/ips/18.0.1/hdf5/1.10.1/lib  -L/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lz -lnetcdf_c++  -Bdynamic
+< EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L/usrx/local/prod/packages/ips/18.0.1/netcdf/3.6.3/lib -L/usrx/local/prod/packages/ips/18.0.1/hdf5/1.10.1/lib  -L/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdf -lhdf5_hl -lhdf5 -lz -lnetcdf_c++  -Bdynamic
+---
+> EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L/apps/netcdf/4.3.0-intel/lib -L/apps/hdf5/1.8.14-intel/lib  -L/apps/zlib/1.2.8-intel-15.0.0/1.2.8/lib -L/apps/szip/2.1/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf  -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lz -lsz -lnetcdf_c++4  -Bdynamic
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw config/Axc30-intel-relo_cice ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/config/Axc30-intel-relo_cice
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw config/Axc40-intel-relo_cice ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/config/Axc40-intel-relo_cice
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw config/xc40-intel-relo_cice ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/config/xc40-intel-relo_cice
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/barotp.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/barotp.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/bigrid.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/bigrid.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/blkdat.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/blkdat.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/cnuity.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/cnuity.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/convec.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/convec.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/diapfl.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/diapfl.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/dimensions.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/dimensions.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/dimensions_relo.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/dimensions_relo.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/dpthuv.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/dpthuv.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/dpudpv.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/dpudpv.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/forfun.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/forfun.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/forfun_test.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/forfun_test.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/geopar.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/geopar.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/hybgen.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/hybgen.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/hycom_cice.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/hycom_cice.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/hycom.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/hycom.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/icloan.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/icloan.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/inicon.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/inicon.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/inigiss.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/inigiss.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/inikpp.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/inikpp.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/inimy.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/inimy.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/isnan.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/isnan.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/latbdy.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/latbdy.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/machine.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/machine.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/matinv.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/matinv.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_archiv.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_archiv.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_cb_arrays.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_cb_arrays.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_dimensions.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_dimensions.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_floats.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_floats.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_hycom.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_hycom.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_incupd.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_incupd.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_mean.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_mean.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_momtum.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_momtum.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_OICPL.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_OICPL.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_pipe.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_pipe.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_stokes.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_stokes.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_tides.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_tides.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_tsadvc.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_tsadvc.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_xc.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_xc.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_xc_mp.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_xc_mp.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_xc_sm.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_xc_sm.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_za.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_za.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_za_mp1.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_za_mp1.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_za_mp.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_za_mp.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_za_sm.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_za_sm.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mod_za_zt.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mod_za_zt.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mxkprf.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mxkprf.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mxkrt.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mxkrt.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mxkrtm.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mxkrtm.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/mxpwp.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/mxpwp.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/overtn.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/overtn.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/poflat.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/poflat.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/prtmsk.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/prtmsk.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/psmoo.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/psmoo.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/restart.f ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/restart.f
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/stmt_fns.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/stmt_fns.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/thermf.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/thermf.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/trcupd.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/trcupd.F
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/unit_offset.h ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/unit_offset.h
+end
+C *****     *****     *****     *****     *****     *****     *****
+C: Command not found.
+diff -ibw hycom/wtime.F ../theia/src_2.2.99DHMTi-900-dist2B_relo_cice_v4.0e/hycom/wtime.F
+end

@@ -1,0 +1,30 @@
+1,11d0
+< setenv SITE NAVO.gordonINTEL
+< unset echo
+< module switch  intel intel/15.0.0.090
+< module switch  cray-mpich cray-mpich/7.2.4
+< module switch  cray-libsci cray-libsci/12.2.0
+23c7,14
+< set echo
+---
+> setenv SITE NOAA.theiaSMSSE
+> module load intel/14.0.2
+> module load hdf5
+> module load szip
+> #module switch ics ics/12.1  #Not in Theia
+> module load impi
+> module load netcdf/4.3.0
+> module list
+27a19
+> setenv SYSTEM_USERDIR /scratch4/NCEPDEV/ocean/scrub/$user
+29d20
+< setenv SYSTEM_USERDIR /p/work1/$user
+43a35
+<     setenv BEI_HOME /p/home/wallcraf/pkgs
+<     setenv ESMF_DIR ${BEI_HOME}/esmf/intel/4.0.0rp2
+---
+>      setenv ESMF_DIR /scratch4/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi
+184,186c176
+< setenv ARCH Axc40-intel-relo
+---
+> setenv ARCH Aintelsse-impi

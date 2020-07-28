@@ -1,0 +1,82 @@
+# ESMF application makefile fragment
+#
+# Use the following ESMF_ variables to compile and link
+# your ESMF application against this ESMF build.
+#
+# !!! VERY IMPORTANT: If the location of this ESMF build is   !!!
+# !!! changed, e.g. libesmf.a is copied to another directory, !!!
+# !!! this file - esmf.mk - must be edited to adjust to the   !!!
+# !!! correct new path                                        !!!
+#
+# Please see end of file for options used on this ESMF build
+#
+
+ESMF_F90COMPILER=mpiifort
+ESMF_F90LINKER=mpiifort
+
+ESMF_F90COMPILEOPTS=-O2 -fPIC -m64 -mcmodel=small -threads  -openmp
+ESMF_F90COMPILEPATHS=-I/scratch1/portfolios/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/mod/modO/Linux.intel.64.intelmpi.default -I/scratch1/portfolios/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/include
+ESMF_F90COMPILECPPFLAGS=-DSx86_64_small=1 -DESMF_OS_Linux=1
+ESMF_F90COMPILEFREECPP=
+ESMF_F90COMPILEFREENOCPP=
+ESMF_F90COMPILEFIXCPP=
+ESMF_F90COMPILEFIXNOCPP=
+
+ESMF_F90LINKOPTS= -m64 -mcmodel=small -threads  -openmp
+ESMF_F90LINKPATHS=-L/scratch1/portfolios/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/lib/libO/Linux.intel.64.intelmpi.default -L/apps/intel/impi/4.1.3.048/intel64/lib -L/apps/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64 -L/apps/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64 -L/apps/intel/composer_xe_2013_sp1.2.144/mkl/lib/intel64 -L/apps/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64 -L/apps/intel/composer_xe_2013_sp1.2.144/tbb/lib/intel64/gcc4.4 -L/apps/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64 -L/usr/lib/gcc/x86_64-redhat-linux/4.4.7/ -L/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/ -L/lib/../lib64 -L/lib/../lib64/ -L/usr/lib/../lib64 -L/usr/lib/../lib64/ -L/apps/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64/ -L/apps/intel/composer_xe_2013_sp1.2.144/mkl/lib/intel64/ -L/apps/intel/composer_xe_2013_sp1.2.144/tbb/lib/intel64/gcc4.4/ -L/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../ -L/lib64 -L/lib/ -L/usr/lib64 -L/usr/lib
+ESMF_F90LINKRPATHS=-Wl,-rpath,/scratch1/portfolios/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/lib/libO/Linux.intel.64.intelmpi.default
+ESMF_F90LINKLIBS= -cxxlib -lrt -ldl
+ESMF_F90ESMFLINKLIBS=-lesmf  -cxxlib -lrt -ldl
+
+ESMF_CXXCOMPILER=mpiicpc
+ESMF_CXXLINKER=mpiicpc
+
+ESMF_CXXCOMPILEOPTS=-O2 -DNDEBUG -fPIC -m64 -mcmodel=small -pthread  -openmp
+ESMF_CXXCOMPILEPATHS=-I/scratch1/portfolios/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/include
+ESMF_CXXCOMPILECPPFLAGS=-DSx86_64_small=1 -DESMF_OS_Linux=1 -D__SDIR__=''
+
+ESMF_CXXLINKOPTS= -m64 -mcmodel=small -pthread  -openmp
+ESMF_CXXLINKPATHS=-L/scratch1/portfolios/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/lib/libO/Linux.intel.64.intelmpi.default -L/apps/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64/
+ESMF_CXXLINKRPATHS=-Wl,-rpath,/scratch1/portfolios/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2-theia/intel/intelmpi/lib/libO/Linux.intel.64.intelmpi.default -Wl,-rpath,/apps/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64/
+ESMF_CXXLINKLIBS= -ldl -lrt -lpthread -lifport -lifcoremt -limf -lsvml -lm -lipgo -liomp5 -lirc -lpthread -lsvml -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl
+ESMF_CXXESMFLINKLIBS=-lesmf  -ldl -lrt -lpthread -lifport -lifcoremt -limf -lsvml -lm -lipgo -liomp5 -lirc -lpthread -lsvml -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl
+
+ESMF_SO_F90COMPILEOPTS=-fPIC
+ESMF_SO_F90LINKOPTS=-shared
+ESMF_SO_F90LINKOPTSEXE=-Wl,-export-dynamic
+ESMF_SO_CXXCOMPILEOPTS=-fPIC
+ESMF_SO_CXXLINKOPTS=-shared
+ESMF_SO_CXXLINKOPTSEXE=-Wl,-export-dynamic
+
+ESMF_OPENMP_F90COMPILEOPTS= -openmp
+ESMF_OPENMP_F90LINKOPTS= -openmp
+ESMF_OPENMP_CXXCOMPILEOPTS= -openmp
+ESMF_OPENMP_CXXLINKOPTS= -openmp
+
+#
+# !!! The following options were used on this ESMF build !!!
+#
+# ESMF_DIR: /scratch1/portfolios/NCEPDEV/ocean/save/Zulema.Garraffo/esmf_4_0_0rp2_src
+# ESMF_OS: Linux
+# ESMF_MACHINE: x86_64
+# ESMF_ABI: 64
+# ESMF_COMPILER: intel
+# ESMF_BOPT: O
+# ESMF_OPTLEVEL: 2
+# ESMF_COMM: intelmpi
+# ESMF_SITE: default
+# ESMF_PTHREADS: ON
+# ESMF_OPENMP: ON
+# ESMF_ARRAY_LITE: FALSE
+# ESMF_NO_INTEGER_1_BYTE: FALSE
+# ESMF_NO_INTEGER_2_BYTE: FALSE
+# ESMF_FORTRANSYMBOLS: default
+# ESMF_DEFER_LIB_BUILD:   ON
+# ESMF_TESTEXHAUSTIVE: OFF
+# ESMF_TESTWITHTHREADS: OFF
+# ESMF_TESTMPMD: OFF
+# ESMF_TESTSHAREDOBJ: OFF
+# ESMF_TESTFORCEOPENMP: OFF
+# ESMF_TESTHARNESS: NONEXHAUSTIVE
+# 
+# ESMF environment variables pointing to 3rd party software:

@@ -1,0 +1,6 @@
+module load ips/18.0.1.163
+module load impi/18.0.1                  #intel mpi. there is also spectrum mpi
+module load NetCDF/3.6.3
+module load ESMF/4_0_0rp2
+module load HDF5-serial/1.10.1
+module load zlib/1.2.11

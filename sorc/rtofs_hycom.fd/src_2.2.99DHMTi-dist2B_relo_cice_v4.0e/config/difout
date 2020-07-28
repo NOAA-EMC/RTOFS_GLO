@@ -1,0 +1,38 @@
+0a1,11
+> # #
+> # DISTRIBUTION STATEMENT B: Distribution authorized to U.S. Government
+> # agencies based upon the reasons of possible Premature Distribution
+> # and the possibility of containing Software Documentation as listed
+> # on Table 1 of DoD Instruction 5230.24, Distribution Statements on
+> # Technical Documents, of 23 August 2012. Other requests for this
+> # document shall be made to Dr. Ruth H. Preller, Superintendent,
+> # Oceanography Division, U.S. Naval Research Laboratory, DEPARTMENT
+> # OF THE NAVY, John C. Stennis Space Center, MS 39529-5004; (228)
+> # 688-4670 (voice); ruth.preller@nrlssc.navy.mil (e-mail).
+> # #
+3c14
+< # common definitions for SGI Altix ICE, Intel MPI, large memory, real*8, ARCTIC
+---
+> # common definitions for SGI Altix ICE, Intel MPI, small memory, real*8, ARCTIC
+8a20
+> # relocatable version
+24,26c36,37
+< #INCLUDES      = -I${ESMF_DIR}/mod/modO -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile
+< INCLUDES      = -I${ESMF_DIR}/mod/modO/Linux.intel.64.intelmpi.default -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile -I/apps/hdf5/1.8.14-intel/include  -I/apps/zlib/1.2.8-intel-15.0.0/1.2.8/include -I/apps/szip/2.1/include 
+< FCFFLAGS      =	-traceback -xSSE4.2 -O3 -fp-model source -r8 -warn nogeneral $(INCLUDES)
+---
+> INCLUDES      = -I${ESMF_DIR}/mod/modO -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile
+> FCFFLAGS      =	-traceback -xSSE4.2 -O3 -fp-model source -r8 -warn nogeneral -mcmodel=small $(INCLUDES)
+28c39
+< CCFLAGS       =	-traceback -xSSE4.2 -O 
+---
+> CCFLAGS       =	-traceback -xSSE4.2 -O -mcmodel=small
+30c41
+< CPPFLAGS      =	-DUSE_ESMF -DIA32 -DREAL8 -DMPI -DSERIAL_IO -DENDIAN_IO -DTIMER -DARCTIC
+---
+> CPPFLAGS      =	-DUSE_ESMF -DIA32 -DREAL8 -DMPI -DSERIAL_IO -DENDIAN_IO -DNAN2003 -DTIMER  -DRELO -DARCTIC
+33,34c44
+< #EXTRALIBS     = -L${ESMF_DIR}/lib/libO -L/u/home/wallcraf/pkgs/netcdf-4.0.1_nc3_ifort_ifort_icpc/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdf -lnetcdf_c++ -Bdynamic
+< EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L/apps/netcdf/4.3.0-intel/lib -L/apps/hdf5/1.8.14-intel/lib  -L/apps/zlib/1.2.8-intel-15.0.0/1.2.8/lib -L/apps/szip/2.1/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lz -lsz -lnetcdf_c++4  -Bdynamic
+---
+> EXTRALIBS     = -L${ESMF_DIR}/lib/libO -L/u/home/wallcraf/pkgs/netcdf-4.0.1_nc3_ifort_ifort_icpc/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdf -lnetcdf_c++ -Bdynamic
