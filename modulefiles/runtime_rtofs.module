@@ -1,0 +1,49 @@
+#%Module######################################################################
+##							Eugene Mirvis@noaa.gov 
+##							EMC/NCEP/NOAA
+##   RTOFS-Global v2.0.0 
+##_____________________________________________________
+proc ModulesHelp { } {
+  puts stderr "Set environment variables for RTOFS-Global"
+        puts stderr "\tHycom: This module initializes Environment variables"
+        puts stderr "\t\tfor the Intel Compiler Suite $version\n"
+}
+
+# 
+module-whatis   " This module loads and sets environment variables for RTOFS_GLO "
+
+set sys         [uname sysname]
+set prec ""
+set ver v2.0.0
+set COMP intel
+
+# Known conflicts _____________
+
+#conflict bacio/v2.0.1
+
+# Loding nceplibs modules _____________
+module purge
+module load EnvVars/1.0.3
+module load ips/18.0.1.163
+module load impi/18.0.1
+module load prod_envir/1.1.0
+module load prod_util/1.1.4
+module load grib_util/1.1.1
+
+module load HDF5-serial/1.10.1
+module load NetCDF/4.5.0
+module load CFP/2.0.2
+
+module load bufr_dumplist/2.2.0
+module load dumpjb/5.0.3
+module load lsf/10.1
+
+module load gempak/7.3.1
+#
+# setenv _______________
+
+#prepending         _________________
+
+#prepend-path MANPATH $path/share/man
+#prepend-path MANPATH $path/share/man
+
