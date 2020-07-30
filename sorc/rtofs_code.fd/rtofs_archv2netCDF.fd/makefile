@@ -65,7 +65,7 @@ RM            = \rm -f
 	$(RM) $<.f
 
 #include ../../config/$(ARCH)_setup
-CMD=	rtofs_archv2ncdf2d  rtofs_archv2ncdf3z
+CMD=	rtofs_archv2ncdf2d  rtofs_archv2ncdf3z rtofs_field2ncdf2d 
 #
 # ---------------------------------------------------------------------
 # Standard part of the Makefile starts here
@@ -122,9 +122,6 @@ ARCHV_SRC = 	hycomarchv.f micomarchv.f \
                 conv_archv.f trim_archv.f mrgl_archv.f cooperhaines_archv.f ncoda_archv.f ncoda_archv_vel.f remap_archv.f remapi_archv.f \
                 archv2data2d.f archv2data2t.f archv2data3z.f archv2datasf.f archv2datasfl.f archv2restart.f putdat.f
 
-#LIBN     = ${LIBRARY} /nwprod/lib/libnetcdf.a ${EXTRALIBS}
-#LIBN     = ${LIBRARY} /usrx/local/NetCDF/3.6.3/lib/libnetcdf.a ${EXTRALIBS}
-#INCLUDE  = /usrx/local/NetCDF/3.6.3/include
 LIBN     = ${LIBRARY} ${NETCDF_LDFLAGS_F} ${EXTRALIBS}
 INCLUDE  = ${NETCDF}/include
 LN       =/bin/ln
@@ -159,6 +156,9 @@ rtofs_archv2datasfl:      $(MODB) archv2datasfl.o $(DATAZ_OBJ)
 
 rtofs_archv2ncdf2d:  $(NETCDF_STUFF)	$(MODB) archv2data2d.o  $(NCDFH_OBJ)
 	$(LD) $(LDFLAGS) -o rtofs_archv2ncdf2d  archv2data2d.o  $(MODB) $(NCDFH_OBJ) $(LIBN)
+
+rtofs_field2ncdf2d:  $(NETCDF_STUFF)	$(MODB) field2data.o  $(NCDFH_OBJ)
+	$(LD) $(LDFLAGS) -o rtofs_field2ncdf2d  field2data.o  $(MODB) $(NCDFH_OBJ) $(LIBN)
 
 rtofs_archm2ncdf2d:       $(MODB) archm2data2d.o  $(NCDFH_OBJ)
 	$(LD) $(LDFLAGS) -o rtofs_archm2ncdf2d  archm2data2d.o  $(MODB) $(NCDFH_OBJ) libnetcdf.a
@@ -249,6 +249,7 @@ NETCDF_STUFF:  netcdf.inc    netcdf.mod
 
 archv2ncdf3z.o:  archv2data3z.f  mod_plot.o mod_za.o getdat.o
 archv2data2d.o:  archv2data2d.f  mod_plot.o mod_za.o 
+field2data.o:  field2data.f  mod_plot.o mod_za.o 
 archm2data2d.o:  archm2data2d.f  mod_plot.o mod_za.o
 archv2data3z.o:  archv2data3z.f  mod_plot.o mod_za.o
 archm2data3z.o:  archm2data3z.f  mod_plot.o mod_za.o
@@ -277,7 +278,6 @@ fordate.o:  fordate.f
 getdat.o:   getdat.f      mod_plot.o mod_za.o
 getdepth.o: getdepth.f    mod_plot.o mod_za.o
 getdtm.o:   getdtm.f      mod_plot.o mod_za.o
-horout.o:   horout.f      mod_plot.o mod_xc.o mod_zb.o
 horout_nc.o: horout_nc.f  mod_plot.o mod_xc.o mod_zb.o
 indxi.o:    indxi.f       mod_plot.o
 indxj.o:    indxj.f       mod_plot.o

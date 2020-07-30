@@ -50,7 +50,8 @@ c
 c
       logical          :: lopen
       integer          :: i,j,l,iyear,month,iday,ihour,
-     &                          iyrms,monms,idms,ihrms
+     &                          iyrms,monms,idms,ihrms,
+     &                          deflate,deflate_level
       real             :: hmin,hmax
       double precision :: dt,yr0,year
 c
@@ -66,6 +67,7 @@ c
       data      cmonth/'Jan','Feb','Mar','Apr','May','Jun',
      &                 'Jul','Aug','Sep','Oct','Nov','Dec'/
 c
+      deflate_level = 1
       if     (iotype.eq.-1) then
 c
 c        initialization.
@@ -298,7 +300,8 @@ c
 c
 c          create a new NetCDF and write data to it
 c
-          call ncheck(nf90_create(trim(ncfile),nf90_noclobber,ncfileID))
+         call ncheck(nf90_create(trim(ncfile),nf90_hdf5,ncfileID))
+cc          call ncheck(nf90_create(trim(ncfile),nf90_hdf5,ncfileID))
           ! define the dimensions
           if     (iotype.eq.4) then !not for MERSEA
             call ncheck(nf90_def_dim(ncfileID,
@@ -471,8 +474,12 @@ c
           endif
           ! create the variables and attributes
           if     (iotype.eq.4) then !not for MERSEA
+CCCCCCCCC             call ncheck(nf90_def_var_deflate(ncfileID,pLatVarID,
+C     &        shuffle,deflate,deflate_level))
+
             call ncheck(nf90_def_var(ncfileID,"MT",  nf90_double,
-     &                               MTDimID,MTVarID))
+     &                           MTDimID,MTVarID,
+     &                           deflate_level = deflate_level))
             if     (yrflag.eq.0) then
               call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                                 "long_name",
@@ -517,7 +524,8 @@ c
             call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                               "axis","T"))
             call ncheck(nf90_def_var(ncfileID,"Date", nf90_double,
-     &                               MTDimID,datVarID))
+     &                           MTDimID,datVarID,
+     &                           deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,datVarID,
      &                               "long_name",
      &                               "date"))
@@ -560,11 +568,17 @@ c
           endif !not MERSEA
           if     (laxis) then
             if     (iotype.eq.-4) then !MERSEA
+CCCCCCCCCCC
+C            call ncheck(nf90_def_var_deflate(ncfileID,pLatVarID,
+C     &        shuffle,deflate,deflate_level))
+C
               call ncheck(nf90_def_var(ncfileID,"latitude",  nf90_float,
-     &                                 pLatDimID,pLatVarID))
+     &                                 pLatDimID,pLatVarID,
+     &                                 deflate_level = deflate_level))
             else
               call ncheck(nf90_def_var(ncfileID,"Latitude",  nf90_float,
-     &                                 pLatDimID,pLatVarID))
+     &                                 pLatDimID,pLatVarID,
+     &                                 deflate_level = deflate_level))
             endif
             call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                               "standard_name","latitude"))
@@ -579,10 +593,12 @@ c
      &                               "axis","Y"))
             if     (iotype.eq.-4) then !MERSEA
               call ncheck(nf90_def_var(ncfileID,"longitude", nf90_float,
-     &                                 pLonDimID,pLonVarID))
+     &                                 pLonDimID,pLonVarID,
+     &                                 deflate_level = deflate_level))
             else
               call ncheck(nf90_def_var(ncfileID,"Longitude", nf90_float,
-     &                                 pLonDimID,pLonVarID))
+     &                                 pLonDimID,pLonVarID,
+     &                                 deflate_level = deflate_level))
             endif
             call ncheck(nf90_put_att(ncfileID,pLonVarID,
      &                               "standard_name","longitude"))
@@ -602,25 +618,29 @@ c
      &                               "axis","X"))
           else !.not.laxis
             call ncheck(nf90_def_var(ncfileID,"Y", nf90_int,
-     &                               pYDimID,pYVarID))
+     &                               pYDimID,pYVarID,
+     &                               deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pYVarID,
      &                               "point_spacing","even"))  !ferret
             call ncheck(nf90_put_att(ncfileID,pYVarID,
      &                               "axis","Y"))
             call ncheck(nf90_def_var(ncfileID,"X", nf90_int,
-     &                               pXDimID,pXVarID))
+     &                               pXDimID,pXVarID,
+     &                               deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pXVarID,
      &                               "point_spacing","even"))  !ferret
             call ncheck(nf90_put_att(ncfileID,pXVarID,
      &                               "axis","X"))
             call ncheck(nf90_def_var(ncfileID,"Latitude",  nf90_float,
-     &                               (/pXDimID, pYDimID/), pLatVarID))
+     &                               (/pXDimID, pYDimID/), pLatVarID,
+     &                               deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                               "standard_name","latitude"))
             call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                               "units","degrees_north"))
             call ncheck(nf90_def_var(ncfileID,"Longitude", nf90_float,
-     &                               (/pXDimID, pYDimID/), pLonVarID))
+     &                               (/pXDimID, pYDimID/), pLonVarID,
+     &                               deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pLonVarID,
      &                               "standard_name","longitude"))
             call ncheck(nf90_put_att(ncfileID,pLonVarID,
@@ -635,23 +655,23 @@ c
           if     (iotype.eq.4) then !not for MERSEA
             if     (laxis) then
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                               (/pLonDimID, pLatDimID, MTDimID/),
-     &                                 varID))
+     &                            (/pLonDimID, pLatDimID, MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Date"))
             else
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                               (/pXDimID,   pYDimID,   MTDimID/),
-     &                                 varID))
+     &                            (/pXDimID,   pYDimID,   MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Longitude Latitude Date"))
             endif
           else !MERSEA      
             call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                               (/pLonDimID, pLatDimID/),
-     &                               varID))
+     &                            (/pLonDimID, pLatDimID/),
+     &                           varID,deflate_level = deflate_level))
           endif                                                         
           if     (names.ne." ") then
             call ncheck(nf90_put_att(ncfileID,varID,
@@ -728,23 +748,23 @@ c
           if     (iotype.eq.4) then !not for MERSEA
             if     (laxis) then
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                               (/pLonDimID, pLatDimID, MTDimID/),
-     &                                 varID))
+     &                           (/pLonDimID, pLatDimID, MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Date"))
             else
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                               (/pXDimID,   pYDimID,   MTDimID/),
-     &                                 varID))
+     &                           (/pXDimID,   pYDimID,   MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Longitude Latitude Date"))
             endif
           else !MERSEA
             call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                               (/pLonDimID, pLatDimID/),
-     &                               varID))
+     &                            (/pLonDimID, pLatDimID/),
+     &                            varID,deflate_level = deflate_level))
           endif
           if     (names.ne." ") then
             call ncheck(nf90_put_att(ncfileID,varID,
@@ -846,7 +866,8 @@ c
 c
       logical          :: lopen
       integer          :: i,j,k,l,iyear,month,iday,ihour,
-     &                            iyrms,monms,idms,ihrms
+     &                            iyrms,monms,idms,ihrms,
+     &                    deflate,deflate_level
       real             :: hmin(999),hmax(999)
       double precision :: dt,yr0,year
 c
@@ -862,6 +883,7 @@ c
       data      cmonth/'Jan','Feb','Mar','Apr','May','Jun',
      &                 'Jul','Aug','Sep','Oct','Nov','Dec'/
 c
+      deflate_level = 1
       if     (iotype.eq.-1) then
 c
 c        initialization.
@@ -1111,7 +1133,7 @@ c
 c
 c         create a new NetCDF and write data to it
 c
-          call ncheck(nf90_create(trim(ncfile),nf90_noclobber,ncfileID))
+          call ncheck(nf90_create(trim(ncfile),nf90_hdf5,ncfileID))
           ! define the dimensions
           if     (iotype.eq.4) then !not for MERSEA
             call ncheck(nf90_def_dim(ncfileID,
@@ -1286,7 +1308,8 @@ c
           ! create the variables and attributes
           if     (iotype.eq.4) then !not for MERSEA
             call ncheck(nf90_def_var(ncfileID,"MT",  nf90_double,
-     &                               MTDimID,MTVarID))
+     &                            MTDimID,MTVarID,
+     &                            deflate_level = deflate_level))
             if     (yrflag.eq.0) then
               call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                                 "long_name",
@@ -1331,7 +1354,8 @@ c
             call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                               "axis","T"))
             call ncheck(nf90_def_var(ncfileID,"Date", nf90_double,
-     &                               MTDimID,datVarID))
+     &                            MTDimID,datVarID,
+     &                            deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,datVarID,
      &                               "long_name",
      &                               "date"))
@@ -1374,12 +1398,14 @@ c
           endif !not MERSEA
           if     (ltheta) then
             call ncheck(nf90_def_var(ncfileID,"Layer", nf90_float,
-     &                               lyrDimID,lyrVarID))
+     &                            lyrDimID,lyrVarID,
+     &                            deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,lyrVarID,
      &                               "units","SigmaTheta"))     
           else
             call ncheck(nf90_def_var(ncfileID,"Layer", nf90_int,
-     &                               lyrDimID,lyrVarID))
+     &                             lyrDimID,lyrVarID,
+     &                             deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,lyrVarID,
      &                               "units","layer"))     
             call ncheck(nf90_put_att(ncfileID,lyrVarID,
@@ -1390,10 +1416,12 @@ c
           if     (laxis) then
             if     (iotype.eq.-4) then !MERSEA
               call ncheck(nf90_def_var(ncfileID,"latitude",  nf90_float,
-     &                                 pLatDimID,pLatVarID))
+     &                                 pLatDimID,pLatVarID,
+     &                                 deflate_level = deflate_level))
             else
               call ncheck(nf90_def_var(ncfileID,"Latitude",  nf90_float,
-     &                                 pLatDimID,pLatVarID))
+     &                                 pLatDimID,pLatVarID,
+     &                                 deflate_level = deflate_level))
             endif
             call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                               "standard_name","latitude"))
@@ -1408,10 +1436,12 @@ c
      &                               "axis","Y"))
             if     (iotype.eq.-4) then !MERSEA
               call ncheck(nf90_def_var(ncfileID,"longitude", nf90_float,
-     &                                 pLonDimID,pLonVarID))
+     &                                 pLonDimID,pLonVarID,
+     *                                 deflate_level = deflate_level))
             else
               call ncheck(nf90_def_var(ncfileID,"Longitude", nf90_float,
-     &                                 pLonDimID,pLonVarID))
+     &                                 pLonDimID,pLonVarID,
+     &                                 deflate_level = deflate_level))
             endif
             call ncheck(nf90_put_att(ncfileID,pLonVarID,
      &                               "standard_name","longitude"))
@@ -1431,25 +1461,29 @@ c
      &                               "axis","X"))
           else !.not.laxis
             call ncheck(nf90_def_var(ncfileID,"Y", nf90_int,
-     &                               pYDimID,pYVarID))
+     &                            pYDimID,pYVarID,
+     &                            deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pYVarID,
      &                               "point_spacing","even"))  !ferret
             call ncheck(nf90_put_att(ncfileID,pYVarID,
      &                               "axis","Y"))
             call ncheck(nf90_def_var(ncfileID,"X", nf90_int,
-     &                               pXDimID,pXVarID))
+     &                            pXDimID,pXVarID,
+     &                            deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pXVarID,
      &                               "point_spacing","even"))  !ferret
             call ncheck(nf90_put_att(ncfileID,pXVarID,
      &                               "axis","X"))
             call ncheck(nf90_def_var(ncfileID,"Latitude",  nf90_float,
-     &                               (/pXDimID, pYDimID/), pLatVarID))
+     &                               (/pXDimID, pYDimID/), pLatVarID,
+     &                               deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                               "standard_name","latitude"))
             call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                               "units","degrees_north"))
             call ncheck(nf90_def_var(ncfileID,"Longitude", nf90_float,
-     &                               (/pXDimID, pYDimID/), pLonVarID))
+     &                               (/pXDimID, pYDimID/), pLonVarID,
+     &                               deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pLonVarID,
      &                               "standard_name","longitude"))
             call ncheck(nf90_put_att(ncfileID,pLonVarID,
@@ -1464,25 +1498,25 @@ c
           if     (iotype.eq.4) then !not for MERSEA
             if     (laxis) then
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                                 (/pLonDimID, pLatDimID,
-     &                                   lyrDimID, MTDimID/),
-     &                                 varID))
+     &                               (/pLonDimID, pLatDimID,
+     &                               lyrDimID, MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Date"))
             else
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                                 (/pXDimID,   pYDimID,
-     &                                   lyrDimID, MTDimID/),
-     &                                 varID))
+     &                             (/pXDimID,   pYDimID,
+     &                              lyrDimID, MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Longitude Latitude Date"))
             endif
           else !MERSEA
             call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                               (/pLonDimID, pLatDimID, lyrDimID/),
-     &                               varID))
+     &                           (/pLonDimID, pLatDimID, lyrDimID/),
+     &                           varID,deflate_level = deflate_level))
           endif
           if     (names.ne." ") then
             call ncheck(nf90_put_att(ncfileID,varID,
@@ -1568,25 +1602,25 @@ c
           if     (iotype.eq.4) then !not for MERSEA
             if     (laxis) then
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                                 (/pLonDimID, pLatDimID,
-     &                                   lyrDimID, MTDimID/),
-     &                                 varID))
+     &                              (/pLonDimID, pLatDimID,
+     &                                lyrDimID, MTDimID/),
+     &                            varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Date"))
             else
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                                 (/pXDimID,   pYDimID,
-     &                                   lyrDimID, MTDimID/),
-     &                                 varID))
+     &                              (/pXDimID,   pYDimID,
+     &                               lyrDimID, MTDimID/),
+     &                            varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Longitude Latitude Date"))
             endif
           else !MERSEA
             call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                               (/pLonDimID, pLatDimID, lyrDimID/),
-     &                               varID))
+     &                            (/pLonDimID, pLatDimID, lyrDimID/),
+     &                            varID,deflate_level = deflate_level))
           endif
           if     (names.ne." ") then
             call ncheck(nf90_put_att(ncfileID,varID,
@@ -1690,7 +1724,8 @@ c
 c
       logical          :: lopen
       integer          :: i,j,k,l,iyear,month,iday,ihour,
-     &                            iyrms,monms,idms,ihrms
+     &                            iyrms,monms,idms,ihrms,
+     &                    deflate,deflate_level
       real             :: hmin(999),hmax(999)
       double precision :: dt,yr0,year
 c
@@ -1706,6 +1741,7 @@ c
       data      cmonth/'Jan','Feb','Mar','Apr','May','Jun',
      &                 'Jul','Aug','Sep','Oct','Nov','Dec'/
 c
+      deflate_level = 1
       if     (iotype.eq.-1) then
 c
 c        initialization.
@@ -1956,7 +1992,7 @@ c
         inquire(file= ncfile, exist=lexist)
         if (.not.lexist) then
           ! create a new NetCDF and write data to it
-          call ncheck(nf90_create(trim(ncfile),nf90_noclobber,ncfileID))
+          call ncheck(nf90_create(trim(ncfile),nf90_hdf5,ncfileID))
           ! define the dimensions
           if     (iotype.eq.4) then !not for MERSEA
             call ncheck(nf90_def_dim(ncfileID,
@@ -2135,7 +2171,8 @@ c
           ! create the variables and attributes
           if     (iotype.eq.4) then !not for MERSEA
             call ncheck(nf90_def_var(ncfileID,"MT",  nf90_double,
-     &                               MTDimID,MTVarID))
+     &                             MTDimID,MTVarID,
+     &                             deflate_level = deflate_level))
             if     (yrflag.eq.0) then
               call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                                 "long_name",
@@ -2180,7 +2217,8 @@ c
             call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                               "axis","T"))
             call ncheck(nf90_def_var(ncfileID,"Date", nf90_double,
-     &                               MTDimID,datVarID))
+     &                               MTDimID,datVarID,
+     &                               deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,datVarID,
      &                               "long_name",
      &                               "date"))
@@ -2223,10 +2261,12 @@ c
           endif !not MERSEA
           if     (iotype.eq.-4) then !MERSEA
             call ncheck(nf90_def_var(ncfileID,"depth", nf90_float,
-     &                               lyrDimID,lyrVarID))
+     &                               lyrDimID,lyrVarID,
+     &                               deflate_level = deflate_level))
           else
             call ncheck(nf90_def_var(ncfileID,"Depth", nf90_float,
-     &                               lyrDimID,lyrVarID))
+     &                               lyrDimID,lyrVarID,
+     &                               deflate_level = deflate_level))
           endif
           call ncheck(nf90_put_att(ncfileID,lyrVarID,
      &                             "standard_name","depth"))
@@ -2239,10 +2279,12 @@ c
           if     (laxis) then
             if     (iotype.eq.-4) then !MERSEA
               call ncheck(nf90_def_var(ncfileID,"latitude",  nf90_float,
-     &                                 pLatDimID,pLatVarID))
+     &                                 pLatDimID,pLatVarID,
+     &                                 deflate_level = deflate_level))
             else
               call ncheck(nf90_def_var(ncfileID,"Latitude",  nf90_float,
-     &                                 pLatDimID,pLatVarID))
+     &                                 pLatDimID,pLatVarID,
+     &                                 deflate_level = deflate_level))
             endif
             call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                               "standard_name","latitude"))
@@ -2257,10 +2299,12 @@ c
      &                               "axis","Y"))
             if     (iotype.eq.-4) then !MERSEA
               call ncheck(nf90_def_var(ncfileID,"longitude", nf90_float,
-     &                                 pLonDimID,pLonVarID))
+     &                                 pLonDimID,pLonVarID,
+     &                                 deflate_level = deflate_level))
             else
               call ncheck(nf90_def_var(ncfileID,"Longitude", nf90_float,
-     &                                 pLonDimID,pLonVarID))
+     &                                 pLonDimID,pLonVarID,
+     &                                 deflate_level = deflate_level))
             endif
             call ncheck(nf90_put_att(ncfileID,pLonVarID,
      &                               "standard_name","longitude"))
@@ -2280,25 +2324,29 @@ c
      &                               "axis","X"))
           else !.not.laxis
             call ncheck(nf90_def_var(ncfileID,"Y", nf90_int,
-     &                               pYDimID,pYVarID))
+     &                               pYDimID,pYVarID,
+     &                               deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pYVarID,
      &                               "point_spacing","even"))  !ferret
             call ncheck(nf90_put_att(ncfileID,pYVarID,
      &                               "axis","Y"))
             call ncheck(nf90_def_var(ncfileID,"X", nf90_int,
-     &                               pXDimID,pXVarID))
+     &                               pXDimID,pXVarID,
+     &                               deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pXVarID,
      &                               "point_spacing","even"))  !ferret
             call ncheck(nf90_put_att(ncfileID,pXVarID,
      &                               "axis","X"))
             call ncheck(nf90_def_var(ncfileID,"Latitude",  nf90_float,
-     &                               (/pXDimID, pYDimID/), pLatVarID))
+     &                               (/pXDimID, pYDimID/), pLatVarID,
+     &                                deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                               "standard_name","latitude"))
             call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                               "units","degrees_north"))
             call ncheck(nf90_def_var(ncfileID,"Longitude", nf90_float,
-     &                               (/pXDimID, pYDimID/), pLonVarID))
+     &                               (/pXDimID, pYDimID/), pLonVarID,
+     &                                deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,pLonVarID,
      &                               "standard_name","longitude"))
             call ncheck(nf90_put_att(ncfileID,pLonVarID,
@@ -2313,25 +2361,25 @@ c
           if     (iotype.eq.4) then !not for MERSEA
             if     (laxis) then
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                                 (/pLonDimID, pLatDimID,
-     &                                   lyrDimID, MTDimID/),
-     &                                 varID))
+     &                             (/pLonDimID, pLatDimID,
+     &                               lyrDimID, MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Date"))
             else
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                                 (/pXDimID,   pYDimID,
-     &                                   lyrDimID, MTDimID/),
-     &                                 varID))
+     &                             (/pXDimID,   pYDimID,
+     &                               lyrDimID, MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Longitude Latitude Date"))
             endif
           else !MERSEA
             call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                            (/pLonDimID, pLatDimID, lyrDimID/),
-     &                               varID))
+     &                         (/pLonDimID, pLatDimID, lyrDimID/),
+     &                            varID,deflate_level = deflate_level))
           endif
           if     (names.ne." ") then
             call ncheck(nf90_put_att(ncfileID,varID,
@@ -2412,25 +2460,25 @@ c
           if     (iotype.eq.4) then !not for MERSEA
             if     (laxis) then
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                                 (/pLonDimID, pLatDimID,
-     &                                   lyrDimID, MTDimID/),
-     &                                 varID))
+     &                             (/pLonDimID, pLatDimID,
+     &                               lyrDimID, MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Date"))
             else
               call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                                 (/pXDimID,   pYDimID,
-     &                                   lyrDimID, MTDimID/),
-     &                                 varID))
+     &                             (/pXDimID,   pYDimID,
+     &                               lyrDimID, MTDimID/),
+     &                             varID,deflate_level = deflate_level))
               call ncheck(nf90_put_att(ncfileID,varID,
      &                                 "coordinates",
      &                                 "Longitude Latitude Date"))
             endif
           else !MERSEA
             call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                            (/pLonDimID, pLatDimID, lyrDimID/),
-     &                               varID))
+     &                        (/pLonDimID, pLatDimID, lyrDimID/),
+     &                           varID,deflate_level = deflate_level))
           endif
           if     (names.ne." ") then
             call ncheck(nf90_put_att(ncfileID,varID,
@@ -2522,6 +2570,7 @@ c
       integer          :: pLatDimID,pLatVarID,
      &                    lyrDimID,lyrVarID
       integer          :: MTDimID,MTVarID,datVarID
+      integer          :: deflate,deflate_level
       character        :: ncfile*240,ncenv*240
       character        :: Ename*6
 c
@@ -2541,6 +2590,7 @@ c
       character cmonth(12)*3
       data      cmonth/'Jan','Feb','Mar','Apr','May','Jun',
      &                 'Jul','Aug','Sep','Oct','Nov','Dec'/
+       deflate_level = 1
 c
       if     (iotype.eq.-1) then
 c
@@ -2639,7 +2689,7 @@ c
 c
 c         create a new NetCDF and write data to it
 c
-          call ncheck(nf90_create(trim(ncfile),nf90_noclobber,ncfileID))
+          call ncheck(nf90_create(trim(ncfile),nf90_hdf5,ncfileID))
           ! define the dimensions
           call ncheck(nf90_def_dim(ncfileID,
      &                             "MT", nf90_unlimited,MTDimID))
@@ -2716,7 +2766,8 @@ c
           endif
           ! create the variables and attributes
           call ncheck(nf90_def_var(ncfileID,"MT",  nf90_double,
-     &                             MTDimID,MTVarID))
+     &                             MTDimID,MTVarID,
+     &                          deflate_level = deflate_level))
           if     (yrflag.eq.0) then
             call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                               "long_name",
@@ -2761,7 +2812,8 @@ c
           call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                             "axis","T"))
           call ncheck(nf90_def_var(ncfileID,"Date", nf90_double,
-     &                             MTDimID,datVarID))
+     &                             MTDimID,datVarID,
+     &                             deflate_level = deflate_level))
           call ncheck(nf90_put_att(ncfileID,datVarID,
      &                             "long_name",
      &                             "date"))
@@ -2803,12 +2855,14 @@ c
           endif
           if     (ltheta) then
             call ncheck(nf90_def_var(ncfileID,"Layer", nf90_float,
-     &                               lyrDimID,lyrVarID))
+     &                               lyrDimID,lyrVarID,
+     &                           deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,lyrVarID,
      &                               "units","SigmaTheta"))     
           else
             call ncheck(nf90_def_var(ncfileID,"Layer", nf90_int,
-     &                               lyrDimID,lyrVarID))
+     &                             lyrDimID,lyrVarID,
+     &                             deflate_level = deflate_level))
             call ncheck(nf90_put_att(ncfileID,lyrVarID,
      &                               "units","layer"))     
             call ncheck(nf90_put_att(ncfileID,lyrVarID,
@@ -2817,7 +2871,8 @@ c
           call ncheck(nf90_put_att(ncfileID,lyrVarID,
      &                             "axis","Z"))
           call ncheck(nf90_def_var(ncfileID,"Latitude",  nf90_float,
-     &                             pLatDimID,pLatVarID))
+     &                             pLatDimID,pLatVarID,
+     &                             deflate_level = deflate_level))
           call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                             "standard_name","latitude"))
           call ncheck(nf90_put_att(ncfileID,pLatVarID,
@@ -2831,9 +2886,9 @@ c
      &                             "axis","Y"))
           ! model 3d variable
           call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                             (/pLatDimID,
-     &                               lyrDimID, MTDimID/),
-     &                             varID))
+     &                          (/pLatDimID,
+     &                            lyrDimID, MTDimID/),
+     &                          varID,deflate_level = deflate_level))
           call ncheck(nf90_put_att(ncfileID,varID,
      &                             "coordinates",
      &                             "Date"))
@@ -2889,9 +2944,9 @@ c
           call ncheck(nf90_redef(ncfileID))
           ! define new variable
           call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                             (/pLatDimID,
-     &                               lyrDimID, MTDimID/),
-     &                             varID))
+     &                        (/pLatDimID,
+     &                           lyrDimID, MTDimID/),
+     &                         varID,deflate_level = deflate_level))
           call ncheck(nf90_put_att(ncfileID,varID,
      &                             "coordinates",
      &                             "Date"))
@@ -2986,6 +3041,7 @@ c
       integer          :: pLatDimID,pLatVarID,
      &                    lyrDimID,lyrVarID
       integer          :: MTDimID,MTVarID,datVarID
+      integer          :: deflate,deflate_level
       character        :: ncfile*240,ncenv*240
       character        :: Ename*6
 c
@@ -3006,6 +3062,7 @@ c
       data      cmonth/'Jan','Feb','Mar','Apr','May','Jun',
      &                 'Jul','Aug','Sep','Oct','Nov','Dec'/
 c
+       deflate_level = 1
       if     (iotype.eq.-1) then
 c
 c        initialization.
@@ -3103,7 +3160,7 @@ c
         inquire(file= ncfile, exist=lexist)
         if (.not.lexist) then
           ! create a new NetCDF and write data to it
-          call ncheck(nf90_create(trim(ncfile),nf90_noclobber,ncfileID))
+          call ncheck(nf90_create(trim(ncfile),nf90_hdf5,ncfileID))
           ! define the dimensions
           call ncheck(nf90_def_dim(ncfileID,
      &                             "MT", nf90_unlimited,MTDimID))
@@ -3180,7 +3237,8 @@ c
           endif
           ! create the variables and attributes
           call ncheck(nf90_def_var(ncfileID,"MT",  nf90_double,
-     &                             MTDimID,MTVarID))
+     &                             MTDimID,MTVarID,
+     &                          deflate_level = deflate_level))
           if     (yrflag.eq.0) then
             call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                               "long_name",
@@ -3225,7 +3283,8 @@ c
           call ncheck(nf90_put_att(ncfileID,MTVarID,
      &                             "axis","T"))
           call ncheck(nf90_def_var(ncfileID,"Date", nf90_double,
-     &                             MTDimID,datVarID))
+     &                             MTDimID,datVarID,
+     &                             deflate_level = deflate_level))
           call ncheck(nf90_put_att(ncfileID,datVarID,
      &                             "long_name",
      &                             "date"))
@@ -3266,7 +3325,8 @@ c
      &                               cell))
           endif
           call ncheck(nf90_def_var(ncfileID,"Depth", nf90_float,
-     &                             lyrDimID,lyrVarID))
+     &                             lyrDimID,lyrVarID,
+     &                           deflate_level = deflate_level))
           call ncheck(nf90_put_att(ncfileID,lyrVarID,
      &                             "units","m"))
           call ncheck(nf90_put_att(ncfileID,lyrVarID,
@@ -3274,7 +3334,8 @@ c
           call ncheck(nf90_put_att(ncfileID,lyrVarID,
      &                             "axis","Z"))
           call ncheck(nf90_def_var(ncfileID,"Latitude",  nf90_float,
-     &                             pLatDimID,pLatVarID))
+     &                             pLatDimID,pLatVarID,
+     &                             deflate_level = deflate_level))
           call ncheck(nf90_put_att(ncfileID,pLatVarID,
      &                             "standard_name","latitude"))
           call ncheck(nf90_put_att(ncfileID,pLatVarID,
@@ -3288,9 +3349,9 @@ c
      &                             "axis","Y"))
           ! model 3Z variable
           call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                             (/pLatDimID,
-     &                               lyrDimID, MTDimID/),
-     &                             varID))
+     &                          (/pLatDimID,
+     &                            lyrDimID, MTDimID/),
+     &                          varID,deflate_level = deflate_level))
           call ncheck(nf90_put_att(ncfileID,varID,
      &                             "coordinates",
      &                             "Date"))
@@ -3339,9 +3400,9 @@ c
           call ncheck(nf90_redef(ncfileID))
           ! define new variable
           call ncheck(nf90_def_var(ncfileID,trim(namec),nf90_float,
-     &                             (/pLatDimID,
-     &                               lyrDimID, MTDimID/),
-     &                             varID))
+     &                         (/pLatDimID,
+     &                           lyrDimID, MTDimID/),
+     &                          varID,deflate_level = deflate_level))
           call ncheck(nf90_put_att(ncfileID,varID,
      &                             "coordinates",
      &                             "Date"))
