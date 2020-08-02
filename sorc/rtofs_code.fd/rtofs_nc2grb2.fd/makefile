@@ -30,7 +30,7 @@ FFLAGS =   -O3  -I $(INC) $(DEBUG)
 # the actual rules which make uses to build CMD.
 #
 all:        $(CMD)
-install:: clean $(CMD) moveexe finish
+everything: clean $(CMD) install finish
 
 $(CMD):      $(OBJS)
 	$(FC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
@@ -41,7 +41,7 @@ clean:
 finish:
 	-rm ${OBJS} # *.mod 
 
-moveexe:
+install:
 	-mv $(CMD) ${BINDIR}
 
 clobber:        clean

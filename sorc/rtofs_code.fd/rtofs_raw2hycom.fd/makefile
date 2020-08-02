@@ -32,7 +32,7 @@ OBJS = raw2hycom.o hycom_endian_io.o parse.o
 #####################################################################
 #
 all: $(CMD)
-install:: clean $(CMD) moveexe finish 
+everything: clean $(CMD) install finish 
 #
 ####################################################################
 ###  Compilation instructions for main programs:		  ###
@@ -48,7 +48,7 @@ clean:
 finish:
 	-rm ${OBJS} *.mod *.F.f 
 
-moveexe:
+install:
 	-mv $(CMD) ${BINDIR}
 
 #

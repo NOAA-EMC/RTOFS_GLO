@@ -73,7 +73,9 @@ CMD=	rtofs_archv2ncdf2d  rtofs_archv2ncdf3z rtofs_field2ncdf2d
 #
 
 all: ${CMD} 
-install: clean $(CMD) moveexe finish
+
+install:
+	-mv $(CMD) ${BINDIR}
 
 clean:
 	/bin/rm -f *.o *.a *.mod M*log *2archv *2d *2t *3z *sf *sfl *sig2a *restart *hv *ncombc $(CMD)
@@ -81,8 +83,7 @@ clean:
 finish:
 	-rm -f *.o *.a *.mod M*log *2archv *2d *2t *3z *sf *sfl *sig2a *restart *hv *ncombc
 
-moveexe:
-	-mv $(CMD) ${BINDIR}
+everything: clean $(CMD) install finish
 
 MODS     =	mod_plot.o mod_xc.o mod_za.o               wtime.o
 MODB     =	mod_plot.o mod_xc.o mod_za.o mod_zb.o      wtime.o

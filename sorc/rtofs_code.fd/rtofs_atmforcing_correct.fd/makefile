@@ -54,7 +54,7 @@ OBJS = ${OBJS_F90} ${OBJS_F}
 #####################################################################
 #
 all: $(CMD)
-install: clean $(CMD)  moveexe finish
+everything: clean $(CMD)  install finish
 #
 ####################################################################
 ###  Compilation instructions for main programs:		  ###
@@ -70,7 +70,7 @@ clean:
 finish:
 	-rm -f ${OBJS} *.mod 
 
-moveexe:
+install:
 	-mv $(CMD) ${BINDIR}
 
 #

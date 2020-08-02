@@ -74,7 +74,7 @@ DATAR_OBJ = 	$(DATAX_OBJ) putdat.o
 #
 
 all:	$(CMD)
-install:: clean $(CMD)  moveexe finish
+everything: clean $(CMD)  install finish
 
 ${CMD}:      $(MODR) ncoda_archv_inc.o $(DATAR_OBJ)
 	$(LD) $(LDFLAGS) -o ${CMD} ncoda_archv_inc.o $(MODR) $(DATAR_OBJ)
@@ -86,7 +86,7 @@ clean:
 finish:
 	/bin/rm -f ${OBJS} *.o *.a *.mod 
 
-moveexe:
+install:
 	-mv $(CMD) ${BINDIR}
 
 #

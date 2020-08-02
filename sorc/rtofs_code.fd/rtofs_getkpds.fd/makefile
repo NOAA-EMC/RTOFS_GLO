@@ -61,7 +61,7 @@ LDFLAGS = -O3
 # actual rules which make uses to build swathps.
 #
 all:	$(CMD)
-install:: clean $(CMD)  moveexe finish
+everything: clean $(CMD)  install finish
 
 $(CMD):		$(OBJS) 
 	$(CF) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
@@ -82,7 +82,7 @@ clean:
 finish:
 	-rm ${OBJS} *.mod 
 
-moveexe:
+install:
 	-mv $(CMD) ${BINDIR}
 
 copy_summ:

@@ -64,7 +64,7 @@ MEAN_OBJ =	bigrid.o blkin.o \
 #
 
 all:	$(CMD)
-install:: clean $(CMD)  moveexe finish
+everything: clean $(CMD)  install finish
 
 ${CMD}:      $(MODS) hycom_diff.o $(MEAN_OBJ)
 	$(LD) $(LDFLAGS) -o ${CMD} hycom_diff.o $(MODS) $(MEAN_OBJ)
@@ -76,7 +76,7 @@ clean:
 finish:
 	/bin/rm -f *.o *.a *.mod 
 
-moveexe:
+install:
 	-mv $(CMD) ${BINDIR}
 
 #
