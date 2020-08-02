@@ -1,6 +1,11 @@
 #!/bin/sh 
 set -x 
 
+module purge
+module use ../modulefiles
+module load build_rtofs_libs.module
+module list
+
  mkdir -f incmod
  rm -f incmod/rtofs*/*.mod
  rm -f librtofs*.a

@@ -1,0 +1,20 @@
+#%Module######################################################################
+##
+## RTOFS_GLO.v2.0.0
+##_____________________________________________________
+proc ModulesHelp { } {
+puts stderr "Set environment for rtofs_glo.v2.0.0 "
+puts stderr "hycom codes in the sorc directory.  \n "
+}
+module-whatis " RTOFS_GLO HYCOM sorc codes build "
+
+set ver v2.0.0
+setenv COMP intel
+
+set sys [uname sysname]
+
+module load EnvVars/1.0.3
+module load ips/18.0.1.163
+module load impi/18.0.1
+module load w3nco/2.0.6
+module load g2/3.1.0

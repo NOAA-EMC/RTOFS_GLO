@@ -46,7 +46,7 @@ CF =		ifort
 
 INC   = 
 LIBS  = ${W3NCO_LIB4} ${BACIO_LIB4}
-BINDIR= ../../exec
+BINDIR= ../../../exec
 CMD  =         rtofs_getkpds
 PROFLIB =	-lprof
 
