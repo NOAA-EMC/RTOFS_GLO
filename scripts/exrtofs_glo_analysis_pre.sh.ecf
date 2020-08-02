@@ -41,95 +41,10 @@ postmsg "$jlogfile" "$msg"
   eday=`$USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc`
   echo "  $sday $eday false false  " > limits
 
-# 2. Copy the necessary input files for the model analysis
-
-# 2.g Get initial conditions (restart files)
-if [ ! ${forcing_only} = "TRUE" ]
-  then 
-  test -f restart_in.a && rm -f restart_in.a
-  test -f restart_in.b && rm -f restart_in.b
-  test -f restart_b_choosen && rm -f restart_b_choosen  
-    LEAD=`expr $fcstdays \* -24`
-    HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.n${LEAD}.restart
-    CICErestTplate=${RUN}_${modID}.t${mycyc}z.n${LEAD}.restart_cice
-    HYCOMNAVYrestplate=restart_r${startdate}'00'_${HYCOM_EXPT}
-    CICENAVYrestplate=cice.restart.${startdate}'00'_${HYCOM_EXPT}
-    HYCOMNAVYrest=${NAVYIN}/${startdate}/wgrdbul/${HYCOMNAVYrestplate}
-    CICENAVYrest=${NAVYIN}/${startdate}/wgrdbul/${CICENAVYrestplate}
-    if [ -s ${HYCOMNAVYrest}.a ] && [ -s ${HYCOMNAVYrest}.b ]
-    then
-      # dbgz NOTE: add a file size check
-      #size_a=`ls -l ${HYCOMNAVYrest}.a.gz | awk '{ print $5 }'`
-      #size_b=`ls -l ${HYCOMNAVYrest}.b.gz | awk '{ print $5 }'`
-      ln -s -f ${HYCOMNAVYrest}.a ${DATA}/${HYCOMrestTplate}.a
-      ln -s -f ${HYCOMNAVYrest}.b ${DATA}/${HYCOMrestTplate}.b
-      chmod u+rw ${DATA}/${HYCOMrestTplate}.[ab]
-      echo "Restart files ${HYCOMNAVYrest}.[ab] are found."
-    else
-      if [ -s ${HYCOMNAVYrest}.a.gz ] && [ -s ${HYCOMNAVYrest}.b.gz ]
-      then
-         echo "Restart files ${HYCOMNAVYrest}.[ab].gz are found."
-         gunzip -c ${HYCOMNAVYrest}.b.gz > $DATA/${HYCOMrestTplate}.b
-        if [ $? -eq 0 ]
-        then
-          gunzip -c ${HYCOMNAVYrest}.a.gz > $DATA/${HYCOMrestTplate}.a
-        fi
-      fi
-    fi  
-    if [ -s ${CICENAVYrest} ]
-    then
-      # Size check here not needed, the file is checked in choose_restart script.
-      #cice_size=`ls -l ${CICENAVYrest}.gz | awk '{ print $5 }'`
-      ln -s -f ${CICENAVYrest} ${DATA}/${CICErestTplate}
-      chmod u+rw ${DATA}/${CICErestTplate}
-      echo "Restart file ${CICENAVYrest} is found."
-    else
-      if [ -s ${CICENAVYrest}.gz ]
-      then
-         echo "Restart file ${CICENAVYrest}.gz is found."
-         gunzip -c ${CICENAVYrest}.gz > $DATA/${CICErestTplate}
-      fi
-    fi  
-    $USHrtofs/${RUN}_choose_restart.sh  $startdate$mycyc
-    err=$?
-    if [ $err -lt 0 ] || [ $err -eq 22 ] || [ ! -s restart_b_choosen ] 
-    then
-       $USHrtofs/${RUN}_abort.sh "Missing Restart File" \
-        "ABNORMAL EXIT ANALYSIS_PRE: NO FILE for restart_in.[ab]" 2
-    else
-      restb=`cat restart_b_choosen`
-      echo "Restatt file to be used is ${restb%.b}.[ab]"
-      cp -p $restb ${COMOUT}/${HYCOMrestTplate}.b
-      cp -p ${restb%.b}.a ${COMOUT}/${HYCOMrestTplate}.a
-      cp -p ${restb%.b}_cice ${COMOUT}/${CICErestTplate}
-      chmod u+rw ${COMOUT}/${HYCOMrestTplate}.[ab]
-    fi
-fi #   [ ! ${forcing_only} = "TRUE" ]
-
 # --------------------------------------------------------------------------- #
-# 3. Do staging
+# 2. Do staging
   $USHrtofs/${RUN}_prestaging.sh 
-#
-# 4. Create n-48 archv and archs (restart name hardwired in source).
-if [ ! ${forcing_only} = "TRUE" ]
-  then 
- ln -s -f $restb $DATA/rest.b
- ln -s -f ${restb%.b}.a $DATA/rest.a
- $USHrtofs/${RUN}_restart2archv.sh      
 
-  cp -f -p archv_n00.a ${RUN}_${modID}.t${mycyc}z.n-48.archv.a
-  cp -f -p archv_n00.b ${RUN}_${modID}.t${mycyc}z.n-48.archv.b
-  cp -f -p archs_n00.a ${RUN}_${modID}.t${mycyc}z.n-48.archs.a
-  cp -f -p archs_n00.b ${RUN}_${modID}.t${mycyc}z.n-48.archs.b
-  if [ $SENDCOM = 'YES' ]
-  then
-      cfile=${RUN}_${modID}.t${mycyc}z.n-48
-      for files in ${cfile}.archv.a ${cfile}.archv.b ${cfile}.archs.a ${cfile}.archs.b
-      do
-	  cp -f -p ${files} ${COMOUT}/. 
-      done
-  fi
-fi # [ ! ${forcing_only} = "TRUE" ]
 #################################################
 msg="THE RTOFS_GLO_ANALYSIS_PRE JOB HAS ENDED NORMALLY on `hostname` at `date`"
 postmsg "$jlogfile" "$msg"

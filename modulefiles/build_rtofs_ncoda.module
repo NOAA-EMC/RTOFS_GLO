@@ -4,9 +4,9 @@
 ##_____________________________________________________
 proc ModulesHelp { } {
 puts stderr "Set environment for rtofs_glo.v2.0.0 "
-puts stderr "hycom codes in the sorc directory.  \n "
+puts stderr "ncoda codes in the sorc directory.  \n "
 }
-module-whatis " RTOFS_GLO HYCOM sorc codes build "
+module-whatis " RTOFS_GLO NCODA sorc codes build "
 
 set ver v2.0.0
 setenv COMP intel
@@ -14,12 +14,11 @@ setenv COMP intel
 set sys [uname sysname]
 
 module load EnvVars/1.0.3
-module load ips/18.0.1.163
+module load ips/18.0.5.274
 module load impi/18.0.1
-module load zlib/1.2.11
-#module load NetCDF/4.5.0
-module load NetCDF/3.6.3
-module load ESMF/4_0_0rp2
-#module load HDF5-parallel/1.10.1
+module load NCL/6.4.0
+module load NetCDF/4.5.0
+module load bufr/11.3.1
+module load HPSS/5.0.2.5
 module load HDF5-serial/1.10.1
-
+module load g2/3.1.0

@@ -104,23 +104,20 @@ fi
 #################################################################
 # Interpolate to RTOFS grid
 #################################################################
-#- UNIT  7  - FILE intp_pars.dat, COTROL RUN PARAMETRS
-#- UNIT  8  - FILE regional.grid.b, DESCRIPTOR FOR HYCOM GRID 
+#- UNIT 11  - FILE intp_pars.dat, COTROL RUN PARAMETRS
+#- UNIT 18  - FILE regional.grid.b, DESCRIPTOR FOR HYCOM GRID 
 #-            (READ IN mod_geom.f90)
-#- UNIT  9  - FILE regional.grid.a, HYCOM GRID 
+#- UNIT 19  - FILE regional.grid.a, HYCOM GRID 
 #-            (READ IN mod_geom.f90)
-#- UNIT 27  - FILE jpdt_table.dat is the PDT Table 4.0 or 4.8
+#- UNIT 12  - FILE jpdt_table.dat is the PDT Table 4.0 or 4.8
 #-            depending on if the data is instantaneos (4.0)
 #-            or averaged (table 4.8)
 #- UNIT 33  - FILE listflx.dat, LIST OF DATES AND MRF FLUS FILES TO 
 #-            BE USED IN INTERPOLATION.
-#- UNIT 59  - FILE regional.depth.a, HYCOM BATHIMETRY 
+#- UNIT 42  - FILE regional.depth.a, HYCOM BATHIMETRY 
 #-            (READ IN mod_geom.f90)
-#- UNIT 61  - FILE regional.mask.a, HYCOM mask
+#- UNIT 44  - FILE regional.mask.a, HYCOM mask
 #-            (READ IN mod_geom.f90)
-#- UNIT 81  - MRF GRIBBED FLUXES FILES WITH THE NAMES FROM THE LIST 
-#-            SPECIFIED IN listflx.dat.
-#- UNIT 82  - THE SAME      
 #################################################################
 pgm=${RUN}_atmforcing
 . prep_step
@@ -133,20 +130,9 @@ sort -n -o ts.dat t.dat
 cat ts.dat >> listflx.dat 
 rm -f t.dat ts.dat
 
-export XLFRTEOPTS="unit_vars=yes:buffering=disable_all"
-export XLFUNIT_7=intp_pars.dat
-export XLFUNIT_8=regional.grid.b
-export XLFUNIT_9=regional.grid.a
-export XLFUNTI_27=jpdt_table.dat
-export XLFUNIT_33=listflx.dat
-export XLFUNIT_59=regional.depth.a
-export XLFUNIT_61=regional.mask.a
-
-#dbx $EXECrtofs/${RUN}_atmforcing <<EOF
-# run
-# where
-# quit
-# EOF
+export FORT11=intp_pars.dat
+export FORT12=jpdt_table.dat
+export FORT33=listflx.dat
 
 $EXECrtofs/${RUN}_atmforcing >>$pgmout 2>errfile
 err=$?; export err ; err_chk

@@ -4,13 +4,13 @@
 ##   RTOFS-Global v2.0.0 
 ##_____________________________________________________
 proc ModulesHelp { } {
-  puts stderr "Set environment variables for RTOFS-Global"
+  puts stderr "Set run-time environment variables for RTOFS-Global"
         puts stderr "\tHycom: This module initializes Environment variables"
         puts stderr "\t\tfor the Intel Compiler Suite $version\n"
 }
 
 # 
-module-whatis   " This module loads and sets environment variables for RTOFS_GLO "
+module-whatis   " This module loads and sets run-time environment variables for RTOFS_GLO "
 
 set sys         [uname sysname]
 set prec ""

@@ -4,9 +4,7 @@
 ##_____________________________________________________
 proc ModulesHelp { } {
 puts stderr "Set environment for rtofs_glo.v2.0.0 "
-puts stderr "codes in the sorc directory.            "
-puts stderr "This module initializes the environment "
-puts stderr "for the IBM Phase 3 implementation.  \n"
+puts stderr "building codes in the sorc directory. \n"
 }
 module-whatis " RTOFS_GLO sorc codes build "
 
