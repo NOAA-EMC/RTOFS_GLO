@@ -14,7 +14,7 @@ PROGRAM atmforcing
   !   INPUT FILES:
   !     FTxxF001 - UNITS 11 THRU 49
   !     UNIT  5  - (STANDARD READ)
-  !     UNIT  7  - FILE intp_pars.dat, COTROL RUN PARAMETRS
+  !     UNIT 11  - FILE intp_pars.dat, COTROL RUN PARAMETRS
   !     UNIT  8  - FILE regional.grid.b, DESCRIPTOR FOR HYCOM GRID 
   !                (READ IN mod_geom.f90)
   !     UNIT  9  - FILE regional.grid.a, HYCOM GRID 
@@ -127,6 +127,8 @@ PROGRAM atmforcing
   CHARACTER (len=10), DIMENSION (:),ALLOCATABLE :: ctime
   CHARACTER (len=400), DIMENSION (:),ALLOCATABLE :: atmnames
 
+character (len=255) :: fort11, fort12, fort33
+
   LOGICAL :: clsgrib,grid_file_exist=.FALSE.,atm_grid_changed
   real,dimension(5000000)      :: xgfld
 ! With pressue
@@ -137,13 +139,15 @@ PROGRAM atmforcing
   !
   ! Read parameters and allocate arrays
   !
-  OPEN (7,file='intp_pars.dat')
-  READ(7,intp_pars)
-  CLOSE(7)
-  open (27,file='jpdt_table.dat')
-  read(27,*)(jpdt_num(i),i=1,natm)
-  close(27)
+  call get_environment_variable ("FORT11",fort11)
+  OPEN (11,file=fort11)
+  READ(11,intp_pars)
+  CLOSE(11)
 
+  call get_environment_variable ("FORT12",fort12)
+  OPEN (12,file=fort12)
+  READ(12,*) (jpdt_num(i),i=1,natm)
+  CLOSE(12)
 
   WRITE(*,intp_pars); CALL flush(lp)
   ! check if regional.grid.[ab] exists and read mapflg. nxhycom,nyhycom will be 
@@ -168,7 +172,8 @@ PROGRAM atmforcing
   ! initialize array i/o.
   CALL zaiost
 
-  OPEN (33,file='listflx.dat',form='formatted')
+  call get_environment_variable ("FORT33",fort33)
+  OPEN (33,file=fort33)
   READ(33,*) ntime
   write(*,*) "  ntime  ",ntime
   ALLOCATE (htime(ntime) &
