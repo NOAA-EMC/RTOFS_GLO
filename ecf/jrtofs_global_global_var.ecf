@@ -1,0 +1,50 @@
+#BSUB -J %E%rtofs_global_global_var
+#BSUB -o %COM%/output/%ENVIR%/today/rtofs_global_global_var.o%J
+#BSUB -e %COM%/output/%ENVIR%/today/rtofs_global_global_var.o%J
+#BSUB -L /bin/sh
+#BSUB -q %QUEUE% 
+#BSUB -W 00:30
+#BSUB -cwd /tmp
+#BSUB -x
+#BSUB -R "span[ptile=%PTILE%]"
+#BSUB -n 72
+#BSUB -P %PROJ%-%PROJENVIR%
+
+%include <head.h>
+%include <envir-p3.h>
+
+# EXPORT list here
+set -x
+export cyc=%CYC%
+export NPROCS=72
+
+ulimit -s unlimited
+ulimit -c 0
+
+export I_MPI_DEBUG=4
+
+model=rtofs_glo
+%include <model_ver.h>
+
+module load ips/${ips_ver}
+module load impi/${impi_ver}
+module list
+
+$NWROOT/rtofs_glo.${rtofs_glo_ver}/jobs/JRTOFS_GLO_GLOBAL_VAR
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: Execute the Global Real-Time Ocean Forecast System global_var
+#          job on the WCOSS
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
+
