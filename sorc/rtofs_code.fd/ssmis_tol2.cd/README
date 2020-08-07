@@ -1,0 +1,34 @@
+ssmis_tol2:
+   read in L1b BUFR data from NCEP data tanks, computes some filters, computes sea ice concentration using the NASA Team algorithm, and write out the land reference, qc flag, Tb, lat, lon, observation time*, and concentration. 
+
+* time is in 2 ints, dtg_yyyymmdd and dtg_hhmm.
+
+platform_id refers to the BUFR satid --
+  285 -- F17
+  286 -- F18
+  248 -- F15
+      -- AMSR2
+
+Quality flagging:
+  qc = 1-5, with 5 being the worst
+     5 -- Invalid observations
+     4 -- Water or land, almost certainly without sea ice on top (set conc = 0)
+     3 -- Land or perhaps mixed land/storm (Tb are valid, just it isn't sea ice)
+     1 -- Good Tb, sea ice point
+
+Land:
+  is something like a probability of a point being land.
+
+ssmis_tol2:
+  algorithm.c     -- apply Team weather filter and compute ice concentration 
+  filter.c        -- locally-developed land/water/mixed filters
+  skel.c          -- netcdf segment, call filters and algorithm
+  bufr.c          -- initial check on values from BUFR decode
+  ssmisu_decode.f -- do the BUFR reading from the tank
+
+#------------------------------------------------------------
+bayes: 
+   do some bayesian filter construction/testing
+
+demo:
+    output and demostration diagnostics of filters
