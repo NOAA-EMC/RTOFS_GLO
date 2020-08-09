@@ -101,14 +101,16 @@ echo "$USHrtofs/rtofs_ncoda_sfcobs_qc.sh" >> runsurf.sh
 chmod +x runsurf.sh
 
 # 3. Put all scripts into command file for cfp
-export amsr_dataloc=dev
-export ssh_dataloc=dev
-export sss_dataloc=dev
+
+# control where data is found
+export amsr_dataloc=prod
+export ssh_dataloc=prod
+export sss_dataloc=prod
 export sst_dataloc=prod
 
 date
 echo "$USHrtofs/rtofs_ncoda_ssh_qc.sh > ssh.qc.out 2>&1" >> cmdfile.qc
-echo "./runsurf.sh > surf.qc.out 2>&1" > cmdfile.qc
+echo "./runsurf.sh > surf.qc.out 2>&1" >> cmdfile.qc
 echo "./runiceqc.sh > ice.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_npp_qc.sh > npp.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_jpss_qc.sh > jpss.qc.out 2>&1" >> cmdfile.qc
@@ -160,9 +162,13 @@ date
 echo timecheck RTOFS_GLO_NCODA_QC finish put at `date`
 
 cd $DATA/logs
-for dtyp in alarm aod_qc amsr_qc goes_qc himawari_qc ice_qc jpss_qc metop_qc npp_qc profile_qc sfc_qc ssh_qc sss_qc ; do
+for dtyp in alarm amsr_qc aod_qc goes_qc himawari_qc ice_qc jpss_qc metop_qc npp_qc profile_qc sfc_qc ssh_qc sss_qc ; do
   mkdir -p $COMOUT/ncoda/logs/$dtyp
   cp -p -f $dtyp/*.${PDYm1}00.* $COMOUT/ncoda/logs/$dtyp 
+done
+
+for dtyp in amsr aod goes himawari ice jpss metop npp ssh sss surf ; do
+  cat $DATA/${dtyp}.qc.out >> $DATA/$pgmout
 done
 
 #################################################

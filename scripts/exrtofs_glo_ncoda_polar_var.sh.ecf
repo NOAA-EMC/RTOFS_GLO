@@ -130,13 +130,13 @@ mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
 mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
 
 #   create graphics
-export OCEAN_OUTPUT_DIR=$DATA/nhem_var/restart
-export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
+export OCN_OUTPUT_DIR=$DATA/nhem_var/restart
+export OCN_CLIM_DIR=$FIXrtofs/codaclim
 $EXECncoda/ncoda_map $ddtg > pout5
 mv gmeta $DATA/logs/nhem_var/nhem_var.$ddtg.gmeta
 
 cat pout* > $DATA/logs/nhem_var/nhem_var.$ddtg.out
-cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $pgmout
+cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $DATA/$pgmout
 echo timecheck RTOFS_GLO_POLAR finish nhem at `date`
 
 # 4. Run SHEM
@@ -202,7 +202,7 @@ $EXECncoda/ncoda_map $ddtg > pout5
 mv gmeta $DATA/logs/shem_var/shem_var.$ddtg.gmeta
 
 cat pout* > $DATA/logs/shem_var/shem_var.$ddtg.out
-cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $pgmout
+cat $DATA/logs/shem_var/shem_var.$ddtg.out >> $DATA/$pgmout
 echo timecheck RTOFS_GLO_POLAR finish shem at `date`
 
 # 5. Copy data back to COMOUT/ncoda

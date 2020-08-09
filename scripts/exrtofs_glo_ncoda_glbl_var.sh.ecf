@@ -124,10 +124,11 @@ mv fort.67 $log_dir/glbl_var.$ddtg.obs
 mv fort.68 $log_dir/glbl_var.$ddtg.grd
 
 #   create graphics
-export OCEAN_OUTPUT_DIR=$DATA/restart
-export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
-$EXECncoda/ncoda_map $ddtg > pout5
-mv gmeta $log_dir/glbl_var.$ddtg.gmeta
+export OCN_OUTPUT_DIR=$DATA/restart
+export OCN_CLIM_DIR=$FIXrtofs/codaclim
+#  ERROR   18 IN MDPINT - MAP LIMITS INAPPROPRIATE
+#$EXECncoda/ncoda_map $ddtg > pout5
+#mv gmeta $log_dir/glbl_var.$ddtg.gmeta
 
 #
 #   combine work files

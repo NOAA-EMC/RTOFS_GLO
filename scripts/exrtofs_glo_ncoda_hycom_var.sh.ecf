@@ -179,13 +179,14 @@ mv fort.68 $log_dir/hycom_var.$ddtg.grd
 mv fort.69 $log_dir/hycom_var.$ddtg.via
 
 #   create data coverage graphics
-export OCEAN_OUTPUT_DIR=$DATA/restart
-export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
+export OCN_OUTPUT_DIR=$DATA/restart
+export OCN_CLIM_DIR=$FIXrtofs/codaclim
 $EXECncoda/ncoda_map $ddtg > pout5
 mv gmeta $log_dir/hycom_var.$ddtg.gmeta
 
 #   combine and remove work files
 cat pout* > $log_dir/hycom_var.$ddtg.out
+cat $log_dir/hycom_var.$ddtg.out > $pgmout
 
 # 4. Copy last 15 days of data back to COMOUT/ncoda
 echo timecheck RTOFS_GLO_HYCOM start put at `date`

@@ -34,9 +34,10 @@ module load HDF5-serial/1.10.1
 module load NetCDF/4.5.0
 module load CFP/2.0.2
 
+# in progress
 module load bufr_dumplist/2.2.0
-# need updated bufr_dumplist... in meantime:
-setenv HOMEobsproc_shared_bufr_dumplist /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_shared_bufr_dumplist.T2B
+module load cdo/1.9.8
+
 module load dumpjb/5.0.3
 module load lsf/10.1
 

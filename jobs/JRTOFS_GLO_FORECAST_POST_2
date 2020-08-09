@@ -8,7 +8,6 @@ echo cyc is ${cyc:?}
 echo envir is ${envir:?} 
 echo rtofs_glo_ver is ${rtofs_glo_ver:?}
 echo rtofs_code_ver is ${rtofs_code_ver:?}
-echo rtofs_cdo_ver is ${rtofs_cdo_ver:?}
 
 export PS4='$SECONDS + '
 date
@@ -43,13 +42,20 @@ export pgmout="OUTPUT.$$"
 
 export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
 export CODErtofs=${CODErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
-export CDOrtofs=${CDOrtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
 export USHrtofs=${HOMErtofs}/ush
 export EXECcode=${CODErtofs}/exec
-export cdo_r=${CDOrtofs}/bin/cdo
+
+# if $CDO is in environment
+# export cdo_r=$CDO
+
+# if cdo path is in environment
+# export cdo_r=$cdo_ROOT/bin/cdo
+
+# if cdo is in $PATH
+export cdo_r=`which cdo`
 
 #############################
 # Set up the UTILITIES
