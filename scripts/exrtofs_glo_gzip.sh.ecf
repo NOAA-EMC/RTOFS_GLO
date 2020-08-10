@@ -82,7 +82,7 @@ case $CYC in
 	;;
     06)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo  ${COMIN}/${filepre}.f{06..96..6}.archv.a;  echo  ${COMIN}/${filepre}.f{01..96}.archs.a; echo  ${COMIN}/${filepre}.f{01..96}.arche.a `
+	for file in `echo  ${COMIN}/${filepre}.f{06..96..6}.archv.a;  echo  ${COMIN}/${filepre}.f{01..96}.archs.a; echo  ${COMIN}/${filepre}.f{00..96}.arche.a `
 	do
 	    if [ -s $file ]; then
 		filename=`basename $file`
