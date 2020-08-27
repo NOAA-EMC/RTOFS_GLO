@@ -80,45 +80,46 @@ ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.b    archv.${archday}.b
 if [ -e $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ]; then
    ln -sf  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ./temp_${dtg}_analinc
 else
-   echo "  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc missing, exiting now."
-   export err=1;err_chk
+   echo "WARNING - $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc missing."
+   echo "No Temperature increments created"
 fi
 # Salinity
 if [ -e $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ]; then
    ln -sf  $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ./saln_${dtg}_analinc
 else
-   echo "  $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc missing, exiting now."
-   export err=1;err_chk
+   echo "WARNING - $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc missing.."
+   echo "No Salinity increments created"
 fi
 # Current - U-component
 if [ -e $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ]; then
    ln -sf  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ./uvel_${dtg}_analinc
 else
-   echo "  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc missing, exiting now."
-   export err=1;err_chk
+   echo "WARNING - $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc missing."
+   echo "No U-Velocity increments created"
 fi
 # Current - V-component
 if [ -e $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ]; then
    ln -sf  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ./vvel_${dtg}_analinc
 else
-   echo "  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc missing, exiting now."
-   export err=1;err_chk
+   echo "WARNING - $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc missing."
+   echo "No V-Velocity increments created"
 fi
 # Layer Pressure
 if [ -e $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ]; then
    ln -sf  $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ./lypr_${dtg}_analinc
 else
-   echo "  $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc missing, exiting now."
-   export err=1;err_chk
+   echo "WARNING - $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc missing."
+   echo "No Layer Pressure increments created"
 fi
 # Ice Coverage
 if [ -e $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ]; then
    ln -sf  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ./icecov_${dtg}_analfld
 else
-   echo "  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld missing, exiting now."
-   export err=1;err_chk
+   echo "WARNING - $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld missing."
+   echo "No ICE COVERAGE increments created"
 fi
 
+#create ssmi.r file
 rm -f ssmi1.a ssmi2.a ssmi.$dtg.r
 $EXECrtofs/rtofs_raw2hycom icecov_${dtg}_analfld $IDM $JDM 999.00 ssmi1.a > ssmi1.b
 err=$?; export err ; err_chk
