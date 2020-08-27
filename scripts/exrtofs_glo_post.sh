@@ -3,7 +3,7 @@
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_post.sh.sms                                #
+# Script name:         exrtofs_glo_post.sh                                    #
 # Script description:                                                         #
 #                                                                             #
 # Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2011-07-20     #

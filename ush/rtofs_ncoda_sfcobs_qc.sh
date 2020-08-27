@@ -32,8 +32,13 @@ mkdir -p $OCN_DATA_DIR/velocity
 
 # link in forcing.wndspd so that ncoda programs find it
 mkdir ./data_${PDYm1}00
-ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ./data_${PDYm1}00/forcing.wndspd.a
-ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ./data_${PDYm1}00/forcing.wndspd.b
+if [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ]] && \
+   [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ]]; then 
+   ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ./data_${PDYm1}00/forcing.wndspd.a
+   ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ./data_${PDYm1}00/forcing.wndspd.b
+else
+   echo "using uniform 5 m/s wind speed"
+fi
 
 #   set path to BUFR dump files
 export BUFR_DATA_DIR=$DATA/dump
@@ -49,7 +54,9 @@ echo "NCODA SFCOBS pre_QC"
 cd $log_dir
 
 #   execute ncoda pre_qc for SFCOBS bufr files
-$EXECncoda/ncoda_bufr_decode sfc $cut_dtg > sfc_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_bufr_decode sfc $cut_dtg > sfc_preqc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_bufr_decode=",$err
 
 echo "  "
 echo "NCODA SFCOBS QC"
@@ -103,7 +110,9 @@ rm -f $OCN_DATA_DIR/incoming/sfc.b
 #   execute ncoda qc
 ln -s $OCN_DATA_DIR/incoming/sfc.a.$cut_dtg $OCN_DATA_DIR/incoming/sfc.a
 ln -s $OCN_DATA_DIR/incoming/sfc.b.$cut_dtg $OCN_DATA_DIR/incoming/sfc.b
-$EXECncoda/ncoda_qc $cut_dtg sfc velocity > sfc_qc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg sfc velocity > sfc_qc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_qc=",$err
 mv fort.44 sfc_qc.$cut_dtg.rej
 mv fort.46 sfc_qc_vel.$cut_dtg.rej
 mv fort.50 sfc_qc_vel.$cut_dtg.rpt

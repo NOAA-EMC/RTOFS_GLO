@@ -54,7 +54,7 @@ export DBN_ALERT_TYPE=RTOFS_GLO_GEMPAK
 ####################
 # execute the script
 ####################
-${HOMErtofs}/scripts/exrtofs_glo_gempak.sh.ecf
+${HOMErtofs}/scripts/exrtofs_glo_gempak.sh
 
 msg="JOB $job HAS COMPLETED NORMALLY." 
 postmsg "$jlogfile" "$msg"

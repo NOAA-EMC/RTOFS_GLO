@@ -3,7 +3,7 @@
 ###############################################################################
 ######################  UNIX Script Documentation Block  ######################
 #                                                                             #
-# Script name:         exrtofs_glo_gzip.sh.ecf                                #
+# Script name:         exrtofs_glo_gzip.sh                                    #
 # Script description:                                                         #
 #                                                                             #
 # Authors: Floyd Fayton Org: PMB         Date: 2013-04-24                     #

@@ -69,7 +69,7 @@ ssmis_tol2 : algorithm.o filter.o bufr.o skel.o ssmisu_decode.o
 	$(FC) ssmisu_decode.o filter.o skel.o bufr.o algorithm.o  $(NETCDF_LDFLAGS_C) -lnetcdf  $(NCEPLIB) $(LIBS) -o $(@)
 
 install: 
-	 -mv ssmis_tol2 ${BINDIR}
+	 -mv ssmis_tol2 ${BINDIR}/rtofs_ssmis_tol2
 
 # ---------------------------------------------------------------------
 

@@ -12,7 +12,7 @@ log_dir=$run_dir/logs/ice_qc
 mkdir -p $log_dir
 
 cut_dtg=${PDYm1}00
-prv_dtg=$( $EXECncoda/dtg -w -h -24 $cut_dtg )
+prv_dtg=$( $EXECrtofs/rtofs_dtg -w -h -24 $cut_dtg )
 
 #   set QC environmental variables
 export ATM_MODEL_DIR=$COMIN
@@ -28,7 +28,7 @@ mkdir -p $OCN_DATA_DIR/ice
 
 #   set paths to NCEP netCDF files
 export SSMI_ICE_DATA_DIR=$DATA/ice_nc
-export AMSR_ICE_DATA_DIR=$DCOMROOT/$amsr_dataloc
+export AMSR_ICE_DATA_DIR=$DCOMINAMSR
 
 echo "current date/time is " $( date)
 echo "data cut time group is " $cut_dtg
@@ -63,11 +63,25 @@ ls $cmd > $log_dir/amsr_02.$cut_dtg
 #   change to working directory
 cd $log_dir
 cat ssmi_*.$cut_dtg > ssmi_files.$cut_dtg
+if [ ! -s ssmi_files.$cut_dtg ]; then
+   echo "WARNING - ssmi_files.$cut_dtg is empty. No SSMI files to process."
+   echo "SSMI.obs_control file will not be updated"
+fi
 cat amsr_*.$cut_dtg > amsr_ice_files.$cut_dtg
+if [ ! -s amsr_ice_files.$cut_dtg ]; then
+   echo "WARNING - amsr_ice_files.$cut_dtg is empty. No AMSR_ICE files to process."
+   echo "AMSR_ICE.obs_control file will not be updated"
+fi
 
 #   execute ncoda pre_qc for ICE netCDF files
-$EXECncoda/ncoda_ncep_ice_nc ssmi $cut_dtg > ssmi_preqc.$cut_dtg.out
-$EXECncoda/ncoda_ncep_ice_nc amsr_ice $cut_dtg > amsr_ice_preqc.$cut_dtg.out
+#SSMI
+$EXECrtofs/rtofs_ncoda_ncep_ice_nc ssmi $cut_dtg > ssmi_preqc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_ncep_ice_nc ssmi=",$err
+#AMSR
+$EXECrtofs/rtofs_ncoda_ncep_ice_nc amsr_ice $cut_dtg > amsr_ice_preqc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_ncep_ice_nc amsr_ice=",$err
 
 #--------------------------------------------------------------------------------------
 echo "  "
@@ -122,14 +136,20 @@ rm -f $OCN_DATA_DIR/incoming/ssmi.a
 rm -f $OCN_DATA_DIR/incoming/ssmi.b
 
 #   execute ncoda qc
+#SSMI
 ln -s $OCN_DATA_DIR/incoming/ssmi.a.$cut_dtg $OCN_DATA_DIR/incoming/ssmi.a
 ln -s $OCN_DATA_DIR/incoming/ssmi.b.$cut_dtg $OCN_DATA_DIR/incoming/ssmi.b
-$EXECncoda/ncoda_qc $cut_dtg ssmi > ssmi_qc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg ssmi > ssmi_qc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_qc ssmi=",$err
 mv fort.44 ssmi_qc.$cut_dtg.rej
 
+#AMSR
 ln -s $OCN_DATA_DIR/incoming/amsr_ice.a.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.a
 ln -s $OCN_DATA_DIR/incoming/amsr_ice.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.b
-$EXECncoda/ncoda_qc $cut_dtg amsr_ice > amsr_ice_qc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_ice > amsr_ice_qc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_qc amsr_ice=",$err
 mv fort.44 amsr_ice_qc.$cut_dtg.rej
 
 #   cleanup
@@ -137,4 +157,3 @@ mv fort.44 amsr_ice_qc.$cut_dtg.rej
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
 
 exit 0
-

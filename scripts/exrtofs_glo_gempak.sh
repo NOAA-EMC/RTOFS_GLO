@@ -3,7 +3,7 @@
 ###############################################################################
 ######################  UNIX Script Documentation Block  ######################
 #                                                                             #
-# Script name:         exrtofs_glo_post_gempak.sh.ecf                         #
+# Script name:         exrtofs_glo_post_gempak.sh                             #
 # Script description:  generate the whole set of GEMPAK files (hours          #
 #        00, 01, 02, ..., 72) for one region                                  #
 #                                                                             #

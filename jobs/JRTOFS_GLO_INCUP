@@ -7,8 +7,6 @@ set +x
 echo cyc is ${cyc:?} 
 echo envir is ${envir:?} 
 echo rtofs_glo_ver is ${rtofs_glo_ver:?}
-echo rtofs_code_ver is ${rtofs_code_ver:?}
-echo rtofs_ncoda_ver is ${rtofs_ncoda_ver:?}
 
 export PS4='$SECONDS + '
 date
@@ -46,14 +44,10 @@ export pgmout="OUTPUT.$$"
 # Specify Execution Areas
 ####################################
 export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
-export CODErtofs=${CODErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
-export NCODArtofs=${NCODArtofs:-${NWROOT:?}/${RUN}_ncoda.${rtofs_ncoda_ver}}
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
 export USHrtofs=${HOMErtofs}/ush
-export EXECcode=${CODErtofs}/exec
-export EXECncoda=${NCODArtofs}/exec
 
 #############################
 # Set up the UTILITIES
@@ -76,7 +70,6 @@ setpdy.sh
 export COMINgdas=${COMINgdas:-$(compath.py gfs/prod/gdas)}
 export GETGES_COM=${GETGES_COM:-${COMINgdas/"/gfs/prod/gdas"/}}
 export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
-export NAVYIN=$DCOMROOT/us007003
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}}
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
@@ -105,7 +98,7 @@ postmsg "$jlogfile" "$msg"
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_incup.sh.ecf
+sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_incup.sh
 
 #===================================================================
 

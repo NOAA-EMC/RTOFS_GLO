@@ -31,7 +31,7 @@ type=$1
 cd $DATA/ocnqc/$type
 mkdir -p $COMOUT/ncoda/ocnqc/$type
 for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-  backymdh=$( $EXECncoda/dtg -d -$d ${PDY}00 )
+  backymdh=$( $EXECrtofs/rtofs_dtg -d -$d ${PDY}00 )
   backymd=${backymdh:0:8}
   if compgen -G "${backymd}*" > /dev/null
   then

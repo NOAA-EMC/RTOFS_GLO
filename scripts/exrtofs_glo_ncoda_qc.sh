@@ -3,7 +3,7 @@ set -xa
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_ncoda_qc.sh.sms                            #
+# Script name:         exrtofs_glo_ncoda_qc.sh                                #
 # Script description:                                                         #
 #                                                                             #
 # Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
@@ -18,7 +18,6 @@ set -xa
 #    rtofs_ncoda_sfcobs_qc.sh
 #    rtofs_ncoda_sss_qc.sh
 #    rtofs_ncoda_ssh_qc.sh
-#    rtofs_ncoda_aod_qc.sh
 #    rtofs_ncoda_amsr_qc.sh
 #    rtofs_ncoda_goes_qc.sh
 #    rtofs_ncoda_himawari_qc.sh
@@ -52,7 +51,7 @@ then
 
 cp -p -f $COMINm1/ncoda/ocnqc/incoming/*control $DATA/ocnqc/incoming
 rm -f cmdfile.cpin
-for dtyp in aod amsr goes himawari ice metop profile sfc ssh sss velocity viirs; do
+for dtyp in amsr goes himawari ice metop profile sfc ssh sss velocity viirs; do
   mkdir -p $DATA/ocnqc/$dtyp
   if compgen -G "$COMINm1/ncoda/ocnqc/$dtyp/*" > /dev/null
   then
@@ -102,12 +101,6 @@ chmod +x runsurf.sh
 
 # 3. Put all scripts into command file for cfp
 
-# control where data is found
-export amsr_dataloc=prod
-export ssh_dataloc=prod
-export sss_dataloc=prod
-export sst_dataloc=prod
-
 date
 echo "$USHrtofs/rtofs_ncoda_ssh_qc.sh > ssh.qc.out 2>&1" >> cmdfile.qc
 echo "./runsurf.sh > surf.qc.out 2>&1" >> cmdfile.qc
@@ -119,7 +112,6 @@ echo "$USHrtofs/rtofs_ncoda_himawari_qc.sh > himawari.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_goes_qc.sh > goes.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_sss_qc.sh > sss.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_amsr_qc.sh > amsr.qc.out 2>&1" >> cmdfile.qc
-echo "$USHrtofs/rtofs_ncoda_aod_qc.sh > aod.qc.out 2>&1" >> cmdfile.qc
 
 chmod +x cmdfile.qc
 echo mpirun cfp ./cmdfile.qc > qc.out
@@ -132,7 +124,10 @@ echo timecheck RTOFS_GLO_NCODA_QC finish qc at `date`
 
 export OCN_DATA_DIR=$DATA/ocnqc
 echo "NCODA DATA ALARM"
-$EXECncoda/ncoda_alarm ${PDYm1}00
+#NCODA alarm
+$EXECrtofs/rtofs_ncoda_alarm ${PDYm1}00
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_alarm=",$err
 mkdir $DATA/logs/alarm
 mv fort.61 $DATA/logs/alarm/ncoda_alarm.${PDYm1}00.out
 
@@ -150,7 +145,7 @@ for typ in `ls $DATA/ocnqc/incoming/*obs_control`; do
 done
 
 rm -f cmdfile.cpout
-for dtyp in aod amsr goes himawari ice metop profile sfc ssh sss velocity viirs; do
+for dtyp in amsr goes himawari ice metop profile sfc ssh sss velocity viirs; do
   echo "$USHrtofs/rtofs_ncodaqc2com.sh $dtyp" >> cmdfile.cpout
 done
 
@@ -162,12 +157,12 @@ date
 echo timecheck RTOFS_GLO_NCODA_QC finish put at `date`
 
 cd $DATA/logs
-for dtyp in alarm amsr_qc aod_qc goes_qc himawari_qc ice_qc jpss_qc metop_qc npp_qc profile_qc sfc_qc ssh_qc sss_qc ; do
+for dtyp in alarm amsr_qc goes_qc himawari_qc ice_qc jpss_qc metop_qc npp_qc profile_qc sfc_qc ssh_qc sss_qc ; do
   mkdir -p $COMOUT/ncoda/logs/$dtyp
   cp -p -f $dtyp/*.${PDYm1}00.* $COMOUT/ncoda/logs/$dtyp 
 done
 
-for dtyp in amsr aod goes himawari ice jpss metop npp ssh sss surf ; do
+for dtyp in amsr goes himawari ice jpss metop npp ssh sss surf ; do
   cat $DATA/${dtyp}.qc.out >> $DATA/$pgmout
 done
 

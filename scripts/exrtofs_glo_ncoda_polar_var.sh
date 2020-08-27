@@ -3,7 +3,7 @@ set -xa
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_ncoda_polar_var.sh.sms                      #
+# Script name:         exrtofs_glo_ncoda_polar_var.sh                          #
 # Script description:                                                         #
 #                                                                             #
 # Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
@@ -74,7 +74,7 @@ cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./nhem_var/oanl
 cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./shem_var/oanl
 echo timecheck RTOFS_GLO_POLAR finish build at `date`
 
-# 3. Run NHEM
+# 3. Run NHEM (NCODA 2Dvar)
 
 echo timecheck RTOFS_GLO_POLAR start nhem at `date`
 cd $DATA/nhem_var
@@ -118,11 +118,25 @@ cat << eof4 > omapnl
  &end
 eof4
 
+#NCODA setup
+$EXECrtofs/rtofs_ncoda_setup 2D ncoda ogridnl $ddtg > pout1
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_setup=",$err
 
-$EXECncoda/ncoda_setup 2D ncoda ogridnl $ddtg > pout1
-mpirun -n  1 $EXECncoda/ncoda_prep 2D ncoda ogridnl $ddtg > pout2
-mpirun -n 24 $EXECncoda/ncoda 2D ncoda ogridnl $ddtg > pout3
-mpirun -n 24 $EXECncoda/ncoda_post 2D ncoda ogridnl $ddtg > pout4
+#NCODA prep
+mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_prep=",$err
+
+#NCODA var
+mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda=",$err
+
+#NCODA post
+mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_post=",$err
 
 #   rename local files
 mv fort.40 $DATA/logs/nhem_var/nhem_var.$ddtg.sus
@@ -132,14 +146,17 @@ mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
 #   create graphics
 export OCN_OUTPUT_DIR=$DATA/nhem_var/restart
 export OCN_CLIM_DIR=$FIXrtofs/codaclim
-$EXECncoda/ncoda_map $ddtg > pout5
+#NCODA map
+$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_map=",$err
 mv gmeta $DATA/logs/nhem_var/nhem_var.$ddtg.gmeta
 
 cat pout* > $DATA/logs/nhem_var/nhem_var.$ddtg.out
 cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $DATA/$pgmout
 echo timecheck RTOFS_GLO_POLAR finish nhem at `date`
 
-# 4. Run SHEM
+# 4. Run SHEM (NCODA 2Dvar)
 
 echo timecheck RTOFS_GLO_POLAR start shem at `date`
 cd $DATA/shem_var
@@ -184,11 +201,25 @@ cat << eof7 > omapnl
  &end
 eof7
 
+#NCODA setup
+$EXECrtofs/rtofs_ncoda_setup 2D ncoda ogridnl $ddtg > pout1
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_setup=",$err
 
-$EXECncoda/ncoda_setup 2D ncoda ogridnl $ddtg > pout1
-mpirun -n  1 $EXECncoda/ncoda_prep 2D ncoda ogridnl $ddtg > pout2
-mpirun -n 24 $EXECncoda/ncoda 2D ncoda ogridnl $ddtg > pout3
-mpirun -n 24 $EXECncoda/ncoda_post 2D ncoda ogridnl $ddtg > pout4
+#NCODA prep
+mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_prep=",$err
+
+#NCODA 
+mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda=",$err
+
+#NCODA post
+mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_post",$err
 
 #   rename local files
 mv fort.40 $DATA/logs/shem_var/nhem_var.$ddtg.sus
@@ -198,7 +229,10 @@ mv fort.68 $DATA/logs/shem_var/nhem_var.$ddtg.grd
 #   create graphics
 export OCEAN_OUTPUT_DIR=$DATA/shem_var/restart
 export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
-$EXECncoda/ncoda_map $ddtg > pout5
+#NCODA map
+$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_map=",$err
 mv gmeta $DATA/logs/shem_var/shem_var.$ddtg.gmeta
 
 cat pout* > $DATA/logs/shem_var/shem_var.$ddtg.out
@@ -213,7 +247,7 @@ mkdir -p $COMOUT/ncoda/nhem_var/restart
 mkdir -p $COMOUT/ncoda/shem_var/restart
 rm -f cmdfile.cpout
 for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-  backymdh=$( $EXECncoda/dtg -d -$d ${PDY}00 )
+  backymdh=$( $EXECrtofs/rtofs_dtg -d -$d ${PDY}00 )
   backymd=${backymdh:0:8}
   if compgen -G "$DATA/nhem_var/restart/*${backymd}*" > /dev/null
   then

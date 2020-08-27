@@ -24,7 +24,7 @@ csh clean_ice.csh
 
   install)
 mkdir -p ../../exec
-cp src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/hycom_cice ../../exec
+cp src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/hycom_cice ../../exec/rtofs_hycom
 ;;
 esac
 

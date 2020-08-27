@@ -7,7 +7,6 @@ set +x
 echo cyc is ${cyc:?} 
 echo envir is ${envir:?} 
 echo rtofs_glo_ver is ${rtofs_glo_ver:?}
-echo rtofs_code_ver is ${rtofs_code_ver:?}
 
 export PS4='$SECONDS + '
 date
@@ -27,7 +26,6 @@ export HYCOM_EXPT=930
 #####################
 # SETUP RUN VARIABLES
 #####################
-export forcing_only=FALSE
 
 export mycyc='00'
 export cycle=t${mycyc}z
@@ -48,12 +46,10 @@ export pgmout="OUTPUT.$$"
 # Specify Execution Areas
 ####################################
 export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
-export CODErtofs=${CODErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
 export USHrtofs=${HOMErtofs}/ush
-export EXECcode=${CODErtofs}/exec
 
 #############################
 # Set up the UTILITIES
@@ -131,7 +127,7 @@ postmsg "$jlogfile" "$msg"
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}_pre.sh.ecf
+sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}_pre.sh
 
 #===================================================================
 

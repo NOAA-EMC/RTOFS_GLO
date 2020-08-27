@@ -24,7 +24,7 @@ mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/sss
 
 #   set paths to NCEP netCDF files
-export SSS_DATA_DIR=$DCOMROOT/$sss_dataloc
+export SSS_DATA_DIR=$DCOMINSSS
 
 echo "current date/time is " $( date)
 echo "data cut date time group is " $cut_dtg
@@ -37,7 +37,7 @@ echo "NCODA SSS pre_QC"
 cd $SSS_DATA_DIR
 for k in 00 24 48
 do
-   prv_dtg=$( $EXECncoda/dtg -w -h -$k $cut_dtg )
+   prv_dtg=$( $EXECrtofs/rtofs_dtg -w -h -$k $cut_dtg )
    ymd=${prv_dtg:0:8}
    cmd=$ymd/wtxtbul/satSSS/SMOS/"SM_OPER_MIR*$ymd*"
    ls $cmd > $log_dir/smos_$k.$cut_dtg
@@ -45,7 +45,7 @@ done
 
 for k in 00 24 48
 do
-   prv_dtg=$( $EXECncoda/dtg -w -h -$k $cut_dtg )
+   prv_dtg=$( $EXECrtofs/rtofs_dtg -w -h -$k $cut_dtg )
    ymd=${prv_dtg:0:8}
    cmd=$ymd/wtxtbul/satSSS/SMAP/"SMAP_L2B_SSS*$ymd*h5"
    ls $cmd > $log_dir/smap_$k.$cut_dtg
@@ -55,9 +55,20 @@ done
 cd $log_dir
 cat smos_*.$cut_dtg > smos_sss_files.$cut_dtg
 cat smap_*.$cut_dtg > smap_sss_files.$cut_dtg
-
+if [ ! -s smos_sss_files.$cut_dtg ]; then
+   echo "WARNING - smos_sss_files.$cut_dtg is empty. No SMOS files to process."
+fi
+if [ ! -s smap_sss_files.acspo_sst_files.$cut_dtg ]; then
+   echo "WARNING - smap_sss_files.$cut_dtg is empty. No SMAP files to process."
+fi
+if [[ ! -s smos_sss_files.acspo_sst_files.$cut_dtg ]] && \
+   [[ ! -s smap_sss_files.acspo_sst_files.$cut_dtg ]]; then
+   echo "SSS.obs_control file will not be updated"
+fi
 #   execute ncoda pre_qc for SSS netCDF files
-$EXECncoda/ncoda_sat_sss_nc $cut_dtg > sss_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_sat_sss_nc $cut_dtg > sss_preqc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_sat_sss_nc=",$err
 
 #--------------------------------------------------------------------------------------
 echo "  "
@@ -112,7 +123,9 @@ rm -f $OCN_DATA_DIR/incoming/sss.b
 #   execute ncoda qc
 ln -s $OCN_DATA_DIR/incoming/sss.a.$cut_dtg $OCN_DATA_DIR/incoming/sss.a
 ln -s $OCN_DATA_DIR/incoming/sss.b.$cut_dtg $OCN_DATA_DIR/incoming/sss.b
-$EXECncoda/ncoda_qc $cut_dtg sss > sss_qc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg sss > sss_qc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_qc=",$err
 mv fort.44 sss_qc.$cut_dtg.rej
 
 #   cleanup

@@ -18,7 +18,7 @@
 # Sub-scripts called:                                                         #
 #                                                                             #
 # Executables called:                                                         #
-#                    rtofs_nc2grib                                            #
+#                    rtofs_nc2grb2                                            #
 #                                                                             #
 #                                                                             #
 # Imported variables:                                                         #
@@ -188,7 +188,7 @@ fi
 
     export XLFUNIT_50=${regdir}/${var}_${fhr}_std_${region}.grb2
 
-    $EXECrtofs/${RUN}_nc2grib < ${regdir}/infile_${var}_${region}  > nc2grb.ft06_${region} 2>> nc2grb.err_${region}
+    $EXECrtofs/${RUN}_nc2grb2 < ${regdir}/infile_${var}_${region}  > nc2grb.ft06_${region} 2>> nc2grb.err_${region}
     # export err=$?; err_chk
     cat ${regdir}/${var}_${fhr}_std_${region}.grb2 >> ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
     test -f ${regdir}/${var}_${fhr}_std_${region}.grb2 && rm ${regdir}/${var}_${fhr}_std_${region}.grb2
@@ -196,24 +196,25 @@ fi
     if [ ${var} = 'vbaro' ]; then
 
       if [ ${fhr} -eq ${dhr} ]; then
+        if [ ${RUN_MODE} = 'analysis' ]; then
         cp ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 ${RUN}_${modID}.t${mycyc}z.${mode}${dhr}_${region}_std.grb2
         test -f ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 && rm ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
         echo $dhr from dhr loop >> ${region}.out
-        if [ ${RUN_MODE} = 'forecast' ]; then
-          dhr=048
-        fi
       fi
+     fi
 
       if [ ${fhr} -eq ${nhr} ]; then
+       if [ ${RUN_MODE} = 'forecast' ]; then
         cp ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 ${RUN}_${modID}.t${mycyc}z.${mode}${fhr}_${region}_std.grb2
         test -f ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 && rm ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
       echo $nhr from nhr loop >> ${region}.out
       fi
+     fi
     fi
   done
   fhr=`expr $fhr + $intvl_hrly`
 done
-fi
+
 # More cleaning up and housekeeping 
 
 test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc

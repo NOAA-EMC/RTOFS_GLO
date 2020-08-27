@@ -2,73 +2,46 @@ Minor change
 
 DESCRIPTION OF CHANGE:  
 
-1. Add NCODA for RTOFS.
+Add Data Assimilation for RTOFS. This requires new observational inputs and 
+DA processing brought from Navy (NCODA).
 
 BENEFIT OF CHANGE: 
 
-1. Currently RTOFS uses Navy RTOFS restart file and that will not be available soon.
-
-USER IMPACT STATEMENT:
-
-1. 
-
-TECHNICAL IMPACT STATEMENT:
-
-1.
+Currently RTOFS uses Navy RTOFS restart file and that will not be available soon.
 
 RISKS:
 
-1. None expected
-
-PROPOSED IMPLEMENTATION
-DATE: 
-TIME:
-
 IMPLEMENTATION INSTRUCTIONS:
 
-I. BUILD A PROJECT
 -------------------
 
-II.1)  Check out RTOFS_GLOBAL:
-       git clone -b RB-2.0.0 "ssh://$LOGNAME@vlab.ncep.noaa.gov:29418/EMC_rtofs_glo_prod" rtofs_glo.v2.0.0
+I.1)  Check out RTOFS_GLOBAL:
+       git clone --single-branch -b RB-2.0.0 ssh://$LOGNAME@vlab.ncep.noaa.gov:29418/EMC_rtofs_glo_prod rtofs_glo.v2.0.0
        into /gpfs/dell1/nco/ops/nwprod/
-       The result will be the directory 
-II.2)  cd rtofs_glo.v1.3.0
-       mkdir -p exec fix
+       The result will be the directory rtofs_glo.v2.2.0
+
+I.2)  Get the fix files
+       mkdir fix
+       cp -R /gpfs/dell2/emc/modeling/noscrub/emc.ncodapa/FIXFILES/v2.0.0/fix/ fix
+
 
 II. COMPILE PROJECT SOURCE CODES
 --------------------------------
 
 # libraries
-cd rtofs_glo.v2.0.0/libs
+cd libs
 ./build_libs.sh
-cd ..
 
-# hycom source
-cd rtofs_hycom.fd
-./build_hycom.sh
-cd ..
+# source
+cd sorc
+./build_rtofs.sh clean
+./build_rtofs.sh compile
+./build_rtofs.sh install
 
-# ncoda source
-cd rtofs_ncoda.fd
-./build_ncoda.sh
-make install
-cd ..
 
-# all other sources
-cd rtofs_code.fd/
-./build_code.sh
-make install
-
-III. SET-UP FIX FILES
----------------------
-
-NOTE III.1: fix files are too big to be part of the repository. 
-
- cp -p  /gpfs/dell2/emc/modeling/noscrub/Dan.Iredell/rtofs_global/fix/* rtofs_glo.v1.3.0/fix/.
-
-IV. SET-UP INITIAL CONDITIONS
+III. SET-UP INITIAL CONDITIONS
 ----------------------------
+
 
 V.1) module load prod_envir/1.0.3
 V.2) mkdir -p $COMROOTp3/rtofs/$envir
@@ -76,48 +49,4 @@ V.3) ln -s $COMROOTp2/rtofs/prod/rtofs.YYYYMMDD  $COMROOTp3/rtofs/$envir/rtofs.Y
 V.4) mkdir -p $GESROOTp3/rtofs/$envir
 V.5) ln -s $GESROOTp2/rtofs/prod/rtofs.YYYYMMDD  $GESROOTp3/rtofs/$envir/rtofs.YYYYMMDD  (for PDYm1 and PDYm2)
 
-V. COMPUTER RESOURCES AND RUN-TIME ENVIRONMENT
-------------------------------------------------
-
-Computer resources and sample LSF command files  the same as for rtofs_glo.v1.1.4 currently in production. 
-
-anal_pre:                                CPU time: 17 min. Max. Memory: 18731 MB    Resources: rtofs_job_command_anal_pre.lsf                    
-anal:                                    CPU time: 50 min. Max. Memory: 1818750 MB  Resources: rtofs_job_command_anal_grib_post.lsf
-anal_post:                               CPU time: 13 min. Max. Memory: 101324 MB   Resources: rtofs_job_command_anal_post.lsf
-anal_grib2_post:                         CPU time: 23 min. Max. Memory: 8016 MB     Resources: rtofs_job_command_anal_grib_post.lsf
-
-fcst_step1_pre:                          CPU time: 10 min. Max. Memory: 2636 MB     Resources: rtofs_job_command_fcst_step1_pre.lsf         
-fcst_step1:                              CPU time: 96 min. Max. Memory: 1818867 MB  Resources: rtofs_job_command_fcst_step1.lsf                
-fcst_post.01 - fcst_post.04:             CPU time: 7 min.  Max. Memory: 99509 MB    Resources: rtofs_job_command_fcst_post.lsf
-fcst_grib2_post.01 - fcst_grib2_post.03: CPU time: 29 min. Max. Memory: 8582 MB     Resources: rtofs_job_command_fcst_grib_post.lsf
-
-fcst_step2_pre:                          CPU time: 10 min  Max. Memory: 2636 MB     Resources: rtofs_job_command_fcst_step2_pre.lsf            
-fcst_step2:                              CPU time: 96 min. Max. Memory: 1818795 MB  Resources: rtofs_job_command_fcst_step2.lsf             
-fcst_post.00 - fcst_post.08:             CPU time: 7 min.  Max. Memory: 99509 MB    Resources: rtofs_job_command_fcst_post.lsf
-fcst_post_2:                             CPU time: 5 min.  Max. Memory: 3499 MB     Resources: rtofs_job_command_fcst_post.lsf
-fcst_grib2_post.04 - fcst_grib2_post.06: CPU time: 29 min. Max. Memory: 8582 MB     Resources: rtofs_job_command_fcst_grib_post.lsf
-
-     
-VI. JOB DEPENDENCIES
--------------------
-
-VI.1a) anal_pre:                                after GFS 00Z cycle is completed. 
-VI.1b) anal:                                    after 1a is completed
-VI.1c) anal_post:                               after 1b is completed
-VI.1d) anal_grib2_post:                         after 1b is completed
-
-VI.2a) fcst_step1_pre:                          after GFS 00Z cycle is completed.
-VI.2b) fcst_step1:                              after 1b is completed
-VI.2c) fcst_post.01 - fcst_post.04:             after 2b is completed
-VI.2d) fcst_grib2_post.01 - fcst_grib2_post.03: after 2b is completed
-
-VI.3a) fcst_step2_pre:                          after GFS 00Z cycle is completed.
-VI.3b) fcst_step2:                              after 2b is completed
-VI.3c) fcst_post.0 - fcst_post.08:              after 3b is completed
-VI.3d) fcst_grib2_post.04 - fcst_grib2_post.06: after 3b is completed
-VI.3f) fcst_post_2                              after 3b is completed
-
-NOTE VI.1: At is assumed that for all post-processing jobs $job has the name structure 
-             of the type job_*NN, where NN is two-digit number.
-NOTE VI.2: GRIB2 post-processing for forecast is done only for the first 6 days.
 

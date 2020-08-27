@@ -3,7 +3,7 @@ set -xa
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_ncoda_inc.sh.sms                           #
+# Script name:         exrtofs_glo_ncoda_inc.sh                               #
 # Script description:                                                         #
 #                                                                             #
 # Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
@@ -31,8 +31,8 @@ postmsg "$jlogfile" "$msg"
 incup_hours=3
 
 dtg=${PDYm1}00
-dtgm1=`$EXECncoda/dtg $dtg -d -1`
-dtgm2=`$EXECncoda/dtg $dtg -h -$incup_hours`
+dtgm1=`$EXECrtofs/rtofs_dtg $dtg -d -1`
+dtgm2=`$EXECrtofs/rtofs_dtg $dtg -h -$incup_hours`
 hday=`$USHrtofs/rtofs_date_normal2hycom.sh $dtg`
 hday2=`echo $hday $incup_hours 24 | awk '{printf("%9.3f", $1-($2/$3))}'`
 jday=`$USHutil/date2jday.sh ${dtg:0:8}`
@@ -73,17 +73,62 @@ typec=icecov_sfc_1o${SIZN}
 
 ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.a    archv.${archday}.a
 ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.b    archv.${archday}.b
-ln -sf  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ./temp_${dtg}_analinc
-ln -sf  $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ./saln_${dtg}_analinc
-ln -sf  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ./uvel_${dtg}_analinc
-ln -sf  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ./vvel_${dtg}_analinc
-ln -sf  $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ./lypr_${dtg}_analinc
-ln -sf  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ./icecov_${dtg}_analfld
+
+# Check for the existence of analysis increment files
+# These are needed to create the HYCOM incremental update file
+# Temperature
+if [ -e $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ]; then
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ./temp_${dtg}_analinc
+else
+   echo "  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc missing, exiting now."
+   export err=1;err_chk
+fi
+# Salinity
+if [ -e $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ]; then
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ./saln_${dtg}_analinc
+else
+   echo "  $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc missing, exiting now."
+   export err=1;err_chk
+fi
+# Current - U-component
+if [ -e $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ]; then
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ./uvel_${dtg}_analinc
+else
+   echo "  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc missing, exiting now."
+   export err=1;err_chk
+fi
+# Current - V-component
+if [ -e $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ]; then
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ./vvel_${dtg}_analinc
+else
+   echo "  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc missing, exiting now."
+   export err=1;err_chk
+fi
+# Layer Pressure
+if [ -e $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ]; then
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ./lypr_${dtg}_analinc
+else
+   echo "  $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc missing, exiting now."
+   export err=1;err_chk
+fi
+# Ice Coverage
+if [ -e $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ]; then
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ./icecov_${dtg}_analfld
+else
+   echo "  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld missing, exiting now."
+   export err=1;err_chk
+fi
 
 rm -f ssmi1.a ssmi2.a ssmi.$dtg.r
 $EXECrtofs/rtofs_raw2hycom icecov_${dtg}_analfld $IDM $JDM 999.00 ssmi1.a > ssmi1.b
+err=$?; export err ; err_chk
+echo " error from rtofs_raw2hycom=",$err
 $EXECrtofs/rtofs_hycom_expr ssmi1.a "ONE" $IDM $JDM  0.01 0 ssmi2.a > ssmi2.b
+err=$?; export err ; err_chk
+echo " error from rtofs_hycom_expr=",$err
 $EXECrtofs/rtofs_hycom2raw8 ssmi2.a $IDM $JDM 1 1 $IDM $JDMA ssmi.$dtg.r
+err=$?; export err ; err_chk
+echo " error from rtofs_hycom2raw8=",$err
 
 ar=archv_1_inc.${archday}
 rm -f $ar.[a,b]
@@ -222,6 +267,8 @@ ${JDM}  'jdmn  ' = j-extent of ncoda subregion (<=jdm; 0 implies jdm)
 NONE
 E-o-D
 $EXECrtofs/rtofs_ncoda_archv_inc < ncoda_archv.input
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_archv_inc=",$err
 
 #
 # calculate increment file for assimilation
@@ -241,6 +288,8 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
 E-o-D
 date
 $EXECrtofs/rtofs_hycom_diff < hycom_diff.input
+err=$?; export err ; err_chk
+echo " error from rtofs_hycom_diff=",$err
 
 #
 # change time on archd*.b file

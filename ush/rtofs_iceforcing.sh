@@ -1,4 +1,3 @@
-
 #!/bin/sh
 #########################################################################
 # Usage: rtofs_iceforcing.sh start-date end-date interval               #
@@ -34,6 +33,7 @@ cd $DATA
 
 #sh ${USHutil}/setup.sh
 
+mode=$RUN_MODE
 if [ ${RUN_MODE} = "analysis" ]
 then
  export mode=anal
@@ -46,7 +46,44 @@ IDM=`cat ${BLKDATA_FILE} | grep idm | cut -d' ' -f1`
 JDM=`cat ${BLKDATA_FILE} | grep jdm | cut -d' ' -f1`
 JDMA=`expr ${JDM} \- 1`
 
+# Determine NREC
+ftime=0.0
+NREC=0
+while read line
+do
+  str=`echo $line | awk '{printf ("%-7s\n", $1)}'`
+  if [ .$str == .wndspd: ]
+  then
+     tim=`echo $line | awk '{printf ("%11.5f\n", $4)}'`
+     let NREC=NREC+1
+     if [[ $tim > $iday ]]
+     then
+       ftime=$tim
+       break
+     fi
+  fi
+done < forcing.wndspd.b
+echo starting cice forcing at record $NREC at timemark $ftime
+
+totrec=`grep -c wndspd forcing.wndspd.b`
+let tailrec=totrec-NREC
+
+#Create the ice forcing starting at the specified time step
+mkdir tempforcing
+cd tempforcing
 rm -f netQlw.[ab]
+
+export pgm="${RUN}_hycom_extract"
+for field in airtmp glbrad lwdflx radflx shwflx surtmp vapmix wndewd wndnwd; do
+  rm -f forcing.$field.a forcing.$field.b
+  ${EXECrtofs}/rtofs_hycom_extract  ../forcing.$field.a $IDM $JDM 1 $NREC 1 0 forcing.$field.a > forcing.$field.list
+  err=$?; export err ; err_chk
+  echo " error from ${RUN}_hycom_extract=",$err
+  head -5 ../forcing.$field.b > forcing.$field.b
+  tail -$tailrec ../forcing.$field.b >> forcing.$field.b
+done
+
+cp -p ../forcing.offlux.? .
 
 export pgm="${RUN}_hycom_expr"
 . prep_step
@@ -101,7 +138,7 @@ do
   export pgm="${RUN}_hycom_expr"
   . prep_step
   startmsg
-  ${EXECrtofs}/${RUN}_hycom2raw8 forcing.${cfield}${extra}.a ${IDM} ${JDM} 1 1 ${IDM} ${JDMA} cice.${cfield}.r > ${DATA}/cice.${cfield}.B
+  ${EXECrtofs}/${RUN}_hycom2raw8 forcing.${cfield}${extra}.a ${IDM} ${JDM} 1 1 ${IDM} ${JDMA} ../cice.${cfield}.r > ../cice.${cfield}.B
   err=$?; export err ; err_chk
   echo " error from ${RUN}_hycom2raw8=",$err
 

@@ -10,7 +10,7 @@ log_dir=$run_dir/logs/amsr_qc
 mkdir -p $log_dir
 
 cut_dtg=${PDYm1}00
-prv_dtg=$( $EXECncoda/dtg -w -h -24 $cut_dtg )
+prv_dtg=$( $EXECrtofs/rtofs_dtg -w -h -24 $cut_dtg )
 
 #   set QC environmental variables
 export ATM_MODEL_DIR=$COMIN
@@ -25,7 +25,7 @@ mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/amsr
 
 #   set paths to NCEP netCDF files
-export SST_DATA_DIR=$DCOMROOT/$sst_dataloc
+export SST_DATA_DIR=$DCOMINSST
 
 #   set path to BUFR dump files
 export BUFR_DATA_DIR=$DATA/dump
@@ -58,9 +58,15 @@ done
 #   change to working directory
 cd $log_dir
 cat amsr_*.$cut_dtg > acspo_sst_files.$cut_dtg
+if [ ! -s acspo_sst_files.$cut_dtg ]; then
+   echo "WARNING - acspo_sst_files.$cut_dtg is empty. No AMSR files to process."
+   echo "AMSR.obs_control file will not be updated"
+fi
 
 #   execute ncoda pre_qc for AMSR netCDF files
-$EXECncoda/ncoda_acspo_sst_nc amsr $cut_dtg > amsr.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_acspo_sst_nc amsr $cut_dtg > amsr_preqc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_acspo_sst_nc=",$err
 
 #--------------------------------------------------------------------------------------
 echo "  "
@@ -115,7 +121,9 @@ rm -f $OCN_DATA_DIR/incoming/amsr.b
 #   execute ncoda qc
 ln -s $OCN_DATA_DIR/incoming/amsr.a.$cut_dtg $OCN_DATA_DIR/incoming/amsr.a
 ln -s $OCN_DATA_DIR/incoming/amsr.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr.b
-$EXECncoda/ncoda_qc $cut_dtg amsr_sst > amsr_qc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_sst > amsr_qc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_qc=",$err
 mv fort.44 amsr_qc.$cut_dtg.rej
 
 #   cleanup

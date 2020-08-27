@@ -36,15 +36,15 @@ postmsg "$jlogfile" "$msg"
   rm -f ok
   date >> TRACK
 
-export pgm="$EXECcode/hycom_cice"
+export pgm="$EXECrtofs/rtofs_hycom"
 #dbzg
 #. ./prep_step
 #startmsg
-  mpirun -l $EXECcode/hycom_cice -procs $NPROCS >> $pgmout 2>errfile
-  # mpirun.lsf $EXECcode/${RUN}_forecast -procs $NPROCS >> $pgmout 2>errfile
+  mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
+  # mpirun.lsf $EXECrtofs/${RUN}_forecast -procs $NPROCS >> $pgmout 2>errfile
   # mpirun -ppn 16 $EXECrtofs/${RUN}_forecast  >> $pgmout 2>errfile
   err=$?; export err ; err_chk
-  echo " error from ${RUN}_hycom_cice=",$err
+  echo " error from rtofs_hycom=",$err
 
   date >> TRACK
 

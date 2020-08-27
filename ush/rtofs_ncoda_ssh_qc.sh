@@ -24,7 +24,7 @@ mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/ssh
 
 #   set paths to NCEP netCDF files
-export SSH_DATA_DIR=$DCOMROOT/$ssh_dataloc
+export SSH_DATA_DIR=$DCOMINSSH
 
 echo "current date/time is " $( date)
 echo "data cut date time group is " $cut_dtg
@@ -40,8 +40,9 @@ echo SSH_DATA_DIR $SSH_DATA_DIR
 echo OCN_DATA_DIR $OCN_DATA_DIR
 
 #   execute ncoda pre_qc for SSH netCDF files
-$EXECncoda/ncoda_adt_ssh_nc $cut_dtg > ssh_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_adt_ssh_nc $cut_dtg > ssh_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_adt_ssh_nc=",$err
 
 echo "  "
 echo "NCODA SSH QC"
@@ -95,7 +96,9 @@ rm -f $OCN_DATA_DIR/incoming/ssh.b
 #   execute ncoda qc
 ln -s $OCN_DATA_DIR/incoming/ssh.a.$cut_dtg $OCN_DATA_DIR/incoming/ssh.a
 ln -s $OCN_DATA_DIR/incoming/ssh.b.$cut_dtg $OCN_DATA_DIR/incoming/ssh.b
-$EXECncoda/ncoda_qc $cut_dtg ssh > ssh_qc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg ssh > ssh_qc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_qc=",$err
 mv fort.44 ssh_qc.$cut_dtg.rej
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

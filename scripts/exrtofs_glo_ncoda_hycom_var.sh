@@ -3,7 +3,7 @@ set -xa
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_ncoda_hycom_var.sh.sms                     #
+# Script name:         exrtofs_glo_ncoda_hycom_var.sh                         #
 # Script description:                                                         #
 #                                                                             #
 # Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
@@ -147,21 +147,36 @@ cat << eof4 > omapnl
 eof4
 echo timecheck RTOFS_GLO_HYCOM finish build at `date`
 
-# 3. Run Hycom var
+# 3. Run Hycom var (NCODA 3D)
 
 ddtg=${PDYm1}00
 log_dir=$DATA/logs
 mkdir -p $log_dir
 
 echo timecheck RTOFS_GLO_HYCOM start setup at `date`
-$EXECncoda/ncoda_setup 3D hycom ogridnl $ddtg > pout1
+#NCODA setup
+$EXECrtofs/rtofs_ncoda_setup 3D hycom ogridnl $ddtg > pout1
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_setup=",$err
+
+#NCODA prep
 echo timecheck RTOFS_GLO_HYCOM start prep at `date`
-mpirun -n  72 $EXECncoda/ncoda_prep 3D hycom ogridnl $ddtg > pout2
+mpirun -n  72 $EXECrtofs/rtofs_ncoda_prep 3D hycom ogridnl $ddtg > pout2
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_prep=",$err
+
+#NCODA var
 echo timecheck RTOFS_GLO_HYCOM start ncoda3d at `date`
-mpirun -n 360 $EXECncoda/ncoda 3D hycom ogridnl $ddtg > pout3
+mpirun -n 360 $EXECrtofs/rtofs_ncoda 3D hycom ogridnl $ddtg > pout3
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda=",$err
+
+#NCODA post
 echo timecheck RTOFS_GLO_HYCOM start post at `date`
-mpirun -n 360 $EXECncoda/ncoda_post 3D hycom ogridnl $ddtg relax > pout4
+mpirun -n 360 $EXECrtofs/rtofs_ncoda_post 3D hycom ogridnl $ddtg relax > pout4
 echo timecheck RTOFS_GLO_HYCOM finish post at `date`
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_post=",$err
 
 #   rename local files
 mv fort.32 $log_dir/hycom_var.$ddtg.rej
@@ -181,7 +196,10 @@ mv fort.69 $log_dir/hycom_var.$ddtg.via
 #   create data coverage graphics
 export OCN_OUTPUT_DIR=$DATA/restart
 export OCN_CLIM_DIR=$FIXrtofs/codaclim
-$EXECncoda/ncoda_map $ddtg > pout5
+# NCODA map
+$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_map=",$err
 mv gmeta $log_dir/hycom_var.$ddtg.gmeta
 
 #   combine and remove work files
@@ -191,14 +209,15 @@ cat $log_dir/hycom_var.$ddtg.out > $pgmout
 # 4. Copy last 15 days of data back to COMOUT/ncoda
 echo timecheck RTOFS_GLO_HYCOM start put at `date`
 
-mkdir -p $DATA/nokeep
-mv $DATA/restart/*_01??_*fcstfld          $DATA/nokeep
-mv $DATA/restart/*_00[456789]?_*fcstfld   $DATA/nokeep
+# taken car of at code level
+#mkdir -p $DATA/nokeep
+#mv $DATA/restart/*_01??_*fcstfld          $DATA/nokeep
+#mv $DATA/restart/*_00[456789]?_*fcstfld   $DATA/nokeep
 
 mkdir -p $COMOUT/ncoda/hycom_var/restart
 rm -f cmdfile.cpout
 for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-  backymdh=$( $EXECncoda/dtg -d -$d ${PDY}00 )
+  backymdh=$( $EXECrtofs/rtofs_dtg -d -$d ${PDY}00 )
   backymd=${backymdh:0:8}
   if compgen -G "$DATA/restart/[a-r]*${backymd}*" > /dev/null
   then

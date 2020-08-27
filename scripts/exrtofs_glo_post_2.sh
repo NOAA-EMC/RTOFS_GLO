@@ -3,22 +3,16 @@
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_grib_post.sh.sms                           #
+# Script name:         exrtofs_glo_post_2.sh                                  #
 # Script description:                                                         #
 #                                                                             #
 # Authors: Bhavani Rajan & Ilya Rivin  Org: NP23         Date: 2011-07-20     #
 #                                                                             #
 # Abstract: This is the post_grib for RTOFS_GLO                               #
-#           Writes out hourly netcdf files for nowcast and 1-72 hr forecast   #
-#           and 3-hrly from 72-144 hrs Surface forecast.                      #
-#           Also packs the netcdf files in GRIB2 format for 11 Regions        #
-#           These are surface only (2d) diag and prog and ice files           #
-#           Additonally puts out netcdf files for OPC                         #
+#           Writes out 3hrly netcdf files for hrs 144-192                     #
 #                                                                             #
 # Sub-scripts called:                                                         # 
 #                    rtofs_glo2d_3hrly.sh                                     #
-#                    rtofs_glo2d_1hrly.sh                                     #
-#                    create_regions_mpmd_weights.sh                           #
 #                                                                             # 
 # Imported variables:                                                         #
 #                    RUN                                                      #
@@ -75,9 +69,7 @@ typeset -Z3 fhr
 typeset -Z3 fhr0
 typeset -Z3 intvl_daily
 typeset -Z3 intvl_3hrly
-typeset -Z3 intvl_1hrly
 typeset -Z3 hr_daily
-typeset -Z3 hr_2d_1hrly
 typeset -Z3 hr_2d_3hrly
 typeset -Z3 ENDHOUR
 typeset -Z3 firsthr
@@ -88,51 +80,23 @@ typeset -Z3 lasthr
 # Define the end forecast hour here:
 
 export fcstdays=${fcstdays:-1}
-if [ ${RUN_MODE} = 'analysis' ]
-then
-  export startdate=${startdate:-${PDYm1}}
-  # export enddate=${analysis_end:-$PDY}
-  # export startdate=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
-  # export ENDHOUR=`expr $fcstdays \* 24`
-fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
   export startdate=${startdate:-${PDY}}
 fi
   export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
-  export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24`
+  export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24 `
 
 # define what functions to do (default to operational settings)
 export running_realtime=${running_realtime:-NO}
 export run_parallel=${run_parallel:-NO}
-export grib_1hrly=${grib_1hrly:-YES}
-export for_opc=${for_opc:-YES}
-export intvl_1hrly=${intvl_1hrly:-1}
 export intvl_3hrly=${intvl_3hrly:-3}
 export intvl_daily=${intvl_daily:-24}
 export no_procs=${NPROCS:-4} # no of processors used in poe
 
-if [ ${RUN_MODE} = 'analysis' ]
-then
-  export surface_1hrly=${surface_1hrly:-YES}
-  export surface_3hrly=${surface_3hrly:-NO}
-  export opc_script=rtofs_surface_hcasts.sh
-fi
-if [ ${RUN_MODE} = 'forecast' ]
-then
-  if [ ${RUN_MODE} = 'forecast' ] && [ ${fcstdays_before_thisstep} -ge 3 ]
-  then
-     export surface_3hrly=${surface_3hrly:-YES}
-     export surface_1hrly=${surface_1hrly:-NO}
-     export opc_script=rtofs_surface_day4-5.sh
-  else
-     export surface_3hrly=${surface_3hrly:-NO}
-     export surface_1hrly=${surface_1hrly:-YES}
-     export opc_script=rtofs_surface_day1-3.sh
-  fi
-fi
+export surface_3hrly=${surface_3hrly:-YES}
 
-echo $surface_1hrly $surface_3hrly
+echo $surface_3hrly
 
 # Waiting time (in 10 sec)
 icnt_max=180
@@ -153,11 +117,6 @@ cp -f -p $DEPTHFILEb ${DATA}/regional.depth.b
 cp -f -p ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv2ncdf2d.in ${DATA}/archv2ncdf2d.in
 
 fhr=`expr \${fcstdays_before_thisstep} \* 24`
-if [ ${RUN_MODE} = 'analysis' ]
-then
-  export mode=n
-  analhrs=`expr $analdays \* 24` 
-fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
   export mode=f
@@ -165,7 +124,6 @@ fi
 export fhr0=$fhr
 export hr_daily=$fhr0
 export hr_2d_3hrly=$fhr0
-export hr_2d_1hrly=$fhr0
 
 
 echo fhr $fhr ENDHOUR $ENDHOUR
@@ -246,7 +204,7 @@ do
     export err=1; err_chk
   fi
      if [ $fhr -eq 00 ]; then
-# This is for n00 or n-24 nowcast 
+# This is for n00 or n-24 nowcast
      ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.arche.a arche.a
      ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.arche.b arche.b
    else
@@ -254,6 +212,7 @@ do
     echo "NOTdone due to missing arche file" >>${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk
   fi
+
  fi
 fi
   missing=no
@@ -275,33 +234,9 @@ fi
 
   # Now for the hourly runs: 1 hourly and 3 hourly and daily for the surface files  
   #
-  # 1 hourly for surface files
-  if [ $fhr -eq $hr_2d_1hrly ]; then
-    hr_2d_1hrly=`expr $hr_2d_1hrly + $intvl_1hrly`
-    if [ $surface_1hrly = 'YES' ]
-    then 
-      ksh ${USHrtofs}/${RUN}_glo2d.sh
-      ksh ${USHrtofs}/${RUN}_glo2d_ice.sh
-      if [ $SENDCOM = 'YES' ]
-      then
-        for ftype in diag prog ice
-        do
-          cfile=${RUN}_${modID}_2ds_${mode}${fhr}_${ftype}.nc
-          cp -f -p $cfile  $COMOUT/.
-          if [ $SENDDBN = 'YES' ]
-          then
-#	      $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
-	      ALERT_MAYBE RTOFS_GLO_NETCDF  $cfile
-          else
-            msg="File $COMOUT/$cfile not posted to db_net."
-            postmsg "$jlogfile" "$msg"
-          fi
-        done
-      fi
-    fi # end of sfc loop
- fi
+  # 3 hourly for surface files
 
- # 3 hourly for surface files
+ # 1 hourly for surface files
   if [ $fhr -eq $hr_2d_3hrly ]; then
     hr_2d_3hrly=`expr $hr_2d_3hrly + $intvl_3hrly`
     if [ $surface_3hrly = 'YES' ]
@@ -326,153 +261,10 @@ fi
       fi
      fi # end of sfc loop
  fi
-if [ ${RUN_MODE} = 'forecast' ] && [ ${fcstdays_before_thisstep} -ge 3 ]
-then
    fhr=`expr $fhr + $intvl_3hrly`
-else
-   fhr=`expr $fhr + $intvl_1hrly`
-fi
 
 done
-## For OPC
-## For analysis
-   if [ ${RUN_MODE} = 'analysis' ] && [ ${ENDHOUR} -eq 24 ]; then
-    if [ $for_opc = 'YES' ]
-     then
-      echo ${USHrtofs}/${opc_script}
-      sh ${USHrtofs}/${opc_script}
-     if [ $SENDCOM = 'YES' ]
-     then
-	 for cfile in `ls -C1 ${DATA_opc}/gr*gz`
-	 do
-	     cfile_new=${cfile/grtofs/rtofs_glo}
-	     mv $cfile $cfile_new
-             cp -f -p $cfile_new  ${COMOUT}/.
-	     cname=`basename $cfile_new`
-             if [ $SENDDBN = 'YES' ]
-             then
-		 $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDFGZ $job $COMOUT/$cname
-             else
-		 msg="File $COMOUT/$cname not posted to db_net."
-		 postmsg "$jlogfile" "$msg"
-             fi
-         done
-      fi ## SENDCOM
-    fi ## for_opc
-    fi ## analysis
-
-
-   if [ ${RUN_MODE} = 'forecast' ] && [ ${ENDHOUR} -eq 72 -o  ${ENDHOUR} -eq 144 ]; then
-    if [ $for_opc = 'YES' ]
-     then
-      echo ${USHrtofs}/${opc_script}
-      sh ${USHrtofs}/${opc_script}
-     if [ $SENDCOM = 'YES' ]
-     then
-	 for cfile in `ls -C1 ${DATA_opc}/gr*gz`
-	 do
-	     cfile_new=${cfile/grtofs/rtofs_glo}
-	     mv $cfile $cfile_new
-             cp -f -p $cfile_new  ${COMOUT}/.
-	     cname=`basename $cfile_new`
-             if [ $SENDDBN = 'YES' ]
-             then
-		 $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDFGZ $job $COMOUT/$cname
-             else
-		 msg="File $COMOUT/$cname not posted to db_net."
-		 postmsg "$jlogfile" "$msg"
-             fi
-         done
-      fi ## SENDCOM
-    fi ## for_opc
-    fi ## forecast
-
-
-
-# If you want to pack to grib then
-    if [ $grib_1hrly = 'YES' ]
-    then
-      ksh ${USHrtofs}/${RUN}_create_regions_mpmd_weights.sh
-    fi
-if [ $SENDCOM = 'YES' ]
-        then
-# Copy them to grib output dir
-## Adds the GRIB Header file to the GRIB2 files
-    for ftype in alaska arctic bering guam gulf_alaska honolulu hudson_baffin samoa trop_paci_lowres west_atl west_conus
-    do
-      for cfile in `ls -C1 $DATA/$ftype/${RUN}_${modID}.t${mycyc}z.${mode}*_${ftype}_std.grb2`
-      do
-          cname=`basename $cfile`
-          cp -f -p $cfile  ${COMOUT}/.
-          file=`echo $cfile |awk -F/ '{print $5}'`
-          fhour=`echo $cname | cut -c17-19`
-
-          ####################################
-          # Processing GRIB2 RTOFS for AWIPS
-          ####################################
-          pgm=tocgrib2
-          export pgm;. prep_step
-          startmsg
-
-          export FORT11=$ftype/${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std.grb2
-          export FORT31=" "
-          export FORT51=grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
-          $TOCGRIB2 < $PARMrtofs/grib2_rtofs_glo_${mode}${fhour}_${ftype}_std
-
-          err=$?;export err ;err_chk
-          echo " error from tocgrib2=",$err
-
-          if [ $SENDCOM = "YES" ] ; then
-          ##############################
-          # Post Files to COMOUTwmo
-          ##############################
-
-             cp  grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std  $COMOUTwmo/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
-
-          fi
-
-          if [ $SENDDBN = 'YES' ]
-          then
-            $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_REG_GB2 $job $COMOUT/$cname
-
-            ##########################
-            # Distribute Data to NCF
-            #########################
-            #
-            #    Distribute Data to TOC (AWIPS)
-            #
-            if [ $SENDDBN_NTC = YES ]; then
-                $DBNROOT/bin/dbn_alert NTC_LOW $NET $job  $COMOUTwmo/grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
-            echo " "
-            fi
-          else
-            msg="File $COMOUT/$cname not posted to db_net."
-            postmsg "$jlogfile" "$msg"
-          fi
-       done
-     done
-fi
       
-if [ $procstatus = 0 ]
-then
-  if [ $running_realtime = 'YES' ]
-  then
-    md5=/usr/bin/md5sum
-    if [ -x $md5 ]
-    then
-      cd $COMOUT
-      # need definition of files
-      for gfile in *.grb2
-      do
-        $md5 $gfile >> $DATA/csum.$PDY$mycyc
-      done
-      for gfile in `ls -C1 ${RUN}_${modID}.t${mycyc}z.[fn]*_std.grb2`
-      do
-        $md5 $gfile >> $DATA/csum_nodc.$PDY$mycyc
-      done
-    fi
-  fi
- fi
   echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
   msg='THE RTOFS_GLO_GRIB_POST JOB HAS ENDED NORMALLY.'
   postmsg "$jlogfile" "$msg"

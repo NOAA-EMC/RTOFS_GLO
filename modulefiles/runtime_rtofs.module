@@ -19,29 +19,38 @@ set COMP intel
 
 # Known conflicts _____________
 
-#conflict bacio/v2.0.1
-
 # Loding nceplibs modules _____________
 module purge
+
+# types of jobs:
+# DA (ncoda_qc, polar_var, hycom_var, global_var, incup, ncoda_inc)
+# pre-processing (analysis_pre, forecast_step1_pre, forecast_step2_pre)
+# analysis & forecast (analysis, forecast_step1, forecast_step2)
+# post-processing (gempak and directories grib2_post, post)
+
+# all jobs
 module load EnvVars/1.0.3
 module load ips/18.0.1.163
 module load impi/18.0.1
 module load prod_envir/1.1.0
 module load prod_util/1.1.4
-module load grib_util/1.1.1
-
-module load HDF5-serial/1.10.1
-module load NetCDF/4.5.0
 module load CFP/2.0.2
-
-# in progress
-module load bufr_dumplist/2.2.0
-module load cdo/1.9.8
-
-module load dumpjb/5.0.3
 module load lsf/10.1
 
+# DA
+module load bufr_dumplist/2.2.0
+module load dumpjb/5.0.3
+module load HDF5-serial/1.10.1
+module load NetCDF/4.5.0
+
+# DA, pre, post
+module load grib_util/1.1.1
+
+# post
 module load gempak/7.3.1
+module use -a /usrx/local/dev/modulefiles
+module load cdo/1.9.8
+
 #
 # setenv _______________
 

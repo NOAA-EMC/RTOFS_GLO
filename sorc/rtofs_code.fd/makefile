@@ -5,6 +5,7 @@ SUBDIRS = \
 	rtofs_archv2netCDF.fd \
 	rtofs_atmforcing_correct.fd \
 	rtofs_atmforcing.fd \
+	rtofs_hycom_extract.fd \
 	rtofs_hycom2raw8.fd \
 	rtofs_hycom_diff.fd \
 	rtofs_hycom_expr.fd \
@@ -12,9 +13,9 @@ SUBDIRS = \
 	rtofs_ncoda_archv_inc.fd \
 	rtofs_raw2hycom.fd \
 	rtofs_getkpds.fd \
-	ssmis_tol2.cd
+	rtofs_ssmis_tol2.cd
 
-# old rtofs_cice_stat.fd , , rtofs_hycom_extract.fd , rtofs_hycom_range.fd , rtofs_restart2archv.fd 
+# old rtofs_cice_stat.fd , , , rtofs_hycom_range.fd , rtofs_restart2archv.fd 
 
 all: $(SUBDIRS)
 	for dir in $(SUBDIRS); do \

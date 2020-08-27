@@ -39,7 +39,9 @@ echo "NCODA PROFILE pre_QC"
 cd $log_dir
 
 #   execute ncoda pre_qc for PROFILE bufr files
-$EXECncoda/ncoda_bufr_decode prof $cut_dtg > prof_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_bufr_decode prof $cut_dtg > prof_preqc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_bufr_decode=",$err
 
 echo "  "
 echo "NCODA PROFILE QC"
@@ -93,7 +95,9 @@ rm -f $OCN_DATA_DIR/incoming/profile.b
 #   execute ncoda qc
 ln -s $OCN_DATA_DIR/incoming/profile.a.$cut_dtg $OCN_DATA_DIR/incoming/profile.a
 ln -s $OCN_DATA_DIR/incoming/profile.b.$cut_dtg $OCN_DATA_DIR/incoming/profile.b
-$EXECncoda/ncoda_qc $cut_dtg profile > prof_qc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg profile > prof_qc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_qc=",$err
 mv fort.45 prof_qc.$cut_dtg.rpt
 mv fort.47 prof_qc.$cut_dtg.err
 mv fort.48 prof_qc.$cut_dtg.vgd

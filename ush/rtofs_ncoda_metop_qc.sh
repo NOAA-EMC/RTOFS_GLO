@@ -10,7 +10,7 @@ log_dir=$run_dir/logs/metop_qc
 mkdir -p $log_dir
 
 cut_dtg=${PDYm1}00
-prv_dtg=$( $EXECncoda/dtg -w -h -24 $cut_dtg )
+prv_dtg=$( $EXECrtofs/rtofs_dtg -w -h -24 $cut_dtg )
 
 #   set QC environmental variables
 export ATM_MODEL_DIR=$COMIN
@@ -25,7 +25,7 @@ mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/metop
 
 #   set paths to NCEP netCDF files
-export SST_DATA_DIR=$DCOMROOT/$sst_dataloc
+export SST_DATA_DIR=$DCOMINSST
 
 #   set path to BUFR dump files
 export BUFR_DATA_DIR=$DATA/dump
@@ -66,9 +66,15 @@ done
 #   change to working directory
 cd $log_dir
 cat mta_*.$cut_dtg mtb_*.$cut_dtg mtc_*.$cut_dtg > acspo_sst_files.$cut_dtg
+if [ ! -s acspo_sst_files.$cut_dtg ]; then
+   echo "WARNING - acspo_sst_files.$cut_dtg is empty. No METOP files to process."
+   echo "METOP.obs_control file will not be updated"
+fi
 
 #   execute ncoda pre_qc for METOP netCDF files
-$EXECncoda/ncoda_acspo_sst_nc metop $cut_dtg > metop_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_acspo_sst_nc metop $cut_dtg > metop_preqc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_acspo_sst_nc=",$err
 
 #--------------------------------------------------------------------------------------
 echo "  "
@@ -123,7 +129,9 @@ rm -f $OCN_DATA_DIR/incoming/metop.b
 #   execute ncoda qc
 ln -s $OCN_DATA_DIR/incoming/metop.a.$cut_dtg $OCN_DATA_DIR/incoming/metop.a
 ln -s $OCN_DATA_DIR/incoming/metop.b.$cut_dtg $OCN_DATA_DIR/incoming/metop.b
-$EXECncoda/ncoda_qc $cut_dtg metop > metop_qc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg metop > metop_qc.$cut_dtg.out
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_qc=",$err
 mv fort.44 metop_qc.$cut_dtg.rej
 
 #   cleanup

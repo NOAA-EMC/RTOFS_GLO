@@ -7,7 +7,6 @@ set +x
 echo cyc is ${cyc:?} 
 echo envir is ${envir:?} 
 echo rtofs_glo_ver is ${rtofs_glo_ver:?}
-echo rtofs_code_ver is ${rtofs_code_ver:?}
 
 export PS4='$SECONDS + '
 date
@@ -43,12 +42,10 @@ export pgmout="OUTPUT.$$"
 # Specify Execution Areas
 ####################################
 export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
-export CODErtofs=${CODErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
 export USHrtofs=${HOMErtofs}/ush
-export EXECcode=${CODErtofs}/exec
 
 # if $CDO is in environment
 # export cdo_r=$CDO
@@ -123,7 +120,7 @@ postmsg "$jlogfile" "$msg"
 ####################
 # execute the script
 ####################
-ksh ${HOMErtofs}/scripts/exrtofs_glo_grib2_post.sh.ecf
+ksh ${HOMErtofs}/scripts/exrtofs_glo_grib2_post.sh
 
 cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.forecast_d1-3_grib_post.`basename $pgmout`

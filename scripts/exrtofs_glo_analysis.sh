@@ -2,7 +2,7 @@
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_analysis.sh.sms                            #
+# Script name:         exrtofs_glo_analysis.sh                                #
 # Script description:                                                         #
 #                                                                             #
 # Author:        Ilya Rivin      Org: NP23         Date: 2010-07-30           #

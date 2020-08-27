@@ -26,7 +26,7 @@ export HOMErtofs=${HOMErtofs:-${NWROOT:?}/rtofs_glo.${rtofs_glo_ver}}
 ####################################
 export pgmout="OUTPUT.$$"
 export cycle=t${cyc}z
-export CYC=$cyc       # remove and use $cyc in scripts/exrtofs_glo_gzip.sh.ecf !
+export CYC=$cyc       # remove and use $cyc in scripts/exrtofs_glo_gzip.sh !
 
 #############################
 # Set up the UTILITIES
@@ -53,7 +53,7 @@ mkdir -m 775 -p $COMOUT
 # execute the script
 ####################
 export CFP_VERBOSE=1
-${HOMErtofs}/scripts/exrtofs_glo_gzip.sh.ecf
+${HOMErtofs}/scripts/exrtofs_glo_gzip.sh
 
 msg="JOB $job HAS COMPLETED NORMALLY." 
 postmsg "$jlogfile" "$msg"

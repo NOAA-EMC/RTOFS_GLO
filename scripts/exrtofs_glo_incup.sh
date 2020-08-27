@@ -3,7 +3,7 @@ set -xa
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_incup.sh.sms                               #
+# Script name:         exrtofs_glo_incup.sh                                   #
 # Script description:                                                         #
 #                                                                             #
 # Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
@@ -31,37 +31,43 @@ postmsg "$jlogfile" "$msg"
 inc_hours=3
 
 dtg=${PDYm1}00
-dtginc=`$EXECncoda/dtg $dtg -h -$inc_hours`
-dtgm1=`$EXECncoda/dtg $dtg -d -1`
-dtgm2=`$EXECncoda/dtg $dtg -h -$inc_hours`
-dtgp1=`$EXECncoda/dtg $dtg -d 1`
-dtgp1inc=`$EXECncoda/dtg $dtgp1 -h -$inc_hours` 
+dtginc=`$EXECrtofs/rtofs_dtg $dtg -h -$inc_hours`
+dtgm1=`$EXECrtofs/rtofs_dtg $dtg -d -1`
+dtgm2=`$EXECrtofs/rtofs_dtg $dtg -h -$inc_hours`
+dtgp1=`$EXECrtofs/rtofs_dtg $dtg -d 1`
+dtgp1inc=`$EXECrtofs/rtofs_dtg $dtgp1 -h -$inc_hours` 
 cisec=`echo ${dtginc:8:2} 86400 24 | awk '{printf ( "%5.5d", ($1 * $2 / $3))}'`
 jday2=`$USHutil/date2jday.sh ${dtgm2:0:8}`
 archday2=${jday2:0:4}_${jday2:4:3}_${dtgm2:8:2}
 
+# inc_hours with incremental update
+hday12=`$USHrtofs/rtofs_date_normal2hycom.sh $dtg`
+hday11=`echo $hday12 $inc_hours 24 | awk '{printf ("%12.3f", ($1 - ($2 / $3)))}'`
+export iday=$hday11
+
+echo $hday11 $hday12 > limits
+
 ln -sf $COMIN/rtofs_glo.ssmi.$dtg.r ssmi.r
-dtgr0=`$EXECncoda/dtg $dtgm1 -f "%Y-%m-%d"`
-dtgr1=`$EXECncoda/dtg $dtg -f "%Y-%m-%d"`
+dtgr0=`$EXECrtofs/rtofs_dtg $dtgm1 -f "%Y-%m-%d"`
+dtgr1=`$EXECrtofs/rtofs_dtg $dtg -f "%Y-%m-%d"`
 
 # cp in yesterday's restart file produced at n-03
-ln -sf $COMINm1/rtofs_glo.t00z.n-03.restart.a restart_in.a
-ln -sf $COMINm1/rtofs_glo.t00z.n-03.restart.b restart_in.b
-ln -sf $COMINm1/rtofs_glo.t00z.n-03.restart_cice  cice.restart.${dtgr0}-$cisec 
-echo cice.restart.${dtgr0}-$cisec > cice.restart_file
+if [[ ! -e $COMINm1/rtofs_glo.t00z.n-03.restart.a ]] &&  \
+   [[ ! -e $COMINm1/rtofs_glo.t00z.n-03.restart.b ]] &&  \
+   [[ ! -e $COMINm1/rtofs_glo.t00z.n-03.restart_cice ]]; then
+     echo "  $COMINm1/rtofs_glo.t00z.n-03.restart.a $COMINm1/rtofs_glo.t00z.n-03.restart.b \
+             $COMINm1/rtofs_glo.t00z.n-03.restart_cice missing, exiting now."
+     export err=1;err_chk
+else
+   ln -sf $COMINm1/rtofs_glo.t00z.n-03.restart.a restart_in.a
+   ln -sf $COMINm1/rtofs_glo.t00z.n-03.restart.b restart_in.b
+   ln -sf $COMINm1/rtofs_glo.t00z.n-03.restart_cice  cice.restart.${dtgr0}-$cisec
+   echo cice.restart.${dtgr0}-$cisec > cice.restart_file
+fi
 
 #link forcing
 case=anal
 pref=rtofs_glo.$case.t00z
-
-   for f in airtmp precip radflx shwflx surtmp vapmix wndewd wndnwd wndspd; do
-      ln -sf $COMINm1/${pref}.forcing.$f.a  forcing.$f.a
-      ln -sf $COMINm1/${pref}.forcing.$f.b  forcing.$f.b
-   done
-
-   for f in airtmp glbrad lwdflx vapmix wndewd wndnwd; do
-      ln -sf $COMINm1/${pref}.cice.$f.r cice.$f.r
-   done #f
 
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.cb_11_10mm.a       cb.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.cb_11_10mm.b       cb.b
@@ -103,6 +109,15 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf2.b           veldf2.b
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf4.a           veldf4.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf4.b           veldf4.b
 
+   for f in airtmp glbrad lwdflx precip presur radflx shwflx surtmp vapmix wndewd wndnwd wndspd; do
+      ln -sf $COMINm1/${pref}.forcing.$f.a  forcing.$f.a
+      ln -sf $COMINm1/${pref}.forcing.$f.b  forcing.$f.b
+   done
+
+   # Prepare sea ice forcing with the start time of the run
+   export RUN_MODE=incup
+   $USHrtofs/${RUN}_iceforcing.sh
+
 mkdir incup
 ln -sf $COMIN/rtofs_glo.incupd.$archday2.a incup/incupd.$archday2.a
 ln -sf $COMIN/rtofs_glo.incupd.$archday2.b incup/incupd.$archday2.b
@@ -112,21 +127,13 @@ cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.incup.blkdat.input ./blkdat.input
 cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.incup.ice_in       ./ice_in
 cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.patch.input        ./patch.input
 
-# inc_hours with incremental update
-hday12=`$USHrtofs/rtofs_date_normal2hycom.sh $dtg`
-hday11=`echo $hday12 $inc_hours 24 | awk '{printf ("%12.3f", ($1 - ($2 / $3)))}'`
-
-echo $hday11 $hday12 > limits
-
 /bin/rm -f core
 touch core
 
 date
-mpirun -l $EXECcode/hycom_cice -procs $NPROCS >> $pgmout 2>errfile
-err=`echo $?`
-if [ $err != 0 ]; then  
-exit
-fi
+mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
+err=$?; export err ; err_chk
+echo " error from rtofs_hycom=",$err
 
 date
 

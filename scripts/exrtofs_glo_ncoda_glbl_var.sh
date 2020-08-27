@@ -3,7 +3,7 @@ set -xa
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_ncoda_glbl_var.sh.sms                      #
+# Script name:         exrtofs_glo_ncoda_glbl_var.sh                          #
 # Script description:                                                         #
 #                                                                             #
 # Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
@@ -104,7 +104,7 @@ cat << eof4 > omapnl
  &end
 eof4
 
-# 3 run global var
+# 3 run global var (NCODA 2D)
 
 ddtg=${PDYm1}00
 log_dir=$DATA/logs
@@ -112,10 +112,26 @@ mkdir -p $log_dir
 
 #   execute ncoda variational programs
 echo timecheck RTOFS_GLO_GLBL start setup at `date`
-$EXECncoda/ncoda_setup 2D ncoda ogridnl $ddtg > pout1
-mpirun -n 24 $EXECncoda/ncoda_prep 2D ncoda ogridnl $ddtg > pout2
-mpirun -n 72 $EXECncoda/ncoda 2D ncoda ogridnl $ddtg > pout3
-mpirun -n 72 $EXECncoda/ncoda_post 2D ncoda ogridnl $ddtg > pout4
+#NCODA setup
+$EXECrtofs/rtofs_ncoda_setup 2D ncoda ogridnl $ddtg > pout1
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_setup=",$err
+
+#NCODA prep
+mpirun -n 24 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_prep=",$err
+
+#NCODA var
+mpirun -n 72 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda=",$err
+
+#NCODA post
+mpirun -n 72 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_post=",$err
+
 echo timecheck RTOFS_GLO_GLBL finish post at `date`
 
 #   rename local files
@@ -126,9 +142,11 @@ mv fort.68 $log_dir/glbl_var.$ddtg.grd
 #   create graphics
 export OCN_OUTPUT_DIR=$DATA/restart
 export OCN_CLIM_DIR=$FIXrtofs/codaclim
-#  ERROR   18 IN MDPINT - MAP LIMITS INAPPROPRIATE
-#$EXECncoda/ncoda_map $ddtg > pout5
-#mv gmeta $log_dir/glbl_var.$ddtg.gmeta
+#NCODA map
+$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+err=$?; export err ; err_chk
+echo " error from rtofs_ncoda_map=",$err
+mv gmeta $log_dir/glbl_var.$ddtg.gmeta
 
 #
 #   combine work files
@@ -141,7 +159,7 @@ echo timecheck RTOFS_GLO_GLBL start put at `date`
 mkdir -p $COMOUT/ncoda/glbl_var/restart
 rm -f cmdfile.cpout
 for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-  backymdh=$( $EXECncoda/dtg -d -$d ${PDY}00 )
+  backymdh=$( $EXECrtofs/rtofs_dtg -d -$d ${PDY}00 )
   backymd=${backymdh:0:8}
   if compgen -G "$DATA/restart/*${backymd}*" > /dev/null
   then
