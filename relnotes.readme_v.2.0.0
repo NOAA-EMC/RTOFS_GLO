@@ -7,12 +7,11 @@ DA processing brought from Navy (NCODA).
 
 BENEFIT OF CHANGE: 
 
-Currently RTOFS uses Navy RTOFS restart file and that will not be available soon.
+Currently RTOFS uses Navy RTOFS restart file and that will be unavailable in the near future.
 
 RISKS:
 
 IMPLEMENTATION INSTRUCTIONS:
-
 -------------------
 
 I.1)  Check out RTOFS_GLOBAL:
@@ -40,13 +39,28 @@ cd sorc
 
 
 III. SET-UP INITIAL CONDITIONS
-----------------------------
+------------------------------
+It's important to start with the run that we have been running. A cold-start run will not
+produce acceptable results. The run in emc.ncodapa has been running for over a year.
+
+III.1) mkdir -p $COMROOT/rtofs/$envir
+III.2) ln -s /gpfs/dell2/emc/modeling/noscrub/emc.ncodapa/COMDIR/com/rtofs/prod/rtofs.YYYYMMDD $COMROOT/rtofs/$envir  (for PDYm1)
 
 
-V.1) module load prod_envir/1.0.3
-V.2) mkdir -p $COMROOTp3/rtofs/$envir
-V.3) ln -s $COMROOTp2/rtofs/prod/rtofs.YYYYMMDD  $COMROOTp3/rtofs/$envir/rtofs.YYYYMMDD  (for PDYm1)
-V.4) mkdir -p $GESROOTp3/rtofs/$envir
-V.5) ln -s $GESROOTp2/rtofs/prod/rtofs.YYYYMMDD  $GESROOTp3/rtofs/$envir/rtofs.YYYYMMDD  (for PDYm1 and PDYm2)
+IV. FAILURE RECOVERY
+--------------------
 
+Data Assimilation - if no observation data found, then the DA jobs will still create a restart file for the analysis.
+If a DA job fails, then it should be rerun.
+
+Forecast jobs write a restart file every 24 hours of forecast. They can be restarted from that point.
+
+Post processing jobs should be retried upon failure. They will pick up where they left off.
+
+
+V. RESTRICTED CODES
+-------------------
+
+The codes in sorc/rtofs_ncoda.fd are restricted and cannot be shared outside of NCEP.  
+They also cannot be put on the rzdm server.
 
