@@ -66,8 +66,8 @@ done
 #   change to working directory
 cd $log_dir
 cat mta_*.$cut_dtg mtb_*.$cut_dtg mtc_*.$cut_dtg > acspo_sst_files.$cut_dtg
-if [ ! -s acspo_sst_files.$cut_dtg ]; then
-   echo "WARNING - acspo_sst_files.$cut_dtg is empty. No METOP files to process."
+if [[ ! -f  acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
+   echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No METOP files to process."
    echo "METOP.obs_control file will not be updated"
 fi
 

@@ -55,14 +55,13 @@ done
 cd $log_dir
 cat smos_*.$cut_dtg > smos_sss_files.$cut_dtg
 cat smap_*.$cut_dtg > smap_sss_files.$cut_dtg
-if [ ! -s smos_sss_files.$cut_dtg ]; then
-   echo "WARNING - smos_sss_files.$cut_dtg is empty. No SMOS files to process."
+if [[ ! -f smos_sss_files.$cut_dtg || ! -s smos_sss_files.$cut_dtg ]]; then
+   echo "WARNING - smos_sss_files.$cut_dtg does not exist/is empty. No SMOS files to process."
 fi
-if [ ! -s smap_sss_files.acspo_sst_files.$cut_dtg ]; then
-   echo "WARNING - smap_sss_files.$cut_dtg is empty. No SMAP files to process."
+if [[ ! -f smap_sss_files.$cut_dtg || ! -s smap_sss_files.$cut_dtg ]]; then
+   echo "WARNING - smap_sss_files.$cut_dtg does not exist/is empty. No SMAP files to process."
 fi
-if [[ ! -s smos_sss_files.acspo_sst_files.$cut_dtg ]] && \
-   [[ ! -s smap_sss_files.acspo_sst_files.$cut_dtg ]]; then
+if [[ ! -f smos_sss_files.$cut_dtg || ! -s smos_sss_files.$cut_dtg ]] && [[ ! -f smap_sss_files.$cut_dtg || ! -s smap_sss_files.$cut_dtg ]]; then
    echo "SSS.obs_control file will not be updated"
 fi
 #   execute ncoda pre_qc for SSS netCDF files

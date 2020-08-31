@@ -58,8 +58,8 @@ done
 #   change to working directory
 cd $log_dir
 cat n20_*.$cut_dtg > acspo_sst_files.$cut_dtg
-if [ ! -s acspo_sst_files.$cut_dtg ]; then
-   echo "WARNING - acspo_sst_files.$cut_dtg is empty. No VIIRS JPSS files to process."
+if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
+   echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No VIIRS JPSS files to process."
    echo "JPSS_VIIRS.obs_control file will not be updated"
 fi
 

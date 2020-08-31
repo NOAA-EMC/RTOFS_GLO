@@ -22,6 +22,11 @@ all: $(SUBDIRS)
 	   ( cd $$dir; echo "Making $@ in `pwd`" ; make ); \
 	done
 
+check: $(SUBDIRS)
+	for dir in $(SUBDIRS); do \
+	   ( cd $$dir; echo "Making $@ in `pwd`" ; make -f makefile.check ); \
+	done
+
 clean: $(SUBDIRS)
 	for dir in $(SUBDIRS); do \
 	   ( cd $$dir; echo "Making $@ in `pwd`" ; \

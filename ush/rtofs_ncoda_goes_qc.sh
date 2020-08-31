@@ -62,8 +62,8 @@ done
 #   change to working directory
 cd $log_dir
 cat g16_*.$cut_dtg g17_*.$cut_dtg > acspo_sst_files.$cut_dtg
-if [ ! -s acspo_sst_files.$cut_dtg ]; then
-   echo "WARNING - acspo_sst_files.$cut_dtg is empty. No GOES files to process."
+if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
+   echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No GOES files to process."
    echo "GOES.obs_control file will not be updated"
 fi
 

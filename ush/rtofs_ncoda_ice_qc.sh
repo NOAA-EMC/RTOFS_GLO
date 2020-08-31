@@ -63,13 +63,13 @@ ls $cmd > $log_dir/amsr_02.$cut_dtg
 #   change to working directory
 cd $log_dir
 cat ssmi_*.$cut_dtg > ssmi_files.$cut_dtg
-if [ ! -s ssmi_files.$cut_dtg ]; then
-   echo "WARNING - ssmi_files.$cut_dtg is empty. No SSMI files to process."
+if [[ ! -f ssmi_files.$cut_dtg || ! -s ssmi_files.$cut_dtg ]]; then
+   echo "WARNING - ssmi_files.$cut_dtg does not exist/is empty. No SSMI files to process."
    echo "SSMI.obs_control file will not be updated"
 fi
 cat amsr_*.$cut_dtg > amsr_ice_files.$cut_dtg
-if [ ! -s amsr_ice_files.$cut_dtg ]; then
-   echo "WARNING - amsr_ice_files.$cut_dtg is empty. No AMSR_ICE files to process."
+if [[ ! -f amsr_ice_files.$cut_dtg || ! -s amsr_ice_files.$cut_dtg ]]; then
+   echo "WARNING - amsr_ice_files.$cut_dtg does not exist/is empty. No AMSR_ICE files to process."
    echo "AMSR_ICE.obs_control file will not be updated"
 fi
 
@@ -82,7 +82,6 @@ echo " error from rtofs_ncoda_ncep_ice_nc ssmi=",$err
 $EXECrtofs/rtofs_ncoda_ncep_ice_nc amsr_ice $cut_dtg > amsr_ice_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_ncep_ice_nc amsr_ice=",$err
-
 #--------------------------------------------------------------------------------------
 echo "  "
 echo "NCODA ICE QC"

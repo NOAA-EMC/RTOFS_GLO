@@ -58,8 +58,8 @@ done
 #   change to working directory
 cd $log_dir
 cat amsr_*.$cut_dtg > acspo_sst_files.$cut_dtg
-if [ ! -s acspo_sst_files.$cut_dtg ]; then
-   echo "WARNING - acspo_sst_files.$cut_dtg is empty. No AMSR files to process."
+if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
+   echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No AMSR files to process."
    echo "AMSR.obs_control file will not be updated"
 fi
 
@@ -67,7 +67,6 @@ fi
 $EXECrtofs/rtofs_ncoda_acspo_sst_nc amsr $cut_dtg > amsr_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_acspo_sst_nc=",$err
-
 #--------------------------------------------------------------------------------------
 echo "  "
 echo "NCODA AMSR SST QC"
