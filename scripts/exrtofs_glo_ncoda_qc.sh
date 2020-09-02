@@ -141,7 +141,7 @@ cp -p -f $DATA/ocnqc/incoming/*obs_control $COMOUT/ncoda/ocnqc/incoming
 
 for typ in `ls $DATA/ocnqc/incoming/*obs_control`; do
   fnam=`basename $typ`
-  cp -p $typ ${COMOUT}/${RUN}_${modID}.ncodaqc.t${mycyc}z.$fnam
+  cp -p $typ ${COMOUT}/${RUN}_${modID}.ncodaqc.t${cyc}z.$fnam
 done
 
 rm -f cmdfile.cpout

@@ -33,7 +33,7 @@ cpfs $GEMPAKrtofs/g2varswmo2_Grtofs.tbl .
 cpfs $GEMPAKrtofs/gempak.sh .
 
 echo "Getting GRTOFS grib 2 files"
-for hr in n048 f024 f048 f072 ; do
+for hr in n024 f024 f048 f072 ; do
 file=$COMIN/rtofs_glo.t00z.${hr}_${instr}_std.grb2
 [  -s $file ] || ( echo "FATAL ERROR: $file not found"; export err=1; err_chk )
 ln -s $file .
@@ -61,8 +61,8 @@ cat mpirun.log
 
 gemfile=grtofs_${outstr}_${PDY}00f000
 
-##Get 0 hour nowcast from 48 hour time-step from rtofs_glo.t00z.n048_${instr}_std.grb2 file
-$WGRIB2 rtofs_glo.t00z.n048_${instr}_std.grb2 -for 162:166 -grib grtofs_${instr}_${PDY}00f000.grb2
+##Get 0 hour nowcast from 24 hour time-step from rtofs_glo.t00z.n024_${instr}_std.grb2 file
+$WGRIB2 rtofs_glo.t00z.n024_${instr}_std.grb2 -for 162:166 -grib grtofs_${instr}_${PDY}00f000.grb2
 
 echo "Converting F000 grib 2 file to Temporary grid"
 
