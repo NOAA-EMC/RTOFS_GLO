@@ -128,14 +128,14 @@ done
 cat cmdfile_tmp_v cmdfile_tmp_c cmdfile_tmp_e cmdfile_tmp_s > cmdfile_tmp_all
 chmod +x cmdfile_tmp_all
 
-if [ $NPROCS -gt 1 ]
+runpara=0
+if [[ $NPROCS -gt 1 && $runpara -eq 1 ]]
 then
   mpirun cfp ./cmdfile_tmp_all >> cptmp2out.out
+  err=$? ; export err ; err_chk
 else
   sh ./cmdfile_tmp_all >> cptmp2out.out
+  err=$? ; export err ; err_chk
 fi
-err=$? ; export err ; err_chk
-
-exit
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

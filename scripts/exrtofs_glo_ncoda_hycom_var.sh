@@ -216,25 +216,13 @@ echo timecheck RTOFS_GLO_HYCOM start put at `date`
 
 mkdir -p $COMOUT/ncoda/hycom_var/restart
 rm -f cmdfile.cpout
-for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+
+for d in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
   backymdh=$( $EXECrtofs/rtofs_dtg -d -$d ${PDY}00 )
   backymd=${backymdh:0:8}
-  if compgen -G "$DATA/restart/[a-r]*${backymd}*" > /dev/null
-  then
-    echo "cp -p -f $DATA/restart/[a-r]*${backymd}* $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
-  fi
-  if compgen -G "$DATA/restart/s[a-d]*${backymd}*" > /dev/null
-  then
-    echo "cp -p -f $DATA/restart/s[a-d]*${backymd}* $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
-  fi
-  if compgen -G "$DATA/restart/s[e-z]*${backymd}*" > /dev/null
-  then
-    echo "cp -p -f $DATA/restart/s[e-z]*${backymd}* $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
-  fi
-  if compgen -G "$DATA/restart/[t-z]*${backymd}*" > /dev/null
-  then
-    echo "cp -p -f $DATA/restart/[t-z]*${backymd}* $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
-  fi
+  for f in `ls $DATA/restart/*${backymd}*`; do
+    echo "cp -p -f $f $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
+  done
 done
 
 chmod +x cmdfile.cpout
