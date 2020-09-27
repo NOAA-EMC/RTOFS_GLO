@@ -23,8 +23,9 @@ export OCN_DATA_DIR=$run_dir/ocnqc
 mkdir -p $OCN_DATA_DIR/incoming
 mkdir -p $OCN_DATA_DIR/ssh
 
-#   set paths to NCEP netCDF files
+#   set paths to NCEP netCDF files (SSH_DATA_DIR/date/SSH_DATA_DIR_2)
 export SSH_DATA_DIR=$DCOMINSSH
+export SSH_DATA_DIR_2=wgrdbul/adt
 
 echo "current date/time is " $( date)
 echo "data cut date time group is " $cut_dtg

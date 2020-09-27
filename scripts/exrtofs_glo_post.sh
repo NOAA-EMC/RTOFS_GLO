@@ -277,10 +277,6 @@ then
       do
         $md5 $gfile >> $DATA/csum.$PDY$mycyc
       done
-      for gfile in `ls -C1 ${RUN}_${modID}.t${mycyc}z.[FN]???.3d.grb ${RUN}_${modID}.t${mycyc}z.[fn]???.grb`
-      do
-        $md5 $gfile >> $DATA/csum_nodc.$PDY$mycyc
-      done
     fi
   fi
 

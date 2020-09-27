@@ -40,7 +40,11 @@ do
    prv_dtg=$( $EXECrtofs/rtofs_dtg -w -h -$k $cut_dtg )
    ymd=${prv_dtg:0:8}
    cmd=$ymd/wtxtbul/satSSS/SMOS/"SM_OPER_MIR*$ymd*"
-   ls $cmd > $log_dir/smos_$k.$cut_dtg
+   if [ -s $cmd ] ; then
+      ls $cmd > $log_dir/smos_$k.$cut_dtg
+   else
+      echo "WARNING $cmd does not exist"
+   fi
 done
 
 for k in 00 24 48
@@ -48,7 +52,11 @@ do
    prv_dtg=$( $EXECrtofs/rtofs_dtg -w -h -$k $cut_dtg )
    ymd=${prv_dtg:0:8}
    cmd=$ymd/wtxtbul/satSSS/SMAP/"SMAP_L2B_SSS*$ymd*h5"
-   ls $cmd > $log_dir/smap_$k.$cut_dtg
+   if [ -s $cmd ] ; then
+      ls $cmd > $log_dir/smap_$k.$cut_dtg
+   else
+      echo "WARNING $cmd does not exist"
+   fi
 done
 
 #   change to working directory

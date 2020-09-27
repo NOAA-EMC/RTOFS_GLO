@@ -44,21 +44,37 @@ cd $SSMI_ICE_DATA_DIR
 # SSMI
 ymd=${prv_dtg:0:8}
 cmd="l2out*$ymd*"
-ls $cmd > $log_dir/ssmi_01.$cut_dtg
+if [ -s $cmd ] ; then
+   ls $cmd > $log_dir/ssmi_01.$cut_dtg
+else
+   echo "WARNING $cmd does not exist"
+fi
 
 ymd=${cut_dtg:0:8}
 cmd="l2out*$ymd*"
-ls $cmd > $log_dir/ssmi_02.$cut_dtg
+if [ -s $cmd ] ; then
+   ls $cmd > $log_dir/ssmi_02.$cut_dtg
+else
+   echo "WARNING $cmd does not exist"
+fi
 
 # AMSR
 cd $AMSR_ICE_DATA_DIR
 ymd=${prv_dtg:0:8}
 cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
-ls $cmd > $log_dir/amsr_01.$cut_dtg
+if [ -s $cmd ] ; then
+   ls $cmd > $log_dir/amsr_01.$cut_dtg
+else
+   echo "WARNING $cmd does not exist"
+fi
 
 ymd=${cut_dtg:0:8}
 cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
-ls $cmd > $log_dir/amsr_02.$cut_dtg
+if [ -s $cmd ] ; then
+   ls $cmd > $log_dir/amsr_02.$cut_dtg
+else
+   echo "WARNING $cmd does not exist"
+fi
 
 #   change to working directory
 cd $log_dir

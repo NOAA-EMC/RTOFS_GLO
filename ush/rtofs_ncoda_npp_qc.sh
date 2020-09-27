@@ -45,14 +45,22 @@ ymd=${prv_dtg:0:8}
 for k in 12 13 14 15 16 17 18 19 20 21 22 23
 do
    cmd="$ymd/sst/$ymd$k*L2P*VIIRS_NPP*"
-   ls $cmd > $log_dir/npp_$k.$cut_dtg
+   if [ -s $cmd ] ; then
+      ls $cmd > $log_dir/npp_$k.$cut_dtg
+   else
+      echo "WARNING $cmd does not exist"
+   fi
 done
 
 ymd=${cut_dtg:0:8}
 for k in 00 01 02 03 04 05 06 07 08 09 10 11
 do
    cmd="$ymd/sst/$ymd$k*L2P*VIIRS_NPP*"
-   ls $cmd > $log_dir/npp_$k.$cut_dtg
+   if [ -s $cmd ] ; then
+      ls $cmd > $log_dir/npp_$k.$cut_dtg
+   else
+      echo "WARNING $cmd does not exist"
+   fi
 done
 
 #   change to working directory
