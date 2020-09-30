@@ -33,8 +33,13 @@ mkdir -p $tmpdir
 cd $tmpdir
 #
 num=$(( 10#${stepnum}+24-last )) # can be 1,2,...,24
+if [ ${instr} = 'alaska' -o ${instr} = 'bering' ]; then
+firstrec=$(( 10#${num}*9 - 8 ))  # can be 1,10,19,...,208
+lastrec=$(( 10#${num}*9 - 4 ))       # can be 5,14,23,...,212
+else
 firstrec=$(( 10#${num}*7 - 6 ))  # can be 1, 8,15,...,162
 lastrec=$(( 10#${num}*7 - 2 ))       # can be 5,12,19,...,166
+fi
 stamp="${firstrec}:${lastrec}"
 step=f0${stepnum}
 echo "Splitting grib2 files into time-steps (5 records in each: WTMP, SALTY, UOGRD, VOGRD, SSHG) using WGRIB2"
