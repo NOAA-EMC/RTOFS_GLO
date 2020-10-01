@@ -17,7 +17,6 @@ cut_dtg=${PDYm1}00
 
 #   set QC environmental variables
 export ATM_MODEL_DIR=$COMIN
-export ATM_MODEL_DIR=$DATA
 export CODA_CLIM_DIR=$FIXrtofs/codaclim
 export CRTM_COEF_DIR=$FIXrtofs/crtmclim
 export GDEM_CLIM_DIR=$FIXrtofs/gdem
