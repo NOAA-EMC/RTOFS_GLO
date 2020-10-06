@@ -61,8 +61,13 @@ cat mpirun.log
 
 gemfile=grtofs_${outstr}_${PDY}00f000
 
-##Get 0 hour nowcast from 24 hour time-step from rtofs_glo.t00z.n024_${instr}_std.grb2 file
+#Get 0 hour forecast from 24 hour time-step from rtofs_glo.t00z.n024_${instr}_std.grb2 file
+if [ ${instr} = 'alaska' -o ${instr} = 'bering' ]; then
+$WGRIB2 rtofs_glo.t00z.n024_${instr}_std.grb2 -for 208:212 -grib grtofs_${instr}_${PDY}00f000.grb2
+else
 $WGRIB2 rtofs_glo.t00z.n024_${instr}_std.grb2 -for 162:166 -grib grtofs_${instr}_${PDY}00f000.grb2
+fi
+
 
 echo "Converting F000 grib 2 file to Temporary grid"
 
