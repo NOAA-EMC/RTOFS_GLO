@@ -186,7 +186,7 @@ mv fort.36 $log_dir/hycom_var.$ddtg.mvo
 mv fort.37 $log_dir/hycom_var.$ddtg.drc
 mv fort.38 $log_dir/hycom_var.$ddtg.lyp
 mv fort.39 $log_dir/hycom_var.$ddtg.fix
-mv fort.40 $log_dir/hycom_var.$ddtg.sus
+#mv fort.40 $log_dir/hycom_var.$ddtg.sus
 mv fort.41 $log_dir/hycom_var.$ddtg.dup
 mv fort.42 $log_dir/hycom_var.$ddtg.ssh
 mv fort.67 $log_dir/hycom_var.$ddtg.obs

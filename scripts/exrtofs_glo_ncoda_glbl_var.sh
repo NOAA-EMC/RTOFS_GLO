@@ -135,7 +135,7 @@ echo " error from rtofs_ncoda_post=",$err
 echo timecheck RTOFS_GLO_GLBL finish post at `date`
 
 #   rename local files
-mv fort.40 $log_dir/glbl_var.$ddtg.sus
+#mv fort.40 $log_dir/glbl_var.$ddtg.sus
 mv fort.67 $log_dir/glbl_var.$ddtg.obs
 mv fort.68 $log_dir/glbl_var.$ddtg.grd
 
