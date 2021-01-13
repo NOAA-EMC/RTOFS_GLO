@@ -31,6 +31,7 @@ $DUMPJB $rundate$HH $interval $dtyp
 #input data must be in fortran unit 11
   export FORT11="$dtyp.ibm" 
   ${EXECrtofs}/rtofs_ssmis_tol2 >>$pgmout 2>errfile
+  err=$? ; export err ; err_chk
   mv l2out.f285.51.nc l2out.f285.51.${rundate}00.nc
 
 done

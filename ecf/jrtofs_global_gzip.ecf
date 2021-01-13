@@ -21,12 +21,13 @@ export cyc=%CYC%
 model=rtofs_glo
 %include <model_ver.h>
 
-module load ips/${ips_ver}
 module load impi/${impi_ver}
 module load CFP/${CFP_ver}
+module load lsf/${lsf_ver}
+
 module list
 
-$NWROOT/rtofs_glo.${rtofs_glo_ver}/jobs/JRTOFS_GLO_GZIP
+$HOMErtofs_glo/jobs/JRTOFS_GLO_GZIP
 
 %include <tail.h>
 %manual

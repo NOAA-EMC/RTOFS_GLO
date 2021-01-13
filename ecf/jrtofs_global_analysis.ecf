@@ -6,7 +6,7 @@
 #BSUB -W 01:20
 #BSUB -cwd /tmp
 #BSUB -x
-#BSUB -R "span[ptile=%PTILE%]"
+#BSUB -R "span[ptile=24]"
 #BSUB -n 1800
 #BSUB -P %PROJ%-%PROJENVIR%
 
@@ -26,11 +26,13 @@ export I_MPI_DEBUG=4
 model=rtofs_glo
 %include <model_ver.h>
 
-module load ips/${ips_ver}
 module load impi/${impi_ver}
+module load CFP/${CFP_ver}
+module load lsf/${lsf_ver}
+
 module list
 
-$NWROOT/rtofs_glo.${rtofs_glo_ver}/jobs/JRTOFS_GLO_ANALYSIS
+$HOMErtofs_glo/jobs/JRTOFS_GLO_ANALYSIS
 
 %include <tail.h>
 %manual

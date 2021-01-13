@@ -33,6 +33,8 @@ cpfs $GEMPAKrtofs/g2varswmo2_Grtofs.tbl .
 cpfs $GEMPAKrtofs/gempak.sh .
 
 echo "Getting GRTOFS grib 2 files"
+# JY only creates up to n024 in this upgrade, n048 is not created.
+#for hr in n048 f024 f048 f072 ; do
 for hr in n024 f024 f048 f072 ; do
 file=$COMIN/rtofs_glo.t00z.${hr}_${instr}_std.grb2
 [  -s $file ] || ( echo "FATAL ERROR: $file not found"; export err=1; err_chk )
@@ -61,7 +63,9 @@ cat mpirun.log
 
 gemfile=grtofs_${outstr}_${PDY}00f000
 
-#Get 0 hour forecast from 24 hour time-step from rtofs_glo.t00z.n024_${instr}_std.grb2 file
+##Get 0 hour nowcast from 48 hour time-step from rtofs_glo.t00z.n048_${instr}_std.grb2 file
+# n048 not exist, change to n024, is it valid? - JY
+# JY $WGRIB2 rtofs_glo.t00z.n048_${instr}_std.grb2 -for 162:166 -grib grtofs_${instr}_${PDY}00f000.grb2
 if [ ${instr} = 'alaska' -o ${instr} = 'bering' ]; then
 $WGRIB2 rtofs_glo.t00z.n024_${instr}_std.grb2 -for 208:212 -grib grtofs_${instr}_${PDY}00f000.grb2
 else
