@@ -6,7 +6,7 @@ module use ../modulefiles
 module load build_rtofs_libs.module
 module list
 
- mkdir -f incmod
+ mkdir -p incmod
  rm -f incmod/rtofs*/*.mod
  rm -f librtofs*.a
  cd ./sorc/rtofs_mpi_mods
