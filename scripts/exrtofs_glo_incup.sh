@@ -28,7 +28,7 @@ postmsg "$jlogfile" "$msg"
 
 # 1. Set up inputs for run
 
-inc_hours=3
+inc_hours=06
 
 dtg=${PDYm1}00
 dtginc=`$EXECrtofs/rtofs_dtg $dtg -h -$inc_hours`
@@ -51,17 +51,18 @@ ln -sf $COMIN/rtofs_glo.ssmi.$dtg.r ssmi.r
 dtgr0=`$EXECrtofs/rtofs_dtg $dtgm1 -f "%Y-%m-%d"`
 dtgr1=`$EXECrtofs/rtofs_dtg $dtg -f "%Y-%m-%d"`
 
-# cp in yesterday's restart file produced at n-03
-if [[ ! -e $COMINm1/rtofs_glo.t00z.n-03.restart.a ]] &&  \
-   [[ ! -e $COMINm1/rtofs_glo.t00z.n-03.restart.b ]] &&  \
-   [[ ! -e $COMINm1/rtofs_glo.t00z.n-03.restart_cice ]]; then
-     echo "  $COMINm1/rtofs_glo.t00z.n-03.restart.a $COMINm1/rtofs_glo.t00z.n-03.restart.b \
-             $COMINm1/rtofs_glo.t00z.n-03.restart_cice missing, exiting now."
+# cp in yesterday's restart file produced at n-$inc_hours
+if [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a ]] &&  \
+   [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b ]] &&  \
+   [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart_cice ]]; then
+     echo "  $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a \ 
+             $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b \
+             $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart_cice missing, exiting now."
      export err=1;err_chk
 else
-   ln -sf $COMINm1/rtofs_glo.t00z.n-03.restart.a restart_in.a
-   ln -sf $COMINm1/rtofs_glo.t00z.n-03.restart.b restart_in.b
-   ln -sf $COMINm1/rtofs_glo.t00z.n-03.restart_cice  cice.restart.${dtgr0}-$cisec
+   ln -sf $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a restart_in.a
+   ln -sf $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b restart_in.b
+   ln -sf $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart_cice  cice.restart.${dtgr0}-$cisec
    echo cice.restart.${dtgr0}-$cisec > cice.restart_file
 fi
 

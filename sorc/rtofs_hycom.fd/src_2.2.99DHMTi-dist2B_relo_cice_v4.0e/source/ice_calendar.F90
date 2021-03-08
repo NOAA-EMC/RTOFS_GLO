@@ -128,7 +128,7 @@
 !      character (len=1) :: &
       character (len=1), save :: &
          histfreq       , & ! history output frequency, 'y','m','d','h','1'
-         dumpfreq           ! restart frequency, 'y','m','d','e','x','o','r','1','2','3','4,'5','6'
+         dumpfreq           ! restart frequency, 'y','m','d','e','x','o','r','1','2','3','4,'5','6','7'
 
 !=======================================================================
 
@@ -422,6 +422,12 @@
 !               write_restart = 1  !21 hours into the run
 !          if (istep == 2*npt12hr)  &
 !                write_restart = 1  !24 hours into the run
+         case ("7") 
+!zg write restart at end of run and 6 hours from end of run
+          if (istep == npt-2*npt3hr)  &
+                write_restart = 1  !6 hours before end of run
+          if (istep >= npt)  &
+                write_restart = 1  !last time step
         case ("4")
           if (istep == 2*npt12hr)  &
                 write_restart = 1  !24 hours into the run

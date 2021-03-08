@@ -28,7 +28,7 @@ postmsg "$jlogfile" "$msg"
 
 # 1. Set up times link to fix and archive inputs
 
-incup_hours=3
+incup_hours=6
 
 dtg=${PDYm1}00
 dtgm1=`$EXECrtofs/rtofs_dtg $dtg -d -1`

@@ -120,11 +120,11 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
    3	  'yrflag' = days in year flag (0=360,  1=366,  2=366J1, 3=actual)
    1	  'sshflg' = diagnostic SSH flag (0=SSH,1=SSH&stericSSH)
 .04166667 'dsurfq' = number of days between model diagnostics at the surface
-  -0.125  'diagfq' = number of days between model diagnostics
+  -0.250  'diagfq' = number of days between model diagnostics
    0.0    'proffq' = number of days between model diagnostics at selected locs
    0.0    'tilefq' = number of days between model diagnostics on selected tiles
    0.0	  'meanfq' = number of days between model diagnostics (time averaged)
- 0.1250   'rstrfq' = number of days between model restart output
+ 0.250    'rstrfq' = number of days between model restart output
    0.0	  'bnstfq' = number of days between baro nesting archive input
    0.0	  'nestfq' = number of days between 3-d  nesting archive input
 .04166667 'cplifq' = number of days (or time steps) between sea ice coupling
