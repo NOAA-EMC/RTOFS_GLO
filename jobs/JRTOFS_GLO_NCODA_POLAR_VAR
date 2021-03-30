@@ -62,7 +62,8 @@ setpdy.sh
 ##############################################
 
 export COMINgdas=${COMINgdas:-$(compath.py gfs/prod/gdas)}
-export GETGES_COM=${GETGES_COM:-${COMINgdas/"/gfs/prod/gdas"/}}
+#export GETGES_COM=${GETGES_COM:-${COMINgdas/"/gfs/prod/gdas"/}}
+export GETGES_COM=${GETGES_COM:-$(dirname $(compath.py gfs))}
 export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}}

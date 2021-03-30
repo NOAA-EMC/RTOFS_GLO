@@ -260,7 +260,7 @@ if [[ $netwk = gdas ]];then
    fhinc=01
    ;;
   sfcflxfv3) geslist='
-   $GETGES_COM/gfs/${envirges}/gdas.$day/${cyc}/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2'
+   $GETGES_COM/gfs/${envirges}/gdas.$day/${cyc}/atmos/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2'
    fhinc=01
    ;;
   pgbges) geslist='
@@ -436,7 +436,7 @@ elif [[ $netwk = gfs ]];then
    $GETGES_COM/gfs/$envirges/gfs.$day/gfs.t${cyc}z.sfluxgrbf${fh}.grib2'
    ;;
   sfcflxfv3) geslist='
-   $GETGES_COM/gfs/${envirges}/gfs.$day/${cyc}/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
+   $GETGES_COM/gfs/${envirges}/gfs.$day/${cyc}/atmos/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
    ;;
   pgbges) geslist='
    $GETGES_COM/gfs/$envirges/gfs.$day/gfs.t${cyc}z.pgrbf$fh'
@@ -609,7 +609,7 @@ elif [[ $netwk = gfs ]];then
    $GETGES_COM/gfs/$envirges/gfs.$day/gfs.t${cyc}z.sfluxgrbf${fh}.grib2'
    ;;
   sfcflxfv3) geslist='
-   $GETGES_COM/gfs/${envirges}/gfs.$day/${cyc}/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
+   $GETGES_COM/gfs/${envirges}/gfs.$day/${cyc}/atmos/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
    ;;
   pgbges) geslist='
    $GETGES_COM/gfs/$envirges/gfs.$day/gfs.t${cyc}z.pgrbf$fh'

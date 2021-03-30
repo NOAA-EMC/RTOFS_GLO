@@ -19,6 +19,8 @@ if [ $# -ne 1 ] ; then
 fi
 idate=$1
 
+envirges=${envirges:-prod}
+
 test -d $DATA/$idate && rm -rf $DATA/$idate ; mkdir -p $DATA/$idate 
 
 # NOTE: here is the possibility that pressure and forcing will be from different cycles. Check later.
@@ -28,7 +30,8 @@ do
 #dbgz
 #  ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t ${sflux} -v $idate` 
 #  ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e prod -n ${netwk} -t ${sflux} -v $idate` 
-  ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e prod -n ${netwk} -t ${sflux} -v $idate` 
+## ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e $envirges -n ${netwk} -t ${sflux} -v $idate` 
+  ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh  -e $envirges -n ${netwk} -t ${sflux} -v $idate` 
   err=$?
   if [ $err -eq 0 ]
   then
@@ -58,7 +61,7 @@ fflxfile=${DATA}/${idate}/${RUN}'.'`basename $forcefile`
 if [ $useslp = YES ] 
 then
 #  pgrbfile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t pgbges -v $idate`
-  pgrbfile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e prod -n ${netwk} -t pgbges -v $idate`
+  pgrbfile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e $envirges -n ${netwk} -t pgbges -v $idate`
   echo "pgrbfile $pgrbfile"
   prsfile=${DATA}/${idate}/${RUN}'.'`basename $pgrbfile`
   $USHrtofs/${RUN}_atmforcing_extract.sh $forcefile $flxfile $pgrbfile $prsfile
