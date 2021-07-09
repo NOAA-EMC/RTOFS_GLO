@@ -39,8 +39,11 @@ Mods from WCOSS
         modified:   sorc/rtofs_code.fd/makefile
         modified:   sorc/rtofs_code.fd/rtofs_atmforcing.fd/atmforcing.f90
         modified:   sorc/rtofs_hycom.fd/build_hycom.sh
+        new file:   sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/bld/Macros.Linux.NOAA.heraSMSSE
+        modified:   sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/bld/Macros.Linux.NOAA.theiaSMSSE
         modified:   sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/comp_ice.csh
         new file:   sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/comp_ice.csh.wcoss
+        modified:   sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/config/Aintelsse-impi-relo_cice
         deleted:    sorc/rtofs_ncoda.fd/
         modified:   ush/rtofs_atmforcing_stage.sh
         modified:   ush/rtofs_glo3z_daily.sh
