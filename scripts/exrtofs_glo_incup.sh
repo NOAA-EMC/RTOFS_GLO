@@ -132,7 +132,9 @@ cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.patch.input        ./patch.input
 touch core
 
 date
-mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
+mpirun -n $NPROCS $EXECrtofs/rtofs_hycom >> $pgmout 2>errfile
+###mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
+###srun -n $NMPI $EXECrtofs/rtofs_hycom
 err=$?; export err ; err_chk
 echo " error from rtofs_hycom=",$err
 

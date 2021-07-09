@@ -23,6 +23,7 @@ then
   runstep=${runmode}
   runname='ANALYSIS_PRE'
   intvl=1 #atmospheric forcing frequency
+  intvl=3 # hindcast so slfux every 3 hours
 else
   runmode='fcst'
   runstep=${runmode}${stepnum}

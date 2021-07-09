@@ -37,8 +37,8 @@
   , kcatbound    = 0 
 /
 &domain_nml
-    nprocs = 1800
-  , processor_shape = 'slenderX4'
+    nprocs = 900
+  , processor_shape = 'slenderX2'
   , distribution_type = 'cartesian'
   , distribution_wght = 'latitude'
   , ew_boundary_type  = 'cyclic'

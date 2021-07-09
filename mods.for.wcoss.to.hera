@@ -1,0 +1,50 @@
+Mods from WCOSS
+        new file:   exec/rtofs_dtg
+        new file:   exec/rtofs_ncoda
+        new file:   exec/rtofs_ncoda_acspo_sst_nc
+        new file:   exec/rtofs_ncoda_adj
+        new file:   exec/rtofs_ncoda_adt_ssh_nc
+        new file:   exec/rtofs_ncoda_alarm
+        new file:   exec/rtofs_ncoda_aod_sst_nc
+        new file:   exec/rtofs_ncoda_archv_inc
+        new file:   exec/rtofs_ncoda_bufr_decode
+        new file:   exec/rtofs_ncoda_color_bio_nc
+        new file:   exec/rtofs_ncoda_crs
+        new file:   exec/rtofs_ncoda_diagn
+        new file:   exec/rtofs_ncoda_doy
+        new file:   exec/rtofs_ncoda_err
+        new file:   exec/rtofs_ncoda_et
+        new file:   exec/rtofs_ncoda_hyb
+        new file:   exec/rtofs_ncoda_map
+        new file:   exec/rtofs_ncoda_movie
+        new file:   exec/rtofs_ncoda_ncep_ice_nc
+        new file:   exec/rtofs_ncoda_post
+        new file:   exec/rtofs_ncoda_prep
+        new file:   exec/rtofs_ncoda_qc
+        new file:   exec/rtofs_ncoda_sat_sss_nc
+        new file:   exec/rtofs_ncoda_setup
+        modified:   libs/build_libs.sh
+        new file:   modulefiles/build_hera_rtofs_code.module
+        new file:   modulefiles/build_hera_rtofs_hycom.module
+        new file:   modulefiles/build_hera_rtofs_libs.module
+        new file:   modulefiles/runtime_hera_rtofs.module
+        modified:   modulefiles/runtime_rtofs.module
+        modified:   parm/rtofs_glo.navy_0.08.anal.ice_in
+        modified:   parm/rtofs_glo.navy_0.08.fcst.ice_in
+        modified:   parm/rtofs_glo.navy_0.08.incup.ice_in
+        modified:   parm/rtofs_glo.navy_0.08.patch.input
+        modified:   scripts/exrtofs_glo_incup.sh
+        modified:   sorc/build_rtofs.sh
+        modified:   sorc/rtofs_code.fd/build_code.sh
+        modified:   sorc/rtofs_code.fd/makefile
+        modified:   sorc/rtofs_code.fd/rtofs_atmforcing.fd/atmforcing.f90
+        modified:   sorc/rtofs_hycom.fd/build_hycom.sh
+        modified:   sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/comp_ice.csh
+        new file:   sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/comp_ice.csh.wcoss
+        deleted:    sorc/rtofs_ncoda.fd/
+        modified:   ush/rtofs_atmforcing_stage.sh
+        modified:   ush/rtofs_glo3z_daily.sh
+        modified:   ush/rtofs_ncoda_ssh_qc.sh
+        modified:   ush/rtofs_prestaging.sh
+        modified:   ush/rtofs_submit.sh
+

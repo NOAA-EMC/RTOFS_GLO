@@ -73,7 +73,7 @@ do
   sed -f change_archv archv.in > archv2ncdf3z_$fnam.in
 
 done
-export NPROCS=4
+NPROCS=${NPROCS:-1}
   if [ "$NPROCS" -gt '1' ]
   then
     cmdtype='poe'

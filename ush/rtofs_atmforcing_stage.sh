@@ -77,10 +77,10 @@ fi # fn1 loop
 fi # useslp loop
 ##cp -p $forcefile $fflxfile
 ##.. prsfile=$pgrbfile 
-$GRBINDEX $flxfile $flxfile.idx
+$GRB2INDEX $flxfile $flxfile.idx
 if [ $useslp = YES ] 
 then
-  $GRBINDEX $prsfile $prsfile.idx
+  $GRB2INDEX $prsfile $prsfile.idx
 fi
 # Shift grid 
 
@@ -122,7 +122,7 @@ test -f $flxfile.idx && rm -f $flxfile.idx
 test -f $prsfile.idx && rm -f $prsfile.idx 
 test -f ${DATA}/${idate}/dump.grb && rm -f ${DATA}/${idate}/dump.grb 
 
-$GRBINDEX $flxfile $flxfile.idx
+$GRB2INDEX $flxfile $flxfile.idx
 
 if [ $useslp = YES ] 
 then

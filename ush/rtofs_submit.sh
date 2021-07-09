@@ -40,7 +40,9 @@ export pgm="$EXECrtofs/rtofs_hycom"
 #dbzg
 #. ./prep_step
 #startmsg
-  mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
+  mpirun -n $NPROCS $EXECrtofs/rtofs_hycom >> $pgmout 2>errfile
+#  mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
+#  srun -n $NMPI $EXECrtofs/rtofs_hycom
   # mpirun.lsf $EXECrtofs/${RUN}_forecast -procs $NPROCS >> $pgmout 2>errfile
   # mpirun -ppn 16 $EXECrtofs/${RUN}_forecast  >> $pgmout 2>errfile
   err=$?; export err ; err_chk

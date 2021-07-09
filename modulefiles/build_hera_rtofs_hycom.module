@@ -1,0 +1,44 @@
+#%Module######################################################################
+##
+## RTOFS_GLO.v2.0.0
+##_____________________________________________________
+proc ModulesHelp { } {
+puts stderr "Set environment for rtofs_glo.v2.0.0 "
+puts stderr "hycom codes in the sorc directory for Hera.  \n "
+}
+module-whatis " RTOFS_GLO HYCOM sorc codes build "
+
+##
+## load contrib environment
+## load slurm utils (arbitrary.pl  layout.pl)
+##
+#module use -a /contrib/sutils/modulefiles
+#module load sutils
+
+##
+## load programming environment
+## this typically includes compiler, MPI and job scheduler
+##
+#module load intel/18.0.5.274
+#module load impi/2018.0.4
+
+# z
+#module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
+#module load z/1.2.11
+
+# netcdf hdf esmf
+#module use -a /scratch1/NCEPDEV/nems/emc.nemspara/soft/modulefiles
+#module load hdf5_parallel/1.10.6
+#module load netcdf_parallel/4.7.4
+#module load esmf/8.1.0bs19_ParallelNetCDF
+
+
+
+setenv SITE NOAA.heraSMSSE
+module purge
+module load intel
+module load impi
+module load hdf5
+module load szip
+module load netcdf
+

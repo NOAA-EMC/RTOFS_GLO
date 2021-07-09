@@ -1,0 +1,85 @@
+#%Module######################################################################
+##							EMC/NCEP/NOAA
+##   RTOFS-Global v2.0.0 
+##_____________________________________________________
+proc ModulesHelp { } {
+  puts stderr "Set run-time environment variables for RTOFS-Global"
+        puts stderr "\tHycom: This module initializes Environment variables"
+        puts stderr "\t\tfor the Intel Compiler Suite $version\n"
+}
+
+# 
+module-whatis   " This module loads and sets run-time environment variables for RTOFS_GLO on hera"
+
+##
+module use -a /contrib/sutils/modulefiles
+module load sutils
+
+module load intel/18.0.5.274
+module load impi/2018.0.4
+
+module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
+module load prod_util/1.1.0
+# set up some stuff for prod_envir
+module load grib_util/1.1.1
+# temp place for bufr_dumplist
+module use /scratch2/NCEPDEV/marine/Dan.Iredell/NCEPLIBS/modulefiles
+module load bufr_dumplist/2.3.0
+# update this to include 2.2
+module load dumpjb/5.0.0
+
+module use /scratch1/NCEPDEV/mdl/apps/modulefiles
+module load CFP/2.0.1
+
+module use -a /apps/modules/modulefamilies/intel
+module load netcdf/4.6.1
+module load hdf5/1.10.4
+
+# ncl in /apps/modules/modulefamilies/intel
+module load ncl/6.5.0
+
+module use -a /scratch1/NCEPDEV/nems/emc.nemspara/soft/modulefiles
+module load hdf5_parallel/1.10.6
+module load netcdf_parallel/4.7.4
+
+# alternatively
+# module use /scratch1/NCEPDEV/mdl/nwprod/modulefiles
+# module load prod_util/1.0.14
+
+# types of jobs:
+# DA (ncoda_qc, polar_var, hycom_var, global_var, incup, ncoda_inc)
+# pre-processing (analysis_pre, forecast_step1_pre, forecast_step2_pre)
+# analysis & forecast (analysis, forecast_step1, forecast_step2)
+# post-processing (gempak and directories grib2_post, post)
+
+# all jobs
+##module load EnvVars/1.0.3
+##module load ips/18.0.1.163
+##module load impi/18.0.1
+##module load prod_envir/1.1.0
+##module load prod_util/1.1.4
+##module load CFP/2.0.2
+##module load lsf/10.1
+
+# DA
+##module load bufr_dumplist/2.2.0
+##module load dumpjb/5.0.3
+##module load HDF5-serial/1.10.1
+##module load NetCDF/4.5.0
+
+# DA, pre, post
+##module load grib_util/1.1.1
+
+# post
+##module load gempak/7.3.1
+##module use -a /usrx/local/dev/modulefiles
+##module load cdo/1.9.8
+
+#
+# setenv _______________
+
+#prepending         _________________
+
+#prepend-path MANPATH $path/share/man
+#prepend-path MANPATH $path/share/man
+

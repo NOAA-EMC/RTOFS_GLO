@@ -20,10 +20,10 @@ case $whattodo in
     echo
     cd ./rtofs_hycom.fd;./build_hycom.sh;cd ..
 
-    echo
-    echo Building rtofs_ncoda.fd
-    echo
-    cd ./rtofs_ncoda.fd;./build_ncoda.sh;cd ..
+#    echo
+#    echo Building rtofs_ncoda.fd
+#    echo
+#    cd ./rtofs_ncoda.fd;./build_ncoda.sh;cd ..
     ;;
 
   install)
@@ -32,7 +32,7 @@ case $whattodo in
     echo
     cd rtofs_code.fd;make install;cd ..
     cd rtofs_hycom.fd;./build_hycom.sh install;cd ..
-    cd rtofs_ncoda.fd;make install;cd ..
+#    cd rtofs_ncoda.fd;make install;cd ..
     ;;
 
   clean)
@@ -41,7 +41,7 @@ case $whattodo in
     echo
     cd rtofs_code.fd;make clean;cd ..
     cd rtofs_hycom.fd;./build_hycom.sh clean;cd ..
-    cd rtofs_ncoda.fd;make clean;cd ..
+#    cd rtofs_ncoda.fd;make clean;cd ..
     ;;
 
   *)

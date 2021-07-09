@@ -1,8 +1,3 @@
-#module purge
-#module use ../../../modulefiles
-#module load build_rtofs_hycom.module
-#module list
-
 # #
 # DISTRIBUTION STATEMENT B: Distribution authorized to U.S. Government
 # agencies based upon the reasons of possible Premature Distribution
@@ -19,20 +14,23 @@
 ### Change these to your own site and user directory! 
 ### You will need to create a Makefile Macro in bld/ and a run_ice script 
 ### in input_templates/.
-setenv SITE NCEP.wcossphase3SMSSE
-#unset echo
-#module switch  intel intel/15.0.0.090
-#module switch  cray-mpich cray-mpich/7.2.4
-#module switch  cray-libsci cray-libsci/12.2.0
-#module switch ics ics/12.1
-#module load NetCDF/4.2/serial
-#set echo
+set echo
+
+#setenv SITE NOAA.heraSMSSE
+#module purge
+#module load intel
+#module load impi
+#module load hdf5
+#module load szip
+#module load netcdf
+
+
 
 ### SYSTEM_USERDIR is the user's primary scratch disk directory
 ### SYSTEM_USERDIR is predefined on ORNL machines
 #setenv SYSTEM_USERDIR /scr/$user
 #setenv SYSTEM_USERDIR /work/$user
-setenv SYSTEM_USERDIR /gpfs/dell2/emc/modeling/noscrub/$LOGNAME/tmp
+setenv SYSTEM_USERDIR /scratch2/NCEPDEV/marine/noscrub/$user
 
 ### Grid resolution
 # GLBb0.08 
@@ -46,7 +44,7 @@ setenv RES GLBb0.08 ; setenv GRID 4500x3297
 ### nprocs in ice_in must equal NPX*NPY ###
 # for GLBb0.08 
 setenv NPX  450   # number of processors in x direction
-setenv NPY    4   # number of processors in y direction
+setenv NPY    2   # number of processors in y direction
 
 setenv BPX    1   # number of blocks per processor in x direction
 setenv BPY    1   # number of blocks per processor in y direction
@@ -161,36 +159,12 @@ cd ${SRCDIR}/hycom
 /bin/rm -f hycom_cice   ../hycom_cice
 /bin/rm -f hycom_cice.o
 
-#   setenv BEI_HOME /site/BEI
-#   setenv BEI_HOME /usr/local/BEI
-#   setenv ESMF_DIR ${BEI_HOME}/esmf/pgi_11.2.0/4.0.0rp2
-#   setenv BEI_HOME /usr/local/usp/COAMPS
-#   setenv ESMF_DIR ${BEI_HOME}/esmf/intel/mpi/4.0.0rp2
-#   setenv BEI_HOME /u/home/tjc
-#   setenv ESMF_DIR ${BEI_HOME}/esmf/intel/intelmpi/4.0.0rp2
-#   setenv BEI_HOME /usr/local/usp
-#   setenv ESMF_DIR ${BEI_HOME}/esmf/4.0.0rp2
-#   setenv BEI_HOME /usr/local/u/wallcraf/pkgs
-#   setenv ESMF_DIR ${BEI_HOME}/esmf/intel/intelmpi/4.0.0rp2
-#   setenv BEI_HOME /u/home/wallcraf/pkgs
-#   setenv ESMF_DIR ${BEI_HOME}/esmf/intelICE/intelmpi/4.0.0rp2
-#    setenv BEI_HOME /p/home/wallcraf/pkgs
-#    setenv ESMF_DIR /usrx/local/esmf-4.0.0rp1
-    setenv ESMF_DIR /usrx/local/prod/packages/ips/18.0.1/impi/18.0.1/esmf/4_0_0rp2
+     setenv ESMF_DIR /scratch2/NCEPDEV/marine/Zulema.Garraffo/esmf_4_0_0rp2/intel/intelmpi
 
     setenv CICE_DIR ${SRCDIR}
 echo "ESMF_DIR = "  $ESMF_DIR
 echo "CICE_DIR = "  $CICE_DIR
 
-#setenv ARCH Asp6-nofl 
-#setenv ARCH Axt5i-mpi2io
-#setenv ARCH AintelICE-mpi2io
-#setenv ARCH Axe6-mpi2io
-#setenv ARCH Aintel-impi
-#setenv ARCH AintelICE-impi
-#setenv ARCH Aintelsse-impi
-#setenv ARCH Axc30-intel-relo
-#setenv ARCH Axc40-intel-relo
 setenv ARCH Aintelsse-impi-relo
 setenv TYPE cice 
 echo $ARCH $TYPE

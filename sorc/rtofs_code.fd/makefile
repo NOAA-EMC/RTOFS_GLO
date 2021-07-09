@@ -12,10 +12,10 @@ SUBDIRS = \
 	rtofs_nc2grb2.fd \
 	rtofs_ncoda_archv_inc.fd \
 	rtofs_raw2hycom.fd \
-	rtofs_getkpds.fd \
-	rtofs_ssmis_tol2.cd
+	rtofs_getkpds.fd
 
 # old rtofs_cice_stat.fd , , , rtofs_hycom_range.fd , rtofs_restart2archv.fd 
+# no ice so don't need	rtofs_ssmis_tol2.cd
 
 all: $(SUBDIRS)
 	for dir in $(SUBDIRS); do \
