@@ -10,15 +10,16 @@ that cdo is used to create products for OPC only.
 the repo.
 
 4. The bufr_dumplist that was implemented on wcoss for RTOFS is not on hera. I
-ported it myself and is in the directory below. The runtime module loads this
-module.
+ported it myself and is in the directory under my name. The runtime module 
+loads this module.
 
 5. RTOFS makes heavy use of the WCOSS function CFP (Command File Processor).
-It's like mpiserial. It is not on hera but I found a home-built one in
-/scratch1/NCEPDEV/mdl/apps/modulefiles. This is probably an older version.
+which is like mpiserial. It is not on hera but I found a home-built one in
+/scratch1/NCEPDEV/mdl/apps/modulefiles. This is probably an older version,
+but it semms to work fine.
 
-6. The observational data that resides in the monthly tanks. It is saved on
-disk on WCOSS. This data is bathy, tesac, xbtctd and subpfl. There is a note
+6. The observational data that resides in the monthly tanks is saved on disk
+on WCOSS only. This data is bathy, tesac, xbtctd and subpfl. There is a note 
 in the get_dcom_data.sh script that shows how to find and rename the data.
 
 7. The launch script ncoda_rtofs_glo.launch.sh is an old script from WCOSS
