@@ -3,7 +3,7 @@ Some random notes on the RTOFS V2 port to hera.
 1. There is no ice processing. The ssmi executable was not ported so that part
 of the QC fails. It does not affect the rest of the QC.
 
-2. Not all products are created becase cdo is not available on hera. I believe
+2. Not all products are created because cdo is not available on hera. I believe
 that cdo is used to create products for OPC only.
 
 3. The NCODA codes are not part of the repo. The compiled binaries are part of
@@ -16,7 +16,7 @@ loads this module.
 5. RTOFS makes heavy use of the WCOSS function CFP (Command File Processor).
 which is like mpiserial. It is not on hera but I found a home-built one in
 /scratch1/NCEPDEV/mdl/apps/modulefiles. This is probably an older version,
-but it semms to work fine.
+but it seems to work fine.
 
 6. The observational data that resides in the monthly tanks is saved on disk
 on WCOSS only. This data is bathy, tesac, xbtctd and subpfl. There is a note 
