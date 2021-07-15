@@ -1,0 +1,69 @@
+###############################################################
+
+Clone the repo from vlab.
+
+git clone -b public-hera ssh://$LOGNAME@vlab.noaa.gov:29418/EMC_rtofs_glo_prod rtofs_glo.v2.1.1
+
+
+###############################################################
+
+Build the system components.
+
+# libraries
+cd libs
+./build_libs.sh
+
+# source
+cd sorc
+./build_rtofs.sh clean
+./build_rtofs.sh compile
+./build_rtofs.sh install
+
+# fix
+ln -s /scratch2/NCEPDEV/marine/Dan.Iredell/FIXFILES/fix
+
+###############################################################
+
+Modify config files for your test suite.
+
+The file tools/user.config controls items that generally do not change from test to test.
+- heraproj is the the group/project on hera (e.g. hurricane, marine, ocean, etc) and is nominally $GROUP
+- account is the cpu project to run the jobs
+- inputroot is the location of the input data (dcom, gfs, rtofs)
+- tmproot is the location of the work directory
+
+For each test you can create a test.config. These items may change from test to test. Also, any item in
+user.config can be overridden in this config file.
+- projectroot is the location of the the project (modulefiles, jobs, scripts, ush, exec, etc)
+- comroot is the location of the output
+
+###############################################################
+
+Get the RTOFS IC, dcom obs data, and gfs/gdas surface flux files from HPSS
+
+1. Creating the rtofs.PDYm1 IC
+
+cd tools
+./create_all_rtofs.ic.sh YYYYMMDD
+
+2. Getting the obs data
+
+cd tools
+./get_dcom_data.sh YYYYMMDD
+
+
+3. Get gfs data
+
+cd tools
+./get_gdas.sh YYYYMMDD
+./get_gfs.sh YYYYMMDD
+
+###############################################################
+
+Run the system
+
+./ncoda_rtofs_glo.launch.sh configname YYYYMMDD
+
+
+###############################################################
+
