@@ -209,198 +209,6 @@ exit
 fi #testjustthisjob
 
 
-skipncoda=0
-if [ $skipncoda -eq 0 ]
-then
-
-# Submit QC
-export jobid=jrtofs_ncoda_qc
-mkdir -p ${DATAROOT}/$jobid
-
-cat << EOF_ncoda_qc > $batchloc/rtofs.qc.sbatch.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=1 --ntasks-per-node=10
-#SBATCH --ntasks=10
-#SBATCH --time=00:30:00
-#SBATCH --account=$account
-#SBATCH --job-name=NCODA_QC
-#SBATCH -o $DATAROOT/rtofs_ncoda_qc.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export I_MPI_PIN_RESPECT_CPUSET=disable
-export NPROCS=10
-(time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_QC )
-EOF_ncoda_qc
-
-jobid_qc=$(sbatch $batchloc/rtofs.qc.sbatch.$pid | cut -d " " -f4)
-if [ $# -gt 0 ] 
-then
-  echo 'LAUNCHER: RTOFS-GLO ncoda qc is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO ncoda qc not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-#echo just qc
-#exit
-
-# Submit Three VAR jobs
-export jobid=jrtofs_hycom_var
-mkdir -p ${DATAROOT}/$jobid
-cat << EOF_ncoda_hycom_var > $batchloc/rtofs.hycomvar.sbatch.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=9 --ntasks-per-node=40
-#SBATCH --time=01:30:00
-#SBATCH --account=$account
-#SBATCH --job-name=NCODA_HYCOM
-#SBATCH -d afterok:$jobid_qc
-#SBATCH -o $DATAROOT/rtofs_hycom_var.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_HYCOM_VAR )
-EOF_ncoda_hycom_var
-
-jid_hycom=$(sbatch $batchloc/rtofs.hycomvar.sbatch.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO hycom var is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO hycom var not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-
-export jobid=jrtofs_glbl_var
-mkdir -p ${DATAROOT}/$jobid
-cat << EOF_ncoda_glbl_var > $batchloc/rtofs.glblvar.sbatch.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=2 --ntasks-per-node=40
-#SBATCH --time=00:20:00
-#SBATCH --account=$account
-#SBATCH --job-name=NCODA_GLBL
-#SBATCH -d afterok:$jobid_qc
-#SBATCH -o $DATAROOT/rtofs_glbl_var.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_GLBL_VAR )
-EOF_ncoda_glbl_var
-
-jid_glbl=$(sbatch $batchloc/rtofs.glblvar.sbatch.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO glbl var is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO glbl var not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-export jobid=jrtofs_polar_var
-mkdir -p ${DATAROOT}/$jobid
-cat << EOF_ncoda_polar_var > $batchloc/rtofs.polarvar.sbatch.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=1 --ntasks-per-node=40
-#SBATCH --time=00:20:00
-#SBATCH --account=$account
-#SBATCH --job-name=NCODA_POLAR
-#SBATCH -d afterok:$jobid_qc
-#SBATCH -o $DATAROOT/rtofs_polar_var.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_POLAR_VAR )
-EOF_ncoda_polar_var
-
-jid_polar=$(sbatch $batchloc/rtofs.polarvar.sbatch.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO polar var is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO polar var not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-fi #skipncoda da
-
-
-# Submit NCODA increment
-export jobid=jrtofs_ncoda_inc
-mkdir -p ${DATAROOT}/$jobid
-cat << EOF_ncoda_inc > $batchloc/rtofs.ncoda.inc.sbatch.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=1 
-#SBATCH --ntasks=1
-#SBATCH --time=00:20:00
-#SBATCH --account=$account
-#SBATCH --job-name=NCODA_INC
-#SBATCH -d afterok:$jid_hycom
-#SBATCH -o $DATAROOT/rtofs_ncoda_inc.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_INC )
-EOF_ncoda_inc
-
-jid_ncodainc=$(sbatch $batchloc/rtofs.ncoda.inc.sbatch.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO ncoda inc is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO ncoda inc not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-# Submit NCODA increment update
-export jobid=jrtofs_incup
-mkdir -p ${DATAROOT}/$jobid
-cat << EOF_incup > $batchloc/rtofs.incup.sbatch.$pid
-#!/bin/ksh -l
-#SBATCH --ntasks=900
-#SBATCH --time=00:30:00
-#SBATCH --account=$account
-#SBATCH --job-name=INCUP
-#SBATCH -d afterok:$jid_ncodainc
-#SBATCH -o $DATAROOT/rtofs_incup.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export NMPI=900
-export NPROCS=900
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_INCUP )
-EOF_incup
-
-jid_incup=$(sbatch $batchloc/rtofs.incup.sbatch.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO incup is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO incup not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-#echo only qc and incup jobs
-#exit
-
-sleep 1
 # Submit pre-analysis
 skipthis=0
 if [ $skipthis -eq 0 ];then
@@ -442,7 +250,7 @@ cat << EOF_analysis > $batchloc/rtofs.analysis.$pid
 #SBATCH --time=01:00:00
 #SBATCH --account=$account
 #SBATCH --job-name=RTOFS_ANAL
-#SBATCH -d afterok:$jobid_anal_pre:$jid_incup
+#SBATCH -d afterok:$jobid_anal_pre
 #SBATCH -o $DATAROOT/rtofs_analysis.out.%j
 #SBATCH -q batch
 module purge
@@ -465,82 +273,8 @@ else
 fi
 
 
-#after analysis (no post)
-#exit 
-
-
 sleep 1
 fi # skipthis
-
-# Submit analysis post
-export jobid=jrtofs_analysis_post
-mkdir -p ${DATAROOT}/$jobid
-cat << EOF_analysis_post > $batchloc/rtofs.analysis_post.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --time=00:30:00
-#SBATCH --account=$account
-#SBATCH --job-name=RTOFS_ANAL_POST
-#SBATCH -d afterok:$jobid_anal
-#SBATCH -o $DATAROOT/rtofs_analysis_post.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export NPROCS=1
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_ANALYSIS_POST )
-EOF_analysis_post
-
-job_anal_post=$(sbatch $batchloc/rtofs.analysis_post.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO analysis_post is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO analysis_post not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-mkdir -p ${DATAROOT}/$jobid
-for NN in 01
-do
-  export job=${RUN}_${modID}_analysis_grib_post_${projID}.${NN}
-  export jobid=j${job}
-  export NN
-##
-cat << EOF_analysis_grib_post > $batchloc/rtofs.analysis_grib_post.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --time=00:30:00
-#SBATCH --account=$account
-#SBATCH --job-name=RTOFS_ANAL_GRIB_POST
-#SBATCH -d afterok:$jobid_anal
-#SBATCH -o $DATAROOT/rtofs_analysis_grib_post.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export NPROCS=1
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_ANALYSIS_GRIB2_POST )
-EOF_analysis_grib_post
-
-job_anal_grib_post=$(sbatch $batchloc/rtofs.analysis_grib_post.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO analysis_grib_post is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO analysis_grib_post not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-done
-
-#echo exit after analysis post
-#exit
 
 #
 # Submit forecast step1 pre
@@ -606,7 +340,7 @@ fi
 
 # stop here after fcst step1 only (and no post for forecasts)
 # remember to change ../parm/*.config for number of days
-stophere=0
+stophere=1
 if [ $stophere -eq 1 ]
 then
   echo

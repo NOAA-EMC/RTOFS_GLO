@@ -47,19 +47,36 @@ yyyymm=`echo $PDY | cut -c1-6`
 
 cd $OUTDIR
 
+# if date lt 20210321, then no atmos directory after cycle
+atmos=
+if [ \$pdy -ge 20210321 ]
+then
+   atmos=atmos
+fi
+
 slist=
 for h in 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63 66 69 72 75 78 81 84 87 90 93 96 99
 do
-slist="\$slist ./gfs.\$pdy/00/atmos/gfs.t00z.sfluxgrbf0\$h.grib2"
+slist="\$slist ./gfs.\$pdy/00/\$atmos/gfs.t00z.sfluxgrbf0\$h.grib2"
 done
 htar -xvf /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy/com_gfs_prod_gfs.\${pdy}_00.gfs_flux.tar \$slist
+if [ \$pdy -lt 20210321 ]
+then
+  mkdir $OUTDIR/gfs.\$pdy/\00/atmos
+  mv $OUTDIR/gfs.\$pdy/\00/gfs* $OUTDIR/gfs.\$pdy/\00/atmos
+fi
 
 slist=
 for h in 087 090 093 096 099 102 105 108 111 114 117 120 123 126 129 132 135 138 141 144 147 150 153 156 159 162 165 168 171 174 177 180 183 186 189
 do
-slist="\$slist ./gfs.\$pdy/06/atmos/gfs.t06z.sfluxgrbf\$h.grib2"
+slist="\$slist ./gfs.\$pdy/06/\$atmos/gfs.t06z.sfluxgrbf\$h.grib2"
 done
 htar -xvf /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy/com_gfs_prod_gfs.\${pdy}_06.gfs_flux.tar \$slist
+if [ \$pdy -lt 20210321 ]
+then
+  mkdir $OUTDIR/gfs.\$pdy/\06/atmos
+  mv $OUTDIR/gfs.\$pdy/\06/gfs* $OUTDIR/gfs.\$pdy/\06/atmos
+fi
 
 eofA
 

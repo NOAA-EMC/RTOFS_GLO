@@ -31,7 +31,7 @@ echo COMOUT is $OUTDIR/rtofs.$PDYm1
 mkdir -p $TMPDIR/stage.$PDY
 
 #
-# Submit service job to pull ocnqc, nhem, shem, glbl, and gdas forcing
+# Submit service job to pull rtofs data
 cat << eofA > $TMPDIR/stage.$PDY/pull.rtofs.data.sh
 #!/bin/ksh -l
 #SBATCH --ntasks=1

@@ -28,7 +28,7 @@ echo OUTDIR is $OUTDIR/$PDY
 mkdir -p $OUTDIR/$PDY
 mkdir -p $TMPDIR/stage.$PDY
 
-# Submit service job to pull ocnqc, nhem, shem, glbl, and gdas forcing
+# Submit service job to pull ocnqc, nhem, shem, glbl data
 cat << eofA > $TMPDIR/stage.$PDY/pull.dcom.sh
 #!/bin/ksh -l
 #SBATCH --ntasks=1

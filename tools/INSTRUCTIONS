@@ -67,3 +67,15 @@ Run the system
 
 ###############################################################
 
+Cold starting the system from Navy restart
+
+1. Get Navy restart
+- The restart file may not be available on the day you select. The script will let you know.
+
+./pull_navy_restart.sh YYYYMMDD
+
+
+2. Run 1 day analysis/forecast from this restart.
+
+./ncoda_rtofs_glo.launch.oneday.sh configname YYYYMMDD
+

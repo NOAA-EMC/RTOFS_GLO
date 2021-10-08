@@ -47,17 +47,29 @@ yyyymm=`echo $PDY | cut -c1-6`
 
 cd $OUTDIR
 
+# if date lt 20210321, then no atmos directory after cycle
+atmos=
+if [ \$pdy -ge 20210321 ]
+then
+   atmos=atmos
+fi
+
 for c in 00 06 12 18
 do
 slist=
 for h in 3 6 9
 do
-slist="\$slist ./gdas.\$pdy/\$c/atmos/gdas.t\${c}z.sfluxgrbf00\$h.grib2"
+slist="\$slist ./gdas.\$pdy/\$c/\$atmos/gdas.t\${c}z.sfluxgrbf00\$h.grib2"
 done
 echo
 echo \$slist
 echo
 htar -xvf /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy/com_gfs_prod_gdas.\${pdy}_\${c}.gdas_flux.tar \$slist
+if [ \$pdy -lt 20210321 ]
+then
+  mkdir $OUTDIR/gdas.\$pdy/\$c/atmos
+  mv $OUTDIR/gdas.\$pdy/\$c/gdas* $OUTDIR/gdas.\$pdy/\$c/atmos
+fi
 done
 
 eofA

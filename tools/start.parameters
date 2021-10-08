@@ -1,0 +1,45 @@
+
+RESTART         from RTOFS V1 (n-48 is from Navy)
+                /NCEPPROD/hpssprod/runhistory/rhYYYY/YYYYMM/YYYYMMDD/com_rtofs_prod_rtofs.YYYYMMDD.restart.tar
+                /NCEPPROD/hpssprod/runhistory/rh2020/202008/20200828/com_rtofs_prod_rtofs.20200828.restart.tar
+                ./rtofs_glo.t00z.n-48.restart.a
+                ./rtofs_glo.t00z.n-48.restart.b
+                ./rtofs_glo.t00z.n-48.restart_cice
+DATES           ~20150101 - 20201205
+PROCESS         Run analysis and one day forecast to create the necessary restart files.
+
+
+
+RESTART         from Navy (archived on Monday, Wednesday, and Fridays)
+                /NCEPDEV/emc-ocean/5year/emc.ncodapa/navy_restarts/restarts.YYYYMMDD.tar
+                cice.restart.YYYYMMDDHH_930.gz
+                restart_rYYYYMMDDHH_930.a.gz
+                restart_rYYYYMMDDHH_930.b.gz
+                /NCEPDEV/emc-ocean/5year/emc.ncodapa/navy_restarts/restarts.20210825.tar
+                cice.restart.2021082500_930.gz
+                restart_r2021082500_930.a.gz
+                restart_r2021082500_930.b.gz
+DATES           20201205 - 20210830 and counting (Navy will stop sending us restarts without warning)
+PROCESS         Run analysis and one day forecast to create the necessary restart files.
+                Can either cold-start or warm-start NCODA.
+
+
+
+RESTART         from RTOFS V2 (no incremental update restart file)
+                /NCEPPROD/hpssprod/runhistory/rhYYYY/YYYYMM/YYYYMMDD/com_rtofs_prod_rtofs.YYYYMMDD.restart.tar
+                (all files)
+                /NCEPPROD/hpssprod/runhistory/rh2021/202101/20210428/com_rtofs_prod_rtofs.20210428.restart.tar
+DATES           20210322 - 20210502
+PROCESS         Run analysis and one day forecast to create the necessary restart files.
+                Can either cold-start or warm-start NCODA.
+
+
+
+
+RESTART         from RTOFS V2 (with incremental update restart file)
+                /NCEPPROD/hpssprod/runhistory/rhYYYY/YYYYMM/YYYYMMDD/com_rtofs_prod_rtofs.YYYYMMDD.restart.tar
+                (all files)
+                /NCEPPROD/hpssprod/runhistory/rh2021/202101/20210128/com_rtofs_prod_rtofs.20210828.restart.tar
+DATES           20210503 - present
+PROCESS         Pull data and IC and run full system
+
