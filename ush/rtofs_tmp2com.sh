@@ -131,7 +131,8 @@ chmod +x cmdfile_tmp_all
 runpara=0
 if [[ $NPROCS -gt 1 && $runpara -eq 1 ]]
 then
-  mpirun cfp ./cmdfile_tmp_all >> cptmp2out.out
+#  mpirun cfp ./cmdfile_tmp_all >> cptmp2out.out
+  mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile_tmp_all > cptmp2out.out
   err=$? ; export err ; err_chk
 else
   sh ./cmdfile_tmp_all >> cptmp2out.out

@@ -45,8 +45,9 @@ setpdy.sh
 #################################
 # Define Input/Output directories
 #################################
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMROOT=${COMROOT:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
+export COMIN=${COMIN:-${COMROOT}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COMROOT}/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
 
 ####################
@@ -56,7 +57,7 @@ export CFP_VERBOSE=1
 ${HOMErtofs}/scripts/exrtofs_glo_gzip.sh
 
 msg="JOB $job HAS COMPLETED NORMALLY." 
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 cd $DATAROOT
 if [ "$KEEPDATA" != YES ]; then

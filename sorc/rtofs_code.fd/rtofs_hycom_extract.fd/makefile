@@ -5,9 +5,9 @@
 #
 AR=ar
 CPP=/usr/bin/cpp
-CC=icc
-FC=ifort
-LD=ifort
+CC=cc
+FC=ftn
+LD=ftn
 ARFLAGS=-rv
 LIBS=
 CPPFLAGS= 

@@ -1,0 +1,11 @@
+% $Id: ESMF_use.tex,v 1.25.6.1 2010/03/04 17:57:23 theurich Exp $
+
+\label{UsingLibrary}
+
+Building a user application against an ESMF installation requires that the compiler and linker be able to find the appropriate ESMF header, module and library files. If this procedure has been documented by the installer of the ESMF library on your system then follow the directions given. Otherwise it is up to the user to determine and provide the required compiler and linker flags. Every ESMF installation provides a file named {\tt esmf.mk} that contains the relevant information.
+
+The location of the {\tt esmf.mk} file should be documented by the party that installed ESMF on the system. We recommend that a single ESMF specific environment variable ESMFMKFILE be set to point to the {\tt esmf.mk} file. See section \ref{InstallESMF} for the related discussion.
+
+The information in {\tt esmf.mk} is defined in form of variables. In fact, syntactically {\tt esmf.mk} is a makefile fragment and can be imported by an application specific makefile via the {\tt include} command. All the variables in {\tt esmf.mk} start with an "{\tt ESMF\_}" prefix to prevent conflicts. The information in {\tt esmf.mk} is fully specified and is not affected by any variables set in the user's environment.
+
+The information defined in {\tt esmf.mk} includes Fortran compiler and linker, as well as C++ compiler and linker. It further includes the Fortran and C++ specific compiler and linker flags. One way of using the {\tt esmf.mk} is to glean the necessary information from it and use this information directly on the command line when compiling a user application, or to hardwire it into the application specific build system. However, the recommended use of {\tt esmf.mk} is to include this file in the application specific makefile directly via the {\tt include} command, and to use the defined variables to augment the application specific settings.

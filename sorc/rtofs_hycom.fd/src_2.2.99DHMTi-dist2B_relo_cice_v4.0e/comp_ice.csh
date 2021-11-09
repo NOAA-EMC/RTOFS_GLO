@@ -19,7 +19,8 @@
 ### Change these to your own site and user directory! 
 ### You will need to create a Makefile Macro in bld/ and a run_ice script 
 ### in input_templates/.
-setenv SITE NCEP.wcossphase3SMSSE
+#setenv SITE NCEP.wcossphase3SMSSE
+setenv SITE NCEP.wcoss2SMSSE
 #unset echo
 #module switch  intel intel/15.0.0.090
 #module switch  cray-mpich cray-mpich/7.2.4
@@ -134,6 +135,14 @@ else
 endif
 
 
+#dan
+setenv ESMF_DIR ${SRCDIR}/../esmf_4_0_0rp2
+#george
+#setenv ESMF_DIR /lfs/h2/emc/eib/noscrub/gwv/public/esmf4
+#jack
+#    setenv ESMF_DIR /lfs/h2/emc/global/noscrub/Jack.Woollen/esmf_4_0_0rp2
+echo ESMF_DIR $ESMF_DIR
+
 echo $NXGLOB, $NYGLOB $BLCKX $BLCKY $MXBLCKS
 echo "ARCH = ",$ARCH
 
@@ -176,7 +185,13 @@ cd ${SRCDIR}/hycom
 #   setenv ESMF_DIR ${BEI_HOME}/esmf/intelICE/intelmpi/4.0.0rp2
 #    setenv BEI_HOME /p/home/wallcraf/pkgs
 #    setenv ESMF_DIR /usrx/local/esmf-4.0.0rp1
-    setenv ESMF_DIR /usrx/local/prod/packages/ips/18.0.1/impi/18.0.1/esmf/4_0_0rp2
+#    setenv ESMF_DIR /usrx/local/prod/packages/ips/18.0.1/impi/18.0.1/esmf/4_0_0rp2
+#dan
+    setenv ESMF_DIR ${SRCDIR}/../esmf_4_0_0rp2
+#george
+#    setenv ESMF_DIR /lfs/h2/emc/eib/noscrub/gwv/public/esmf4
+#jack
+#    setenv ESMF_DIR /lfs/h2/emc/global/noscrub/Jack.Woollen/esmf_4_0_0rp2
 
     setenv CICE_DIR ${SRCDIR}
 echo "ESMF_DIR = "  $ESMF_DIR

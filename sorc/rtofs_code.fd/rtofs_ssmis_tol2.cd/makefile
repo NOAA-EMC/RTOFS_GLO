@@ -1,5 +1,10 @@
 #Robert Grumbine 27 May 2016
 SHELL=/bin/sh
+
+###
+MMAB_INC=/lfs/h2/emc/couple/noscrub/Robert.Grumbine/mmablib/include
+MMAB_LIBF4=/lfs/h2/emc/couple/noscrub/Robert.Grumbine/mmablib/libombf_4.a
+###
         
 # include ../makeall.mk
 #work
@@ -10,7 +15,7 @@ SHELL=/bin/sh
 #module load w3nco 
 #module load w3emc
 NCEPLIB=$(BUFR_LIB4) $(W3EMC_LIB4) $(W3NCO_LIB4)
-FC=ifort
+FC=ftn
 #FOPTS=-c -std90 -O2 $(MMAB_INC)
 FOPTS=-c -O2 $(MMAB_INC)
 
@@ -23,22 +28,23 @@ FOPTS=-c -O2 $(MMAB_INC)
 #FC=gfortran
 
 #FOPTS=-c -std=f95 -O2 $(MMAB_INC) $(NETCDF_INCLUDE)
-FOPTS=-c -O2 -I$(MMAB_INC) $(NETCDF_INCLUDE) 
+FOPTS=-c -O2 -I$(MMAB_INC) -I$(NETCDF_INCLUDES)
 
 #all -- makeall.mk suitable:  
 #LIBS=/nwprod2/lib/mmab/v3.4.1/libombf.v3.4.1_4.a -lm
+
 LIBS=$(MMAB_LIBF4)
 CPP=g++
 #CPPOPTS= -c -ansi -Wall -O2 -DLINUX -DCPLUS $(MMAB_INC)
-CPPOPTS= -c -O2 -DLINUX -DCPLUS -I $(MMAB_INC) $(NETCDF_INCLUDE)
+CPPOPTS= -c -O2 -DLINUX -DCPLUS -I$(MMAB_INC) -I$(NETCDF_INCLUDES)
 CPPLD=g++
 CPPLDFLAGS=-lombf_4 -lombc_4
 
 BINDIR= ../../../exec
 
-CC=gcc
+CC=cc
 #COPTS=-c -Wall -O2 -DLINUX $(MMAB_INC)
-COPTS=-c -Wall -ansi -O2 -DLINUX -I$(MMAB_INC) $(NETCDF_INCLUDE)
+COPTS=-c -Wall -ansi -O2 -DLINUX -I$(MMAB_INC) -I$(NETCDF_INCLUDES)
 
 #Building elements
 %.o: %.C
@@ -66,7 +72,7 @@ demo : demo.o
 	g++ $< $(LIBS) -o $(@)
 
 ssmis_tol2 : algorithm.o filter.o bufr.o skel.o ssmisu_decode.o
-	$(FC) ssmisu_decode.o filter.o skel.o bufr.o algorithm.o  $(NETCDF_LDFLAGS_C) -lnetcdf  $(NCEPLIB) $(LIBS) -o $(@)
+	$(FC) ssmisu_decode.o filter.o skel.o bufr.o algorithm.o -L$(NETCDF_LIBRARIES) -lnetcdf  $(NCEPLIB) $(LIBS) -o $(@)
 
 install: 
 	 -mv ssmis_tol2 ${BINDIR}/rtofs_ssmis_tol2

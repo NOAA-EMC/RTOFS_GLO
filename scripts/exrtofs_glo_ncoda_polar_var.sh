@@ -24,7 +24,7 @@ set -xa
 export PS4='$SECONDS + '
 
 msg="RTOFS_GLO_NCODA_POLAR_VAR JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 cd $DATA
 
@@ -61,8 +61,7 @@ else
 fi
 
 chmod +x cmdfile.cpin
-echo mpirun cfp ./cmdfile.cpin > cpin.out
-mpirun cfp ./cmdfile.cpin >> cpin.out
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin
 err=$? ; export err ; err_chk
 date
 
@@ -124,17 +123,20 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
-mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+#mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+mpiexec -n 1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
-mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
+#mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
+mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
-mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
+#mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
+mpiexec -n $NPROCS $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
@@ -144,13 +146,16 @@ mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
 mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
 
 #   create graphics
-export OCN_OUTPUT_DIR=$DATA/nhem_var/restart
-export OCN_CLIM_DIR=$FIXrtofs/codaclim
-#NCODA map
-$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_map=",$err
-mv gmeta $DATA/logs/nhem_var/nhem_var.$ddtg.gmeta
+DoGraphics=NO
+if [ $DoGraphics = YES ] ; then
+  export OCN_OUTPUT_DIR=$DATA/nhem_var/restart
+  export OCN_CLIM_DIR=$FIXrtofs/codaclim
+  #NCODA map
+  $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+  err=$?; export err ; err_chk
+  echo " error from rtofs_ncoda_map=",$err
+  mv gmeta $DATA/logs/nhem_var/nhem_var.$ddtg.gmeta
+fi
 
 cat pout* > $DATA/logs/nhem_var/nhem_var.$ddtg.out
 cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $DATA/$pgmout
@@ -207,17 +212,20 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
-mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+#mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
+mpiexec -n 1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
-#NCODA 
-mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
+#NCODA var
+#mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
+mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
-mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
+#mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
+mpiexec -n $NPROCS $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post",$err
 
@@ -227,13 +235,16 @@ mv fort.67 $DATA/logs/shem_var/nhem_var.$ddtg.obs
 mv fort.68 $DATA/logs/shem_var/nhem_var.$ddtg.grd
 
 #   create graphics
-export OCEAN_OUTPUT_DIR=$DATA/shem_var/restart
-export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
-#NCODA map
-$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_map=",$err
-mv gmeta $DATA/logs/shem_var/shem_var.$ddtg.gmeta
+DoGraphics=NO
+if [ $DoGraphics = YES ] ; then
+  export OCEAN_OUTPUT_DIR=$DATA/shem_var/restart
+  export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
+  #NCODA map
+  $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+  err=$?; export err ; err_chk
+  echo " error from rtofs_ncoda_map=",$err
+  mv gmeta $DATA/logs/shem_var/shem_var.$ddtg.gmeta
+fi
 
 cat pout* > $DATA/logs/shem_var/shem_var.$ddtg.out
 cat $DATA/logs/shem_var/shem_var.$ddtg.out >> $DATA/$pgmout
@@ -260,8 +271,7 @@ for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
 done
 
 chmod +x cmdfile.cpout
-echo mpirun cfp ./cmdfile.cpout > cpout.out
-mpirun cfp ./cmdfile.cpout >> cpout.out
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout
 err=$? ; export err ; err_chk
 
 mkdir -p $COMOUT/ncoda/logs/nhem_var
@@ -275,7 +285,7 @@ date
 
 #################################################
 msg="THE RTOFS_GLO_NCODA_POLAR_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ################## END OF SCRIPT #######################
 

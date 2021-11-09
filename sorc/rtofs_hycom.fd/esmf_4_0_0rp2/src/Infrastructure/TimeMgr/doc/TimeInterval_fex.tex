@@ -1,0 +1,12 @@
+% $Id: TimeInterval_fex.tex,v 1.7 2003/08/29 22:12:05 eschwab Exp $
+
+\begin{verbatim}
+use ESMF_Mod
+
+! Declare a TimeInterval
+type(ESMF_TimeInterval) :: timeStep
+
+! Set it to 3 days, 5 hours, 15 minutes, 30 seconds
+call ESMF_TimeIntervalSet(timeStep, d=3, h=5, m=15, s=30)
+
+\end{verbatim}

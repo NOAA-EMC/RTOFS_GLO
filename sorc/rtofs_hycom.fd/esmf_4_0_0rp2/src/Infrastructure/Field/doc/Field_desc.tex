@@ -1,0 +1,30 @@
+% $Id: Field_desc.tex,v 1.6 2009/03/03 20:25:55 feiliu Exp $
+
+An ESMF Field represents a physical field, such as temperature.
+The motivation for including Fields in ESMF is that bundles of 
+Fields are the entities that are normally exchanged when coupling
+Components.  
+
+The ESMF Field class contains distributed, discretized field data, a reference 
+to its associated grid, and metadata.  The Field class maintains the
+relationship of how a data array maps onto a grid (e.g. one item per
+cell located at the cell center, one item per cell located at the NW
+corner,  one item per cell vertex, ...).  This means that different Fields
+which are on the same underlying ESMF Grid but have different
+staggerings can share the same Grid object without needing to replicate
+it multiple times. 
+
+Fields can be added to States for use in inter-Component
+data communications.  Fields can also be added to FieldBundles,
+which are currently defined as groups of Fields on the same underlying
+grid.  One motivation for FieldBundles is convenience; another is the
+ability to perform optimized collective data transfers.  
+
+Field communications, including data redistribution, regriding, scatter,
+and gather, are enabled in this release.  Field halo update operation is
+not enabled in this release and will be enabled in subsequent releases.
+
+ESMF does not currently support vector fields, so the components of 
+a vector field must be stored as separate Field objects.  
+
+

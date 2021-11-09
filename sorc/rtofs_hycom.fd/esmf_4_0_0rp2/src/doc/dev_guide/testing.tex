@@ -1,0 +1,518 @@
+%===============================================================================
+% CVS $Id: testing.tex,v 1.21.2.1 2009/12/23 19:39:30 svasquez Exp $
+% CVS $Source: /mnt/twixshare/Storage/Archive-SF-Repos/ESMF_CVS_Repo/esmf/src/doc/dev_guide/testing.tex,v $
+% CVS $Name:  $
+%===============================================================================
+
+\subsection{Testing and Validation}
+\label{sec:testing}
+
+ESMF software is subject to the following tests:
+\begin{enumerate}
+\item Unit tests, which are simple per-class tests.
+\item Testing Harness, parameter space spanning tests similar to the unit tests
+\item System tests, which generally involve inter-component interactions.
+\item Use test cases (UTCs), which are tests at realistic problem
+sizes (e.g., large data sets, processor counts, grids).
+\item Examples that range from simple to complex.
+\item Beta testing through preliminary releases.
+\end{enumerate}
+Unit tests, system tests, and examples are distributed with the
+ESMF software.  UTCs, because of their size, are 
+stored and distributed separately.  Tests are run nightly,
+following a weekly schedule, on a wide variety of platforms.  
+Beta testing of ESMF software is done by providing an Internal Release
+to customers three months before public release.  
+
+The ESMF team keeps track of test coverage on a per-method basis.
+This information is on the {\bf Metrics} page under the {\bf Development}
+link on the navigation bar.
+
+Testing information is stored on a {\bf Test and Validation} web page,
+under the {\bf Development} link on the ESMF 
+web site.  This web page includes:
+\begin{itemize}
+\item separate web pages for each system test and UTC;
+\item links to the {\it Developer's Guide}, SourceForge Tracker, Requirements 
+Spreadsheet, and any other pertinent information; and
+\item separate web page for automated regression test information and results.
+\end{itemize}
+
+The ESMF is designed to run on several target platforms, in different 
+configurations, and is required to interoperate with many combinations 
+of application software. Thus our test strategy includes the following.
+
+\begin{itemize}
+\item Tests are executed on as many target platforms as possible. 
+\item Tests are executed on a variety of programming paradigms
+(e.g pure shared memory, pure distributed memory and a mix of both).
+\item Tests are executed in multiple configurations (e.g. uni-processor,
+multi-processor).
+\item The result of each test is a {\tt PASS/FAIL}.  
+\item In some cases, for floating point comparisons, an epsilon value
+will be used.
+\item Tests are implemented for each language interface that is 
+supported.
+\end{itemize}
+
+\subsubsection{Unit Tests}
+
+Each class in the framework is associated with a suite of unit tests.
+Typically the unit tests are stored in one file per class, and are
+located near the corresponding source code in a test directory.  The 
+framework {\tt make} system will have an option to build and run unit tests.
+The user has the option of building either a "sanity check" type test
+or an exhaustive suite. The exhaustive tests include tests of many 
+functionalities and a variety of valid and invalid input values. The sanity 
+check tests are a minimum set of tests to indicate whether, for example, the 
+software has been installed correctly. It is the responsibility of the 
+software developer to write and execute the unit tests. Unit tests 
+are distributed with the framework software.
+
+To achieve adequate unit testing, developers shall attempt to meet the following goals. 
+
+\begin{itemize}
+\item Individual procedures will be evaluated with at least one unit
+test function.  However, as many test functions as necessary will be
+implemented to assure that each procedure works properly.  
+\item Developers should unit test their code to the degree possible  
+before it is checked into the repository.  It is assumed that 
+developers will use stubs as necessary.
+\item Variables are tested for acceptable range and precision.
+\item Variables are tested for a range of valid values, including boundary
+values.
+\item Unit tests should verify that error handling works correctly.
+\end{itemize}
+
+\paragraph{Writing Unit Tests}
+
+Unit tests usually test a single argument of a method to make it easier to
+identify the bug when a unit test fails.
+There are several steps to writing a unit test.
+First, each unit test must be labled with one of the following tags:
+\begin{itemize}
+\item NEX\_UTest - This tag signifies a non-exhaustive test. These tests are always run and
+are considered to be sanity tests they usually consist of creating and destroying a specific class.
+\item EX\_UTest - This tag signifies an exhaustive unit test. These tests are more rigorous and
+are run when the ESMF\_EXHAUSTIVE environmental variable is set to ON. These unit test must be between the \#ifdef ESMF\_EXHAUSTIVE
+and \#endif definitions in the unit test file.
+\item NEX\_UTest\_Multi\_Proc\_Only - These are non-exhaustive multi-processor unit tests that will not be
+run when the run\_unit\_tests\_uni or unit\_test\_uni targets are specified.
+\item EX\_UTest\_Multi\_Proc\_Only - These are exhaustive multi-proccesor unit tests that will not be
+run when the run\_unit\_tests\_uni or unit\_tests\_uni targets are specified.
+\end{itemize}
+Note that when the NEX\_UTest\_Multi\_Proc\_Only or EX\_UTest\_Multi\_Proc\_Only tags are used, all the unit tests in
+the file must be labeled as such. You may not mix these tags with the other tags. In addition, verify that the makefile
+does not allow the unit tests with these tags to be run uni.
+
+Second, a string is specified describing the test, for example:
+\begin{verbatim}
+
+	write(name, *) "Grid Destroy Test"
+
+\end{verbatim}
+Third, a string to be printed when the test fails is specified, for example:
+\begin{verbatim}
+
+	write(failMsg, *) "Did not return ESMF_SUCCESS"
+
+\end{verbatim}
+Fourth, the ESMF\_Test subroutine is called to determine the test results, for example:
+\begin{verbatim}
+
+	call ESMF_Test((rc.eq.ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+
+\end{verbatim}
+The following two tests are good examples of how unit tests should be written.
+The first test verify that getting the attribute count from a Field returns ESMF\_SUCCESS, while
+the second verifies the attribute count is correct. These two tests could be combined into one
+with a logical AND statement when calling ESMF\_Test, but breaking the tests up allows you
+to identify the source of the bug immediately.
+\begin{verbatim}
+
+      !------------------------------------------------------------------------
+      !EX_UTest
+      ! Getting Attrubute count from a Field
+      call ESMF_FieldGetAttributeCount(f1, count, rc=rc)
+      write(failMsg, *) "Did not return ESMF_SUCCESS"
+      write(name, *) "Getting Attribute count from a Field "
+      call ESMF_Test((rc.eq.ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+
+      !------------------------------------------------------------------------
+      !EX_UTest
+      ! Verify Attribute Count Test
+      write(failMsg, *) "Incorrect count"
+      write(name, *) "Verify Attribute count from a Field "
+      call ESMF_Test((count.eq.0), name, failMsg, result, ESMF_SRCLINE)
+
+      !------------------------------------------------------------------------
+
+\end{verbatim}
+
+
+\paragraph{Analyzing unit test results }
+When unit test are run, a Perl script prints out the test results as shown in
+Section "Running ESMF Unit Tests" in the ESMF User's Guide. To print out the test results,
+the Perl script must determine the number of unit tests in each test file and the number of
+processors executing the unit test. It determines the number of tests by counting the
+EX\_UTest, NEX\_UTest, EX\_UTest\_Multi\_Proc\_Only, or NEX\_UTest\_Multi\_Proc\_Only 
+tags in the test source file whichever is appropriate for the test being run. 
+To determine the number of processors, it counts the number of "NUMBER\_OF\_PROCESSORS" strings in the
+unit test output Log file. The script then counts the number of PASS and FAIL strings in the
+test Log file.
+The Perl script first divides the number of PASS strings by the number of processors. If the
+quotient is not a whole  number then the script concludes that the test crashed. If the quotient
+is a whole number, the script then divides the number of FAIL strings by the number of processors.
+The sum of the two quotients must equal the total number of tests, if not the test is marked
+as crashed.
+
+Sometimes a unit test is written expecting a subset of the processors to fail the test. To
+handle this case, the unit test must verify results from each processor as in the unit test below:
+\begin{verbatim}
+
+
+    !------------------------------------------------------------------------
+    !EX_UTest
+    ! Verify that the rc is correct on all pets.
+    write(failMsg, *) "Did not return FAILURE  on PET 1, SUCCESS otherwise"
+    write(name, *) "Verify rc of a Gridded Component Test"
+    if (localPet==1) then
+      call ESMF_Test((rc.eq.ESMF_FAILURE), name, failMsg, result, ESMF_SRCLINE)
+    else
+      call ESMF_Test((rc.eq.ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+    endif
+
+    !------------------------------------------------------------------------
+
+\end{verbatim}
+
+\paragraph{Disabling unit tests }
+Sometimes in the software development process it becomes necessary to disable one or more unit tests.
+To disable a unit test, two lines need to be modified. First, the line calling "ESMF\_Test" must be commented out.
+Second, the NEX\_UTest, EX\_UTest, NEX\_UTest\_Multi\_Proc\_Only and EX\_UTest\_Multi\_Proc\_Only tags must be modified
+so that they are not found by the Perl script that analyzes the test results.
+The recommended way to modify these tags is to replace the first underscore with "\_disable\_", thus NEX\_UTest becomes
+NEX\_disable\_UTest. 
+
+\subsubsection{Examples}
+The examples are written to help users understand a specific use of an
+ESMF capabilty. The examples appear as text in the ESMF Referance Manual, therefore
+care must be taken to insure that correct portions of the examples appear in the
+document. Latex tags have been created to designate which portions of the
+examples are visible in the document. 
+
+BOE and EOE are used between text decribing the example. BOC and EOC are used between
+actual working code that appears in the Reference Manual. Below is an example of how
+the tags are used:
+
+\begin{verbatim}
+
+!-------------------------------- Example -----------------------------
+!>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%
+!BOE
+!\subsubsection{Get Grid and Array and other information from a Field}
+!\label{sec:field:usage:field_get_default}
+!
+!  A user can get the internal {\tt ESMF\_Grid} and {\tt ESMF\_Array}
+!  from a {\tt ESMF\_Field}.  Note that the user should not issue any destroy command
+!  on the retrieved grid or array object since they are referenced
+!  from within the {\tt ESMF\_Field}. The retrieved objects should be used
+!  in a read-only fashion to query additional information not directly
+!  available through the {\tt ESMF\_FieldGet()} interface.
+!
+!EOE
+
+!BOC
+    call ESMF_FieldGet(field, grid=grid, array=array, &
+        typekind=typekind, dimCount=dimCount, staggerloc=staggerloc, &
+        gridToFieldMap=gridToFieldMap, &
+        ungriddedLBound=ungriddedLBound, ungriddedUBound=ungriddedUBound, &
+        maxHaloLWidth=maxHaloLWidth, maxHaloUWidth=maxHaloUWidth, &
+        name=name, &
+        rc=rc)
+!EOC
+    if(rc .ne. ESMF_SUCCESS) finalrc = ESMF_FAILURE
+    print *, "Field Get Grid and Array example returned"
+
+    call ESMF_FieldDestroy(field, rc=rc)
+    if(rc .ne. ESMF_SUCCESS) finalrc = ESMF_FAILURE
+!>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%>%
+
+\end{verbatim}
+
+Note that any code or text that is not contained within the tag pairs does not appear in the
+Reference Manual.
+
+Most examples can be run on multiple processors or a single processor. Those examples should
+have the tag, "ESMF\_EXAMPLE" as a comment in the body of the example file. If the example
+can only run on multiple processors then use the tag, "ESMF\_MULTI\_PROC\_EXAMPLE".
+
+\paragraph{Disabling examples}
+When an example is removed from the makefile, the "ESMF\_EXAMPLE" or 
+"ESMF\_MULTI\_PROC\_EXAMPLE"
+tags must be modified so that the example is not flagged as failed. 
+The recommended way to modify these tags is to replace the first underscore with "\_disable\_", 
+thus "ESMF\_EXAMPLE" becomes
+"ESMF\_disable\_EXAMPLE".
+
+
+\subsubsection{System Tests}
+
+System tests are written to test functionality that spans several
+classes.  The following areas should be addressed in system testing.
+
+\begin{itemize}
+\item Design omissions (e.g. incomplete or incorrect behaviors).
+\item Associations between objects (e.g. fields, grids, bundles).
+\item Control and infrastructure. (e.g. couplers, time management, error handling).
+\item Feature interactions or side effects when multiple features are used
+simultaneously.
+\end{itemize}
+
+The system tester should issue a test log after each software release is tested,
+which is recorded on the {\bf Test and Validation} web page. The test
+log shall
+include: a test ID number, a software release ID number, testing environment
+descriptions, a list of test cases executed, results, and any unexpected
+events. Bugs should be documented in the \htmladdnormallink{{\it SourceForge Bug
+Tracker}}{https://sourceforge.net/tracker/?group\_id=38089&atid=421185} and
+any bug fixes shall be validated.
+
+\paragraph{Writing System Tests}
+
+System tests should contain the following sections:
+\begin{itemize}
+\item Create - Create Components, Couplers, Clock, Grids, States etc.
+\item Register - Register Components and the initialize, run and finalize subroutines.
+\item Initialize - Initialize as needed.
+\item Run - Run the test.
+\item Finalize - Verify results.
+\item Destroy - Destory all classes.
+\end{itemize}
+
+Most system tests can be run on multiple processors or a single processor. Those system tests should
+have the tag, "ESMF\_SYSTEM\_TEST" as a comment in the body of the system test. If the system test
+can only run on multiple processors then use the tag, "ESMF\_MULTI\_PROC\_SYSTEM\_TEST".
+
+At the end of the system it is recommended that the ESMF\_TestGlobal subroutine be used to gather
+test results from all processors and print out a single PASS/FAIL message instead
+of individual PASS/FAIL messages from all the processors.
+After the test is written it must be documented on the ESMF Test \& Validaton
+web page:
+
+\begin{verbatim}
+
+http://www.earthsystemmodeling.org/developers/test/system/
+
+\end{verbatim}
+
+
+\paragraph{Disabling system tests}
+When a system test is removed from the makefile, the "ESMF\_SYSTEM\_TEST" or 
+"ESMF\_MULTI\_PROC\_SYSTEM\_TEST"
+tags must be modified so that the system test is not counted as failed. 
+The recommended way to modify these tags is to replace the first underscore with "\_disable\_", thus 
+ESMF\_SYSTEM\_TEST becomes 
+ESMF\_disable\_SYSTEM\_TEST
+
+
+\subsubsection{Test Harness}
+The Test Harness is a highly configurable test control system for conducting 
+thorough testing of the Regridding and Redistribution processes. The Test Harness 
+consists of a single shared executable and a collection of customizable resource
+files that define an ensemble of test configurations tailored to each ESMF class.
+The Test Harness is integrated into the Unit test framework, enabling
+the Test Harness to be built and run as part of the Unit tests. The test results 
+are reported to a single standard-out file which is located with the unit test 
+results.
+
+\paragraph{Specifying Tests Harness tests}
+The test harness code consists of a single executable that runs along with the
+unit tests. The executable is augmented by a hierarchy of customizable configuration
+files which are located within and below the \texttt{tests/} directory of each 
+class; currently only ESMF\_ARRAY and ESMF\_FIELD. These configuration files are 
+combined by the executable to generate specific test configurations. 
+
+The top level configuration file is called \texttt{test\_harness.rc} and is located 
+in the \texttt{tests/} directory of each class; e.g. 
+\texttt{esmf/src/Infrastructure/\$CLASS/tests/}. The top level helper file called
+\texttt{test\_harness.rc} is unique to each class and specifies the test class, the 
+format for reporting the test results, and the location and file names containing 
+the \textit{problem descriptor files}. 
+
+The \textit{problem descriptor files} are the next level of configuration files
+used by the test harness routines. They contain a collection of 
+\textit{problem descriptor strings} which describe a family of problems with the 
+same memory topology, distribution, and grid association. The problem descriptor 
+strings employ the Field Taxonomy to describe an ensemble of tests. For instance, a
+\textit{problem descriptor string} might describe the ensemble of all 
+regriddings between a pair of two-dimensional blocks memory, each with a  specific
+type of distribution and grid association. One such configuration could look like
+
+\begin{center}
+\begin{verbatim}
+[ B1 G1; B2 G2 ] --> [ B1 G1; B2 G2 ] 
+[ B1 G1; B2 G2 ] =B=> [ B1 G1; B2 G2 ]
+\end{verbatim}
+\end{center}
+
+This pair of problem descriptor strings defines two types of regridding tests.
+The first describes an ensemble of redistributions between two block
+distributed grids. The second string describes
+an ensemble of first order bilinear remapping tests between the same two 
+distributed grids. See section~\ref{sec:harness} for a complete discussion of the 
+syntax and use of problem descriptor strings.
+
+The \textit{problem descriptor strings} are augmented by a collection of 
+\textit{specifier files} which complete the  description by defining specific 
+aspects of the configuration space such as the grid size, rank, and type, as well
+the nature of the distribution, its connectivity, etc. Both the problem descriptor
+files and the specifier files are located in the subdirectory 
+\texttt{tests/test\_config/} within the class directory.
+
+A complete description of the grid specifier files and their syntax is available
+in section~\ref{sec:harness_gridspecifier} of the developers guide. An equivalent 
+discussion of the distribution configuration files is available in 
+section~\ref{sec:harness_distributionsspecifier} of the developers guide.
+
+The motivation for employing such a hierarchy configuration files is to allow a 
+high degree of customization of the problem configuration by combining individual 
+specification files. In addition it was desired to make the specification files 
+as simple to read as is possible so that user is not forced to engage in complicated 
+encoding to specify a problem. The end result is that each class will have its own 
+collection of specification files tailored to the needs of that class.
+
+\paragraph{Analyzing Test Harness results }
+When the Test Harness completes a run, the results from the ensemble of tests are
+reported in two ways. The first is analogous to the unit test reporting, since the
+test harness is run as part of the unit tests, a summary of the results are recorded 
+just as with the unit tests. In addition to the standard unit test reporting, the
+test harness is also able to produce a human readable report. The report consists 
+of a concise summary of the test configuration along with the test results. The test 
+configuration is described in terms of the Field Taxonomy syntax and user provided 
+strings. The intent is not to provide a exhaustive description of the test, but 
+rather to provide a useful description of the failed tests.
+
+Consider another example similar to the previous one, where two descriptor strings 
+describing an ensemble regridding tests. The first uses the patch method and the 
+second uses bilinear interpolation.
+
+\begin{center}
+\begin{verbatim}
+[ B1 G1; B2 G2 ] =P=> [ B1 G1; B2 G2 ] 
+[ B1 G1; B2 G2 ] =B=> [ B1 G1; B2 G2 ] 
+\end{verbatim}
+\end{center}
+
+Suppose the associated specifier files indicate that the source  grid is rectilinear
+and is 100 X 50 in size. The destination grid is also rectilinear and is 80 X 20 
+in size. 
+Both grids are block distributed in two 
+ways, 1 X NPETS and NPETS X 1. And suppose that the first dimension of both the
+source and destination grids are periodic. If the test succeeds for the bilinear
+regridding, but fails for one of the patch regridding configurations, the reported results
+could look something like
+
+\begin{verbatim}
+SUCCESS: [B1 G1; B2 G2 ] =B=> [B1 G1; B2 G2 ] 
+FAILURE: [B1{1} G1{100}+P; B2{npets} G2{50} ] =P=> [B1{1} G1{80}+P; B2{npets} G2{20} ] 
+     failure at line 101 of test.F90
+SUCCESS: [ B1{npets} G1{100} +P; B2{1} G2{50} ] =P=> [ B1{npets} G1{80}+P; B2{1} G2{20} ] 
+\end{verbatim}
+
+The report indicates that all the test configurations for the bilinear regridding
+are successful. This is indicated by the key word SUCCESS which is followed by the 
+successful problem descriptor string. Since all of the tests in the first case pass,
+there is no need to include any of the specifier information. For the second
+ensemble of tests, one configuration passed, while the other failed. In this case,
+since there is a mixture of successes and failures, the report includes 
+specifier information for all configurations to help indicate the source of the
+test failure. The supplemental information, while not a complete problem description
+since it lacks items such as the physical coordinates of the grid and the nature of 
+the test field, includes information crucial to isolating the failed test.
+
+
+\subsubsection{Use Test Cases (UTCs)}
+
+Use Test Cases are problems of realistic size created to test the ESMF
+software.  They were initiated when the ESMF team and its users saw that
+often ESMF capabilities could pass simple system tests but would fail
+out in the field, for real customer problems.  UTCs have realistic
+processor counts, data set sizes, and grid and data array sizes.  UTCs are
+listed on the {\bf Test \& Validation} page of the ESMF website.  They
+are not distributed with the ESMF software; instead they are stored in
+a separate module in the main repository called {\tt use\_test\_cases}.
+
+\subsubsection{Beta Testing}
+
+ESMF software is released in a beta form, as an Internal Release,
+three months before it is publicly released.  This gives users
+a chance to test the software and report back any problems to 
+support.
+
+\subsubsection{Automated Regression Tests}
+
+The purpose of regression testing is to reveal faults caused by new
+or modified software (e.g. side effects, incompatibility between 
+releases, and bad bug fixes).  
+Regression tests regularly exercise all interfaces of the code on 
+all target platforms.  The Integrator runs 
+automated nightly builds on a wide variety of machines, listed on the
+{\bf Test and Validation} website. This site stores log files of the
+build results.
+The log files are kept on a monthly basis in 
+separate directories. For example, the December 2002 directory is named {\tt 0212\_test}. The 
+directory contains an {\tt ESMFdailyLog} file which has a one line entry for each platform on 
+which the build was attempted indicating whether the build was successful or not. 
+
+The {\tt ESMFdailyLog} file for the current month is available on the {\bf Test and Validation} website.
+
+If the build is not successful, then a file containing the build output is stored in 
+the:\\
+{\tt /fs/projects/css/esmf/esmf\_test/daily\_builds}\\
+directory on the NCAR fileserver. The file naming convention for the build output file is:\\
+{\tt build\_BOPT\_(day)(platform)ESMF\_ARCH}.\\
+For example, if the build fails on longs on the 19th of the month with {\tt BOPT=g},
+the file would be called:\\
+{\tt build\_g\_19longslinux\_lf95}. 
+
+Email is sent daily to the ESMF core team listing all the platforms on which the build was attempted with a {\tt PASS/FAIL} indication. 
+
+\subsubsection{Testing for Releases}
+
+We provide two types of tar files, the ESMF source and the shared
+libraries of the supported platforms. Consequently, there are two test
+procedures followed before placing the tar files on the ESMF download website. 
+
+The {\bf Source Code Test Procedure} is followed on all the supported
+platforms for the particular release.
+
+\begin{enumerate}
+\item Verify that the source code builds in both {\tt BOPT=g} and {\tt BOPT=O}.
+\item Verify that  the {\tt ESMF\_COUPLED\_FLOW} demonstration executes successfully.
+\item Verify that the unit tests run successfully, and that there are no {\tt NON-EXHAUSTIVE} unit tests  failures.
+\item Verify that all system tests run successfully. 
+\end{enumerate}
+
+The {\bf Shared Libraries Test Procedure} is also followed on all supported
+platforms for a release.
+
+\begin{enumerate}
+\item Change to the {\tt CoupledFlowEx} directory and execute {\tt gmake}. Verify that the demo runs successfully.
+\item Change to the {\tt CoupledFlowSrc} directory and execute {\tt gmake} then {\tt gmake run}. Verify that the demo runs successfully.
+\item Change to the {\tt examples} directory and execute {\tt gmake} and {\tt gmake run}. Verify that the example runs successfully.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

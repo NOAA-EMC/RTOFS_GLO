@@ -23,7 +23,7 @@ set -xa
 export PS4='$SECONDS + '
 
 msg="RTOFS_GLO_NCODA_HYCOM_VAR JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 cd $DATA
 
@@ -45,8 +45,7 @@ else
 fi
 
 chmod +x cmdfile.cpin
-echo mpirun cfp ./cmdfile.cpin > cpin.out
-mpirun cfp ./cmdfile.cpin >> cpin.out
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin
 err=$? ; export err ; err_chk
 date
 
@@ -63,14 +62,14 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regio
 # when fixed change dsomrff below to COMIN
 
 mkdir -p $RUN
-ln -s $COMROOT/${NET}/${envir}/${RUN}.${PDYm2} $RUN/${RUN}.${PDYm2}
-ln -s $COMROOT/${NET}/${envir}/${RUN}.${PDYm3} $RUN/${RUN}.${PDYm3}
-ln -s $COMROOT/${NET}/${envir}/${RUN}.${PDYm4} $RUN/${RUN}.${PDYm4}
-ln -s $COMROOT/${NET}/${envir}/${RUN}.${PDYm5} $RUN/${RUN}.${PDYm5}
-ln -s $COMROOT/${NET}/${envir}/${RUN}.${PDYm6} $RUN/${RUN}.${PDYm6}
-ln -s $COMROOT/${NET}/${envir}/${RUN}.${PDYm7} $RUN/${RUN}.${PDYm7}
+ln -s $COMROOT/${RUN}.${PDYm2} $RUN/${RUN}.${PDYm2}
+ln -s $COMROOT/${RUN}.${PDYm3} $RUN/${RUN}.${PDYm3}
+ln -s $COMROOT/${RUN}.${PDYm4} $RUN/${RUN}.${PDYm4}
+ln -s $COMROOT/${RUN}.${PDYm5} $RUN/${RUN}.${PDYm5}
+ln -s $COMROOT/${RUN}.${PDYm6} $RUN/${RUN}.${PDYm6}
+ln -s $COMROOT/${RUN}.${PDYm7} $RUN/${RUN}.${PDYm7}
 mkdir -p $RUN/$RUN.$PDYm1
-ln -s $COMROOT/${NET}/${envir}/${RUN}.${PDYm1}/* $RUN/${RUN}.${PDYm1}/.
+ln -s $COMROOT/${RUN}.${PDYm1}/* $RUN/${RUN}.${PDYm1}/.
 
 # rename n-24:n00  to  n00:n24
 cd $RUN/${RUN}.${PDYm1}
@@ -161,19 +160,19 @@ echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
 echo timecheck RTOFS_GLO_HYCOM start prep at `date`
-mpirun -n  72 $EXECrtofs/rtofs_ncoda_prep 3D hycom ogridnl $ddtg > pout2
+mpiexec -n 72 --cpu-bind core $EXECrtofs/rtofs_ncoda_prep 3D hycom ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
 echo timecheck RTOFS_GLO_HYCOM start ncoda3d at `date`
-mpirun -n 360 $EXECrtofs/rtofs_ncoda 3D hycom ogridnl $ddtg > pout3
+mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 3D hycom ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
 echo timecheck RTOFS_GLO_HYCOM start post at `date`
-mpirun -n 360 $EXECrtofs/rtofs_ncoda_post 3D hycom ogridnl $ddtg relax > pout4
+mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda_post 3D hycom ogridnl $ddtg relax > pout4
 echo timecheck RTOFS_GLO_HYCOM finish post at `date`
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
@@ -194,13 +193,16 @@ mv fort.68 $log_dir/hycom_var.$ddtg.grd
 mv fort.69 $log_dir/hycom_var.$ddtg.via
 
 #   create data coverage graphics
-export OCN_OUTPUT_DIR=$DATA/restart
-export OCN_CLIM_DIR=$FIXrtofs/codaclim
-# NCODA map
-$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_map=",$err
-mv gmeta $log_dir/hycom_var.$ddtg.gmeta
+DoGraphics=NO
+if [ $DoGraphcs = YES ] ; then
+  export OCN_OUTPUT_DIR=$DATA/restart
+  export OCN_CLIM_DIR=$FIXrtofs/codaclim
+  # NCODA map
+  $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+  err=$?; export err ; err_chk
+  echo " error from rtofs_ncoda_map=",$err
+  mv gmeta $log_dir/hycom_var.$ddtg.gmeta
+fi
 
 #   combine and remove work files
 cat pout* > $log_dir/hycom_var.$ddtg.out
@@ -226,8 +228,7 @@ for d in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
 done
 
 chmod +x cmdfile.cpout
-echo mpirun cfp ./cmdfile.cpout > cpout.out
-mpirun cfp ./cmdfile.cpout >> cpout.out
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout
 err=$? ; export err ; err_chk
 date
 
@@ -238,7 +239,7 @@ echo timecheck RTOFS_GLO_HYCOM finish put at `date`
 
 #################################################
 msg="THE RTOFS_GLO_NCODA_HYCOM_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ################## END OF SCRIPT #######################
 

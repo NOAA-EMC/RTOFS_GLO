@@ -18,6 +18,7 @@ case $whattodo in
     echo
     echo Building rtofs_hycom.fd
     echo
+    cd ./rtofs_hycom.fd;./build_hycom.sh esmf ;cd ..
     cd ./rtofs_hycom.fd;./build_hycom.sh;cd ..
 
     echo

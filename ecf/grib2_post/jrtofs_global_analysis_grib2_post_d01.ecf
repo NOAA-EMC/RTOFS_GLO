@@ -1,37 +1,43 @@
-#BSUB -J %E%rtofs_global_analysis_grib2_post_d01
-#BSUB -o %COM%/output/%ENVIR%/today/rtofs_global_analysis_grib2_post_d01.o%J
-#BSUB -e %COM%/output/%ENVIR%/today/rtofs_global_analysis_grib2_post_d01.o%J
-#BSUB -L /bin/sh
-#BSUB -q %QUEUE%
-#BSUB -cwd /tmp
-#BSUB -W 01:10
-#BSUB -P %PROJ%-%PROJENVIR%
-#BSUB -n 11
-#BSUB -R "span[ptile=11]" -R "affinity[core]"
-#BSUB -x
+#PBS -N rtofs_global_analysis_grib2_post_d01
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=01:10:00
+#PBS -l select=1:ncpus=%NPROCS%
+#PBS -l debug=true
 
 %include <head.h>
 %include <envir-p3.h>
 
 # EXPORT list here
 set -x
+export model=rtofs_glo
 export cyc=%CYC%
-
-model=rtofs_glo
 %include <model_ver.h>
 
-module load impi/${impi_ver}
-module load NetCDF/${NetCDF_ver}
-module load grib_util/${grib_util_ver}
-module load CFP/${CFP_ver}
-module load lsf/${lsf_ver}
+source ${HOMErtofs_glo}/versions/run.ver
 
-module load grib_util/${grib_util_ver}
+cd $PBS_O_WORKDIR
 
+module purge
+module load envvar/${envvar_ver}
+module load PrgEnv-intel/${PrgEnv_intel_ver}
+module load intel/${intel_ver}
+module load craype/${craype_ver}
+module load cray-pals/${cray_pals_ver}
+module load prod_envir/${prod_envir_ver}
+module load prod_util/${prod_util_ver}
+module load cfp/${cfp_ver}
+module load hdf5/${hdf5_ver}
+module load netcdf/${netcdf4_ver}
+module load wgrib2/${wgrib2_ver}
+module load libjpeg/${libjpeg_ver}
+module load grib_util/${grib_util_ver}
 module load cdo/${cdo_ver}
-module load gempak/${gempak_ver}
-
 module list
+
+export NPROCS=11
 
 $HOMErtofs_glo/jobs/JRTOFS_GLO_ANALYSIS_GRIB2_POST
 

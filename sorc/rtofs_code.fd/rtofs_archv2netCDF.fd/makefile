@@ -27,9 +27,9 @@
 # LDFLAGS:    Loader flags.
 # EXTRALIBS:  Extra local libraries (if any).
 #
-FC            = ifort
-FCFFLAGS      = -fixed -assume byterecl -convert big_endian $(NETCDF_FFLAGS)
-CC            = icc
+FC            = ftn
+FCFFLAGS      = -fixed -assume byterecl -convert big_endian -I$(NETCDF_INCLUDES)
+CC            = cc
 CCFLAGS       =
 CPP           = /usr/bin/cpp 
 CPPFLAGS      = -P -traditional-cpp -DREAL4
@@ -37,7 +37,7 @@ LD            = $(FC)
 LDFLAGS       = 
 BINDIR= ../../../exec
 ##LIBRARY       = -L/nwprod/lib
-EXTRALIBS     = ${W3NCO_LIB4} ${BACIO_LIB4} $(NETCDF_LDFLAGS)
+EXTRALIBS     = ${W3NCO_LIB4} ${BACIO_LIB4} -L$(NETCDF_LIBRARIES) -lnetcdff
 
 #
 # --- generic make definitions
@@ -123,8 +123,8 @@ ARCHV_SRC = 	hycomarchv.f micomarchv.f \
                 conv_archv.f trim_archv.f mrgl_archv.f cooperhaines_archv.f ncoda_archv.f ncoda_archv_vel.f remap_archv.f remapi_archv.f \
                 archv2data2d.f archv2data2t.f archv2data3z.f archv2datasf.f archv2datasfl.f archv2restart.f putdat.f
 
-LIBN     = ${LIBRARY} ${NETCDF_LDFLAGS_F} ${EXTRALIBS}
-INCLUDE  = ${NETCDF}/include
+LIBN     = ${LIBRARY} -L${NETCDF_LIBRARIES} -lnetcdff ${EXTRALIBS}
+INCLUDE  = ${NETCDF_INCLUDES}
 LN       =/bin/ln
 
 #

@@ -73,7 +73,7 @@ do
   sed -f change_archv archv.in > archv2ncdf3z_$fnam.in
 
 done
-export NPROCS=4
+export NPROCS=${NPROCS:-4}
   if [ "$NPROCS" -gt '1' ]
   then
     cmdtype='poe'
@@ -92,7 +92,8 @@ then
     echo sh ./run_script.sh vvl >> scp.sh
     chmod +x scp.sh
     #mpirun.lsf cfp scp.sh > mpirun_daily.out
-    mpirun cfp scp.sh > mpirun_daily.out
+    #mpirun cfp scp.sh > mpirun_daily.out
+    mpiexec -np $NPROCS --cpu-bind verbose,core cfp scp.sh
     export err=$?; err_chk
 
 else

@@ -14,13 +14,17 @@ OBJS=   nc2grib.o
 # LIBS      List of libraries
 # CMD       Name of the executable
 #
-FC            =   ifort
+FC            =   ftn
 LDFLAGS = 	 -O  -convert big_endian
 BINDIR= ../../../exec
 #INC = /nwprod/lib/incmod/g2_4
 #LIBS = -L/nwprod/lib -lg2_v1.4.0_4 -lw3nco_v2.0.3_4 -lbacio_v2.0.1_4 -ljasper -lpng -lz
 INC = ${G2_INC4}
-LIBS = ${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
+LIBS = ${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} \
+	-L${JASPER_LIB} -ljasper \
+	-L${LIBPNG_LIB} -lpng \
+	-L${ZLIB_LIBRARIES} -lz
+
 CMD =      rtofs_nc2grb2
 #DEBUG =    
 DEBUG =     

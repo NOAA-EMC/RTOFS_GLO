@@ -68,10 +68,11 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export GETGES_COM=${GETGES_COM:-$(dirname $(compath.py gfs))}
+export GETGES_COM=${GETGES_COM:-$(compath.py gfs/${gfs_ver})}
 export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMROOT=${COMROOT:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
+export COMIN=${COMIN:-${COMROOT}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COMROOT}/${RUN}.${PDY}}
 export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT
@@ -119,10 +120,10 @@ export fcstdays
 export stepnum
 
 #################################################################
-#  Send a message to the jlogfile indication the start of the job
+#  Send a message indicating the start of the job
 #################################################################
 msh="HAS BEGUN on `hostname`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ####################
 # execute the script
@@ -135,7 +136,7 @@ cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}_pre.`basename $pgmout`
 
 msg="JOB $job HAS COMPLETED NORMALLY."
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 cd $DATAROOT
 if [ "$KEEPDATA" != YES ]; then

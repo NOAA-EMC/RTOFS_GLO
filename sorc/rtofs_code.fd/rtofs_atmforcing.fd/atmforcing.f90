@@ -25,9 +25,9 @@ PROGRAM atmforcing
   !                (READ IN mod_geom.f90)
   !     UNIT 61  - FILE regional.mask.a, HYCOM mask
   !                (READ IN mod_geom.f90)
-  !     UNIT 81  - GFS GRIBBED FLUXES FILES WITH THE NAMES FROM THE LIST 
+  !     UNIT 41  - GFS GRIBBED FLUXES FILES WITH THE NAMES FROM THE LIST 
   !                SPECIFIED IN listflx.dat.
-  !     UNIT 82  - THE SAME !     
+  !     UNIT 42  - THE SAME !     
   !
   !   OUTPUT FILES:  
   !     FTxxF001 - UNITS 51 THRU 79
@@ -316,10 +316,10 @@ character (len=255) :: fort11, fort12, fort33
      PRINT *, "Inside Time Loop ",m
      !
      !   Get GFS grid parameters (before  20021029.t12Z: 512x256, after: 768x384)
-!     CALL getgds(81,TRIM(atmnames(m)),gds)
+!     CALL getgds(41,TRIM(atmnames(m)),gds)
      
      jdiscno=0
-     call rdgrib(81,TRIM(atmnames(m)),xgfld,kpds,jpdtno,jdiscno,0,xpts,ypts)
+     call rdgrib(41,TRIM(atmnames(m)),xgfld,kpds,jpdtno,jdiscno,0,xpts,ypts)
      nxatm=xpts ; nyatm=ypts
      print *, "1st rdgrib ",nxatm,"  ypts  ",nyatm
      nxatm2=nxatm/2 ; nyatm2=nyatm/2
@@ -404,7 +404,7 @@ character (len=255) :: fort11, fort12, fort33
         !     Establish GFS mask (land=0,sea=1). 
         !
         PRINT *,'--- Changing GFS mask'; CALL flush(lp)
-        CALL mask_atm(82,TRIM(atmnames(1)),kpds567(:,natm),mskfrac,nextrap_max,msk_in &
+        CALL mask_atm(42,TRIM(atmnames(1)),kpds567(:,natm),mskfrac,nextrap_max,msk_in &
              ,imsk_hycom,mskatm_tmp,nextrap,mapflg,exhycom2d,eyhycom2d,global=global)
         IF(nextrap>=nextrap_max) THEN
            PRINT *,'WARNING: nextrap>=nextrap_max, nextrap=',nextrap,' nextrap_max=',nextrap_max
@@ -434,7 +434,7 @@ character (len=255) :: fort11, fort12, fort33
 !       write(*,*)'"BEFORE 2nd rdgrib: kpds=',kpds
 !       write(*,*)'"BEFORE 2nd rdgrib: jpdtno,jdiscno=',jpdtno,jdiscno
 !       write(*,*)'"BEFORE 2nd rdgrib: xpts,ypts=',xpts,ypts
-       CALL rdgrib(82+m,TRIM(atmnames(m)),xgfld,kpds,jpdtno,jdiscno,1,xpts,ypts)  
+       CALL rdgrib(42+m,TRIM(atmnames(m)),xgfld,kpds,jpdtno,jdiscno,1,xpts,ypts)  
 !       write(*,*)" After 2nd rdgrib: kpds ",kpds,jpdtno,jdiscno
         atmflx=reshape(source=xgfld,shape=SHAPE(atmflx))
         IF (mapflg==mapflg_tripol) THEN

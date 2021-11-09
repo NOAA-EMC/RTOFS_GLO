@@ -42,7 +42,7 @@ OBJS=	${SRCS:.f90=.o}
 # CMD		Name of the executable
 # PROFLIB	Library needed for profiling
 # 
-CF =		ifort
+CF =		ftn
 
 INC   = 
 LIBS  = ${W3NCO_LIB4} ${BACIO_LIB4}

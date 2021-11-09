@@ -59,7 +59,8 @@ chmod +x cmdfile
 
 chmod +x cmdfile.for.cfp
 echo mpirun cfp ./cmdfile.for.cfp > create.regions.out
-mpirun cfp ./cmdfile.for.cfp > create.regions.out
+#mpirun cfp ./cmdfile.for.cfp > create.regions.out
+mpiexec -np 11 --cpu-bind verbose,core cfp ./cmdfile.for.cfp
 err=$? ; export err ; err_chk
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

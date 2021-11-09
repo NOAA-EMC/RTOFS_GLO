@@ -9,7 +9,7 @@ MODDIR=../../incmod/rtofs_hycomiot_mods_4
 
 #--------------------------------------
 # The following was used for XLF on AIX
-FC=ifort
+FC=ftn
 CPPFLAGS  = DIA32 -DREAL4 -DSERIAL_IO -DTIMER -DARCTIC
 INC1   = ../../incmod/rtofs_serial_mods_4 
 INC	= ${G2_INC4}

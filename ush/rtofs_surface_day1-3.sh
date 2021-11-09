@@ -36,7 +36,7 @@ ${cdo_r} mergetime rtofs_glo_2ds_f024_1hrly_sst.nc rtofs_glo_2ds_f027_1hrly_sst.
 ${cdo_r} mergetime rtofs_glo_2ds_f048_1hrly_sst.nc rtofs_glo_2ds_f051_1hrly_sst.nc rtofs_glo_2ds_f054_1hrly_sst.nc rtofs_glo_2ds_f057_1hrly_sst.nc rtofs_glo_2ds_f060_1hrly_sst.nc rtofs_glo_2ds_f063_1hrly_sst.nc rtofs_glo_2ds_f066_1hrly_sst.nc rtofs_glo_2ds_f069_1hrly_sst.nc rtofs_glo_2ds_f072_1hrly_sst.nc rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_day3.nc 
 
 
-gtar -cvf grtofs_sst_${yyyymmdd}.tar rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_day1.nc rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_day2.nc rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_day3.nc
+tar -cvf grtofs_sst_${yyyymmdd}.tar rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_day1.nc rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_day2.nc rtofs_glo_2ds_1hrly_sst_${yyyymmdd}_day3.nc
 
 gzip grtofs_sst_${yyyymmdd}.tar
 
@@ -60,6 +60,6 @@ ${cdo_r} merge rtofs_glo_2ds_1hrly_u_velocity_${yyyymmdd}_day2.nc rtofs_glo_2ds_
 
 ${cdo_r} merge rtofs_glo_2ds_1hrly_u_velocity_${yyyymmdd}_day3.nc rtofs_glo_2ds_1hrly_v_velocity_${yyyymmdd}_day3.nc rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day3.nc  
 
-gtar -cvf grtofs_uv_${yyyymmdd}.tar rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day1.nc rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day2.nc rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day3.nc
+tar -cvf grtofs_uv_${yyyymmdd}.tar rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day1.nc rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day2.nc rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day3.nc
 gzip grtofs_uv_${yyyymmdd}.tar 
 

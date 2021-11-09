@@ -22,7 +22,7 @@ export PS4='$SECONDS + '
 cd $DATA
 
 msg="RTOFS_GLO_INCUP JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 # --------------------------------------------------------------------------- #
 
@@ -132,7 +132,8 @@ cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.patch.input        ./patch.input
 touch core
 
 date
-mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
+#mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
+mpiexec -np $NPROCS --cpu-bind core $EXECrtofs/rtofs_hycom >> $pgmout 2>errfile
 err=$?; export err ; err_chk
 echo " error from rtofs_hycom=",$err
 

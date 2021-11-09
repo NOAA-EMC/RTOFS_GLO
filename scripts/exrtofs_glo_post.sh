@@ -45,7 +45,7 @@ cd $DATA
 ###
 
 msg="RTOFS_GLO_POST JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 procstatus=0
 
@@ -217,7 +217,7 @@ do
             $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
           else
             msg="File $COMOUT/$cfile not posted to db_net."
-            postmsg "$jlogfile" "$msg"
+            postmsg "$msg"
           fi
         done
       fi
@@ -240,7 +240,8 @@ do
       done
       chmod +x cmdfile
       #mpirun.lsf cfp cmdfile > mpirun_6hrly.out
-      mpirun cfp cmdfile > mpirun_6hrly.out
+      #mpirun cfp cmdfile > mpirun_6hrly.out
+      mpiexec -np $NPROCS --cpu-bind verbose,core cfp cmdfile
       export err=$?; err_chk
 ## Copy all the regions to com
       for reg in hvr_US_east hvr_US_west hvr_alaska
@@ -254,7 +255,7 @@ do
             $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
           else
             msg="File $COMOUT/$cfile not posted to db_net."
-            postmsg "$jlogfile" "$msg"
+            postmsg "$msg"
           fi
         fi
     done # regional loop
@@ -282,11 +283,11 @@ then
 
   echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
   msg='THE RTOFS_GLO_POST JOB HAS ENDED NORMALLY.'
-  postmsg "$jlogfile" "$msg"
+  postmsg "$msg"
 fi
 
 #################################################
 msg='THE RTOFS_GLO_POST JOB HAS ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ################## END OF SCRIPT #######################

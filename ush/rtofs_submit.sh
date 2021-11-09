@@ -27,7 +27,7 @@ else
 fi 
 
 msg="RTOFS_GLO_FORECAST_PRE JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 #
 # 1. Prepare for the model run
@@ -40,9 +40,7 @@ export pgm="$EXECrtofs/rtofs_hycom"
 #dbzg
 #. ./prep_step
 #startmsg
-  mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
-  # mpirun.lsf $EXECrtofs/${RUN}_forecast -procs $NPROCS >> $pgmout 2>errfile
-  # mpirun -ppn 16 $EXECrtofs/${RUN}_forecast  >> $pgmout 2>errfile
+  mpiexec -n $NPROCS -ppn 120 --cpu-bind core $EXECrtofs/rtofs_hycom >> $pgmout 2>errfile
   err=$?; export err ; err_chk
   echo " error from rtofs_hycom=",$err
 

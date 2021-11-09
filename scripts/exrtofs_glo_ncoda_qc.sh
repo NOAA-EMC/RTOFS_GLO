@@ -36,7 +36,7 @@ export PS4='$SECONDS + '
 cd $DATA
 
 msg="RTOFS_GLO_NCODA_QC JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 # --------------------------------------------------------------------------- #
 
 # 1.a Populate DATA/ocnqc with QC files from COMINm1/ncoda/ocnqc
@@ -60,8 +60,7 @@ for dtyp in amsr goes himawari ice metop profile sfc ssh sss velocity viirs; do
 done
 
 chmod +x cmdfile.cpin
-echo mpirun cfp ./cmdfile.cpin > cpin.out
-mpirun cfp ./cmdfile.cpin >> cpin.out
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin > cpin.out
 err=$? ; export err ; err_chk
 date
 
@@ -102,7 +101,8 @@ chmod +x runsurf.sh
 # 3. Put all scripts into command file for cfp
 
 date
-echo "$USHrtofs/rtofs_ncoda_ssh_qc.sh > ssh.qc.out 2>&1" >> cmdfile.qc
+rm -f cmdfile.qc
+echo "$USHrtofs/rtofs_ncoda_ssh_qc.sh > ssh.qc.out 2>&1" > cmdfile.qc
 echo "./runsurf.sh > surf.qc.out 2>&1" >> cmdfile.qc
 echo "./runiceqc.sh > ice.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_npp_qc.sh > npp.qc.out 2>&1" >> cmdfile.qc
@@ -113,9 +113,7 @@ echo "$USHrtofs/rtofs_ncoda_goes_qc.sh > goes.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_sss_qc.sh > sss.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_amsr_qc.sh > amsr.qc.out 2>&1" >> cmdfile.qc
 
-chmod +x cmdfile.qc
-echo mpirun cfp ./cmdfile.qc > qc.out
-mpirun cfp ./cmdfile.qc >> qc.out
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.qc
 err=$? ; export err ; err_chk
 date
 echo timecheck RTOFS_GLO_NCODA_QC finish qc at `date`
@@ -146,12 +144,12 @@ done
 
 rm -f cmdfile.cpout
 for dtyp in amsr goes himawari ice metop profile sfc ssh sss velocity viirs; do
-  echo "$USHrtofs/rtofs_ncodaqc2com.sh $dtyp" >> cmdfile.cpout
+  echo "$USHrtofs/rtofs_ncodaqc2com.sh $dtyp > $dtyp.cpout.out" >> cmdfile.cpout
 done
 
 chmod +x cmdfile.cpout
 echo mpirun cfp ./cmdfile.cpout > cpout.out
-mpirun cfp ./cmdfile.cpout >> cpout.out
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout > cpout.out
 err=$? ; export err ; err_chk
 date
 echo timecheck RTOFS_GLO_NCODA_QC finish put at `date`
@@ -168,7 +166,7 @@ done
 
 #################################################
 msg="THE RTOFS_GLO_NCODA_QC JOB HAS ENDED NORMALLY on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ################## END OF SCRIPT #######################
 

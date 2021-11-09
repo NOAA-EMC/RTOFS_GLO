@@ -1,31 +1,39 @@
-#BSUB -J %E%rtofs_global_gzip_%CYC%
-#BSUB -o %COM%/output/%ENVIR%/today/rtofs_global_gzip_%CYC%.o%J
-#BSUB -e %COM%/output/%ENVIR%/today/rtofs_global_gzip_%CYC%.o%J
-#BSUB -L /bin/sh
-#BSUB -q %QUEUE%
-#BSUB -W 00:40
-#BSUB -cwd /tmp
-#BSUB -R "span[ptile=%PTILE%]"
-#BSUB -R affinity[core]
-#BSUB -n %NTASK%
-#BSUB -P %PROJ%-%PROJENVIR%
-#BSUB -x
+#PBS -N rtofs_global_gzip_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=00:40:00
+#PBS -l select=1:ncpus=%NPROCS%
+#PBS -l debug=true
 
 %include <head.h>
 %include <envir-p3.h>
 
 # EXPORT list here
 set -x
+export model=rtofs_glo
 export cyc=%CYC%
-
-model=rtofs_glo
 %include <model_ver.h>
 
-module load impi/${impi_ver}
-module load CFP/${CFP_ver}
-module load lsf/${lsf_ver}
+source ${HOMErtofs_glo}/versions/run.ver
 
+cd $PBS_O_WORKDIR
+
+module purge
+module load envvar/${envvar_ver}
+module load PrgEnv-intel/${PrgEnv_intel_ver}
+module load intel/${intel_ver}
+module load craype/${craype_ver}
+module load cray-pals/${cray_pals_ver}
+module load cray-mpich/${cray_mpich_ver}
+module load prod_envir/${prod_envir_ver}
+module load prod_util/${prod_util_ver}
+module load cfp/${cfp_ver}
 module list
+
+#number of procs
+export NPROCS=%NPROCS%
 
 $HOMErtofs_glo/jobs/JRTOFS_GLO_GZIP
 

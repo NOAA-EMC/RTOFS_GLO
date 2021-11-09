@@ -32,11 +32,16 @@
 # LDFLAGS:    Loader flags.
 # EXTRALIBS:  Extra local libraries (if any).
 #
-FC            =	mpiifort
+#FC            =	mpiifort
+FC            =	ftn
 #INCLUDES      = -I${ESMF_DIR}/mod/modO -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile
 #INCLUDES      = -I${ESMF_DIR}/mod/modO/Linux.intel.64.intelmpi.default -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile -I/usrx/local/prod/packages/ips/18.0.1/impi/18.0.1/hdf5/1.10.1/include  -I/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/include
-INCLUDES      = -I${ESMF_DIR}/mod/modO/Linux.intel.64.intelmpi.default -I${ESMF_DIR}/src/include -I${CICE_DIR}/esmf/compile -I/usrx/local/prod/packages/ips/18.0.1/impi/18.0.1/hdf5/1.10.1/include  -I/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/include
-FCFFLAGS      =	-traceback -xSSE4.2 -O3 -fp-model source -r8 -warn nogeneral $(INCLUDES)
+#INCLUDES      = -I${ESMF_DIR}/mod/modO/Linux.intel.64.intelmpi.default -I${ESMF_DIR}/src/include -I${CICE_DIR}/esmf/compile -I/usrx/local/prod/packages/ips/18.0.1/impi/18.0.1/hdf5/1.10.1/include  -I/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/include
+#INCLUDES      = -I${ESMF_DIR}/mod -I${ESMF_DIR}/include -I${CICE_DIR}/esmf/compile -I$(HDF5_INCLUDES) -I$(ZLIB_INC)
+INCLUDES       = -I${ESMF_DIR}/mod/modO/Linux.intel.64.intelmpi.default -I${ESMF_DIR}/src/include -I${CICE_DIR}/esmf/compile -I$(HDF5_INCLUDES) -I$(ZLIB_INC)
+#FCFFLAGS      =	-traceback -xSSE4.2 -O3 -fp-model source -r8 -warn nogeneral $(INCLUDES)
+#FCFFLAGS      =	-O2 -g -w -fpp -traceback -ip -fno-alias -fp-model strict -no-fma -ftz -convert big_endian -assume byterecl -assume buffered_io -real-size 32 -i4 $(INCLUDES)
+FCFFLAGS      =        -traceback -msse4.2 -O2 -fp-model source -r8 -warn nogeneral $(INCLUDES)
 CC            =	icc
 CCFLAGS       =	-traceback -xSSE4.2 -O 
 CPP           =	cpp -P
@@ -45,7 +50,12 @@ LD            =	$(FC)
 LDFLAGS       =	-V $(FCFFLAGS) -mkl
 #EXTRALIBS     = -L${ESMF_DIR}/lib/libO -L/u/home/wallcraf/pkgs/netcdf-4.0.1_nc3_ifort_ifort_icpc/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdf -lnetcdf_c++ -Bdynamic
 #EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L/usrx/local/prod/packages/ips/18.0.1/netcdf/3.6.3/lib -L/usrx/local/prod/packages/ips/18.0.1/hdf5/1.10.1/lib  -L/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lz -lnetcdf_c++  -Bdynamic
-EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L/usrx/local/prod/packages/ips/18.0.1/netcdf/3.6.3/lib -L/usrx/local/prod/packages/ips/18.0.1/hdf5/1.10.1/lib  -L/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdf -lhdf5_hl -lhdf5 -lz -lnetcdf_c++  -Bdynamic
+#EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L/usrx/local/prod/packages/ips/18.0.1/netcdf/3.6.3/lib -L/usrx/local/prod/packages/ips/18.0.1/hdf5/1.10.1/lib  -L/usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/lib -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -Bstatic -lnetcdf -lhdf5_hl -lhdf5 -lz -lnetcdf_c++  -Bdynamic
+#EXTRALIBS     = -L${ESMF_DIR}/lib -L$(NETCDF_LIB) -L$(HDF5_LIBRARIES)  -L$(ZLIB_LIBDIR) -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -lnetcdf -lhdf5_hl -lhdf5 -lz -lnetcdf_c++  -Bdynamic
+#netcdf3
+EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L$(NETCDF_LIB) -L$(HDF5_LIBRARIES)  -L$(ZLIB_LIBDIR) -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -lnetcdf -lhdf5_hl -lhdf5 -lz -lnetcdf_c++ -Bdynamic
+#netcdf4
+#4 EXTRALIBS     = -L${ESMF_DIR}/lib/libO/Linux.intel.64.intelmpi.default -L$(NETCDF_LIBRARIES) -L$(HDF5_LIBRARIES)  -L$(ZLIB_LIBDIR) -Bstatic -lesmf -Bdynamic -ldl -ldl -ldl -ldl -lpthread -lpthread -lpthread -lpthread -lrt -limf -lsvml -lm -lipgo -ldecimal -lcilkrts -lstdc++ -lgcc -lgcc_s -lirc -lpthread -lgcc -lgcc_s -lirc_s -ldl -lrt -ldl -lnetcdf -lhdf5_hl -lhdf5 -lz -lnetcdf_c++4 -Bdynamic
 #
 # --- generic make definitions
 #

@@ -39,7 +39,7 @@ OBJS=	${SRCS:.f90=.o}
 # CMD		Name of the executable
 # PROFLIB	Library needed for profiling
 # 
-CF =		ifort
+CF =		ftn
 
 RTOFS_LIB_INC=../../../libs/incmod
 RTOFS_LIB=../../../libs
@@ -51,8 +51,10 @@ INC2   = ${RTOFS_LIB_INC}/rtofs_hycomiot_mods_4
 #         -L${NW_LIB}/lib  -lg2 -lw3nco -lbacio -ljasper -lpng -lz
 INC3	= ${G2_INC4}
 LIBS  = -L${RTOFS_LIB} -lrtofs_serial_mods_4 -lrtofs_hycomiot_4 \
-         ${G2_LIB4}  ${BACIO_LIB4} ${W3NCO_LIB4} ${JASPER_LIB} \
-         ${PNG_LIB} ${Z_LIB}  
+	${G2_LIB4}  ${BACIO_LIB4} ${W3NCO_LIB4} \
+	-L${JASPER_LIB} -ljasper \
+	-L${LIBPNG_LIB} -lpng \
+	-L${ZLIB_LIBRARIES} -lz
 BINDIR= ../../../exec
 CMD   =		rtofs_atmforcing
 PROFLIB =	-lprof
@@ -61,8 +63,8 @@ PROFLIB =	-lprof
 # To compile with flowtracing turned on, use the second line
 # To compile giving profile additonal information, use the third line
 # WARNING:  SIMULTANEOUSLY PROFILING AND FLOWTRACING IS NOT RECOMMENDED 
-FFLAGS = -free -O3 -assume byterecl -convert big_endian
-LDFLAGS = -O3 
+FFLAGS = -free -O2 -assume byterecl -convert big_endian
+LDFLAGS = -O2
 
 # Lines from here on down should not need to be changed.  They are the
 # actual rules which make uses to build swathps.

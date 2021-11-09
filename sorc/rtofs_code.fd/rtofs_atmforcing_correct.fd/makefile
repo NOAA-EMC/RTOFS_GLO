@@ -5,8 +5,8 @@
 #
 AR=ar
 CPP=/usr/bin/cpp -P 
-FC=ifort
-LD=ifort
+FC=ftn
+LD=ftn
 ARFLAGS=-rv
 RTOFS_LIB_INC=../../../libs/incmod
 RTOFS_LIB=../../../libs
@@ -15,9 +15,9 @@ INC2   = ${RTOFS_LIB_INC}/rtofs_hycomiot_mods_4
 LIBS=-L${RTOFS_LIB} -lrtofs_serial_mods_4 -lrtofs_hycomiot_4
 CPPFLAGS=-DIA32 -DREAL4 -DARCTIC
 FFLAGS=-O -fixed  -assume byterecl -convert big_endian -I$(INC1) -I$(INC2) # -03
-F90FLAGS=-free -O -xHost -assume byterecl -convert big_endian -I$(INC1) -I$(INC2) # -03
+F90FLAGS=-free -O -assume byterecl -convert big_endian -I$(INC1) -I$(INC2) # -03
 FCFLAGS= -c -fixed -fp-model strict -assume byterecl -convert big_endian -I$(INC1) -I$(INC2)
-LDFLAGS=-O3 -xHost
+LDFLAGS=-O2
 #-AIX AR=ar
 #-AIX CPP=/usr/lib/cpp -P 
 #-AIX FC=ncepxlf95

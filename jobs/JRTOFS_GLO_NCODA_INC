@@ -61,13 +61,12 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export COMINm1=${COMINm1:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMROOT=${COMROOT:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
+export COMIN=${COMIN:-${COMROOT}/${RUN}.${PDY}}
+export COMINm1=${COMINm1:-${COMROOT}/${RUN}.${PDYm1}}
+export COMOUT=${COMOUT:-${COMROOT}/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT
-
 
 ###################
 # Define model grid
@@ -80,10 +79,10 @@ export inputgrid=navy_0.08
 . $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
 
 #################################################################
-#  Send a message to the jlogfile indication the start of the job
+#  Send a message indicating the start of the job
 #################################################################
 msh="HAS BEGUN on `hostname`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ####################
 # execute the script
@@ -96,7 +95,7 @@ cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.ncoda_inc.`basename $pgmout`
 
 msg="JOB $job HAS COMPLETED NORMALLY."
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 cd $DATAROOT
 

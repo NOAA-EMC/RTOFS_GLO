@@ -25,7 +25,7 @@ export PS4='$SECONDS + '
 cd $DATA
 
 msg="$job JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 yymmdd=${PDY:2}
 
@@ -51,7 +51,8 @@ for last in 24 48 72 ; do
 	echo "./gempak.sh $last $stepnum $instr $outstr $COMOUTgempak > $instr.$stepnum.log" >> mpirun.dat
     done
     chmod 775 mpirun.dat
-    mpirun cfp mpirun.dat >> mpirun.log
+    #mpirun cfp mpirun.dat >> mpirun.log
+    mpiexec -np $NPROCS --cpu-bind verbose,core cfp mpirun.dat >> mpirun.log
     export err=$?; err_chk
 done
 cat mpirun.log
@@ -145,5 +146,5 @@ fi
 
 #################################################
 msg='THE $job JOB HAS ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 ################## END OF SCRIPT #######################

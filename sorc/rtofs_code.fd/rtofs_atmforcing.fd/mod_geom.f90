@@ -870,7 +870,8 @@ CONTAINS
        ic = ic + 1
        WRITE(iu,*)'max of exatm ', MAXVAL(exatm),' <  max of lon target grid ',MAXVAL(qx)
     ENDIF
-    IF( MAXVAL(eyatm) < MAXVAL(qy) ) THEN
+    !precision
+    IF( MAXVAL(eyatm)+.000001 < MAXVAL(qy) ) THEN
        ic = ic + 1
        WRITE(iu,*)'max of eyatm ', MAXVAL(eyatm),' >  max of lat target grid ',MAXVAL(qy)
     ENDIF

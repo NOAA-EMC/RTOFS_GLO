@@ -34,7 +34,7 @@ cd $DATA
 ###
 
 msg="$job JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 filepre=${RUN}_${modID}.t00z
 
@@ -54,7 +54,8 @@ case $CYC in
 	    fi
 	done
 	chmod 775 $DATA/poescript
-	mpirun cfp $DATA/poescript
+#	mpirun cfp $DATA/poescript
+        mpiexec -np $NPROCS --cpu-bind verbose,core cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
 	for tgzfile in `echo ${COMOUT}/${filepre}.n00.archs.a.tgz;  echo ${COMOUT}/${filepre}.n-{01..24}.archs.a.tgz;  echo ${COMOUT}/${filepre}.n00.archv.a.tgz;  echo ${COMOUT}/${filepre}.n-{06..24..6}.archv.a.tgz;  echo ${COMOUT}/${filepre}.n00.restart_cice.tgz;  echo ${COMOUT}/${filepre}.n00.restart.a.tgz`  
@@ -93,7 +94,8 @@ case $CYC in
 	    fi
 	done
 	chmod 775 $DATA/poescript
-	mpirun cfp $DATA/poescript
+	#mpirun cfp $DATA/poescript
+        mpiexec -np $NPROCS --cpu-bind verbose,core cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
 	for tgzfile in `echo ${COMOUT}/${filepre}.f{01..96}.archs.a.tgz;  echo ${COMOUT}/${filepre}.f{06..96..6}.archv.a.tgz`
@@ -127,7 +129,8 @@ case $CYC in
 	    fi
 	done
 	chmod 775 $DATA/poescript
-	mpirun cfp $DATA/poescript
+	#mpirun cfp $DATA/poescript
+        mpiexec -np $NPROCS --cpu-bind verbose,core cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
 	for tgzfile in `echo ${COMOUT}/${filepre}.f{97..192}.archs.a.tgz;  echo ${COMOUT}/${filepre}.f{102..196..6}.archv.a.tgz`
@@ -155,5 +158,5 @@ esac
 
 #################################################
 msg='THE $job JOB HAS ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 ################## END OF SCRIPT #######################

@@ -36,10 +36,10 @@ RM            = \rm -f
 
 .F.o:
 	$(FC) $(CPPFLAGS) $(FCFFLAGS) -c $*.F
-FC            =	ifort
+FC            =	ftn
 FCFFLAGS      =	-g -O3 -fp-model source -convert big_endian
-FCFFLAGS      =	-traceback -xHost -g -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl
-CC            =	icc
+FCFFLAGS      =	-traceback -g -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl
+CC            =	cc
 CCFLAGS       =	-O
 CPP           =	cpp -P
 CPPFLAGS      =	-DIA32 -DREAL4
