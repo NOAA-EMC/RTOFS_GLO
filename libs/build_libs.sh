@@ -1,11 +1,5 @@
 #!/bin/sh 
 
-#module purge
-#odule use ../modulefiles
-#odule load build_rtofs_libs_wcoss2.module
-#odule list
-#xit
-
 set -x
 
 BASE=`pwd`
