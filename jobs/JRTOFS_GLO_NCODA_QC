@@ -66,6 +66,7 @@ export DCOMINAMSR=${DCOMINAMSR:-${DCOMROOT}/prod}
 export DCOMINSSH=${DCOMINSSH:-${DCOMROOT}/prod}
 export DCOMINSSS=${DCOMINSSS:-${DCOMROOT}/prod}
 export DCOMINSST=${DCOMINSST:-${DCOMROOT}/prod}
+export DCOMINHFR=${DCOMINHFR:-${DCOMROOT}/prod}
 
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}}
@@ -87,7 +88,7 @@ export inputgrid=navy_0.08
 #################################################################
 #  Send a message to the jlogfile indication the start of the job
 #################################################################
-msh="HAS BEGUN on `hostname`"
+msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
 ####################

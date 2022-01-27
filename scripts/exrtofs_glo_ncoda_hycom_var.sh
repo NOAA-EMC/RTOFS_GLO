@@ -40,15 +40,14 @@ then
   for hv in `ls $COMINm1/ncoda/hycom_var/restart/`; do
     echo "cp -p -f $COMINm1/ncoda/hycom_var/restart/$hv $DATA/restart" >> cmdfile.cpin
   done
+  chmod +x cmdfile.cpin
+  echo mpirun cfp ./cmdfile.cpin > cpin.out
+  mpirun cfp ./cmdfile.cpin >> cpin.out
+  err=$? ; export err ; err_chk
+  date
 else
   echo "Cold starting hycom var!"
 fi
-
-chmod +x cmdfile.cpin
-echo mpirun cfp ./cmdfile.cpin > cpin.out
-mpirun cfp ./cmdfile.cpin >> cpin.out
-err=$? ; export err ; err_chk
-date
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
 
@@ -60,8 +59,12 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regio
 
 # BEGIN LINKING
 # build links needed for hycom_var ... some names are mismatched so this is klugey
-# when fixed change dsomrff below to COMIN
+# when fixed change dsomrff below to COMIN/..
+# when linking, dsomrff=$DATA/rtofs
 
+sameold=1
+if [ $sameold -eq 0 ]
+then
 mkdir -p $RUN
 ln -s $COMROOT/${NET}/${envir}/${RUN}.${PDYm2} $RUN/${RUN}.${PDYm2}
 ln -s $COMROOT/${NET}/${envir}/${RUN}.${PDYm3} $RUN/${RUN}.${PDYm3}
@@ -103,6 +106,7 @@ done
 cd $DATA
 
 #end LINKING
+fi #sameold
 
 # 2. build namelists
 
@@ -117,7 +121,7 @@ cat << eof1 > odsetnl
  &dsetnl
   dsoclim = '$FIXrtofs/codaclim'
   dsogdem = '$FIXrtofs/gdem'
-  dsomrff = '$DATA/rtofs'
+  dsomrff = '$COMIN/..'
   dsomfix = '$DATA'
   dsorff  = '$DATA/restart'
   dsoudat = '$DATA/ocnqc'
@@ -189,9 +193,11 @@ mv fort.39 $log_dir/hycom_var.$ddtg.fix
 #mv fort.40 $log_dir/hycom_var.$ddtg.sus
 mv fort.41 $log_dir/hycom_var.$ddtg.dup
 mv fort.42 $log_dir/hycom_var.$ddtg.ssh
+mv fort.52 $log_dir/hycom_var.$ddtg.sal
 mv fort.67 $log_dir/hycom_var.$ddtg.obs
 mv fort.68 $log_dir/hycom_var.$ddtg.grd
 mv fort.69 $log_dir/hycom_var.$ddtg.via
+mv fort.88 $log_dir/hycom_var.$ddtg.dbg
 
 #   create data coverage graphics
 export OCN_OUTPUT_DIR=$DATA/restart

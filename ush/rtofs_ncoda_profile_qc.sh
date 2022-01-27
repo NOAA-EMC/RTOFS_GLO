@@ -103,6 +103,8 @@ mv fort.47 prof_qc.$cut_dtg.err
 mv fort.48 prof_qc.$cut_dtg.vgd
 mv fort.49 prof_qc.$cut_dtg.inc
 mv fort.51 prof_qc.$cut_dtg.dup
+mv fort.52 prof_qc.$cut_dtg.stb
+mv fort.53 prof_qc.$cut_dtg.arg
 #mv gmeta prof_qc.$cut_dtg.gmeta
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`

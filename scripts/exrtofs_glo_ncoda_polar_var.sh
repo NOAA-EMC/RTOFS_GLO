@@ -60,11 +60,14 @@ else
   echo "Cold starting north polar var!"
 fi
 
-chmod +x cmdfile.cpin
-echo mpirun cfp ./cmdfile.cpin > cpin.out
-mpirun cfp ./cmdfile.cpin >> cpin.out
-err=$? ; export err ; err_chk
-date
+if [ -s cmdfile.cpin ]
+then
+  chmod +x cmdfile.cpin
+  echo mpirun cfp ./cmdfile.cpin > cpin.out
+  mpirun cfp ./cmdfile.cpin >> cpin.out
+  err=$? ; export err ; err_chk
+  date
+fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
 
@@ -222,9 +225,9 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post",$err
 
 #   rename local files
-#mv fort.40 $DATA/logs/shem_var/nhem_var.$ddtg.sus
-mv fort.67 $DATA/logs/shem_var/nhem_var.$ddtg.obs
-mv fort.68 $DATA/logs/shem_var/nhem_var.$ddtg.grd
+#mv fort.40 $DATA/logs/shem_var/shem_var.$ddtg.sus
+mv fort.67 $DATA/logs/shem_var/shem_var.$ddtg.obs
+mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
 
 #   create graphics
 export OCEAN_OUTPUT_DIR=$DATA/shem_var/restart
