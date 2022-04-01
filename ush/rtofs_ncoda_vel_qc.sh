@@ -46,8 +46,6 @@ export BUFR_DATA_DIR=$DATA/dump
 echo "current date/time is " $( date)
 echo "data cut date time group is " $cut_dtg
 echo "previous date time group is " $prv_dtg
---------------------------------------------------------------------------------------
-#???? Do we know HFR path, or will work if undefined? 
 echo " "
 echo "NCODA HF Radar pre_QC"
 

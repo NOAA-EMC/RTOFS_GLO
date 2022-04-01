@@ -133,6 +133,7 @@ cat << eof2 > ogridnl
  &gridnl
   delx(1) = 8896.78809,
   dely(1) = 8895.59277,
+  kkm     = 41,
   kko     = 41,
   m       = 4500,
   n       = 3298,
