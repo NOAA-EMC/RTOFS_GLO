@@ -58,9 +58,7 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regio
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
 
 # BEGIN LINKING
-# build links needed for hycom_var ... some names are mismatched so this is klugey
-# when fixed change dsomrff below to COMIN/..
-# when linking, dsomrff=$DATA/rtofs
+# build links needed for hycom_var
 
 sameold=1
 if [ $sameold -eq 0 ]
