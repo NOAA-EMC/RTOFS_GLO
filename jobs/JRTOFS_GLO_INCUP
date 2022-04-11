@@ -93,7 +93,7 @@ export inputgrid=navy_0.08
 #################################################################
 #  Send a message to the jlogfile indication the start of the job
 #################################################################
-msh="HAS BEGUN on `hostname`"
+msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
 ####################
