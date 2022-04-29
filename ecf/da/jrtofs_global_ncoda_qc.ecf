@@ -3,30 +3,23 @@
 #PBS -S /bin/bash
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
-#PBS -l select=1:ncpus=10
+#PBS -l place=vscatter,select=1:ncpus=10:mem=75GB
 #PBS -l walltime=00:30:00
 #PBS -l debug=true
 
+export model=rtofs
+
 %include <head.h>
-%include <envir-p3.h>
+%include <envir-p1.h>
 
 # EXPORT list here
 set -x
-export model=rtofs_glo
 export cyc=%CYC%
-%include <model_ver.h>
 
-source ${HOMErtofs_glo}/versions/run.ver
-
-cd $PBS_O_WORKDIR
-
-module purge
-module load envvar/${envvar_ver}
 module load PrgEnv-intel/${PrgEnv_intel_ver}
 module load intel/${intel_ver}
 module load craype/${craype_ver}
-module load prod_envir/${prod_envir_ver}
-module load prod_util/${prod_util_ver}
+module load cray-pals/${pals_ver}
 module load cfp/${cfp_ver}
 module load bufr_dump/${bufr_dump_ver}
 module load hdf5/${hdf5_ver}
@@ -38,7 +31,7 @@ module list
 
 export NPROCS=10
 
-$HOMErtofs_glo/jobs/JRTOFS_GLO_NCODA_QC
+$HOMErtofs/jobs/JRTOFS_GLO_NCODA_QC
 
 %include <tail.h>
 %manual

@@ -1,0 +1,59 @@
+suite prod
+family primary
+
+family 18
+family gfs
+family v16.2
+family gdas
+family atmos
+family post
+
+task jgdas_atmos_post_f192
+endfamily
+endfamily
+endfamily
+endfamily
+endfamily
+endfamily 
+
+
+
+family 00
+family rtofs
+    edit CYC '00'
+    edit PROJ 'RTOFS'
+    edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/rtofs.%rtofs_ver%'
+    family v2.2
+      family da
+        task jrtofs_global_ncoda_qc
+          trigger :TIME >= 0100 and :TIME < 0400
+         task jrtofs_global_global_var
+          trigger jrtofs_global_ncoda_qc == complete
+        task jrtofs_global_polar_var
+          trigger jrtofs_global_ncoda_qc == complete
+        task jrtofs_global_hycom_var
+          trigger jrtofs_global_ncoda_qc == complete
+        task jrtofs_global_ncoda_inc
+          trigger jrtofs_global_hycom_var == complete
+        task jrtofs_global_incup
+          trigger jrtofs_global_ncoda_inc == complete
+      endfamily
+      task jrtofs_global_analysis_pre
+        trigger :TIME >= 0030 and :TIME < 0500 and /prod/primary/18/gfs/v16.2/gdas/atmos/post == complete
+       task jrtofs_global_analysis
+	trigger :TIME >= 0243 and :TIME < 0530 and da/jrtofs_global_incup == complete and jrtofs_global_analysis_pre == complete
+
+        family grib2_post
+        task jrtofs_global_analysis_grib2_post_d01
+          trigger ../jrtofs_global_analysis == complete
+      endfamily
+      task jrtofs_global_analysis_post
+        trigger jrtofs_global_analysis == complete
+      task jrtofs_global_gzip
+        edit NCPUS '12'
+       trigger :TIME >= 0330 and :TIME < 0600 and jrtofs_global_analysis_post == complete
+    endfamily
+  endfamily
+endfamily
+endfamily 
+endsuite

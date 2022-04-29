@@ -44,7 +44,7 @@ export cycle=t${cyc}z
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
+#export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
@@ -77,10 +77,14 @@ export inputgrid=navy_0.08
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export COMROOT=${COMROOT:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
-export COMIN=${COMIN:-${COMROOT}/${RUN}.${PDY}}
-export COMOUT=${COMOUT:-${COMROOT}/${RUN}.${PDY}}
-export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
+#export COMROOT=${COMROOT:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
+#export COMIN=${COMIN:-${COMROOT}/${RUN}.${PDY}}
+#export COMOUT=${COMOUT:-${COMROOT}/${RUN}.${PDY}}
+#export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
+export GETGES_NWG=${GETGES_NWG:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/nwges}
+export GESIN=${GESIN:-${GETGES_NWG}/${RUN}.${PDY}}
+export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT
 

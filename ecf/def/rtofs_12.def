@@ -1,0 +1,37 @@
+suite prod
+family primary
+family 12
+family rtofs
+    edit CYC '12'
+    edit PROJ 'RTOFS'
+    edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/rtofs.%rtofs_ver%'
+    family v2.2
+      task jrtofs_global_forecast_step2_pre
+        time 11:03
+      task jrtofs_global_forecast_step2
+        trigger jrtofs_global_forecast_step2_pre == complete
+        time 13:25
+      family grib2_post
+        task jrtofs_global_forecast_grib2_post_d04
+          trigger ../jrtofs_global_forecast_step2 == complete
+      endfamily
+      family post
+        task jrtofs_global_forecast_post_d05
+          trigger ../jrtofs_global_forecast_step2 == complete
+        task jrtofs_global_forecast_post_d06
+          trigger ../jrtofs_global_forecast_step2 == complete
+        task jrtofs_global_forecast_post_d07
+          trigger ../jrtofs_global_forecast_step2 == complete
+        task jrtofs_global_forecast_post_d08
+          trigger ../jrtofs_global_forecast_step2 == complete
+        task jrtofs_global_forecast_post2
+          trigger ../jrtofs_global_forecast_step2 == complete
+      endfamily
+      task jrtofs_global_gzip
+        trigger post == complete
+        edit NCPUS '22'
+    endfamily
+  endfamily
+endfamily
+endfamily
+endsuite

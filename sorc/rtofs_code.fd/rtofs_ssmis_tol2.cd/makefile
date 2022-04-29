@@ -2,8 +2,10 @@
 SHELL=/bin/sh
 
 ###
-MMAB_INC=/lfs/h2/emc/couple/noscrub/Robert.Grumbine/mmablib/include
-MMAB_LIBF4=/lfs/h2/emc/couple/noscrub/Robert.Grumbine/mmablib/libombf_4.a
+#MMAB_INC=/lfs/h2/emc/couple/noscrub/Robert.Grumbine/mmablib/include
+#MMAB_LIBF4=/lfs/h2/emc/couple/noscrub/Robert.Grumbine/mmablib/libombf_4.a
+MMAB_INC=../../mmablib/include
+MMAB_LIBF4=../../mmablib/libombf_4.a
 ###
         
 # include ../makeall.mk

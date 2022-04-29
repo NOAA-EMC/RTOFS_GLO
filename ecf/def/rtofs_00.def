@@ -1,0 +1,42 @@
+suite prod
+family primary
+family 00
+family rtofs
+    edit CYC '00'
+    edit PROJ 'RTOFS'
+    edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/rtofs.%rtofs_ver%'
+    family v2.2
+      family da
+        task jrtofs_global_ncoda_qc
+          time 01:00
+        task jrtofs_global_global_var
+          trigger jrtofs_global_ncoda_qc == complete
+        task jrtofs_global_polar_var
+          trigger jrtofs_global_ncoda_qc == complete
+        task jrtofs_global_hycom_var
+          trigger jrtofs_global_ncoda_qc == complete
+        task jrtofs_global_ncoda_inc
+          trigger jrtofs_global_hycom_var == complete
+        task jrtofs_global_incup
+          trigger jrtofs_global_ncoda_inc == complete
+      endfamily
+      task jrtofs_global_analysis_pre
+        time 01:05
+      task jrtofs_global_analysis
+        trigger jrtofs_global_analysis_pre == complete and da/jrtofs_global_incup == complete
+        time 02:43
+      family grib2_post
+        task jrtofs_global_analysis_grib2_post_d01
+          trigger ../jrtofs_global_analysis == complete
+      endfamily
+      task jrtofs_global_analysis_post
+        trigger jrtofs_global_analysis == complete
+      task jrtofs_global_gzip
+        trigger jrtofs_global_analysis_post == complete
+        edit NCPUS '12'
+        time 03:30
+    endfamily
+  endfamily
+endfamily
+endfamily 
+endsuite

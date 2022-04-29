@@ -1,0 +1,68 @@
+suite prod
+family primary
+family 06
+family rtofs
+family v2.2
+task jrtofs_global_forecast_step1
+endfamily
+endfamily
+
+family gfs
+family v16.2
+family gfs
+family atmos
+family post
+task jgfs_atmos_post_f192
+endfamily
+endfamily
+endfamily
+endfamily
+endfamily
+endfamily
+
+
+
+
+
+
+
+
+
+
+
+
+family 12
+family rtofs
+    edit CYC '12'
+    edit PROJ 'RTOFS'
+    edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/rtofs.%rtofs_ver%'
+    family v2.2
+      task jrtofs_global_forecast_step2_pre
+     trigger /prod/primary/06/gfs/v16.2/gfs/atmos/post == complete and /prod/primary/06/rtofs/v2.2/jrtofs_global_forecast_step1 == complete
+
+      task jrtofs_global_forecast_step2
+	 trigger :TIME >= 1325 and :TIME < 1625 and jrtofs_global_forecast_step2_pre == complete
+      family grib2_post
+        task jrtofs_global_forecast_grib2_post_d04
+          trigger ../jrtofs_global_forecast_step2 == complete
+      endfamily
+      family post
+        task jrtofs_global_forecast_post_d05
+          trigger ../jrtofs_global_forecast_step2 == complete
+        task jrtofs_global_forecast_post_d06
+          trigger ../jrtofs_global_forecast_step2 == complete
+        task jrtofs_global_forecast_post_d07
+          trigger ../jrtofs_global_forecast_step2 == complete
+        task jrtofs_global_forecast_post_d08
+          trigger ../jrtofs_global_forecast_step2 == complete
+        task jrtofs_global_forecast_post2
+          trigger ../jrtofs_global_forecast_step2 == complete
+      endfamily
+      task jrtofs_global_gzip
+        trigger post == complete
+        edit NCPUS '22'
+    endfamily
+  endfamily
+endfamily
+endfamily
+endsuite

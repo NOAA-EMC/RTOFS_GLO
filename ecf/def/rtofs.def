@@ -1,0 +1,123 @@
+suite prod
+  family primary
+    family 00
+      family rtofs
+        defstatus complete
+        edit CYC '00'
+        edit PROJ 'RTOFS'
+        edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/rtofs.%rtofs_ver%'
+        family v2.2
+          family da
+            task jrtofs_global_ncoda_qc
+              time 01:00
+            task jrtofs_global_global_var
+              trigger jrtofs_global_ncoda_qc == complete
+            task jrtofs_global_polar_var
+              trigger jrtofs_global_ncoda_qc == complete
+            task jrtofs_global_hycom_var
+              trigger jrtofs_global_ncoda_qc == complete
+            task jrtofs_global_ncoda_inc
+              trigger jrtofs_global_hycom_var == complete
+            task jrtofs_global_incup
+              trigger jrtofs_global_ncoda_inc == complete
+          endfamily
+          task jrtofs_global_analysis_pre
+#            trigger /prod18/gdas/atmos/post == complete
+#            time 00:30
+             time 01:05 # temp
+          task jrtofs_global_analysis
+            trigger jrtofs_global_analysis_pre == complete and da/jrtofs_global_incup == complete
+            time 02:43
+          family grib2_post
+            task jrtofs_global_analysis_grib2_post_d01
+              trigger ../jrtofs_global_analysis == complete
+          endfamily
+          task jrtofs_global_analysis_post
+            trigger jrtofs_global_analysis == complete
+          task jrtofs_global_gzip
+            trigger jrtofs_global_analysis_post == complete
+            edit NCPUS '12'
+            time 03:30
+        endfamily #v2.2
+      endfamily #rtofs
+    endfamily # 00
+    family 06
+      family rtofs
+        defstatus complete
+        edit CYC '06'
+        edit PROJ 'RTOFS'
+        edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/rtofs.%rtofs_ver%'
+        family v2.2
+          task jrtofs_global_forecast_step1_pre
+#            trigger /prod00/rtofs/jrtofs_global_analysis == complete and /prod00/gfs/atmos/post == complete
+            time 05:22 # temp
+          task jrtofs_global_forecast_step1
+            trigger jrtofs_global_forecast_step1_pre == complete
+            time 07:25
+          family grib2_post
+            task jrtofs_global_forecast_grib2_post_d01
+              trigger ../jrtofs_global_forecast_step1 == complete
+            task jrtofs_global_forecast_grib2_post_d02
+              trigger ../jrtofs_global_forecast_step1 == complete
+            task jrtofs_global_forecast_grib2_post_d03
+              trigger ../jrtofs_global_forecast_step1 == complete
+          endfamily
+          family post
+            task jrtofs_global_forecast_post_d01
+              trigger ../jrtofs_global_forecast_step1 == complete
+            task jrtofs_global_forecast_post_d02
+              trigger ../jrtofs_global_forecast_step1 == complete
+            task jrtofs_global_forecast_post_d03
+              trigger ../jrtofs_global_forecast_step1 == complete
+            task jrtofs_global_forecast_post_d04
+              trigger ../jrtofs_global_forecast_step1 == complete
+          endfamily
+          task jrtofs_global_gempak_alaska
+            trigger grib2_post == complete
+          task jrtofs_global_gempak_bering
+            trigger grib2_post == complete
+          task jrtofs_global_gempak_watl
+            trigger grib2_post == complete
+          task jrtofs_global_gzip
+            trigger post == complete
+            edit NCPUS '22'
+        endfamily # v2.2
+      endfamily # rtofs
+    endfamily # 06
+    family 12
+      family rtofs
+        defstatus complete
+        edit CYC '12'
+        edit PROJ 'RTOFS'
+        edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/rtofs.%rtofs_ver%'
+        family v2.2
+          task jrtofs_global_forecast_step2_pre
+#            trigger /prod06/rtofs/jrtofs_global_forecast_step1 == complete and /prod06/gfs/atmos/post/jgfs_atmos_post_f189 == complete
+             time 11:01      # temp
+          task jrtofs_global_forecast_step2
+            trigger jrtofs_global_forecast_step2_pre == complete
+            time 13:25
+          family grib2_post
+            task jrtofs_global_forecast_grib2_post_d04
+              trigger ../jrtofs_global_forecast_step2 == complete
+          endfamily
+          family post
+            task jrtofs_global_forecast_post_d05
+              trigger ../jrtofs_global_forecast_step2 == complete
+            task jrtofs_global_forecast_post_d06
+              trigger ../jrtofs_global_forecast_step2 == complete
+            task jrtofs_global_forecast_post_d07
+              trigger ../jrtofs_global_forecast_step2 == complete
+            task jrtofs_global_forecast_post_d08
+              trigger ../jrtofs_global_forecast_step2 == complete
+            task jrtofs_global_forecast_post2
+              trigger ../jrtofs_global_forecast_step2 == complete
+          endfamily
+          task jrtofs_global_gzip
+            trigger post == complete
+            edit NCPUS '22'
+        endfamily #v2.2
+      endfamily  #rtofs
+    endfamily #12
+  endfamily # primary
+endsuite

@@ -18,7 +18,7 @@ export NET=rtofs
 export RUN=rtofs
 export modID=glo
 export RUN_MODE=gzip
-export HOMErtofs=${HOMErtofs:-${NWROOT:?}/rtofs_glo.${rtofs_glo_ver}}
+#export HOMErtofs=${HOMErtofs:-${NWROOT:?}/rtofs_glo.${rtofs_glo_ver}}
 
 
 ####################################
@@ -45,9 +45,8 @@ setpdy.sh
 #################################
 # Define Input/Output directories
 #################################
-export COMROOT=${COMROOT:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
-export COMIN=${COMIN:-${COMROOT}/${RUN}.${PDY}}
-export COMOUT=${COMOUT:-${COMROOT}/${RUN}.${PDY}}
+export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
 
 ####################

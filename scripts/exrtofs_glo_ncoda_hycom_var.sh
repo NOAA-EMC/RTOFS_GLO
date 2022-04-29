@@ -62,14 +62,14 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regio
 # when fixed change dsomrff below to COMIN
 
 mkdir -p $RUN
-ln -s $COMROOT/${RUN}.${PDYm2} $RUN/${RUN}.${PDYm2}
-ln -s $COMROOT/${RUN}.${PDYm3} $RUN/${RUN}.${PDYm3}
-ln -s $COMROOT/${RUN}.${PDYm4} $RUN/${RUN}.${PDYm4}
-ln -s $COMROOT/${RUN}.${PDYm5} $RUN/${RUN}.${PDYm5}
-ln -s $COMROOT/${RUN}.${PDYm6} $RUN/${RUN}.${PDYm6}
-ln -s $COMROOT/${RUN}.${PDYm7} $RUN/${RUN}.${PDYm7}
+ln -s $COMROOTrtofs/${RUN}.${PDYm2} $RUN/${RUN}.${PDYm2}
+ln -s $COMROOTrtofs/${RUN}.${PDYm3} $RUN/${RUN}.${PDYm3}
+ln -s $COMROOTrtofs/${RUN}.${PDYm4} $RUN/${RUN}.${PDYm4}
+ln -s $COMROOTrtofs/${RUN}.${PDYm5} $RUN/${RUN}.${PDYm5}
+ln -s $COMROOTrtofs/${RUN}.${PDYm6} $RUN/${RUN}.${PDYm6}
+ln -s $COMROOTrtofs/${RUN}.${PDYm7} $RUN/${RUN}.${PDYm7}
 mkdir -p $RUN/$RUN.$PDYm1
-ln -s $COMROOT/${RUN}.${PDYm1}/* $RUN/${RUN}.${PDYm1}/.
+ln -s $COMROOTrtofs/${RUN}.${PDYm1}/* $RUN/${RUN}.${PDYm1}/.
 
 # rename n-24:n00  to  n00:n24
 cd $RUN/${RUN}.${PDYm1}
