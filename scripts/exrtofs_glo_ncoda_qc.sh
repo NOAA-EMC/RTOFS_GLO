@@ -171,6 +171,11 @@ for dtyp in $(ls $DATA/*qc.out) ; do
   cat ${dtyp} >> $DATA/$pgmout
 done
 
+# save dumps
+mkdir $COMOUT/dump
+cp -p $DATA/dump/* $COMOUT/dump
+cp -p $DATA/ice_nc/l2out.* $DATA/ice_nc/*.out $COMOUT/dump
+
 #################################################
 msg="THE RTOFS_GLO_NCODA_QC JOB HAS ENDED NORMALLY on `hostname` at `date`"
 postmsg "$jlogfile" "$msg"
