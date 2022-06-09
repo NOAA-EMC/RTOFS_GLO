@@ -1,8 +1,6 @@
 #!/bin/ksh
 
 #   this script runs NCODA pre_QC and NCODA QC for SFCOBS
-#   it also creates surface velocity observations from
-#   drifter tracks
 
 echo "*** Started script $0 on hostname "`hostname`' at time '`date`
 set -xa
@@ -109,12 +107,12 @@ rm -f $OCN_DATA_DIR/incoming/sfc.b
 #   execute ncoda qc
 ln -s $OCN_DATA_DIR/incoming/sfc.a.$cut_dtg $OCN_DATA_DIR/incoming/sfc.a
 ln -s $OCN_DATA_DIR/incoming/sfc.b.$cut_dtg $OCN_DATA_DIR/incoming/sfc.b
-$EXECrtofs/rtofs_ncoda_qc $cut_dtg sfc velocity > sfc_qc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg sfc > sfc_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
 mv fort.44 sfc_qc.$cut_dtg.rej
-mv fort.46 sfc_qc_vel.$cut_dtg.rej
-mv fort.50 sfc_qc_vel.$cut_dtg.rpt
+#mv fort.46 sfc_qc_vel.$cut_dtg.rej
+#mv fort.50 sfc_qc_vel.$cut_dtg.rpt
 
 echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
 

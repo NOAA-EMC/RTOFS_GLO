@@ -60,10 +60,13 @@ else
   echo "Cold starting north polar var!"
 fi
 
-chmod +x cmdfile.cpin
-mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin
-err=$? ; export err ; err_chk
-date
+if [ -s cmdfile.cpin ]
+then
+  chmod +x cmdfile.cpin
+  mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin
+  err=$? ; export err ; err_chk
+  date
+fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
 
@@ -230,9 +233,9 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post",$err
 
 #   rename local files
-#mv fort.40 $DATA/logs/shem_var/nhem_var.$ddtg.sus
-mv fort.67 $DATA/logs/shem_var/nhem_var.$ddtg.obs
-mv fort.68 $DATA/logs/shem_var/nhem_var.$ddtg.grd
+#mv fort.40 $DATA/logs/shem_var/shem_var.$ddtg.sus
+mv fort.67 $DATA/logs/shem_var/shem_var.$ddtg.obs
+mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO
@@ -273,6 +276,7 @@ done
 chmod +x cmdfile.cpout
 mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout
 err=$? ; export err ; err_chk
+date
 
 mkdir -p $COMOUT/ncoda/logs/nhem_var
 mkdir -p $COMOUT/ncoda/logs/shem_var

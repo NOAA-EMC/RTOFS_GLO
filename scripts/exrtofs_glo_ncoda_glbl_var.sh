@@ -40,14 +40,13 @@ then
   for gv in `ls $COMINm1/ncoda/glbl_var/restart/`; do
     echo "cp -p -f $COMINm1/ncoda/glbl_var/restart/$gv $DATA/restart" >> cmdfile.cpin
   done
+  chmod +x cmdfile.cpin
+  mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin
+  err=$? ; export err ; err_chk
+  date
 else
   echo "cold starting global var!"
 fi
-
-chmod +x cmdfile.cpin
-mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin
-err=$? ; export err ; err_chk
-date
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
 echo timecheck RTOFS_GLO_GLBL finish get at `date`

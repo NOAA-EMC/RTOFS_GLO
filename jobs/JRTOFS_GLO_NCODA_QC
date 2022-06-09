@@ -65,6 +65,7 @@ export DCOMINAMSR=${DCOMINAMSR:-${DCOMROOT}}
 export DCOMINSSH=${DCOMINSSH:-${DCOMROOT}}
 export DCOMINSSS=${DCOMINSSS:-${DCOMROOT}}
 export DCOMINSST=${DCOMINSST:-${DCOMROOT}}
+export DCOMINHFR=${DCOMINSST:-${DCOMROOT}}
 
 #export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
 #export COMROOT=${COMROOT:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
