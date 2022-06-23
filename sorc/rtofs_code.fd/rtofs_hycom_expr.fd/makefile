@@ -44,7 +44,7 @@ everything: clean $(CMD)  install finish
 #
 #
 clean:
-	-rm -f ${OBJS} *.mod *.F.f $(CMD) 
+	-rm -f ${OBJS} *.mod *.f $(CMD) 
         
 finish:
 	-rm ${OBJS} *.mod *.F.f 
