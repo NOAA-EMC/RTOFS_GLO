@@ -4,7 +4,7 @@
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -l walltime=02:00:00
-#PBS -l place=vscatter:excl,select=15:ncpus=120:mpiprocs=120
+#PBS -l place=vscatter:exclhost,select=15:ncpus=120:mpiprocs=120
 #PBS -l debug=true
 
 export model=rtofs
