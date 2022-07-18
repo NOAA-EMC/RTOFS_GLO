@@ -1,4 +1,4 @@
-#PBS -N rtofs_global_gloval_var
+#PBS -N rtofs_global_global_var
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q %QUEUE%
@@ -22,6 +22,8 @@ module load craype/${craype_ver}
 module load cray-pals/${cray_pals_ver}
 module load cray-mpich/${cray_mpich_ver}
 module load cfp/${cfp_ver}
+module load hdf5/${hdf5_ver}
+module load netcdf/${netcdf4_ver}
 module list
 
 export NPROCS=72
