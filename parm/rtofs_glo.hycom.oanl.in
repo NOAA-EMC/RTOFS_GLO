@@ -2,6 +2,7 @@
   bias_lmt    = 3., 8.,
   bias_opt    = 'tsuv',
   bias_wt     = 1.,
+  blist       = '4800009', '4800029',
   cluster(2)  = 2.,
   cluster(3)  = 2.,
   cluster(6)  = 2.,

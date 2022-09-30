@@ -43,13 +43,13 @@ cd $SST_DATA_DIR
 ymd=${prv_dtg:0:8}
 for k in 12 13 14 15 16 17 18 19 20 21 22 23
 do
-   cmd="$ymd/sst/$ymd$k*L2P*AHI_H08*"
+   cmd="$ymd/sst/$ymd$k*L2P*AHI_H08*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/h08_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*AHI_H09*"
+   cmd="$ymd/sst/$ymd$k*L2P*AHI_H09*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/h09_$k.$cut_dtg
    else
@@ -60,13 +60,13 @@ done
 ymd=${cut_dtg:0:8}
 for k in 00 01 02 03 04 05 06 07 08 09 10 11
 do
-   cmd="$ymd/sst/$ymd$k*L2P*AHI_H08*"
+   cmd="$ymd/sst/$ymd$k*L2P*AHI_H08*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/h08_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*AHI_H09*"
+   cmd="$ymd/sst/$ymd$k*L2P*AHI_H09*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/h09_$k.$cut_dtg
    else
@@ -76,7 +76,22 @@ done
 
 #   change to working directory
 cd $log_dir
-cat h08_*.$cut_dtg h09_*.$cut_dtg > acspo_sst_files.$cut_dtg
+cat h08_*.$cut_dtg h09_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
+
+echo timecheck himawari start ncdump at $(date)
+while read line
+do
+  ncdump -k $SST_DATA_DIR/$line > /dev/null
+  ncrc=$?
+  if [ $ncrc -eq 0 ]
+  then
+     echo $line >> acspo_sst_files.$cut_dtg
+  else
+     echo "WARNING - file $SST_DATA_DIR/$line appears to be corrupt."
+  fi
+done < acspo_sst_files.${cut_dtg}_prelim
+echo timecheck himawari finish ncdump at $(date)
+
 if [[  ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
    echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No HIMAWARI files to process."
    echo "HIMAWARI.obs_control file will not be updated"
