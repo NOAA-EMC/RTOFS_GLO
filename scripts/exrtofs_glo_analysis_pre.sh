@@ -23,7 +23,7 @@ export PS4='$SECONDS + '
 cd $DATA
 
 msg="RTOFS_GLO_ANALYSIS_PRE JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 # --------------------------------------------------------------------------- #
 # 0. date and time stuff
@@ -48,6 +48,6 @@ postmsg "$jlogfile" "$msg"
 
 #################################################
 msg="THE RTOFS_GLO_ANALYSIS_PRE JOB HAS ENDED NORMALLY on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ################## END OF SCRIPT #######################

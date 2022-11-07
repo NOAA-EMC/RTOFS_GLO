@@ -22,6 +22,9 @@ then
   runmode='anal'
   runstep=${runmode}
   runname='ANALYSIS_PRE'
+  # Set intvl=3 for retrospectives when only 3 hour forcing is available.
+  # Remember to change 3 lines in parm/rtofs_glo.navy_0.08.anal.ice_in.
+  # Change atm_data_type, sss_data_type, sst_data_type from 'cfsr' to 'nogaps'.
   intvl=1 #atmospheric forcing frequency
   intvl=3 # hindcast so slfux every 3 hours
 else
@@ -136,7 +139,7 @@ fi
               ${COMOUT}/${RUN}_${modID}.${runstep}.t${mycyc}z.forcing.${fil}.${type}
             else
               msg="File${COMOUT}/${RUN}_${modID}.${runstep}.t${mycyc}z.forcing.${fil}.${type} not posted to db_net."
-              postmsg "$jlogfile" "$msg"
+              postmsg "$msg"
             fi
           fi
        else
@@ -160,7 +163,7 @@ fi
               ${COMOUT}/${RUN}_${modID}.${runstep}.t${mycyc}z.cice.${fil}.${type}
             else
               msg="File ${COMOUT}/${RUN}_${modID}.${runstep}.t${mycyc}z.cice.${fil}.${type} not posted to db_net."
-              postmsg "$jlogfile" "$msg"
+              postmsg "$msg"
             fi
           fi
       else

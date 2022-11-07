@@ -1,10 +1,6 @@
 #!/bin/bash
-# this script pulls the required NCODA data for PDYm1
-# - ncoda
-# -- ocnqc
-# -- shem_var
-# -- nhem_var
-# -- glbl_var
+# this script pulls the RTOFS restart and ab files
+# and then tar-gunzips the .tgz files
 #
 
 if [ $# -eq 1 ]
@@ -31,7 +27,7 @@ echo COMOUT is $OUTDIR/rtofs.$PDYm1
 mkdir -p $TMPDIR/stage.$PDY
 
 #
-# Submit service job to pull rtofs data
+# Submit service job to pull rtofs restarts and archives
 cat << eofA > $TMPDIR/stage.$PDY/pull.rtofs.data.sh
 #!/bin/ksh -l
 #SBATCH --ntasks=1
@@ -45,6 +41,7 @@ cat << eofA > $TMPDIR/stage.$PDY/pull.rtofs.data.sh
 module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
 module load prod_util/1.1.0
 module load hpss
+module list
 
 set -x
 
@@ -54,6 +51,9 @@ mm=\`echo \$pdy | cut -c5-6\`
 
 # get rtofs data
 cd $COMOUT
+
+# find version
+vers=\$(hsi -P ls /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyy\$mm/\$pdy/ | grep rtofs.\${pdy}.restart.tar.idx | cut -d_ -f3)
 
 # restart file (if available)
 rlist=
@@ -68,7 +68,7 @@ else
    echo
 fi
 
-htar -xvf /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyy\$mm/\$pdy/com_rtofs_prod_rtofs.\$pdy.restart.tar \$rlist
+htar -xvf /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyy\$mm/\$pdy/com_rtofs_\${vers}_rtofs.\$pdy.restart.tar \$rlist
 
 # ab in 5 year
 alist=
@@ -104,7 +104,7 @@ do
   fi
 done
 
-htar -xvf /NCEPPROD/5year/hpssprod/runhistory/rh\$yyyy/\$yyyy\$mm/\$pdy/com_rtofs_prod_rtofs.\$pdy.ab.tar \$alist
+htar -xvf /NCEPPROD/5year/hpssprod/runhistory/rh\$yyyy/\$yyyy\$mm/\$pdy/com_rtofs_\${vers}_rtofs.\$pdy.ab.tar \$alist
 
 # untar the .tgz files
 for a in \`ls *arch*tgz\`;do echo \$a;tar xpvzf \$a;done &

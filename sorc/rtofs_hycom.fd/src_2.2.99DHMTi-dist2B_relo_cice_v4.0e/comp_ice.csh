@@ -16,7 +16,8 @@
 ### in input_templates/.
 set echo
 
-#setenv SITE NOAA.heraSMSSE
+setenv SITE NOAA.heraSMSSE
+
 #module purge
 #module load intel
 #module load impi

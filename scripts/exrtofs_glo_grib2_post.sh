@@ -67,7 +67,7 @@ cd $DATA
 ###
 
 msg="RTOFS_GLO_GRIB_POST JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 procstatus=0
 
@@ -294,7 +294,7 @@ fi
 	      ALERT_MAYBE RTOFS_GLO_NETCDF  $cfile
           else
             msg="File $COMOUT/$cfile not posted to db_net."
-            postmsg "$jlogfile" "$msg"
+            postmsg "$msg"
           fi
         done
       fi
@@ -320,7 +320,7 @@ fi
 	      ALERT_MAYBE RTOFS_GLO_NETCDF  $cfile
           else
             msg="File $COMOUT/$cfile not posted to db_net."
-            postmsg "$jlogfile" "$msg"
+            postmsg "$msg"
           fi
         done
       fi
@@ -354,7 +354,7 @@ done
 		 $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDFGZ $job $COMOUT/$cname
              else
 		 msg="File $COMOUT/$cname not posted to db_net."
-		 postmsg "$jlogfile" "$msg"
+		 postmsg "$msg"
              fi
          done
       fi ## SENDCOM
@@ -380,7 +380,7 @@ done
 		 $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDFGZ $job $COMOUT/$cname
              else
 		 msg="File $COMOUT/$cname not posted to db_net."
-		 postmsg "$jlogfile" "$msg"
+		 postmsg "$msg"
              fi
          done
       fi ## SENDCOM
@@ -447,7 +447,7 @@ if [ $SENDCOM = 'YES' ]
             fi
           else
             msg="File $COMOUT/$cname not posted to db_net."
-            postmsg "$jlogfile" "$msg"
+            postmsg "$msg"
           fi
        done
      done
@@ -475,10 +475,10 @@ then
  fi
   echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
   msg='THE RTOFS_GLO_GRIB_POST JOB HAS ENDED NORMALLY.'
-  postmsg "$jlogfile" "$msg"
+  postmsg "$msg"
 
 #################################################
 msg='THE RTOFS_GLO_GRI_POST JOB HAS ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ################## END OF SCRIPT #######################

@@ -1,6 +1,5 @@
 #!/bin/bash -l
 # this script pulls the required RTOFS data for PDYm1
-# rtofs restart and forcing files 
 # - ncoda
 # -- ocnqc
 # -- shem_var
@@ -33,7 +32,7 @@ mkdir -p $COMOUT/ncoda
 mkdir -p $TMPDIR/stage.$PDY
 
 #
-# Submit service job to pull ocnqc, nhem, shem, glbl data
+# Submit service job to pull ocnqc, nhem, shem, glbl, and gdas forcing
 cat << eofA > $TMPDIR/stage.$PDY/pull.lotsa.stuff.sh
 #!/bin/ksh -l
 #SBATCH --ntasks=1
@@ -47,6 +46,7 @@ cat << eofA > $TMPDIR/stage.$PDY/pull.lotsa.stuff.sh
 module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
 module load prod_util/1.1.0
 module load hpss
+module list
 
 set -x
 
@@ -56,17 +56,33 @@ mm=`echo $PDY | cut -c5-6`
 
 # get ocnqc (plus some other stuff) in nco tanks
 cd $COMOUT
-htar -xvf /NCEPPROD/5year/hpssprod/runhistory/rh\$yyyy/\$yyyy\$mm/\$pdy/com_rtofs_prod_rtofs.\$pdy.ncoda.tar
+
+# find version
+vers=\$(hsi -P ls /NCEPPROD/5year/hpssprod/runhistory/rh\$yyyy/\$yyyy\$mm/\$pdy/ | grep rtofs.\${pdy}.ncoda.tar.idx | cut -d_ -f3)
+
+htar -xvf /NCEPPROD/5year/hpssprod/runhistory/rh\$yyyy/\$yyyy\$mm/\$pdy/com_rtofs_\${vers}_rtofs.\$pdy.ncoda.tar
 
 # get 2dvar from emc tanks
 cd $COMOUT/ncoda
+if [ $pdy -le 20220629 ]
+then
 htar -xvf /NCEPDEV/emc-ocean/5year/emc.ncodapa/rtofs.v2/rtofs.\$pdy/glbl.tar
 htar -xvf /NCEPDEV/emc-ocean/5year/emc.ncodapa/rtofs.v2/rtofs.\$pdy/nhem.tar
 htar -xvf /NCEPDEV/emc-ocean/5year/emc.ncodapa/rtofs.v2/rtofs.\$pdy/shem.tar
+else
+htar -xvf /NCEPDEV/emc-ocean/5year/Dan.Iredell/wcoss2.prod/rtofs.\$pdy/glbl.tar
+htar -xvf /NCEPDEV/emc-ocean/5year/Dan.Iredell/wcoss2.prod/rtofs.\$pdy/nhem.tar
+htar -xvf /NCEPDEV/emc-ocean/5year/Dan.Iredell/wcoss2.prod/rtofs.\$pdy/shem.tar
+fi
 
-# get forcing (not always available) from emc tanks
+# get forcing (not always available) from emc tanks (re-create forcing from gdas/gfs)
 cd $COMOUT
+if [ $pdy -le 20220629 ]
+then
 htar -xvf /NCEPDEV/emc-ocean/5year/emc.ncodapa/rtofs.v2/rtofs.\$pdy/rtofs.forcing.tar
+else
+htar -xvf /NCEPDEV/emc-ocean/5year/Dan.Iredell/wcoss2.prod/rtofs.\$pdy/rtofs.forcing.tar
+fi
 
 eofA
 

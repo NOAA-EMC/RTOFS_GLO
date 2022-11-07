@@ -41,7 +41,7 @@ export pgmout="OUTPUT.$$"
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
+#export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
@@ -64,13 +64,18 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
-export GESOUT=${GESOUT:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
+export GETGES_COM=${GETGES_COM:-$(compath.py ${envir}/com/gfs/${gfs_ver})}
+export GETGES_NWG=${GETGES_NWG:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/nwges}
+export GESIN=${GESIN:-${GETGES_NWG}/${RUN}.${PDY}}
+export GESOUT=${GESOUT:-${GETGES_NWG}/${RUN}.${PDY}}
+
+export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
+export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+
 mkdir -m 775 -p $COMOUT
-test -d $GESOUT || mkdir -p $GESOUT
 test -d $COMOUT || mkdir -p $COMOUT
+test -d $GESOUT || mkdir -p $GESOUT
 
 ###################
 # Define model grid
@@ -118,10 +123,10 @@ export SAVE_RESTART
 export CONTINUE_FORECAST
 
 #################################################################
-#  Send a message to the jlogfile indication the start of the job
+#  Send a message indicating the start of the job
 #################################################################
-msh="HAS BEGUN on `hostname`"
-postmsg "$jlogfile" "$msg"
+msg="HAS BEGUN on `hostname`"
+postmsg "$msg"
 
 ####################
 # execute the script
@@ -134,7 +139,7 @@ cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}.`basename $pgmout`
 
 msg="JOB $job HAS COMPLETED NORMALLY."
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 cd $DATAROOT
 if [ "$KEEPDATA" != YES ]; then

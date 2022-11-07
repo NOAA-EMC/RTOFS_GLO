@@ -66,17 +66,16 @@ then
   prsfile=${DATA}/${idate}/${RUN}'.'`basename $pgrbfile`
   $USHrtofs/${RUN}_atmforcing_extract.sh $forcefile $flxfile $pgrbfile $prsfile
 else
-if [ $fn1 == 'sfcflx' ]; then
-cp -p $forcefile $fflxfile
-$CNVGRIB -g12 ${fflxfile} ${fflxfile}.grib2
-flxfile=${fflxfile}.grib2
-else
-cp -p $forcefile $fflxfile
-flxfile=${fflxfile}
-fi # fn1 loop
+  if [ $fn1 == 'sfcflx' ]; then
+    cp -p $forcefile $fflxfile
+    $CNVGRIB -g12 ${fflxfile} ${fflxfile}.grib2
+    flxfile=${fflxfile}.grib2
+  else
+    cp -p $forcefile $fflxfile
+    flxfile=${fflxfile}
+  fi # fn1 loop
 fi # useslp loop
-##cp -p $forcefile $fflxfile
-##.. prsfile=$pgrbfile 
+
 $GRB2INDEX $flxfile $flxfile.idx
 if [ $useslp = YES ] 
 then

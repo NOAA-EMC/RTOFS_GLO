@@ -28,7 +28,7 @@ echo OUTDIR is $OUTDIR/$PDY
 mkdir -p $OUTDIR/$PDY
 mkdir -p $TMPDIR/stage.$PDY
 
-# Submit service job to pull ocnqc, nhem, shem, glbl data
+# Submit service job to pull dcom data
 cat << eofA > $TMPDIR/stage.$PDY/pull.dcom.sh
 #!/bin/ksh -l
 #SBATCH --ntasks=1
@@ -42,6 +42,7 @@ cat << eofA > $TMPDIR/stage.$PDY/pull.dcom.sh
 module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
 module load prod_util/1.1.0
 module load hpss
+module list
 
 set -x
 
@@ -51,7 +52,16 @@ yyyymm=`echo $PDY | cut -c1-6`
 
 cd $OUTDIR/\$pdy
 
-dfile=/NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy/dcom_prod_\$pdy.tar
+# see if there is a versio
+vers=\$(hsi -P ls /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy | grep dcom | grep \$pdy.tar.idx | cut -d_ -f2)
+if [ \$vers -eq \$pdy ]
+then
+  vers=
+else
+  vers=\${vers}_
+fi
+
+dfile=/NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy/dcom_${vers}\$pdy.tar
 d1=./sst/*
 d2=./wtxtbul/satSSS/SMOS/*
 d3=./wtxtbul/satSSS/SMAP/*

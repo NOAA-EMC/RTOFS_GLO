@@ -19,7 +19,7 @@ msg1=$1
 msg2=$2
 err=$3
 
-postmsg "$jlogfile" "$msg1"' '"$msg2"
+postmsg "$msg1"' '"$msg2"
 err=2;
 echo "$msg1" "$msg2"
 export err;err_chk

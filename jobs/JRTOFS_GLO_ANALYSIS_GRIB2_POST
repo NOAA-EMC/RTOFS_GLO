@@ -10,6 +10,7 @@ echo rtofs_glo_ver is ${rtofs_glo_ver:?}
 
 export PS4='$SECONDS + '
 date
+env
 set -xa
 
 #######################################
@@ -41,7 +42,7 @@ export pgmout="OUTPUT.$$"
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
+#export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
@@ -83,11 +84,11 @@ export inputgrid=navy_0.08
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMOUTwmo=${COMOUTwmo:-${COMOUT}/wmo}
-export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
-test -d $COMOUT || mkdir -m 775 -p $COMOUT
+mkdir -m 775 -p $COMOUT
+test -d $COMOUT || mkdir -p $COMOUT
 test -d $COMOUTwmo || mkdir -m 775 -p $COMOUTwmo
 
 ############################################
@@ -108,10 +109,10 @@ eval analdays="\$analdays" # length of the analysis.
 export analdays 
 
 ################################################################
-# Send a message to the jlogfile indicating the start of the job
+# Send a message indicating the start of the job
 ################################################################
 msg="HAS BEGUN on `hostname`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ####################
 # execute the script
@@ -122,7 +123,7 @@ cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.analysis.grib_post.`basename $pgmout`
 
 msg="JOB $job HAS COMPLETED NORMALLY." 
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 cd $DATAROOT
 if [ "$KEEPDATA" != YES ]; then

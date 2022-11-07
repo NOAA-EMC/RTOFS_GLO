@@ -89,10 +89,6 @@ then
       echo 'sleep 1' >> $cfile
       cmdlen=`expr $cmdlen + 1`
     done
-    #module load ics
-    #module load ibmpe
-    #export MP_LABELIO=yes
-    #export MP_CMDFILE=./$cfile 
     #mpirun.lsf >>$pgmout 2>errfile 
     mpirun ./$cfile >>$pgmout 2>errfile 
     exit=$?
@@ -123,7 +119,7 @@ pgm=${RUN}_atmforcing
 . prep_step
 
 msg=" `date`  -- $pgm for $adate started "
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 echo ${NTIME} > listflx.dat 
 sort -n -o ts.dat t.dat

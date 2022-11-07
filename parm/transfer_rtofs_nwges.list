@@ -24,6 +24,6 @@
 # directory are included, so if no exclude patterns match that file, it will be
 # transferred.
 
-_GESROOT_/_ENVIR_/rtofs._PDY_/
+_COMROOT_/rtofs/_SHORTVER_/nwges/rtofs._PDY_/
+_COMROOT_/rtofs/_SHORTVER_/nwges/rtofs._PDYm1_/
 
-_GESROOT_/_ENVIR_/rtofs._PDYm1_/

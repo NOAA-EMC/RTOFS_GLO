@@ -22,7 +22,7 @@ export PS4='$SECONDS + '
 cd $DATA
 
 msg="RTOFS_GLO_INCUP JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 # --------------------------------------------------------------------------- #
 

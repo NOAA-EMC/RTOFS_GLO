@@ -34,7 +34,7 @@ cd $DATA
 ###
 
 msg="$job JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 filepre=${RUN}_${modID}.t00z
 
@@ -155,5 +155,5 @@ esac
 
 #################################################
 msg='THE $job JOB HAS ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 ################## END OF SCRIPT #######################

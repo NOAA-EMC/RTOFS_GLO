@@ -24,7 +24,10 @@ set -xa
 export PS4='$SECONDS + '
 
 msg="RTOFS_GLO_NCODA_POLAR_VAR JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
+
+#defaults (hera)
+masscfpcopy=0
 
 cd $DATA
 
@@ -60,11 +63,19 @@ else
   echo "Cold starting north polar var!"
 fi
 
-chmod +x cmdfile.cpin
-echo mpirun cfp ./cmdfile.cpin > cpin.out
-mpirun cfp ./cmdfile.cpin >> cpin.out
-err=$? ; export err ; err_chk
-date
+if [ -s cmdfile.cpin ]
+then
+  chmod +x cmdfile.cpin
+  echo mpirun cfp ./cmdfile.cpin > cpin.out
+  if [ $masscfpcopy -eq 1 ]
+  then
+    mpirun cfp ./cmdfile.cpin >> cpin.out
+  else
+    sh ./cmdfile.cpin
+  fi
+  err=$? ; export err ; err_chk
+  date
+fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
 
@@ -144,13 +155,16 @@ mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
 mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
 
 #   create graphics
-export OCN_OUTPUT_DIR=$DATA/nhem_var/restart
-export OCN_CLIM_DIR=$FIXrtofs/codaclim
-#NCODA map
-$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_map=",$err
-mv gmeta $DATA/logs/nhem_var/nhem_var.$ddtg.gmeta
+DoGraphics=YES
+if [ $DoGraphics = YES ] ; then
+  export OCN_OUTPUT_DIR=$DATA/nhem_var/restart
+  export OCN_CLIM_DIR=$FIXrtofs/codaclim
+  #NCODA map
+  $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+  err=$?; export err ; err_chk
+  echo " error from rtofs_ncoda_map=",$err
+  mv gmeta $DATA/logs/nhem_var/nhem_var.$ddtg.gmeta
+fi
 
 cat pout* > $DATA/logs/nhem_var/nhem_var.$ddtg.out
 cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $DATA/$pgmout
@@ -222,18 +236,21 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post",$err
 
 #   rename local files
-#mv fort.40 $DATA/logs/shem_var/nhem_var.$ddtg.sus
-mv fort.67 $DATA/logs/shem_var/nhem_var.$ddtg.obs
-mv fort.68 $DATA/logs/shem_var/nhem_var.$ddtg.grd
+#mv fort.40 $DATA/logs/shem_var/shem_var.$ddtg.sus
+mv fort.67 $DATA/logs/shem_var/shem_var.$ddtg.obs
+mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
 
 #   create graphics
-export OCEAN_OUTPUT_DIR=$DATA/shem_var/restart
-export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
-#NCODA map
-$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_map=",$err
-mv gmeta $DATA/logs/shem_var/shem_var.$ddtg.gmeta
+DoGraphics=YES
+if [ $DoGraphics = YES ] ; then
+  export OCN_OUTPUT_DIR=$DATA/shem_var/restart
+  export OCN_CLIM_DIR=$FIXrtofs/codaclim
+  #NCODA map
+  $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+  err=$?; export err ; err_chk
+  echo " error from rtofs_ncoda_map=",$err
+  mv gmeta $DATA/logs/shem_var/shem_var.$ddtg.gmeta
+fi
 
 cat pout* > $DATA/logs/shem_var/shem_var.$ddtg.out
 cat $DATA/logs/shem_var/shem_var.$ddtg.out >> $DATA/$pgmout
@@ -261,7 +278,12 @@ done
 
 chmod +x cmdfile.cpout
 echo mpirun cfp ./cmdfile.cpout > cpout.out
-mpirun cfp ./cmdfile.cpout >> cpout.out
+if [ $masscfpcopy -eq 1 ]
+then
+  mpirun cfp ./cmdfile.cpout >> cpout.out
+else
+  sh ./cmdfile.cpout
+fi
 err=$? ; export err ; err_chk
 
 mkdir -p $COMOUT/ncoda/logs/nhem_var
@@ -275,7 +297,7 @@ date
 
 #################################################
 msg="THE RTOFS_GLO_NCODA_POLAR_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ################## END OF SCRIPT #######################
 

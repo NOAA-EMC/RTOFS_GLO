@@ -23,7 +23,10 @@ set -xa
 export PS4='$SECONDS + '
 
 msg="RTOFS_GLO_NCODA_GLBL_VAR JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
+
+#defaults (hera)
+masscfpcopy=0
 
 cd $DATA
 
@@ -40,15 +43,19 @@ then
   for gv in `ls $COMINm1/ncoda/glbl_var/restart/`; do
     echo "cp -p -f $COMINm1/ncoda/glbl_var/restart/$gv $DATA/restart" >> cmdfile.cpin
   done
+  chmod +x cmdfile.cpin
+  echo mpirun cfp ./cmdfile.cpin > cpin.out
+  if [ $masscfpcopy -eq 1 ]
+  then
+    mpirun cfp ./cmdfile.cpin >> cpin.out
+  else
+    sh ./cmdfile.cpin
+  fi
+  err=$? ; export err ; err_chk
+  date
 else
   echo "cold starting global var!"
 fi
-
-chmod +x cmdfile.cpin
-echo mpirun cfp ./cmdfile.cpin > cpin.out
-mpirun cfp ./cmdfile.cpin >> cpin.out
-err=$? ; export err ; err_chk
-date
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
 echo timecheck RTOFS_GLO_GLBL finish get at `date`
@@ -140,13 +147,16 @@ mv fort.67 $log_dir/glbl_var.$ddtg.obs
 mv fort.68 $log_dir/glbl_var.$ddtg.grd
 
 #   create graphics
-export OCN_OUTPUT_DIR=$DATA/restart
-export OCN_CLIM_DIR=$FIXrtofs/codaclim
-#NCODA map
-$EXECrtofs/rtofs_ncoda_map $ddtg > pout5
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_map=",$err
-mv gmeta $log_dir/glbl_var.$ddtg.gmeta
+DoGraphics=YES
+if [ $DoGraphics = YES ] ; then
+  export OCN_OUTPUT_DIR=$DATA/restart
+  export OCN_CLIM_DIR=$FIXrtofs/codaclim
+  #NCODA map
+  $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
+  err=$?; export err ; err_chk
+  echo " error from rtofs_ncoda_map=",$err
+  mv gmeta $log_dir/glbl_var.$ddtg.gmeta
+fi
 
 #
 #   combine work files
@@ -171,8 +181,13 @@ for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
 done
 
 chmod +x cmdfile.cpout
-echo mpirun cfp ./cmdfile.cpout > cpout.out
-mpirun cfp ./cmdfile.cpout >> cpout.out
+if [ $masscfpcopy -eq 1 ]
+then
+  echo mpirun cfp ./cmdfile.cpout > cpout.out
+  mpirun cfp ./cmdfile.cpout >> cpout.out
+else
+  sh ./cmdfile.cpout
+fi
 err=$? ; export err ; err_chk
 date
 
@@ -182,7 +197,7 @@ echo timecheck RTOFS_GLO_GLBL finish put at `date`
 
 #################################################
 msg="THE RTOFS_GLO_NCODA_GLBL_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 ################## END OF SCRIPT #######################
 

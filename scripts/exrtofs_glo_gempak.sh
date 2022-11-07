@@ -25,7 +25,7 @@ export PS4='$SECONDS + '
 cd $DATA
 
 msg="$job JOB has begun on `hostname` at `date`"
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 yymmdd=${PDY:2}
 
@@ -145,5 +145,5 @@ fi
 
 #################################################
 msg='THE $job JOB HAS ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 ################## END OF SCRIPT #######################

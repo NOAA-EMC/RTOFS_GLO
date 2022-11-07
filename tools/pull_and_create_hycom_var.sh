@@ -1,6 +1,5 @@
 #!/bin/bash
 # this script pulls the required hycom_var data and recreates the hycom_var directory
-# rtofs restart and forcing files 
 #
 
 if [ $# -eq 1 ]
@@ -40,6 +39,7 @@ cat << eofB > $TMPDIR/stage.$PDY/pull.hycom.listing.sh
 #SBATCH -q batch
 
 module load hpss
+module list
 
 set -x
 
@@ -48,7 +48,12 @@ pdy=$PDYm1
 mkdir -p $COMOUT/ncoda/hycom_var/restart
 cd $COMOUT/ncoda/hycom_var/restart
 
+if [ $pdy -le 20220629 ]
+then
 htar -xvf /NCEPDEV/emc-ocean/5year/emc.ncodapa/rtofs.v2/rtofs.\$pdy/hycom_var_listing.tar
+else
+htar -xvf /NCEPDEV/emc-ocean/5year/Dan.Iredell/wcoss2.prod/rtofs.\$pdy/hycom_var_listing.tar
+fi
 
 eofB
 
@@ -80,7 +85,12 @@ pdy=$ipdy
 mkdir -p $COMOUT/ncoda/3dvar/ncoda.\$pdy
 cd $COMOUT/ncoda/3dvar/ncoda.\$pdy
 
+if [ $pdy -le 20220629 ]
+then
 htar -xvf /NCEPDEV/emc-ocean/5year/emc.ncodapa/rtofs.v2/rtofs.\$pdy/hycom.tar
+else
+htar -xvf /NCEPDEV/emc-ocean/5year/Dan.Iredell/wcoss2.prod/rtofs.\$pdy/hycom.tar
+fi
 
 eofn
 

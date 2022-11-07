@@ -38,7 +38,7 @@ export pgmout="OUTPUT.$$"
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
+#export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix
@@ -61,19 +61,13 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
+export COMROOTrtofs=${COMROOTrtofs:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
+export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
+export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 
-export COMINgdas=${COMINgdas:-$(compath.py gfs/prod/gdas)}
-#export GETGES_COM=${GETGES_COM:-${COMINgdas/"/gfs/prod/gdas"/}}
-export GETGES_COM=${GETGES_COM:-$(dirname $(compath.py gfs))}
-export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export COMINm1=${COMINm1:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export GESdir=${GESROOTp3}/${envir}/${RUN}.${PDY}
 mkdir -m 775 -p $COMOUT
-test -d $GESdir || mkdir -p $GESdir
 test -d $COMOUT || mkdir -p $COMOUT
-
 
 ###################
 # Define model grid
@@ -86,10 +80,10 @@ export inputgrid=navy_0.08
 . $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
 
 #################################################################
-#  Send a message to the jlogfile indication the start of the job
+#  Send a message indicating the start of the job
 #################################################################
-msh="HAS BEGUN on `hostname`"
-postmsg "$jlogfile" "$msg"
+msg="HAS BEGUN on `hostname`"
+postmsg "$msg"
 
 ####################
 # execute the script
@@ -102,7 +96,7 @@ cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.ncoda_hycom_var.`basename $pgmout`
 
 msg="JOB $job HAS COMPLETED NORMALLY."
-postmsg "$jlogfile" "$msg"
+postmsg "$msg"
 
 cd $DATAROOT
 

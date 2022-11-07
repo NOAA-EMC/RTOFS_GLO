@@ -38,6 +38,7 @@ cat << eofA > $TMPDIR/stage.$PDY/pull.gdas.sh
 module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
 module load prod_util/1.1.0
 module load hpss
+module list
 
 set -x
 
@@ -47,33 +48,23 @@ yyyymm=`echo $PDY | cut -c1-6`
 
 cd $OUTDIR
 
-# if date lt 20210321, then no atmos directory after cycle
-atmos=
-if [ \$pdy -ge 20210321 ]
-then
-   atmos=atmos
-fi
+# find version
+vers=\$(hsi -P ls /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy/ | grep gdas.\${pdy}_00.gdas_flux.tar.idx | cut -d_ -f3)
 
 for c in 00 06 12 18
 do
 slist=
 for h in 3 6 9
 do
-slist="\$slist ./gdas.\$pdy/\$c/\$atmos/gdas.t\${c}z.sfluxgrbf00\$h.grib2"
+slist="\$slist ./gdas.\$pdy/\$c/atmos/gdas.t\${c}z.sfluxgrbf00\$h.grib2"
 done
 echo
 echo \$slist
 echo
-htar -xvf /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy/com_gfs_prod_gdas.\${pdy}_\${c}.gdas_flux.tar \$slist
-if [ \$pdy -lt 20210321 ]
-then
-  mkdir $OUTDIR/gdas.\$pdy/\$c/atmos
-  mv $OUTDIR/gdas.\$pdy/\$c/gdas* $OUTDIR/gdas.\$pdy/\$c/atmos
-fi
+htar -xvf /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy/com_gfs_\${vers}_gdas.\${pdy}_\${c}.gdas_flux.tar \$slist
 done
 
 eofA
 
 sbatch $TMPDIR/stage.$PDY/pull.gdas.sh
 
-  

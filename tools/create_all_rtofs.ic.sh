@@ -1,21 +1,11 @@
 #!/bin/bash
 # This script populates the directory rtofs.$PDYm1 given $PDY
 #
-# Scripts callled
+# Scripts called
 # ./pull_lotsa_stuff.sh
 # ./pull_and_create_hycom_var.sh
 # ./pull_rtofs_archive_and_restart.sh
 # 
-# rtofs restart and forcing files 
-# - ncoda
-# -- ocnqc
-# -- shem_var
-# -- nhem_var
-# -- glbl_var
-# -- hycom_var
-# 
-# hycom_var is a multi-step process
-#
 
 if [ $# -eq 1 ]
 then
@@ -31,7 +21,7 @@ fi
 export OUTDIR=$inputroot/rtofs
 
 #
-# call script to pull ocnqc, nhem, shem, glbl, and gdas forcing
+# call script to pull NCODA ocnqc, nhem, shem, glbl files
 ./pull_lotsa_stuff.sh $PDY
 
 #

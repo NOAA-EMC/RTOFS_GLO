@@ -147,9 +147,11 @@ if [[ $gfile = '?' || $# -gt 1 || $err -ne 0 || -z $valid ||\
  exit 1
 fi
 #[[ $quiet = NO ]]&&set -x
-if [[ $envirges != prod && $envirges != test && $envirges != para && $envirges != para2 && $envirges != dump && $envirges != pr? ]];then
+if [[ $envirges != prod && $envirges != test && $envirges != para && $envirges != para2 && $envirges != dump && $envirges != pr? && $envir != canned ]];then
+ echo "input netwk $netwk" >&2
+ echo "input envirges $envirges" >&2
  netwk=$envirges
- envirges=prod
+# envirges=prod
  echo '************************************************************' >&2
  echo '* CAUTION: Using "-e" is deprecated in this case.          *' >&2
  echo '*          Please use "-n" instead.                        *' >&2       
@@ -260,7 +262,7 @@ if [[ $netwk = gdas ]];then
    fhinc=01
    ;;
   sfcflxfv3) geslist='
-   $GETGES_COM/gfs/${envirges}/gdas.$day/${cyc}/atmos/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2'
+   $GETGES_COM/gdas.$day/${cyc}/atmos/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2'
    fhinc=01
    ;;
   pgbges) geslist='
@@ -436,7 +438,7 @@ elif [[ $netwk = gfs ]];then
    $GETGES_COM/gfs/$envirges/gfs.$day/gfs.t${cyc}z.sfluxgrbf${fh}.grib2'
    ;;
   sfcflxfv3) geslist='
-   $GETGES_COM/gfs/${envirges}/gfs.$day/${cyc}/atmos/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
+   $GETGES_COM/gfs.$day/${cyc}/atmos/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
    ;;
   pgbges) geslist='
    $GETGES_COM/gfs/$envirges/gfs.$day/gfs.t${cyc}z.pgrbf$fh'

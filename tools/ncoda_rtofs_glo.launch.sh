@@ -17,14 +17,17 @@ then
 fi
 . ./user.config
 . ./$configname
+#. ./hera.env
 
 echo
 echo heraproj $heraproj
-echo projectroot $projectroot
-echo inputroot $inputroot
-echo comroot $comroot
-echo tmproot $tmproot
 echo account $account
+echo inputroot $inputroot
+echo tmproot $tmproot
+echo projectroot $projectroot
+echo comroot $comroot
+#echo masscfpcopy $masscfpcopy
+#echo launcher $launcher
 echo
 
 batchloc=./batchscripts
@@ -48,6 +51,8 @@ export model_ver=2.1.1
 export PROJECTdir=$projectroot
 export projID=NC-${model_ver} #      `basename $PROJECTdir`
 export KEEPDATA=YES
+export jlogfile=/dev/null
+export COMROOTrtofs=/dev/null
 
 export cyc=00
 export cycle=t${cyc}z
@@ -72,6 +77,7 @@ export DCOMINAMSR=$DCOMROOT/prod
 export DCOMINSSH=$DCOMROOT/prod
 export DCOMINSSS=$DCOMROOT/prod
 export DCOMINSST=$DCOMROOT/prod
+export TANK=$DCOMROOT/prod
 
 #export NPROCS=900
 #export NPROCS=1800
@@ -92,7 +98,7 @@ export fcstdays=`expr ${fcstdays_step1} + ${fcstdays_step2} + ${fcstdays_step3}`
 hindcast=YES
 if [ $hindcast = YES ] 
 then
-  export GETGES_COM=$COMgfs
+  export GETGES_COM=$COMgfs/gfs/prod
 fi
 hindcast=NO
 if [ $hindcast = NO ] &&  [ $testcast = NO ]
@@ -120,6 +126,7 @@ export HOMEout=$COMtmp
 # very important: redefinition of the default date (PDY !!!
 # if PDY is defined here, it will not be reset by setpdy utility.
 export PDY=$today
+export PDYm1=`$NDATE -24 ${PDY}'00' | cut -c1-8`
 export DATAROOT=$tmproot/${projID}/$PDY
 mkdir -p ${DATAROOT}
 
@@ -193,18 +200,208 @@ test -d $HOMEout/logs || mkdir -p $HOMEout/logs
 
 pid=$$
 
-
-# Submit the job.
-##module load lsf
-
-
 # area for testing only one job
-testjustthisjob=0
+testjustthisjob=1
 if [ $testjustthisjob -eq 1 ]
 then
 
-echo justthisonejob no jobs
+#########just
 
+#
+# Submit forecast step2 pre
+export jobid=jrtofs_forecast_step2_pre
+mkdir -p ${DATAROOT}/$jobid
+cat << EOF_forecast_step2_pre > $batchloc/rtofs.forecast_step2_pre.$pid
+#!/bin/ksh -l
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --time=00:30:00
+#SBATCH --account=$account
+#SBATCH --job-name=RTOFS_PRE_FCST2
+#SBATCH -o $DATAROOT/rtofs_forecast_step2_pre.out.%j
+#SBATCH -q debug
+module purge
+module use $HOMErtofs/modulefiles
+module load runtime_hera_rtofs.module
+export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
+export I_MPI_PIN_RESPECT_CPUSET=disable
+(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_STEP2_PRE )
+EOF_forecast_step2_pre
+
+jobid_fcst2_pre=$(sbatch $batchloc/rtofs.forecast_step2_pre.$pid | cut -d " " -f4)
+if [ $# -gt 0 ]
+then
+  echo 'LAUNCHER: RTOFS-GLO forecast_step2 pre is submitted at host '`hostname`' at '`date`
+else
+  echo 'LAUNCHER ERROR: RTOFS-GLO forecast_step2 pre not submitted at host '`hostname`' at '`date` "error is $#"
+  exit
+fi
+
+sleep 1
+export jobid=jrtofs_forecast_step2
+mkdir -p ${DATAROOT}/$jobid
+cat << EOF_forecast_step2 > $batchloc/rtofs.forecast_step2.$pid
+#!/bin/ksh -l
+#SBATCH --ntasks=900
+#SBATCH --time=03:00:00
+#SBATCH --account=$account
+#SBATCH --job-name=RTOFS_FCST2
+#SBATCH -d afterok:$jobid_fcst2_pre
+#SBATCH -o $DATAROOT/rtofs_fcst2.out.%j
+#SBATCH -q batch
+module purge
+module use $HOMErtofs/modulefiles
+module load runtime_hera_rtofs.module
+export NMPI=900
+export NPROCS=900
+export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
+export I_MPI_PIN_RESPECT_CPUSET=disable
+(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_STEP2 )
+EOF_forecast_step2
+
+jobid_fcst2=$(sbatch $batchloc/rtofs.forecast_step2.$pid | cut -d " " -f4)
+if [ $# -gt 0 ]
+then
+  echo 'LAUNCHER: RTOFS-GLO forecast step2 is submitted at host '`hostname`' at '`date`
+else
+  echo 'LAUNCHER ERROR: RTOFS-GLO forecast step2 not submitted at host '`hostname`' at '`date` "error is $#"
+  exit
+fi
+
+#
+# Submit forecast post-processing
+sleep 1
+export jobid=jrtofs_forecast_post_2
+mkdir -p ${DATAROOT}/$jobid
+cat << EOF_forecast_2_post > $batchloc/rtofs.forecast_2_post.$pid
+#!/bin/ksh -l
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --time=01:00:00
+#SBATCH --account=$account
+#SBATCH --job-name=RTOFS_FCST_POST
+#SBATCH -d afterok:$jobid_fcst2
+#SBATCH -o $DATAROOT/rtofs_forecast_2_post.out.%j
+#SBATCH -q batch
+module purge
+module use $HOMErtofs/modulefiles
+module load runtime_hera_rtofs.module
+export COMROOT=${COMtmp}/com
+export NPROCS=1
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
+export I_MPI_PIN_RESPECT_CPUSET=disable
+(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_POST_2 )
+EOF_forecast_2_post
+
+job_fcst2_post=$(sbatch $batchloc/rtofs.forecast_2_post.$pid | cut -d " " -f4)
+if [ $# -gt 0 ]
+then
+  echo 'LAUNCHER: RTOFS-GLO forecast post-processing_2 job is submitted at host '`hostname`' at '`date`
+else
+  echo 'LAUNCHER ERROR: RTOFS-GLO forecast post-processing_2 job is not submitted at host '`hostname`' at '`date` "error is $#"
+  exit
+fi
+
+# Submit forecast grib posts
+for NN in 01 02 03 04
+do
+  export job=${RUN}_${modID}_forecast_grib_post_${projID}.${NN}
+  export jobid=j${job}
+  export NN
+##
+cat << EOF_forecast_grib_post > $batchloc/rtofs.forecast_grib_post.$pid
+#!/bin/ksh -l
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --time=01:00:00
+#SBATCH --account=$account
+#SBATCH --job-name=RTOFS_FCST_GRIB_POST
+#SBATCH -d afterok:$jobid_fcst2
+#SBATCH -o $DATAROOT/rtofs_forecast_grib_post.out.$NN.%j
+#SBATCH -q batch
+module purge
+module use $HOMErtofs/modulefiles
+module load runtime_hera_rtofs.module
+export NPROCS=1
+export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
+export I_MPI_PIN_RESPECT_CPUSET=disable
+(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_GRIB2_POST )
+EOF_forecast_grib_post
+
+job_fcst_grib_post=$(sbatch $batchloc/rtofs.forecast_grib_post.$pid | cut -d " " -f4)
+
+  if [ $# -gt 0 ]
+  then
+    echo 'LAUNCHER: RTOFS-GLO forecast GRIB post-processing job ' $NN ' is submitted at host '`hostname`' at '`date`
+  else
+    echo 'LAUNCHER ERROR: RTOFS-GLO forecast GRIB post-processing job ' $NN ' is not submitted at host '`hostname`' at '`date` "error is $#"
+    exit
+  fi
+  unset job
+done
+
+for NN in 01 02 03 04 05 06 07 08
+do
+  export job=${RUN}_${modID}_forecast_post_${projID}.${NN}
+  export jobid=j${job}
+  mkdir -p ${DATAROOT}/$jobid
+  export NN
+##
+cat << EOF_forecast_post > $batchloc/rtofs.forecast_post.$pid
+#!/bin/ksh -l
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --time=01:00:00
+#SBATCH --account=$account
+#SBATCH --job-name=RTOFS_FCST_POST
+#SBATCH -d afterok:$jobid_fcst2
+#SBATCH -o $DATAROOT/rtofs_forecast_post.out.$NN.%j
+#SBATCH -q batch
+module purge
+module use $HOMErtofs/modulefiles
+module load runtime_hera_rtofs.module
+export COMROOT=${COMtmp}/com
+export NPROCS=1
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
+export I_MPI_PIN_RESPECT_CPUSET=disable
+(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_POST )
+EOF_forecast_post
+
+job_fcst_post=$(sbatch $batchloc/rtofs.forecast_post.$pid | cut -d " " -f4)
+
+  if [ $# -gt 0 ]
+  then
+    echo 'LAUNCHER: RTOFS-GLO forecast post-processing job ' $NN ' is submitted at host '`hostname`' at '`date`
+  else
+    echo 'LAUNCHER ERROR: RTOFS-GLO forecast post-processing job ' $NN ' is not submitted at host '`hostname`' at '`date` "error is $#"
+    exit
+  fi
+  unset job
+done
+
+
+#########just
+
+
+echo testjustthisjob
 exit
 fi #testjustthisjob
 
@@ -230,6 +427,10 @@ module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 export NPROCS=10
 (time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_QC )
@@ -244,15 +445,15 @@ else
   exit
 fi
 
-#echo just qc
-#exit
+echo one job
+exit
 
 # Submit Three VAR jobs
 export jobid=jrtofs_hycom_var
 mkdir -p ${DATAROOT}/$jobid
 cat << EOF_ncoda_hycom_var > $batchloc/rtofs.hycomvar.sbatch.$pid
 #!/bin/ksh -l
-#SBATCH --nodes=9 --ntasks-per-node=40
+#SBATCH --nodes=18 --ntasks-per-node=20
 #SBATCH --time=01:30:00
 #SBATCH --account=$account
 #SBATCH --job-name=NCODA_HYCOM
@@ -263,6 +464,9 @@ module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_HYCOM_VAR )
 EOF_ncoda_hycom_var
@@ -291,7 +495,11 @@ cat << EOF_ncoda_glbl_var > $batchloc/rtofs.glblvar.sbatch.$pid
 module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
+export NPROCS=80
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_GLBL_VAR )
 EOF_ncoda_glbl_var
@@ -319,7 +527,11 @@ cat << EOF_ncoda_polar_var > $batchloc/rtofs.polarvar.sbatch.$pid
 module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
+export NPROCS=40
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_POLAR_VAR )
 EOF_ncoda_polar_var
@@ -353,6 +565,9 @@ module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_NCODA_INC )
 EOF_ncoda_inc
@@ -382,9 +597,12 @@ module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export I_MPI_PIN_RESPECT_CPUSET=disable
 export NMPI=900
 export NPROCS=900
-export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_INCUP )
 EOF_incup
 
@@ -420,6 +638,10 @@ module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_ANALYSIS_PRE )
 EOF_analysis_pre
@@ -449,6 +671,10 @@ module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export NMPI=900
 export NPROCS=900
 export I_MPI_PIN_RESPECT_CPUSET=disable
@@ -488,8 +714,12 @@ cat << EOF_analysis_post > $batchloc/rtofs.analysis_post.$pid
 module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
 export NPROCS=1
+export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_ANALYSIS_POST )
 EOF_analysis_post
@@ -523,8 +753,12 @@ cat << EOF_analysis_grib_post > $batchloc/rtofs.analysis_grib_post.$pid
 module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
 export NPROCS=1
+export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_ANALYSIS_GRIB2_POST )
 EOF_analysis_grib_post
@@ -539,8 +773,8 @@ else
 fi
 done
 
-#echo exit after analysis post
-#exit
+echo exit after analysis post
+exit
 
 #
 # Submit forecast step1 pre
@@ -560,6 +794,10 @@ module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_STEP1_PRE )
 EOF_forecast_step1_pre
@@ -588,9 +826,13 @@ cat << EOF_forecast_step1 > $batchloc/rtofs.forecast_step1.$pid
 module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
 export NMPI=900
 export NPROCS=900
+export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_STEP1 )
 EOF_forecast_step1
@@ -635,6 +877,10 @@ module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_STEP2_PRE )
 EOF_forecast_step2_pre
@@ -663,9 +909,13 @@ cat << EOF_forecast_step2 > $batchloc/rtofs.forecast_step2.$pid
 module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
 export NMPI=900
 export NPROCS=900
+export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_STEP2 )
 EOF_forecast_step2
@@ -713,6 +963,10 @@ module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
 export NPROCS=1
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_POST_2 )
 EOF_forecast_2_post
@@ -746,8 +1000,12 @@ cat << EOF_forecast_grib_post > $batchloc/rtofs.forecast_grib_post.$pid
 module purge
 module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
 export NPROCS=1
+export COMROOT=${COMtmp}/com
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_GRIB2_POST )
 EOF_forecast_grib_post
@@ -786,6 +1044,10 @@ module use $HOMErtofs/modulefiles
 module load runtime_hera_rtofs.module
 export COMROOT=${COMtmp}/com
 export NPROCS=1
+export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
+export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
+export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
+export GETGES_NWG=/dev/null
 export I_MPI_PIN_RESPECT_CPUSET=disable
 (time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_POST )
 EOF_forecast_post

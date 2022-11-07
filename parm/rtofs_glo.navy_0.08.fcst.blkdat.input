@@ -128,7 +128,7 @@ sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
    0.0	  'bnstfq' = number of days between baro nesting archive input
    0.0	  'nestfq' = number of days between 3-d  nesting archive input
 .04166667 'cplifq' = number of days (or time steps) between sea ice coupling
-  72.0	  'baclin' = baroclinic time step (seconds), int. divisor of 86400
+  60.0	  'baclin' = baroclinic time step (seconds), int. divisor of 86400
  6.0      'batrop' = barotropic time step (seconds), int. div. of baclin/2
    0      'incflg' = incremental update flag (-ve for inc) (0=no, 1=yes, 2=full-velocity)
   90      'incstp' = no. timesteps for full update (1=direct insertion)
