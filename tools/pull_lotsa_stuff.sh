@@ -51,8 +51,8 @@ module list
 set -x
 
 pdy=$PDYm1
-yyyy=`echo $PDY | cut -c1-4`
-mm=`echo $PDY | cut -c5-6`
+yyyy=`echo \$PDYm1 | cut -c1-4`
+mm=`echo \$PDYm1 | cut -c5-6`
 
 # get ocnqc (plus some other stuff) in nco tanks
 cd $COMOUT

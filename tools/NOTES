@@ -1,13 +1,12 @@
 Some random notes on the RTOFS V2 port to hera.
 
-1. There is no ice processing. The ssmi executable was not ported so that part
-of the QC fails. It does not affect the rest of the QC.
+1. There is now ice processing. The ssmi executable has now been ported.
 
 2. Not all products are created because cdo is not available on hera. I believe
 that cdo is used to create products for OPC only.
 
-3. The NCODA codes are not part of the repo. The compiled binaries are part of
-the repo.
+3. The NCODA codes are not part of the repo. The hera-compiled binaries are part
+of the repo. The NCODA codes are what is in production as of today (20221115).
 
 4. The bufr_dumplist that was implemented on wcoss for RTOFS is not on hera. I
 ported it myself and is in the directory under my name. The runtime module 
@@ -16,7 +15,8 @@ loads this module.
 5. RTOFS makes heavy use of the WCOSS function CFP (Command File Processor).
 which is like mpiserial. It is not on hera but I found a home-built one in
 /scratch1/NCEPDEV/mdl/apps/modulefiles. This is probably an older version,
-but it seems to work fine.
+but it seems to work fine. (Addendum - it fails sometimes.. so I have removed
+some of the CFP calls and only use it when necessary.)
 
 6. The observational data that resides in the monthly tanks is saved on disk
 on WCOSS only. This data is bathy, tesac, xbtctd and subpfl. There is a note 
@@ -26,3 +26,25 @@ in the get_dcom_data.sh script that shows how to find and rename the data.
 that I modified for hera. There is probably some dead code in there and
 some macros that are set that are no longer used. But it works.
 
+8. RTOFS creates forcing files from the GDAS surface flux files. During real
+time, these surface flux files are hourly. However, they are only archived 
+every three hours. So when running retrospectives a couple of things have been
+modified (or need to be modified).
+
+# this file now sets the interval to 3 hours (intvl=3)
+
+ush/rtofs_prestaging.sh  
+
+# this file tells the scripts how to create the ice forcing and needs to know
+# if the atmospheric forcing is hourly or 3-hourly
+
+parm/rtofs_glo.navy_0.08.anal.ice_in.
+
+# check the settings for these keywords
+
+atm_data_type
+sss_data_type
+sst_data_type
+
+# if 'cfsr', then the atmospheric forcing is hourly
+# if 'nogaps', then the atmospheric forcing is 3-hourly

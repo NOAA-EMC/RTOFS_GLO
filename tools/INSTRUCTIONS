@@ -1,8 +1,8 @@
 ###############################################################
 
-Clone the repo from vlab.
+Clone the repo from github.
 
-git clone -b public-hera ssh://$LOGNAME@vlab.noaa.gov:29418/EMC_rtofs_glo_prod rtofs_glo.v2.1.1
+git clone -b public-hera git@github.com:NOAA-EMC/RTOFS_GLO.git rtofs.public-hera
 
 
 ###############################################################
@@ -41,19 +41,21 @@ user.config can be overridden in this config file.
 
 Get the RTOFS IC, dcom obs data, and gfs/gdas surface flux files from HPSS
 
-1. Creating the rtofs.PDYm1 IC
+For experiment going from days PDY to PDYpxx:
+- get rtofs data for PDY (scripts know to get PDYm1)
+- get obs data for PDYm1 to PDYpxx
+- get gdas data for PDYm3 to PDYpxx
+- get gfs data for PDYm1 to PDYpxx
 
+1. Creating the rtofs.PDYm1 IC
 cd tools
 ./create_all_rtofs.ic.sh YYYYMMDD
 
 2. Getting the obs data
-
 cd tools
 ./get_dcom_data.sh YYYYMMDD
 
-
 3. Get gfs data
-
 cd tools
 ./get_gdas.sh YYYYMMDD
 ./get_gfs.sh YYYYMMDD

@@ -1,0 +1,8 @@
+!Robert Grumbine 1999
+      REAL dxlat, dylat
+      PARAMETER (dxlat = 1./12.)
+      PARAMETER (dylat = 1./12.)
+      INTEGER gridno
+      PARAMETER (gridno = 173) !NCEP grid number of this grid
+      LOGICAL WMO
+      PARAMETER (WMO = .FALSE.)

@@ -86,7 +86,7 @@
   , ocn_data_dir = 'COUPLED'
   , oceanmixed_file= 'pop_frc.gx1v3.051202.nc'
   , restore_sst  = .true.
-  , insert_ssmi  = .false.
+  , insert_ssmi  = .true.
   , insert_sih   = .false.
   , trestore     =  1 
   , atm_netrad   = .false.

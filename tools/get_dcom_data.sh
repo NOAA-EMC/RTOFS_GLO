@@ -52,7 +52,7 @@ yyyymm=`echo $PDY | cut -c1-6`
 
 cd $OUTDIR/\$pdy
 
-# see if there is a versio
+# see if there is a version
 vers=\$(hsi -P ls /NCEPPROD/hpssprod/runhistory/rh\$yyyy/\$yyyymm/\$pdy | grep dcom | grep \$pdy.tar.idx | cut -d_ -f2)
 if [ \$vers -eq \$pdy ]
 then
@@ -67,18 +67,19 @@ d2=./wtxtbul/satSSS/SMOS/*
 d3=./wtxtbul/satSSS/SMAP/*
 d4=./seaice/pda/*
 d5=./wgrdbul/adt/*ncoda*
-d6=./b001/xx001
-d7=./b001/xx013
-d8=./b001/xx101
-d9=./b001/xx102
-da=./b001/xx103
-db=./b001/xx113
-dc=./b021/xx201
+d6=./wgrdbul/ndbc/*hfr*
+d7=./b001/xx001
+d8=./b001/xx013
+d9=./b001/xx101
+da=./b001/xx102
+db=./b001/xx103
+dc=./b001/xx113
+dd=./b021/xx201
 
 echo dfile \$dfile
-echo datasets "\$d1 \$d2 \$d3 \$d4 \$d5 \$d6 \$d7 \$d8 \$d9 \$da \$db \$dc "
+echo datasets "\$d1 \$d2 \$d3 \$d4 \$d5 \$d6 \$d7 \$d8 \$d9 \$da \$db \$dc \$dd "
 
-htar -xvf \$dfile \$d1 \$d2 \$d3 \$d4 \$d5 \$d6 \$d7 \$d8 \$d9 \$da \$db \$dc
+htar -xvf \$dfile \$d1 \$d2 \$d3 \$d4 \$d5 \$d6 \$d7 \$d8 \$d9 \$da \$db \$dc \$dd
 
 eofA
 
@@ -99,12 +100,11 @@ mkdir -p $OUTDIR/$yyyymm/b031
 echo
 echo \#################################################
 echo
-echo Monthly data for this day can be found on WCOSS 
-echo $monthdata
-echo and copied to
-echo $OUTDIR/$yyyymm/b031
-echo 
-echo and unzipped and mapped the following way
+echo Monthly data for this day can be found on WCOSS2
+echo  approx last 6 months - /lfs/h1/ops/prod/dcom/YYYYMM/b031
+echo  archive - /lfs/h2/emc/obsproc/noscrub/ashley.stanfield/MarineArchive/dcom_d10/YYYY/MM/b031/
+echo
+echo if from archive, then they should be unzipped and mapped the following way:
 echo
 echo bathy.$yyyymm.dcom.gz   to  xx001
 echo tesac.$yyyymm.dcom.gz   to  xx002

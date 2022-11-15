@@ -1,0 +1,48 @@
+      REAL FUNCTION wdir(U,V,D)
+!$$$  SUBPROGRAM DOCUMENTATION BLOCK
+!
+! SUBPROGRAM:    WDIR        MEAN ICE-DRIFT VECTOR DIRECTION
+!   PRGMMR: TOWNSHEND        ORG: W/NMC411   DATE: 89-09-27
+!
+! ABSTRACT: CALCULATE DIRECTION OF MEAN ICE-DRIFT VECTOR.
+!
+! PROGRAM HISTORY LOG:
+!   89-09-27  TOWNSHEND   ORIGINAL AUTHOR
+!   92-03-06  GRUMBINE    REVISION TO CALL AS FUNCTION
+! 2014-11-19  Grumbine    Update to Ftn 90 standard (no goto)
+!
+! USAGE:    CALL WDIR(U,V,D)
+!   INPUT ARGUMENT LIST:
+!     U    - E-W COMPONENT OF MEAN ICE-DRIFT VECTOR
+!     V    - N-S COMPONENT OF MEAN ICE-DRIFT VECTOR
+!
+!   OUTPUT ARGUMENT LIST:
+!     D    - DIRECTION (DEGREES) OF MEAN ICE-DRIFT VECTOR
+!
+!   LANGUAGE: Fortran 90
+!   MACHINE:  wcoss-tide/gyre
+!
+!$$$
+!
+      IMPLICIT none
+      REAL D, U, V
+      REAL R, RADIAN
+
+      DATA  RADIAN/57.29577951308232D0/
+
+      IF (U.EQ.0.) THEN
+        IF (V.GT.0.) D=180.
+        IF (V.LE.0.) D=0.
+      ELSE
+        R = V/U
+        IF (U.GT.0.) THEN
+          D = 270.-ATAN(R)*RADIAN
+        ELSE
+          D = 90. -ATAN(R)*RADIAN
+        ENDIF
+      ENDIF
+
+      WDIR = D
+ 
+      RETURN
+      END

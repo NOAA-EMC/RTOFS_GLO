@@ -1,0 +1,239 @@
+#!/bin/sh
+#shell to repair day/month/year, assuming that days are only incremented
+# by 1 or decremented by 1.
+#Wish: Fix to handle arbitrary jumps
+#Robert Grumbine 
+#7 October 1999 -- New variant: 
+#       Use case statement for control (clarity)
+#       Add in some 'early out' tests
+#          -- combination gives about 25% speed up and improved readability
+#       N.B.: Much of the time spent is in parsing the arguments rather than
+#          in the logical tree
+#3 January 2001 -- Correctly handle yy of 1-9.  
+#7 July 2003    -- Fix up decrement cases
+#  Should really be handled by something more portable, like python RG 2018
+               
+
+#set -x
+
+#Handle the arguments.  Verify that they are reasonable, and parse
+# Them in to 'century' (first 2 digits of a 4 digit year), year,
+# month, and day.  cc, yy, mo, dy respectively.
+if [ $# -eq 1 ] ; then
+  if [ ${#1} -eq 6 ] ; then
+    yy=`echo $1 | cut -c1-2`
+    mo=`echo $1 | cut -c3-4`
+    dy=`echo $1 | cut -c5-6`
+  elif [ ${#1} -eq 8 ] ; then
+    cc=`echo $1 | cut -c1-2`
+    yy=`echo $1 | cut -c3-4`
+    mo=`echo $1 | cut -c5-6`
+    dy=`echo $1 | cut -c7-8`
+  elif [ ${#1} -eq 3 ] ; then
+    yy=00
+    mo=0`echo $1 | cut -c1`
+    dy=`echo $1 | cut -c2-3`
+  elif [ ${#1} -eq 4 ] ; then
+    yy=00
+    mo=`echo $1 | cut -c1-2`
+    dy=`echo $1 | cut -c3-4`
+  elif [ ${#1} -eq 5 ] ; then
+    yy=0`echo $1 | cut -c1`
+    mo=`echo $1 | cut -c2-3`
+    dy=`echo $1 | cut -c4-5`
+  else
+    echo "Don't know how to handle a date that isn't 6 or 8 chars long!"
+    echo Input date was $1
+    exit -1
+  fi
+else
+  if [ $# -eq 3 ] ; then
+    cc=19
+    if [ ${#1} -eq 4 ] ; then
+      cc=`echo $1 | cut -c1-2`
+      yy=`echo $1 | cut -c3-4`
+     else
+      yy=$1
+      if [ $yy -lt 10 ] ; then
+        yy=0$yy
+      fi
+    fi
+    mo=$2
+    dy=$3
+  elif [ $# -eq 4 ] ; then
+    cc=$1
+    yy=$2
+      if [ $yy -lt 10 ] ; then
+        yy=0$yy
+      fi
+    mo=$3
+    dy=$4
+  else
+    echo "Don't know how to handle other than 1, 3, or 4 arguments." 
+    echo You entered $#
+    exit -1
+  fi
+fi
+
+#Pre-emptive check to see if there's any need to do work:
+if [ $dy -gt 01 -a $dy -lt 29 ] ; then
+  if [ ${#1} -eq 6 ] ; then
+    echo $yy$mo$dy
+  else
+    echo $cc$yy$mo$dy
+  fi
+  exit
+fi
+
+#Have the dates, now work on adjusting for date increments
+case $mo in
+  01|03|05|07|08) 
+    if [ $dy -eq 32 ] ; then
+      mo=0`expr $mo + 1`
+      dy=01
+    fi
+    ;;
+  10)
+    if [ $dy -eq 32 ] ; then
+      mo=11; dy=01;
+    fi
+    ;;
+  04|06)
+    if [ $dy -eq 31 ] ; then
+      mo=0`expr $mo + 1`
+      dy=01
+    fi
+    ;;
+  09|11) 
+    if [ $dy -eq 31 ] ; then
+      mo=`expr $mo + 1`
+      dy=01
+    fi
+    ;;
+  12) 
+    if [ $dy -eq 32 ] ; then
+      mo=01
+      dy=01
+      if [ $yy -eq 99 ] ; then
+        cc=`expr $cc + 1`
+        yy=00
+      else 
+        yy=`expr $yy + 1`
+        if [ $yy -lt 10 ] ; then
+          yy=0$yy
+        fi
+      fi
+    fi
+    ;;
+  02) 
+    if [ $dy -eq 29 ] ; then
+    nn=`expr $yy / 4 `
+    if [ ` expr $nn \* 4 ` -ne $yy ] ; then #The rule: If year is divisible by
+                                            # 4, then it is a leap year.
+      #echo year not divisible by 4, not a leap year
+        mo=03
+        dy=01
+     else 
+      #echo $cc $nn $yy else case 
+      if [ $yy -ne 00 ] ; then   #Don't need century rules
+        mo=$mo
+        dy=$dy
+       else
+        if [ $yy -eq 00 -a `expr $cc \/ 4 \* 4` -eq $cc  ] ; then 
+                #If it is a century year, and not a century year divisible 
+                #by 400, then it really is not a leap year.  
+          mo=$mo
+          dy=$dy
+         else
+          mo=03
+          dy=01
+        fi
+      fi
+    fi
+  fi
+    if [ $dy -eq 30 ] ; then
+      mo=03
+      dy=01
+    fi
+    ;;
+ *) 
+  echo Should not have reached this default case!
+  ;;
+
+esac
+
+
+# Now manage decrementing of days:
+if [ $dy -ne 00 ] ; then
+  if [ ${#1} -eq 6 ] ; then
+    echo $yy$mo$dy
+  else
+    echo $cc$yy$mo$dy
+  fi
+  exit
+fi
+
+#only reach this point if dy is 00
+case $mo in 
+  01)
+    mo=12
+    dy=31
+    yy=`expr $yy - 1`
+    if [ $yy -lt 10 ] ; then
+      yy=0$yy
+    fi
+    if [ $yy -lt 0 ] ; then
+      cc=`expr $cc - 1`
+      yy=`expr $yy + 100`
+      if [ $yy -lt 10 ] ; then
+        yy=0$yy
+      fi
+    fi
+    ;;
+  02|04|06|08|09)
+    mo=0`expr $mo - 1`
+    dy=31
+    ;;
+  05|07|10)
+    mo=0`expr $mo - 1`
+    dy=30
+    ;;
+  11)
+    mo=`expr $mo - 1`
+    dy=31
+    ;;
+  12)
+    mo=`expr $mo - 1`
+    dy=30
+    ;;
+  03)
+    nn=`expr $yy / 4 `
+    if [ ` expr $nn \* 4 ` -eq $yy ] ; then
+      if [ $yy -ne 0 ] ; then
+        mo=02
+        dy=29
+      else 
+        if [ $yy -eq 00 -a `expr $cc \/ 4 \* 4` -eq $cc  ] ; then 
+          mo=02
+          dy=29
+        else
+          mo=02
+          dy=28
+        fi
+      fi
+     else
+      mo=02
+      dy=28
+    fi
+    ;;
+  *)
+    echo should never have reached this point
+    exit
+    ;;
+esac
+
+if [ ${#1} -eq 6 ] ; then
+  echo $yy$mo$dy
+else
+  echo $cc$yy$mo$dy
+fi

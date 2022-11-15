@@ -77,6 +77,7 @@ export DCOMINAMSR=$DCOMROOT/prod
 export DCOMINSSH=$DCOMROOT/prod
 export DCOMINSSS=$DCOMROOT/prod
 export DCOMINSST=$DCOMROOT/prod
+export DCOMINHFR=$DCOMROOT/prod
 export TANK=$DCOMROOT/prod
 
 #export NPROCS=900
@@ -207,199 +208,9 @@ then
 
 #########just
 
-#
-# Submit forecast step2 pre
-export jobid=jrtofs_forecast_step2_pre
-mkdir -p ${DATAROOT}/$jobid
-cat << EOF_forecast_step2_pre > $batchloc/rtofs.forecast_step2_pre.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --time=00:30:00
-#SBATCH --account=$account
-#SBATCH --job-name=RTOFS_PRE_FCST2
-#SBATCH -o $DATAROOT/rtofs_forecast_step2_pre.out.%j
-#SBATCH -q debug
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
-export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
-export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
-export GETGES_NWG=/dev/null
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_STEP2_PRE )
-EOF_forecast_step2_pre
-
-jobid_fcst2_pre=$(sbatch $batchloc/rtofs.forecast_step2_pre.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO forecast_step2 pre is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO forecast_step2 pre not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-sleep 1
-export jobid=jrtofs_forecast_step2
-mkdir -p ${DATAROOT}/$jobid
-cat << EOF_forecast_step2 > $batchloc/rtofs.forecast_step2.$pid
-#!/bin/ksh -l
-#SBATCH --ntasks=900
-#SBATCH --time=03:00:00
-#SBATCH --account=$account
-#SBATCH --job-name=RTOFS_FCST2
-#SBATCH -d afterok:$jobid_fcst2_pre
-#SBATCH -o $DATAROOT/rtofs_fcst2.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export NMPI=900
-export NPROCS=900
-export COMROOT=${COMtmp}/com
-export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
-export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
-export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
-export GETGES_NWG=/dev/null
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_STEP2 )
-EOF_forecast_step2
-
-jobid_fcst2=$(sbatch $batchloc/rtofs.forecast_step2.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO forecast step2 is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO forecast step2 not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-#
-# Submit forecast post-processing
-sleep 1
-export jobid=jrtofs_forecast_post_2
-mkdir -p ${DATAROOT}/$jobid
-cat << EOF_forecast_2_post > $batchloc/rtofs.forecast_2_post.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --time=01:00:00
-#SBATCH --account=$account
-#SBATCH --job-name=RTOFS_FCST_POST
-#SBATCH -d afterok:$jobid_fcst2
-#SBATCH -o $DATAROOT/rtofs_forecast_2_post.out.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export NPROCS=1
-export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
-export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
-export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
-export GETGES_NWG=/dev/null
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_POST_2 )
-EOF_forecast_2_post
-
-job_fcst2_post=$(sbatch $batchloc/rtofs.forecast_2_post.$pid | cut -d " " -f4)
-if [ $# -gt 0 ]
-then
-  echo 'LAUNCHER: RTOFS-GLO forecast post-processing_2 job is submitted at host '`hostname`' at '`date`
-else
-  echo 'LAUNCHER ERROR: RTOFS-GLO forecast post-processing_2 job is not submitted at host '`hostname`' at '`date` "error is $#"
-  exit
-fi
-
-# Submit forecast grib posts
-for NN in 01 02 03 04
-do
-  export job=${RUN}_${modID}_forecast_grib_post_${projID}.${NN}
-  export jobid=j${job}
-  export NN
-##
-cat << EOF_forecast_grib_post > $batchloc/rtofs.forecast_grib_post.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --time=01:00:00
-#SBATCH --account=$account
-#SBATCH --job-name=RTOFS_FCST_GRIB_POST
-#SBATCH -d afterok:$jobid_fcst2
-#SBATCH -o $DATAROOT/rtofs_forecast_grib_post.out.$NN.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export NPROCS=1
-export COMROOT=${COMtmp}/com
-export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
-export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
-export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
-export GETGES_NWG=/dev/null
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_GRIB2_POST )
-EOF_forecast_grib_post
-
-job_fcst_grib_post=$(sbatch $batchloc/rtofs.forecast_grib_post.$pid | cut -d " " -f4)
-
-  if [ $# -gt 0 ]
-  then
-    echo 'LAUNCHER: RTOFS-GLO forecast GRIB post-processing job ' $NN ' is submitted at host '`hostname`' at '`date`
-  else
-    echo 'LAUNCHER ERROR: RTOFS-GLO forecast GRIB post-processing job ' $NN ' is not submitted at host '`hostname`' at '`date` "error is $#"
-    exit
-  fi
-  unset job
-done
-
-for NN in 01 02 03 04 05 06 07 08
-do
-  export job=${RUN}_${modID}_forecast_post_${projID}.${NN}
-  export jobid=j${job}
-  mkdir -p ${DATAROOT}/$jobid
-  export NN
-##
-cat << EOF_forecast_post > $batchloc/rtofs.forecast_post.$pid
-#!/bin/ksh -l
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --time=01:00:00
-#SBATCH --account=$account
-#SBATCH --job-name=RTOFS_FCST_POST
-#SBATCH -d afterok:$jobid_fcst2
-#SBATCH -o $DATAROOT/rtofs_forecast_post.out.$NN.%j
-#SBATCH -q batch
-module purge
-module use $HOMErtofs/modulefiles
-module load runtime_hera_rtofs.module
-export COMROOT=${COMtmp}/com
-export NPROCS=1
-export COMIN=$COMROOT/rtofs/prod/rtofs.$PDY
-export COMINm1=$COMROOT/rtofs/prod/rtofs.$PDYm1
-export COMOUT=$COMROOT/rtofs/prod/rtofs.$PDY
-export GETGES_NWG=/dev/null
-export I_MPI_PIN_RESPECT_CPUSET=disable
-(time $HOMErtofs/jobs/JRTOFS_GLO_FORECAST_POST )
-EOF_forecast_post
-
-job_fcst_post=$(sbatch $batchloc/rtofs.forecast_post.$pid | cut -d " " -f4)
-
-  if [ $# -gt 0 ]
-  then
-    echo 'LAUNCHER: RTOFS-GLO forecast post-processing job ' $NN ' is submitted at host '`hostname`' at '`date`
-  else
-    echo 'LAUNCHER ERROR: RTOFS-GLO forecast post-processing job ' $NN ' is not submitted at host '`hostname`' at '`date` "error is $#"
-    exit
-  fi
-  unset job
-done
 
 
 #########just
-
 
 echo testjustthisjob
 exit
@@ -445,8 +256,8 @@ else
   exit
 fi
 
-echo one job
-exit
+#echo one job
+#exit
 
 # Submit Three VAR jobs
 export jobid=jrtofs_hycom_var
