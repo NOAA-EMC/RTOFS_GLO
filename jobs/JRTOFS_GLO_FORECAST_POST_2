@@ -119,7 +119,7 @@ export fcstdays
 ################################################################
 # Send a message indicating the start of the job
 ################################################################
-msg="HAS BEGUN on `hostname`"
+msg="JOB $jobid HAS BEGUN on `hostname`"
 postmsg "$msg"
 
 ####################
@@ -130,7 +130,7 @@ ksh ${HOMErtofs}/scripts/exrtofs_glo_post_2.sh
 cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.forecast_d7-8_post_2.`basename $pgmout`
 
-msg="JOB $job HAS COMPLETED NORMALLY." 
+msg="JOB $jobid HAS COMPLETED NORMALLY." 
 postmsg "$msg"
 
 cd $DATAROOT

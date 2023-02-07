@@ -263,8 +263,6 @@ if [[ $netwk = gdas ]];then
    ;;
   sfcflxfv3) geslist='
    $GETGES_COM/gdas.$day/${cyc}/atmos/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2'
-# /lfs/h1/ops/canned/com/gfs/v16.2/gdas.20210823/00/atmos/
-#old   $GETGES_COM/gfs/${envirges}/gdas.$day/${cyc}/atmos/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2
    fhinc=01
    ;;
   pgbges) geslist='
@@ -441,8 +439,6 @@ elif [[ $netwk = gfs ]];then
    ;;
   sfcflxfv3) geslist='
    $GETGES_COM/gfs.$day/${cyc}/atmos/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
-# /lfs/h1/ops/canned/com/gfs/v16.2/gfs.20210824/18/atmos
-#old   $GETGES_COM/gfs/${envirges}/gfs.$day/${cyc}/atmos/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
    ;;
   pgbges) geslist='
    $GETGES_COM/gfs/$envirges/gfs.$day/gfs.t${cyc}z.pgrbf$fh'

@@ -65,7 +65,8 @@ export DCOMINAMSR=${DCOMINAMSR:-${DCOMROOT}}
 export DCOMINSSH=${DCOMINSSH:-${DCOMROOT}}
 export DCOMINSSS=${DCOMINSSS:-${DCOMROOT}}
 export DCOMINSST=${DCOMINSST:-${DCOMROOT}}
-export DCOMINHFR=${DCOMINSST:-${DCOMROOT}}
+export DCOMINHFR=${DCOMINHFR:-${DCOMROOT}}
+export TANK=${TANK:-${DCOMROOT}}
 
 #export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
 #export COMROOT=${COMROOT:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
@@ -94,7 +95,7 @@ export inputgrid=navy_0.08
 #################################################################
 #  Send a message indicating the start of the job
 #################################################################
-msh="HAS BEGUN on `hostname`"
+msg="JOB $jobid HAS BEGUN on `hostname`"
 postmsg "$msg"
 
 ####################
@@ -107,7 +108,7 @@ sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_ncoda_qc.sh
 cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.ncoda_qc.`basename $pgmout`
 
-msg="JOB $job HAS COMPLETED NORMALLY."
+msg="JOB $jobid HAS COMPLETED NORMALLY."
 postmsg "$msg"
 
 cd $DATAROOT

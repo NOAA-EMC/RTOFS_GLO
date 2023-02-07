@@ -199,7 +199,7 @@ mv fort.88 $log_dir/hycom_var.$ddtg.dbg
 
 #   create data coverage graphics
 DoGraphics=NO
-if [ $DoGraphcs = YES ] ; then
+if [ $DoGraphics = YES ] ; then
   export OCN_OUTPUT_DIR=$DATA/restart
   export OCN_CLIM_DIR=$FIXrtofs/codaclim
   # NCODA map

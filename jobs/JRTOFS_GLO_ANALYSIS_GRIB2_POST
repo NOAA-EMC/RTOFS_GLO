@@ -10,6 +10,7 @@ echo rtofs_glo_ver is ${rtofs_glo_ver:?}
 
 export PS4='$SECONDS + '
 date
+env
 set -xa
 
 #######################################
@@ -110,7 +111,7 @@ export analdays
 ################################################################
 # Send a message indicating the start of the job
 ################################################################
-msg="HAS BEGUN on `hostname`"
+msg="JOB $jobid HAS BEGUN on `hostname`"
 postmsg "$msg"
 
 ####################
@@ -121,7 +122,7 @@ ksh ${HOMErtofs}/scripts/exrtofs_glo_grib2_post.sh
 cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.analysis.grib_post.`basename $pgmout`
 
-msg="JOB $job HAS COMPLETED NORMALLY." 
+msg="JOB $jobid HAS COMPLETED NORMALLY." 
 postmsg "$msg"
 
 cd $DATAROOT

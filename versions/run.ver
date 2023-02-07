@@ -1,9 +1,9 @@
 #export model=rtofs
-export rtofs_glo_ver=v2.3.1
+export rtofs_glo_ver=v2.3.2
 export model_ver=${rtofs_glo_ver}
 export version=${rtofs_glo_ver}
 
-export gfs_ver=v16.2
+export gfs_ver=v16.3
 
 export PrgEnv_intel_ver=8.1.0
 export craype_ver=2.7.10

@@ -139,7 +139,7 @@ mv fort.68 $log_dir/glbl_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO
-if [ $DoGraphcs = YES ] ; then
+if [ $DoGraphics = YES ] ; then
   export OCN_OUTPUT_DIR=$DATA/restart
   export OCN_CLIM_DIR=$FIXrtofs/codaclim
   #NCODA map

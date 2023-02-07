@@ -79,7 +79,7 @@ export inputgrid=navy_0.08
 #################################################################
 #  Send a message indicating the start of the job
 #################################################################
-msh="HAS BEGUN on `hostname`"
+msg="JOB $jobid HAS BEGUN on `hostname`"
 postmsg "$msg"
 
 ####################
@@ -92,7 +92,7 @@ sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_ncoda_polar_var.sh
 cat $pgmout
 cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.ncoda_polar_var.`basename $pgmout`
 
-msg="JOB $job HAS COMPLETED NORMALLY."
+msg="JOB $jobid HAS COMPLETED NORMALLY."
 postmsg "$msg"
 
 cd $DATAROOT

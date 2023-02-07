@@ -240,8 +240,8 @@ mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
 #   create graphics
 DoGraphics=NO
 if [ $DoGraphics = YES ] ; then
-  export OCEAN_OUTPUT_DIR=$DATA/shem_var/restart
-  export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
+  export OCN_OUTPUT_DIR=$DATA/shem_var/restart
+  export OCN_CLIM_DIR=$FIXrtofs/codaclim
   #NCODA map
   $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
   err=$?; export err ; err_chk
