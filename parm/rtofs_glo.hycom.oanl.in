@@ -38,7 +38,7 @@
   mask_opt    = '3D',
   mld_rec     = 425,
   mld_src     = 'modl',
-  mx_asm_lvl  = 2500., 2500., 2500., 2500., 2500., 2500.,
+  mx_asm_lvl  = 2500., 2500., 2500., 2500., 2500.,
   n_pass      = 2,
   offset      = 0., 0., 0., 0.,
   ohc         = .false.,

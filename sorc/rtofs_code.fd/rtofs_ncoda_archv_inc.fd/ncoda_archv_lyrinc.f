@@ -2338,61 +2338,61 @@ C
       IMPLICIT NONE
       REAL*8  TT8,SS8
 cZG
-      INCLUDE 'include/stmt_fns_SIGMA0_7term.h'
+      INCLUDE './stmt_fns_SIGMA0_7term.h'
       SIG_1 = SIG(TT8,SS8)
       END
       REAL*8 FUNCTION SIGLOC_1(TT8,SS8,PRS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8,PRS8
-      INCLUDE 'include/stmt_fns_SIGMA0_7term.h'
+      INCLUDE './stmt_fns_SIGMA0_7term.h'
       SIGLOC_1 = SIGLOC(TT8,SS8,PRS8)
       END
       REAL*8 FUNCTION SOFSIG_1(RR8,TT8)
       IMPLICIT NONE
       REAL*8  RR8,TT8
-      INCLUDE 'include/stmt_fns_SIGMA0_7term.h'
+      INCLUDE './stmt_fns_SIGMA0_7term.h'
       SOFSIG_1 = SOFSIG(RR8,TT8)
       END
       REAL*8 FUNCTION TOFSIG_1(RR8,SS8)
       IMPLICIT NONE
       REAL*8  RR8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA0_7term.h'
+      INCLUDE './stmt_fns_SIGMA0_7term.h'
       TOFSIG_1 = TOFSIG(RR8,SS8)
       END
       REAL*8 FUNCTION SIG_3(TT8,SS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA0_9term.h'
+      INCLUDE './stmt_fns_SIGMA0_9term.h'
       SIG_3 = SIG(TT8,SS8)
       END
       REAL*8 FUNCTION SIGLOC_3(TT8,SS8,PRS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8,PRS8
-      INCLUDE 'include/stmt_fns_SIGMA0_9term.h'
+      INCLUDE './stmt_fns_SIGMA0_9term.h'
       SIGLOC_3 = SIGLOC(TT8,SS8,PRS8)
       END
       REAL*8 FUNCTION SOFSIG_3(RR8,TT8)
       IMPLICIT NONE
       REAL*8  RR8,TT8
-      INCLUDE 'include/stmt_fns_SIGMA0_9term.h'
+      INCLUDE './stmt_fns_SIGMA0_9term.h'
       SOFSIG_3 = SOFSIG(RR8,TT8)
       END
       REAL*8 FUNCTION TOFSIG_3(RR8,SS8)
       IMPLICIT NONE
       REAL*8  RR8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA0_9term.h'
+      INCLUDE './stmt_fns_SIGMA0_9term.h'
       TOFSIG_3 = TOFSIG(RR8,SS8)
       END
       REAL*8 FUNCTION SIG_5(TT8,SS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA0_17term.h'
+      INCLUDE './stmt_fns_SIGMA0_17term.h'
       SIG_5 = SIG(TT8,SS8)
       END
       REAL*8 FUNCTION SIGLOC_5(TT8,SS8,PRS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8,PRS8
-      INCLUDE 'include/stmt_fns_SIGMA0_17term.h'
+      INCLUDE './stmt_fns_SIGMA0_17term.h'
       SIGLOC_5 = SIGLOC(TT8,SS8,PRS8)
       END
       REAL*8 FUNCTION SOFSIG_5(RR8,TT8)
@@ -2402,7 +2402,7 @@ cZG
       INTEGER NN
       REAL*8  SN,SO
       REAL*8  SOFSIG_7
-      INCLUDE 'include/stmt_fns_SIGMA0_17term.h'
+      INCLUDE './stmt_fns_SIGMA0_17term.h'
 C     sofsig via Newton iteration from a 12-term 1st guess
       SN = SOFSIG_7(RR8,TT8)  !non-negative
       DO NN= 1,10
@@ -2421,7 +2421,7 @@ C     sofsig via Newton iteration from a 12-term 1st guess
       INTEGER NN
       REAL*8  TN,TO
       REAL*8  TOFSIG_7
-      INCLUDE 'include/stmt_fns_SIGMA0_17term.h'
+      INCLUDE './stmt_fns_SIGMA0_17term.h'
 C     sofsig via Newton iteration from a 12-term 1st guess
       TN = TOFSIG_7(RR8,SS8)  !non-negative
       DO NN= 1,10
@@ -2436,85 +2436,85 @@ C     sofsig via Newton iteration from a 12-term 1st guess
       REAL*8 FUNCTION SIG_7(TT8,SS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA0_12term.h'
+      INCLUDE './stmt_fns_SIGMA0_12term.h'
       SIG_7 = SIG(TT8,SS8)
       END
       REAL*8 FUNCTION SIGLOC_7(TT8,SS8,PRS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8,PRS8
-      INCLUDE 'include/stmt_fns_SIGMA0_12term.h'
+      INCLUDE './stmt_fns_SIGMA0_12term.h'
       SIGLOC_7 = SIGLOC(TT8,SS8,PRS8)
       END
       REAL*8 FUNCTION SOFSIG_7(RR8,TT8)
       IMPLICIT NONE
       REAL*8  RR8,TT8
-      INCLUDE 'include/stmt_fns_SIGMA0_12term.h'
+      INCLUDE './stmt_fns_SIGMA0_12term.h'
       SOFSIG_7 = SOFSIG(RR8,TT8)
       END
       REAL*8 FUNCTION TOFSIG_7(RR8,SS8)
       IMPLICIT NONE
       REAL*8  RR8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA0_12term.h'
+      INCLUDE './stmt_fns_SIGMA0_12term.h'
       TOFSIG_7 = TOFSIG(RR8,SS8)
       END
       REAL*8 FUNCTION SIG_2(TT8,SS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA2_7term.h'
+      INCLUDE './stmt_fns_SIGMA2_7term.h'
       SIG_2 = SIG(TT8,SS8)
       END
       REAL*8 FUNCTION SIGLOC_2(TT8,SS8,PRS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8,PRS8
-      INCLUDE 'include/stmt_fns_SIGMA2_7term.h'
+      INCLUDE './stmt_fns_SIGMA2_7term.h'
       SIGLOC_2 = SIGLOC(TT8,SS8,PRS8)
       END
       REAL*8 FUNCTION SOFSIG_2(RR8,TT8)
       IMPLICIT NONE
       REAL*8  RR8,TT8
-      INCLUDE 'include/stmt_fns_SIGMA2_7term.h'
+      INCLUDE './stmt_fns_SIGMA2_7term.h'
       SOFSIG_2 = SOFSIG(RR8,TT8)
       END
       REAL*8 FUNCTION TOFSIG_2(RR8,SS8)
       IMPLICIT NONE
       REAL*8  RR8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA2_7term.h'
+      INCLUDE './stmt_fns_SIGMA2_7term.h'
       TOFSIG_2 = TOFSIG(RR8,SS8)
       END
       REAL*8 FUNCTION SIG_4(TT8,SS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA2_9term.h'
+      INCLUDE './stmt_fns_SIGMA2_9term.h'
       SIG_4 = SIG(TT8,SS8)
       END
       REAL*8 FUNCTION SIGLOC_4(TT8,SS8,PRS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8,PRS8
-      INCLUDE 'include/stmt_fns_SIGMA2_9term.h'
+      INCLUDE './stmt_fns_SIGMA2_9term.h'
       SIGLOC_4 = SIGLOC(TT8,SS8,PRS8)
       END
       REAL*8 FUNCTION SOFSIG_4(RR8,TT8)
       IMPLICIT NONE
       REAL*8  RR8,TT8
-      INCLUDE 'include/stmt_fns_SIGMA2_9term.h'
+      INCLUDE './stmt_fns_SIGMA2_9term.h'
       SOFSIG_4 = SOFSIG(RR8,TT8)
       END
       REAL*8 FUNCTION TOFSIG_4(RR8,SS8)
       IMPLICIT NONE
       REAL*8  RR8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA2_9term.h'
+      INCLUDE './stmt_fns_SIGMA2_9term.h'
       TOFSIG_4 = TOFSIG(RR8,SS8)
       END
       REAL*8 FUNCTION SIG_6(TT8,SS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA2_17term.h'
+      INCLUDE './stmt_fns_SIGMA2_17term.h'
       SIG_6 = SIG(TT8,SS8)
       END
       REAL*8 FUNCTION SIGLOC_6(TT8,SS8,PRS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8,PRS8
-      INCLUDE 'include/stmt_fns_SIGMA2_17term.h'
+      INCLUDE './stmt_fns_SIGMA2_17term.h'
       SIGLOC_6 = SIGLOC(TT8,SS8,PRS8)
       END
       REAL*8 FUNCTION SOFSIG_6(RR8,TT8)
@@ -2524,7 +2524,7 @@ C     sofsig via Newton iteration from a 12-term 1st guess
       INTEGER NN
       REAL*8  SN,SO
       REAL*8  SOFSIG_8
-      INCLUDE 'include/stmt_fns_SIGMA2_17term.h'
+      INCLUDE './stmt_fns_SIGMA2_17term.h'
 C     sofsig via Newton iteration from a 12-term 1st guess
       SN = SOFSIG_8(RR8,TT8)  !non-negative
       DO NN= 1,10
@@ -2543,7 +2543,7 @@ C     sofsig via Newton iteration from a 12-term 1st guess
       INTEGER NN
       REAL*8  TN,TO
       REAL*8  TOFSIG_8
-      INCLUDE 'include/stmt_fns_SIGMA2_17term.h'
+      INCLUDE './stmt_fns_SIGMA2_17term.h'
 C     sofsig via Newton iteration from a 12-term 1st guess
       TN = TOFSIG_8(RR8,SS8)  !non-negative
       DO NN= 1,10
@@ -2558,24 +2558,24 @@ C     sofsig via Newton iteration from a 12-term 1st guess
       REAL*8 FUNCTION SIG_8(TT8,SS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA2_12term.h'
+      INCLUDE './stmt_fns_SIGMA2_12term.h'
       SIG_8 = SIG(TT8,SS8)
       END
       REAL*8 FUNCTION SIGLOC_8(TT8,SS8,PRS8)
       IMPLICIT NONE
       REAL*8  TT8,SS8,PRS8
-      INCLUDE 'include/stmt_fns_SIGMA2_12term.h'
+      INCLUDE './stmt_fns_SIGMA2_12term.h'
       SIGLOC_8 = SIGLOC(TT8,SS8,PRS8)
       END
       REAL*8 FUNCTION SOFSIG_8(RR8,TT8)
       IMPLICIT NONE
       REAL*8  RR8,TT8
-      INCLUDE 'include/stmt_fns_SIGMA2_12term.h'
+      INCLUDE './stmt_fns_SIGMA2_12term.h'
       SOFSIG_8 = SOFSIG(RR8,TT8)
       END
       REAL*8 FUNCTION TOFSIG_8(RR8,SS8)
       IMPLICIT NONE
       REAL*8  RR8,SS8
-      INCLUDE 'include/stmt_fns_SIGMA2_12term.h'
+      INCLUDE './stmt_fns_SIGMA2_12term.h'
       TOFSIG_8 = TOFSIG(RR8,SS8)
       END
