@@ -14,6 +14,7 @@ set -xa
 #                                                                             #
 # Script history log:                                                         #
 # 2020-07-30  Dan Iredell                                                     #
+# 2023-02-08  Dmitry Dukhovskoy modified for updated ncoda_archv_lyrinc       #
 #                                                                             #
 ###############################################################################
 
@@ -74,39 +75,45 @@ typec=icecov_sfc_1o${SIZN}
 ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.a    archv.${archday}.a
 ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.b    archv.${archday}.b
 
+export lyrprinc=lyrprs_${dtg}_analinc
+export salininc=salint_${dtg}_analinc
+export stempinc=seatmp_${dtg}_analinic
+export upvelinc=upvel_${dtg}_analinic  # u vel increm on p-grid
+export vpvelinc=vpvel_${dtg}_analinic
+
 # Check for the existence of analysis increment files
 # These are needed to create the HYCOM incremental update file
 # Temperature
 if [ -e $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ./temp_${dtg}_analinc
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ./${stempinc}
 else
    echo "WARNING - $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc missing."
    echo "No Temperature increments created"
 fi
 # Salinity
 if [ -e $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ./saln_${dtg}_analinc
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ./${salininc}
 else
    echo "WARNING - $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc missing.."
    echo "No Salinity increments created"
 fi
 # Current - U-component
 if [ -e $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ./uvel_${dtg}_analinc
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ./${upvelinc}
 else
    echo "WARNING - $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc missing."
    echo "No U-Velocity increments created"
 fi
 # Current - V-component
 if [ -e $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ./vvel_${dtg}_analinc
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ./${vpvelinc}
 else
    echo "WARNING - $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc missing."
    echo "No V-Velocity increments created"
 fi
 # Layer Pressure
 if [ -e $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ./lypr_${dtg}_analinc
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ./${lyrprinc}
 else
    echo "WARNING - $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc missing."
    echo "No Layer Pressure increments created"
@@ -135,11 +142,20 @@ ar=archv_1_inc.${archday}
 rm -f $ar.[a,b]
 
 # copy modify input file with local vars
-cp ${PARMrtofs}/${RUN}_${modID}.ncoda_archv.input ./ncoda_archv.input
-sed -i -e "s/&archday/$archday/" -e "s/&archname/$ar/" -e "s/&IDM/$IDM/g" -e "s/&JDM/$JDM/g" -e "s/&dtg/$dtg/g" ./ncoda_archv.input
-ln -s ${PARMrtofs}/${RUN}_${modID}.zlevels zi.txt
+cp ${PARMrtofs}/${RUN}_${modID}.ncoda_archv_lyr.input ./ncoda_archv.input
+sed -i -e "s/&archday/$archday/" \
+       -e "s/&archname/$ar/" \
+       -e "s/&IDM/$IDM/g" \
+       -e "s/&JDM/$JDM/g" \
+       -e "s/&dtg/$dtg/g" \
+       -e "s/&lyrprsinc/${lyrprinc}/g" \
+       -e "s/&salintinc/${salininc}/g" \
+       -e "s/&seatmpinc/${stempinc}/g" \
+       -e "s/&upvelinc/${upvelinc}/g" \
+       -e "s/&vpvelinc/${vpvelinc}/g" ./ncoda_archv.input
+#ln -s ${PARMrtofs}/${RUN}_${modID}.zlevels zi.txt
 
-$EXECrtofs/rtofs_ncoda_archv_inc < ncoda_archv.input
+$EXECrtofs/rtofs_ncoda_archv_lyrinc < ncoda_archv.input
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_archv_inc=",$err
 
