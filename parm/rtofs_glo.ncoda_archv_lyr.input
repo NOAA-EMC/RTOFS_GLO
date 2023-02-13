@@ -126,5 +126,5 @@ regional.depth.a
 &IDM  'idmn  ' = i-extent of ncoda subregion (<=idm; 0 implies idm)
 &JDM  'jdmn  ' = j-extent of ncoda subregion (<=jdm; 0 implies jdm)
 41 'kncoda' = number   of ncoda levels
-2  'lrprsu' = 1 - db, 2 - Pa, 3 - m input units pressure increments
+3  'lrprsu' = 1 - db, 2 - Pa, 3 - m input units pressure increments
 NONE

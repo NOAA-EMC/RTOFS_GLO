@@ -65,11 +65,11 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_ssh.b      relax.ssh.b
 
 # 2. link to ncoda hycom var restart files
  
-typet=seatmp_pre_1o${SIZN}
-types=salint_pre_1o${SIZN}
-typeu=uucurr_pre_1o${SIZN}
-typev=vvcurr_pre_1o${SIZN}
-typep=lyrprs_pre_1o${SIZN}
+typet=seatmp_lyr_1o${SIZN}
+types=salint_lyr_1o${SIZN}
+typeu=uucurr_lyr_1o${SIZN}
+typev=vvcurr_lyr_1o${SIZN}
+typep=lyrprs_lyr_1o${SIZN}
 typec=icecov_sfc_1o${SIZN}
 
 ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.a    archv.${archday}.a
@@ -77,9 +77,9 @@ ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.b    archv.${archday}.b
 
 export lyrprinc=lyrprs_${dtg}_analinc
 export salininc=salint_${dtg}_analinc
-export stempinc=seatmp_${dtg}_analinic
-export upvelinc=upvel_${dtg}_analinic  # u vel increm on p-grid
-export vpvelinc=vpvel_${dtg}_analinic
+export stempinc=seatmp_${dtg}_analinc
+export upvelinc=upvel_${dtg}_analinc  # u vel increm on p-grid
+export vpvelinc=vpvel_${dtg}_analinc
 
 # Check for the existence of analysis increment files
 # These are needed to create the HYCOM incremental update file
