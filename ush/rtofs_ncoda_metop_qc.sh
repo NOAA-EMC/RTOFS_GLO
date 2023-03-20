@@ -44,19 +44,19 @@ cd $SST_DATA_DIR
 ymd=${prv_dtg:0:8}
 for k in 12 13 14 15 16 17 18 19 20 21 22 23
 do
-   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MA*"
+   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MA*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/mta_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MB*"
+   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MB*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/mtb_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MC*"
+   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MC*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/mtc_$k.$cut_dtg
    else
@@ -67,19 +67,19 @@ done
 ymd=${cut_dtg:0:8}
 for k in 00 01 02 03 04 05 06 07 08 09 10 11
 do
-   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MA*"
+   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MA*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/mta_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MB*"
+   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MB*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/mtb_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MC*"
+   cmd="$ymd/sst/$ymd$k*L2P*AVHRRF_MC*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/mtc_$k.$cut_dtg
    else
@@ -89,7 +89,22 @@ done
 
 #   change to working directory
 cd $log_dir
-cat mta_*.$cut_dtg mtb_*.$cut_dtg mtc_*.$cut_dtg > acspo_sst_files.$cut_dtg
+cat mta_*.$cut_dtg mtb_*.$cut_dtg mtc_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
+
+echo timecheck metop start ncdump at $(date)
+while read line
+do
+  ncdump -k $SST_DATA_DIR/$line > /dev/null
+  ncrc=$?
+  if [ $ncrc -eq 0 ]
+  then
+     echo $line >> acspo_sst_files.$cut_dtg
+  else
+     echo "WARNING - file $SST_DATA_DIR/$line appears to be corrupt."
+  fi
+done < acspo_sst_files.${cut_dtg}_prelim
+echo timecheck metop finish ncdump at $(date)
+
 if [[ ! -f  acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
    echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No METOP files to process."
    echo "METOP.obs_control file will not be updated"
