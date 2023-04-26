@@ -346,7 +346,7 @@ c ---     q is dp00i   when much deeper than surface fixed coordinates
           endif
           qhrlx( k+1)=1.0/(1.0 + qts*(hybrlx-1.0))  !1 at  dp0k, qhybrlx at dp00i
           dp0ij( k)  =min( q, dp0k(k) )
-          dp0cum(k+1)=dp0cum(k)+dp0ij(k)
+          dp0cum(k+1)=dp0cum(k)+dp0k(k)
           p(i,j, k+1)=p(i,j,k)+dp(i,j,k,n)
 cdiag         if (i.eq.itest .and. j.eq.jtest) then
 cdiag           write (lp,'(i6,1x,6f9.3)')
