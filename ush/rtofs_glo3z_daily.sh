@@ -33,7 +33,7 @@
 ###############################################################################
 set -x
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 cp -f -p ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv_full.in archv.in
 
@@ -64,7 +64,7 @@ do
 
   pgmout=outfile
 
-  rm change_archv; touch change_archv
+  rm -f change_archv; touch change_archv
   echo "s/1uvl/$uvl1/g" >> change_archv
   echo "s/1vvl/$vvl1/g" >> change_archv
   echo "s/1tem/$tem1/g" >> change_archv
@@ -105,4 +105,4 @@ else
 fi
 
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

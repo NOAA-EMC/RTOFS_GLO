@@ -106,7 +106,7 @@ eval fcstdays="\$analdays"
 #################################################################
 #  Send a message indicating the start of the job
 #################################################################
-msg="JOB $jobid HAS BEGUN on `hostname`"
+msg="JOB $job HAS BEGUN on $(hostname)"
 postmsg "$msg"
 
 ####################
@@ -117,9 +117,9 @@ ksh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}.sh
 #===================================================================
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}.$(basename $pgmout)
 
-msg="JOB $jobid HAS COMPLETED NORMALLY."
+msg="JOB $job HAS COMPLETED NORMALLY."
 postmsg "$msg"
 
 cd $DATAROOT

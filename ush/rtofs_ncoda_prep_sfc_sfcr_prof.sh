@@ -6,7 +6,7 @@
 ##  this script should be followed by running a decoder.
 ##  Y. Hao  IMSG AT EMC/NCEP/NOAA  10/08/2018. Dump only: ZG May 2019
 ###################################################################################
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -x
 
 DIROUT=$DATA/dump
@@ -27,9 +27,9 @@ export HHbacks=48  # surface lookup back (in hours)
 export HHbackp=132  # profile lookup back (in hours)
 export HHfwd=12    # surface lookup forward (in hours)
 
- export lkbck_obsdtg_s=`$NDATE -${HHbacks} ${run_dtg}`
- export lkbck_obsdtg_p=`$NDATE -${HHbackp} ${run_dtg}`
- export lkahd_obsdtg=`$NDATE +${HHfwd} ${run_dtg}`
+export lkbck_obsdtg_s=$($NDATE -${HHbacks} ${run_dtg})
+export lkbck_obsdtg_p=$($NDATE -${HHbackp} ${run_dtg})
+export lkahd_obsdtg=$($NDATE +${HHfwd} ${run_dtg})
 
 #start date for surface and profiles, end date
 #with centertime and interval, for surface dump will be from 12+hhbacks 
@@ -60,7 +60,7 @@ do
   cat $dtyp.ibm.$ADATE >> $dtyp.${enddate}
   cat $dtyp.out1.$ADATE >> $dtyp.out.${enddate}
   ADATE=$ADATE'00'
-  ADATE=`$NDATE +24 $ADATE | cut -c1-8`
+  ADATE=$($NDATE +24 $ADATE | cut -c1-8)
 done # while [[ $ADATE -le  $enddate ]]
 mv $dtyp.${enddate} $DIROUT/.
 mv $dtyp.out.${enddate} $DIROUT/.
@@ -83,7 +83,7 @@ do
   cat $dtyp.ibm.$ADATE >> $dtyp.${enddate}
   cat $dtyp.out1.$ADATE >> $dtyp.out.${enddate}
   ADATE=$ADATE'00'
-  ADATE=`$NDATE +24 $ADATE | cut -c1-8`
+  ADATE=$($NDATE +24 $ADATE | cut -c1-8)
 done # while [[ $ADATE -le  $enddate ]]
 mv $dtyp.${enddate} $DIROUT/.
 mv $dtyp.out.${enddate} $DIROUT/.
@@ -112,6 +112,6 @@ done #dtyp
 ##ln -s /gpfs/dell2/emc/modeling/noscrub/Dan.Iredell/COMDIR/com/rtofs/prod/dump.$enddate/* dump/.
 ##### this is so we can test with emc.ncodapa dumps
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0

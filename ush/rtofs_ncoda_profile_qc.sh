@@ -2,7 +2,7 @@
 
 #   this script runs NCODA pre_QC and NCODA QC for PROFILEs
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
@@ -107,7 +107,7 @@ mv fort.52 prof_qc.$cut_dtg.stb
 mv fort.53 prof_qc.$cut_dtg.arg
 #mv gmeta prof_qc.$cut_dtg.gmeta
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0
 

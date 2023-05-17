@@ -44,7 +44,7 @@ cd $DATA
 ### NOTE: Move copying to forecast step
 ###
 
-msg="RTOFS_GLO_POST JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_POST JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 procstatus=0
@@ -63,15 +63,15 @@ if [ ${RUN_MODE} = 'analysis' ]
 then
   export fcstdays=${fcstdays:-2}
   export enddate=${analysis_end:-$PDY}
-  export startdate=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
-  export ENDHOUR=`expr $fcstdays \* 24`
+  export startdate=$($NDATE -$(expr $fcstdays \* 24 ) ${enddate}'00' | cut -c1-8)
+  export ENDHOUR=$(expr $fcstdays \* 24)
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
   export fcstdays=${fcstdays:-1}
   export startdate=${startdate:-${PDY}}
-  export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
-  export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24 `
+  export enddate=$($NDATE $(expr $fcstdays \* 24 ) ${startdate}${mycyc} | cut -c1-8)
+  export ENDHOUR=$(expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24)
 fi
 
 # define what functions to do (default to operational settings)
@@ -104,19 +104,19 @@ if [ ${RUN_MODE} = 'analysis' ]
 then
   fhr=00
   export mode=n
-  analhrs=`expr $fcstdays \* 24` 
+  analhrs=$(expr $fcstdays \* 24) 
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
-  fhr=`expr \${fcstdays_before_thisstep} \* 24`
+  fhr=$(expr ${fcstdays_before_thisstep} \* 24)
   export mode=f
 fi
 export fhr0=$fhr
-fhr=`expr $fhr + 6`
+fhr=$(expr $fhr + 6)
 
 # srtarting hours
-export hr_daily=`expr $fhr0 \+ 24`
-export hr_3z_6hrly=`expr $fhr0 \+ 6`
+export hr_daily=$(expr $fhr0 \+ 24)
+export hr_3z_6hrly=$(expr $fhr0 \+ 6)
 
 
 echo fhr $fhr ENDHOUR $ENDHOUR
@@ -143,7 +143,7 @@ do
   if [ ${RUN_MODE} = 'analysis' ]
   then
     typeset -Z2 fhr3
-    fhr3=`expr $analhrs - $fhr2`
+    fhr3=$(expr $analhrs - $fhr2)
     if [ $fhr -eq $ENDHOUR ]; then
        arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}00.archv
     else
@@ -201,7 +201,7 @@ do
 #*********************************************************************
   if [ $fhr -eq $hr_daily ]
   then
-    hr_daily=`expr $hr_daily + $intvl_daily`
+    hr_daily=$(expr $hr_daily + $intvl_daily)
 ###
     if [ $volume_3z_daily = 'YES' ]
     then
@@ -228,7 +228,7 @@ do
   # 6 hourlies for volume files in 3 regions
   #
   if [ $fhr -eq $hr_3z_6hrly ]; then
-    hr_3z_6hrly=`expr $hr_3z_6hrly + $intvl_6hrly`
+    hr_3z_6hrly=$(expr $hr_3z_6hrly + $intvl_6hrly)
     if [ $volume_3z_6hrly = 'YES' ]
     then
       cmdtype='poe'
@@ -262,7 +262,7 @@ do
     fi # 6hrly loop 
   fi # volume 3z loop
 
-  fhr=`expr $fhr + $intvl_6hrly` 
+  fhr=$(expr $fhr + $intvl_6hrly) 
 done
 
 if [ $procstatus = 0 ]
@@ -274,7 +274,7 @@ then
     then
       cd $COMOUT
       # need definition of files
-      for gfile in *.grb2
+      for gfile in $(ls *.grb2)
       do
         $md5 $gfile >> $DATA/csum.$PDY$mycyc
       done

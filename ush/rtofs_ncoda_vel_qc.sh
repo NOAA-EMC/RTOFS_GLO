@@ -3,7 +3,7 @@
 #   this script runs NCODA pre_QC and NCODA QC for HF Radar
 #   and drifting buoy velocity observations
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
@@ -28,16 +28,21 @@ mkdir -p $OCN_DATA_DIR/sfc
 mkdir -p $OCN_DATA_DIR/velocity
 
 # link in forcing.wndspd so that ncoda programs find it
-mkdir ./data_${PDYm1}00
+mkdir -p ./data_${PDYm1}00
 if [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ]] && \
-   [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ]]; then 
-   ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ./data_${PDYm1}00/forcing.wndspd.a
-   ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ./data_${PDYm1}00/forcing.wndspd.b
+   [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ]]
+then
+   if [[ ! -s ./data_${PDYm1}00/forcing.wndspd.a ]] && \
+      [[ ! -s ./data_${PDYm1}00/forcing.wndspd.b ]] 
+   then
+      ln -sf $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ./data_${PDYm1}00/forcing.wndspd.a
+      ln -sf $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ./data_${PDYm1}00/forcing.wndspd.b
+   fi
 else
    echo "using uniform 5 m/s wind speed"
 fi
 
-#use dcominsss for now
+# path to location of hfr data
 export HFR_DATA_DIR=$DCOMINHFR
 
 #   set path to BUFR dump files
@@ -83,7 +88,10 @@ $EXECrtofs/rtofs_ncoda_drft_decode $cut_dtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_drft_decode=",$err
 
-mv -f fort.71 drifter_frames.$cut_dtg.out
+if [ -e fort.71 ]
+then
+  mv -f fort.71 drifter_frames.$cut_dtg.out
+fi
 cat pout1 pout2 > vel_preqc.$cut_dtg.out
 
 #--------------------------------------------------------------------------------------
@@ -122,11 +130,20 @@ ln -s $OCN_DATA_DIR/incoming/drft.b.$cut_dtg $OCN_DATA_DIR/incoming/drft.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg velocity > vel_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 vel_qc.$cut_dtg.rej
-mv fort.46 vel_qc_rpt.$cut_dtg.rej
-mv -f gmeta vel_qc.$cut_dtg.gmeta
+if [ -e fort.44 ]
+then
+  mv fort.44 vel_qc.$cut_dtg.rej
+fi
+if [ -e fort.46 ]
+then
+  mv fort.46 vel_qc_rpt.$cut_dtg.rej
+fi
+if [ -e gmeta ]
+then
+  mv -f gmeta vel_qc.$cut_dtg.gmeta
+fi
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0
 

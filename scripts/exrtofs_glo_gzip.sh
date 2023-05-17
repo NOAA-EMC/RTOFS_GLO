@@ -33,7 +33,7 @@ cd $DATA
 ### NOTE: GZIP files and alert_dbn
 ###
 
-msg="$job JOB has begun on `hostname` at `date`"
+msg="$job JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 filepre=${RUN}_${modID}.t00z
@@ -43,10 +43,10 @@ filepre=${RUN}_${modID}.t00z
 case $CYC in 
     00)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo ${COMIN}/${filepre}.n*.restart.a;  echo ${COMIN}/${filepre}.n*.restart_cice;  echo ${COMIN}/${filepre}.n-{06..24..6}.archv.a;  echo ${COMIN}/${filepre}.n00.archv.a;  echo ${COMIN}/${filepre}.n00.arche.a;  echo ${COMIN}/${filepre}.n-{01..24}.arche.a;  echo ${COMIN}/${filepre}.n00.archs.a;  echo ${COMIN}/${filepre}.n-{01..24}.archs.a`
+	for file in $(echo ${COMIN}/${filepre}.n*.restart.a;  echo ${COMIN}/${filepre}.n*.restart_cice;  echo ${COMIN}/${filepre}.n-{06..24..6}.archv.a;  echo ${COMIN}/${filepre}.n00.archv.a;  echo ${COMIN}/${filepre}.n00.arche.a;  echo ${COMIN}/${filepre}.n-{01..24}.arche.a;  echo ${COMIN}/${filepre}.n00.archs.a;  echo ${COMIN}/${filepre}.n-{01..24}.archs.a)
 	do
 	    if [ -s $file ]; then
-		filename=`basename $file`
+		filename=$(basename $file)
 		echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
 	    else
 		echo " $file missing, exiting now."
@@ -58,14 +58,14 @@ case $CYC in
         mpiexec -np $NPROCS --cpu-bind verbose,core cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
-	for tgzfile in `echo ${COMOUT}/${filepre}.n00.archs.a.tgz;  echo ${COMOUT}/${filepre}.n-{01..24}.archs.a.tgz;  echo ${COMOUT}/${filepre}.n00.archv.a.tgz;  echo ${COMOUT}/${filepre}.n-{06..24..6}.archv.a.tgz;  echo ${COMOUT}/${filepre}.n00.restart_cice.tgz;  echo ${COMOUT}/${filepre}.n00.restart.a.tgz`  
+	for tgzfile in $(echo ${COMOUT}/${filepre}.n00.archs.a.tgz;  echo ${COMOUT}/${filepre}.n-{01..24}.archs.a.tgz;  echo ${COMOUT}/${filepre}.n00.archv.a.tgz;  echo ${COMOUT}/${filepre}.n-{06..24..6}.archv.a.tgz;  echo ${COMOUT}/${filepre}.n00.restart_cice.tgz;  echo ${COMOUT}/${filepre}.n00.restart.a.tgz)  
 	do
 	    if [ -s $tgzfile ]; then
 		if [ $SENDDBN = YES ] ; then
-		    if [ `basename $tgzfile` == 'rtofs_glo.t00z.n00.restart.a.tgz' ]; then
+		    if [ $(basename $tgzfile) == 'rtofs_glo.t00z.n00.restart.a.tgz' ]; then
 			${DBNROOT}/bin/dbn_alert MODEL RTOFS_GLO_NRESTARTA_TGZ $job $tgzfile
 			${DBNROOT}/bin/dbn_alert MODEL RTOFS_GLO_NRESTARTB $job ${tgzfile%.a.*}.b
-		    elif [ `basename $tgzfile` == 'rtofs_glo.t00z.n00.restart_cice.tgz' ]; then
+		    elif [ $(basename $tgzfile) == 'rtofs_glo.t00z.n00.restart_cice.tgz' ]; then
 			${DBNROOT}/bin/dbn_alert MODEL RTOFS_GLO_NRESTARTCICE_TGZ $job $tgzfile
 		    elif  echo $tgzfile | grep -q archv ; then
 			${DBNROOT}/bin/dbn_alert MODEL RTOFS_GLO_NARCHVA_TGZ $job $tgzfile
@@ -83,10 +83,10 @@ case $CYC in
 	;;
     06)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo  ${COMIN}/${filepre}.f{06..96..6}.archv.a;  echo  ${COMIN}/${filepre}.f{01..96}.archs.a; echo  ${COMIN}/${filepre}.f{00..96}.arche.a `
+	for file in $(echo  ${COMIN}/${filepre}.f{06..96..6}.archv.a;  echo  ${COMIN}/${filepre}.f{01..96}.archs.a; echo  ${COMIN}/${filepre}.f{00..96}.arche.a)
 	do
 	    if [ -s $file ]; then
-		filename=`basename $file`
+		filename=$(basename $file)
 		echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
 	    else
 		echo " $file missing, exiting now."
@@ -98,7 +98,7 @@ case $CYC in
         mpiexec -np $NPROCS --cpu-bind verbose,core cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
-	for tgzfile in `echo ${COMOUT}/${filepre}.f{01..96}.archs.a.tgz;  echo ${COMOUT}/${filepre}.f{06..96..6}.archv.a.tgz`
+	for tgzfile in $(echo ${COMOUT}/${filepre}.f{01..96}.archs.a.tgz;  echo ${COMOUT}/${filepre}.f{06..96..6}.archv.a.tgz)
 	do
 	    if [ -s $tgzfile ]; then
 		if [ $SENDDBN = YES ] ; then
@@ -118,10 +118,10 @@ case $CYC in
 	;;
     12)
 # sort files from largest to smallest for cfp efficiency
-	for file in `echo  ${COMIN}/${filepre}.f{102..192..6}.archv.a;  echo ${COMIN}/${filepre}.f{97..192}.archs.a; echo ${COMIN}/${filepre}.f{97..192}.arche.a   `
+	for file in $(echo  ${COMIN}/${filepre}.f{102..192..6}.archv.a;  echo ${COMIN}/${filepre}.f{97..192}.archs.a; echo ${COMIN}/${filepre}.f{97..192}.arche.a)
 	do
 	    if [ -s $file ]; then
-		filename=`basename $file`
+		filename=$(basename $file)
 		echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
 	    else
 		echo " $file missing, exiting now."
@@ -133,7 +133,7 @@ case $CYC in
         mpiexec -np $NPROCS --cpu-bind verbose,core cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
-	for tgzfile in `echo ${COMOUT}/${filepre}.f{97..192}.archs.a.tgz;  echo ${COMOUT}/${filepre}.f{102..196..6}.archv.a.tgz`
+	for tgzfile in $(echo ${COMOUT}/${filepre}.f{97..192}.archs.a.tgz;  echo ${COMOUT}/${filepre}.f{102..196..6}.archv.a.tgz)
 	do
 	    if [ -s $tgzfile ]; then
 		if [ $SENDDBN = YES ] ; then
@@ -157,6 +157,6 @@ case $CYC in
 esac
 
 #################################################
-msg='THE $job JOB HAS ENDED NORMALLY.'
+msg="THE $job JOB HAS ENDED NORMALLY."
 postmsg "$msg"
 ################## END OF SCRIPT #######################

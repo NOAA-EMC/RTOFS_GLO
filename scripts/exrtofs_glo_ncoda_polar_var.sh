@@ -23,7 +23,7 @@ set -xa
 
 export PS4='$SECONDS + '
 
-msg="RTOFS_GLO_NCODA_POLAR_VAR JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_NCODA_POLAR_VAR JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 cd $DATA
@@ -31,7 +31,7 @@ cd $DATA
 # --------------------------------------------------------------------------- #
 
 # 1. Populate DATA/polar_var with polar_var files from COMINm1/ncoda
-echo timecheck RTOFS_GLO_POLAR start get at `date`
+echo timecheck RTOFS_GLO_POLAR start get at $(date)
 
 mkdir -p $DATA/nhem_var/restart
 mkdir -p $DATA/shem_var/restart
@@ -44,7 +44,7 @@ ddtg=${PDYm1}00
 rm -f cmdfile.cpin
 if compgen -G "$COMINm1/ncoda/nhem_var/restart/*" > /dev/null
 then
-  for nv in `ls $COMINm1/ncoda/nhem_var/restart/`; do
+  for nv in $(ls $COMINm1/ncoda/nhem_var/restart/); do
     echo "cp -p -f $COMINm1/ncoda/nhem_var/restart/$nv $DATA/nhem_var/restart" >> cmdfile.cpin
   done
 else
@@ -53,7 +53,7 @@ fi
 
 if compgen -G "$COMINm1/ncoda/shem_var/restart/*" > /dev/null
 then
-  for sv in `ls $COMINm1/ncoda/shem_var/restart/`; do
+  for sv in $(ls $COMINm1/ncoda/shem_var/restart/); do
     echo "cp -p -f $COMINm1/ncoda/shem_var/restart/$sv $DATA/shem_var/restart" >> cmdfile.cpin
   done
 else
@@ -74,11 +74,11 @@ ln -sf $COMIN/ncoda/ocnqc $DATA
 
 cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./nhem_var/oanl
 cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./shem_var/oanl
-echo timecheck RTOFS_GLO_POLAR finish build at `date`
+echo timecheck RTOFS_GLO_POLAR finish build at $(date)
 
 # 3. Run NHEM (NCODA 2Dvar)
 
-echo timecheck RTOFS_GLO_POLAR start nhem at `date`
+echo timecheck RTOFS_GLO_POLAR start nhem at $(date)
 cd $DATA/nhem_var
 #   build local nhem namelist files
 rm -f odsetnl
@@ -162,11 +162,11 @@ fi
 
 cat pout* > $DATA/logs/nhem_var/nhem_var.$ddtg.out
 cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $DATA/$pgmout
-echo timecheck RTOFS_GLO_POLAR finish nhem at `date`
+echo timecheck RTOFS_GLO_POLAR finish nhem at $(date)
 
 # 4. Run SHEM (NCODA 2Dvar)
 
-echo timecheck RTOFS_GLO_POLAR start shem at `date`
+echo timecheck RTOFS_GLO_POLAR start shem at $(date)
 cd $DATA/shem_var
 #   build local shem namelist files
 rm -f odsetnl
@@ -251,11 +251,11 @@ fi
 
 cat pout* > $DATA/logs/shem_var/shem_var.$ddtg.out
 cat $DATA/logs/shem_var/shem_var.$ddtg.out >> $DATA/$pgmout
-echo timecheck RTOFS_GLO_POLAR finish shem at `date`
+echo timecheck RTOFS_GLO_POLAR finish shem at $(date)
 
 # 5. Copy data back to COMOUT/ncoda
 
-echo timecheck RTOFS_GLO_POLAR start put at `date`
+echo timecheck RTOFS_GLO_POLAR start put at $(date)
 cd $DATA
 mkdir -p $COMOUT/ncoda/nhem_var/restart
 mkdir -p $COMOUT/ncoda/shem_var/restart
@@ -283,12 +283,12 @@ mkdir -p $COMOUT/ncoda/logs/shem_var
 cp -p -f $DATA/logs/nhem_var/*.$ddtg.* $COMOUT/ncoda/logs/nhem_var
 cp -p -f $DATA/logs/shem_var/*.$ddtg.* $COMOUT/ncoda/logs/shem_var
 
-echo timecheck RTOFS_GLO_POLAR finish put at `date`
+echo timecheck RTOFS_GLO_POLAR finish put at $(date)
 
 date
 
 #################################################
-msg="THE RTOFS_GLO_NCODA_POLAR_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
+msg="THE RTOFS_GLO_NCODA_POLAR_VAR JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
 
 ################## END OF SCRIPT #######################

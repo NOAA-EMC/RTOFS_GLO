@@ -6,7 +6,7 @@
 ##  2. Run readssmisu to create input files for ncoda_qc 
 ##  Hao,Y  IMSG AT EMC/NCEP/NOAA  03/26/2019
 ###################################################################################
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -x
 
 mkdir -p $DATA/ice_nc
@@ -37,7 +37,7 @@ $DUMPJB $rundate$HH $interval $dtyp
 
 done
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0
 

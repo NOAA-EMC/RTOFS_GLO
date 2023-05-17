@@ -60,7 +60,7 @@ cd $DATA
 ### NOTE: Move copying to forecast step
 ###
 
-msg="RTOFS_GLO_GRIB_POST JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_GRIB_POST JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 procstatus=0
@@ -84,8 +84,8 @@ if [ ${RUN_MODE} = 'forecast' ]
 then
   export startdate=${startdate:-${PDY}}
 fi
-  export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
-  export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24 `
+  export enddate=$($NDATE $(expr $fcstdays \* 24 ) ${startdate}${mycyc} | cut -c1-8)
+  export ENDHOUR=$(expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24)
 
 # define what functions to do (default to operational settings)
 export running_realtime=${running_realtime:-NO}
@@ -116,7 +116,7 @@ cp -f -p $DEPTHFILEb ${DATA}/regional.depth.b
 # Copy in the Parm Files:
 cp -f -p ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv2ncdf2d.in ${DATA}/archv2ncdf2d.in
 
-fhr=`expr \${fcstdays_before_thisstep} \* 24`
+fhr=$(expr ${fcstdays_before_thisstep} \* 24)
 if [ ${RUN_MODE} = 'forecast' ]
 then
   export mode=f
@@ -151,7 +151,7 @@ do
   if [ ${RUN_MODE} = 'analysis' ]
   then
     typeset -Z2 fhr3
-    fhr3=`expr $analhrs - $fhr2`
+    fhr3=$(expr $analhrs - $fhr2)
     if [ $fhr3 -eq -0 ]
     then
       chr=00
@@ -238,7 +238,7 @@ fi
 
  # 1 hourly for surface files
   if [ $fhr -eq $hr_2d_3hrly ]; then
-    hr_2d_3hrly=`expr $hr_2d_3hrly + $intvl_3hrly`
+    hr_2d_3hrly=$(expr $hr_2d_3hrly + $intvl_3hrly)
     if [ $surface_3hrly = 'YES' ]
     then
       ksh ${USHrtofs}/${RUN}_glo2d.sh
@@ -261,7 +261,7 @@ fi
       fi
      fi # end of sfc loop
  fi
-   fhr=`expr $fhr + $intvl_3hrly`
+   fhr=$(expr $fhr + $intvl_3hrly)
 
 done
       

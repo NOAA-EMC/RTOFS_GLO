@@ -38,7 +38,7 @@
 
 set -x
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 export reg=$1
 export CDF033=${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
@@ -51,4 +51,4 @@ startmsg
 ${EXECrtofs}/${RUN}_archv2ncdf3z < $DATA/archv_$reg.in >> $pgmout 2>>errfile
 export err=$?; err_chk
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

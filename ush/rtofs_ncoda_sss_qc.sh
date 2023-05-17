@@ -2,7 +2,7 @@
 
 #   this script runs NCODA pre_QC and NCODA QC for SSS
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
@@ -139,7 +139,7 @@ mv fort.44 sss_qc.$cut_dtg.rej
 #rm -f smos_00.* smos_24.* smos_48.*
 #rm -f smap_00.* smap_24.* smap_48.*
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0
 

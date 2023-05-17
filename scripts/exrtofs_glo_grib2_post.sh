@@ -66,7 +66,7 @@ cd $DATA
 ### NOTE: Move copying to forecast step
 ###
 
-msg="RTOFS_GLO_GRIB_POST JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_GRIB_POST JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 procstatus=0
@@ -91,19 +91,15 @@ export fcstdays=${fcstdays:-1}
 if [ ${RUN_MODE} = 'analysis' ]
 then
   export startdate=${startdate:-${PDYm1}}
-  # export enddate=${analysis_end:-$PDY}
-  # export startdate=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
-  # export ENDHOUR=`expr $fcstdays \* 24`
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
   export startdate=${startdate:-${PDY}}
 fi
-  export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
-  export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24`
+  export enddate=$($NDATE $(expr $fcstdays \* 24 ) ${startdate}${mycyc} | cut -c1-8)
+  export ENDHOUR=$(expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24)
 
 # define what functions to do (default to operational settings)
-export running_realtime=${running_realtime:-NO}
 export run_parallel=${run_parallel:-NO}
 export grib_1hrly=${grib_1hrly:-YES}
 export for_opc=${for_opc:-YES}
@@ -152,11 +148,11 @@ cp -f -p $DEPTHFILEb ${DATA}/regional.depth.b
 # Copy in the Parm Files:
 cp -f -p ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv2ncdf2d.in ${DATA}/archv2ncdf2d.in
 
-fhr=`expr \${fcstdays_before_thisstep} \* 24`
+fhr=$(expr ${fcstdays_before_thisstep} \* 24)
 if [ ${RUN_MODE} = 'analysis' ]
 then
   export mode=n
-  analhrs=`expr $analdays \* 24` 
+  analhrs=$(expr $analdays \* 24) 
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
@@ -193,7 +189,7 @@ do
   if [ ${RUN_MODE} = 'analysis' ]
   then
     typeset -Z2 fhr3
-    fhr3=`expr $analhrs - $fhr2`
+    fhr3=$(expr $analhrs - $fhr2)
     if [ $fhr3 -eq -0 ]
     then
       chr=00
@@ -277,7 +273,7 @@ fi
   #
   # 1 hourly for surface files
   if [ $fhr -eq $hr_2d_1hrly ]; then
-    hr_2d_1hrly=`expr $hr_2d_1hrly + $intvl_1hrly`
+    hr_2d_1hrly=$(expr $hr_2d_1hrly + $intvl_1hrly)
     if [ $surface_1hrly = 'YES' ]
     then 
       ksh ${USHrtofs}/${RUN}_glo2d.sh
@@ -303,7 +299,7 @@ fi
 
  # 3 hourly for surface files
   if [ $fhr -eq $hr_2d_3hrly ]; then
-    hr_2d_3hrly=`expr $hr_2d_3hrly + $intvl_3hrly`
+    hr_2d_3hrly=$(expr $hr_2d_3hrly + $intvl_3hrly)
     if [ $surface_3hrly = 'YES' ]
     then
       ksh ${USHrtofs}/${RUN}_glo2d.sh
@@ -328,9 +324,9 @@ fi
  fi
 if [ ${RUN_MODE} = 'forecast' ] && [ ${fcstdays_before_thisstep} -ge 3 ]
 then
-   fhr=`expr $fhr + $intvl_3hrly`
+   fhr=$(expr $fhr + $intvl_3hrly)
 else
-   fhr=`expr $fhr + $intvl_1hrly`
+   fhr=$(expr $fhr + $intvl_1hrly)
 fi
 
 done
@@ -343,12 +339,12 @@ done
       sh ${USHrtofs}/${opc_script}
      if [ $SENDCOM = 'YES' ]
      then
-	 for cfile in `ls -C1 ${DATA_opc}/gr*gz`
+	 for cfile in $(ls -C1 ${DATA_opc}/gr*gz)
 	 do
 	     cfile_new=${cfile/grtofs/rtofs_glo}
 	     mv $cfile $cfile_new
              cp -f -p $cfile_new  ${COMOUT}/.
-	     cname=`basename $cfile_new`
+	     cname=$(basename $cfile_new)
              if [ $SENDDBN = 'YES' ]
              then
 		 $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDFGZ $job $COMOUT/$cname
@@ -369,12 +365,12 @@ done
       sh ${USHrtofs}/${opc_script}
      if [ $SENDCOM = 'YES' ]
      then
-	 for cfile in `ls -C1 ${DATA_opc}/gr*gz`
+	 for cfile in $(ls -C1 ${DATA_opc}/gr*gz)
 	 do
 	     cfile_new=${cfile/grtofs/rtofs_glo}
 	     mv $cfile $cfile_new
              cp -f -p $cfile_new  ${COMOUT}/.
-	     cname=`basename $cfile_new`
+	     cname=$(basename $cfile_new)
              if [ $SENDDBN = 'YES' ]
              then
 		 $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDFGZ $job $COMOUT/$cname
@@ -400,12 +396,12 @@ if [ $SENDCOM = 'YES' ]
 ## Adds the GRIB Header file to the GRIB2 files
     for ftype in alaska arctic bering guam gulf_alaska honolulu hudson_baffin samoa trop_paci_lowres west_atl west_conus
     do
-      for cfile in `ls -C1 $DATA/$ftype/${RUN}_${modID}.t${mycyc}z.${mode}*_${ftype}_std.grb2`
+      for cfile in $(ls -C1 $DATA/$ftype/${RUN}_${modID}.t${mycyc}z.${mode}*_${ftype}_std.grb2)
       do
-          cname=`basename $cfile`
+          cname=$(basename $cfile)
           cp -f -p $cfile  ${COMOUT}/.
-          file=`echo $cfile |awk -F/ '{print $5}'`
-          fhour=`echo $cname | cut -c17-19`
+          file=$(echo $cfile |awk -F/ '{print $5}')
+          fhour=$(echo $cname | cut -c17-19)
 
           ####################################
           # Processing GRIB2 RTOFS for AWIPS
@@ -453,32 +449,8 @@ if [ $SENDCOM = 'YES' ]
      done
 fi
       
-if [ $procstatus = 0 ]
-then
-  if [ $running_realtime = 'YES' ]
-  then
-    md5=/usr/bin/md5sum
-    if [ -x $md5 ]
-    then
-      cd $COMOUT
-      # need definition of files
-      for gfile in *.grb2
-      do
-        $md5 $gfile >> $DATA/csum.$PDY$mycyc
-      done
-      for gfile in `ls -C1 ${RUN}_${modID}.t${mycyc}z.[fn]*_std.grb2`
-      do
-        $md5 $gfile >> $DATA/csum_nodc.$PDY$mycyc
-      done
-    fi
-  fi
- fi
-  echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
-  msg='THE RTOFS_GLO_GRIB_POST JOB HAS ENDED NORMALLY.'
-  postmsg "$msg"
-
 #################################################
+echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
 msg='THE RTOFS_GLO_GRI_POST JOB HAS ENDED NORMALLY.'
 postmsg "$msg"
-
 ################## END OF SCRIPT #######################

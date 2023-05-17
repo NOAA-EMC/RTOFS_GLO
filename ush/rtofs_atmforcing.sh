@@ -22,7 +22,7 @@
 # future: use $cyc to grab latest flux files (not always 00z cycle)
 set -x
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 if [ $# -lt 3 ] ; then 
   echo USAGE:  ${RUN}_atmforcing.sh start-date end-date interval
@@ -34,8 +34,8 @@ fi
 sdate=$1
 edate=$2
 intvl=$3
-sdate=`$NDATE -3 $sdate`
-edate=`$NDATE 3 $edate`
+sdate=$($NDATE -3 $sdate)
+edate=$($NDATE 3 $edate)
 
 # to incorporate sea level pressure
 export sea_lev_pres=PRMSL
@@ -73,21 +73,21 @@ do
    else
      echo $USHrtofs/${RUN}_atmforcing_stage.sh $idate >> cmdfile_tmp
    fi
-   NTIME=`expr $NTIME + 1`
-   idate=`$NDATE $intvl $idate` 
+   NTIME=$(expr $NTIME + 1)
+   idate=$($NDATE $intvl $idate)
 done
 
 if [ $NPROCS -gt 1 ] 
 then
   split -${NPROCS} cmdfile_tmp cmdfile.
   ls cmdfile.*
-  for cfile in `ls cmdfile.*`
+  for cfile in $(ls cmdfile.*)
   do
-    cmdlen=`cat $cfile | wc -l`
+    cmdlen=$(cat $cfile | wc -l)
     while [ $cmdlen -lt $NPROCS ]
     do
       echo 'sleep 1' >> $cfile
-      cmdlen=`expr $cmdlen + 1`
+      cmdlen=$(expr $cmdlen + 1)
     done
     #mpirun.lsf >>$pgmout 2>errfile 
     mpirun ./$cfile >>$pgmout 2>errfile 
@@ -118,7 +118,7 @@ fi
 pgm=${RUN}_atmforcing
 . prep_step
 
-msg=" `date`  -- $pgm for $adate started "
+msg=" $(date)  -- $pgm for $idate started "
 postmsg "$msg"
 
 echo ${NTIME} > listflx.dat 
@@ -136,4 +136,4 @@ echo " error from ${RUN}_atmforcing=",$err
 
 # End of genrating the forcing files
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

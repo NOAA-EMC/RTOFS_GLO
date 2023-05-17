@@ -22,7 +22,7 @@ export PS4='$SECONDS + '
 
 cd $DATA
 
-msg="RTOFS_GLO_ANALYSIS_PRE JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_ANALYSIS_PRE JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 # --------------------------------------------------------------------------- #
@@ -31,15 +31,15 @@ postmsg "$msg"
   export fcstdays=${fcstdays:-2}
   export enddate=${analysis_end:-$PDY}
 # startdate for V2 is 24 hours, but get 48 hours for NCODA purposes (and bug on first record of forcings)
-  export startice=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
-  export iday=`$USHrtofs/rtofs_date_normal2hycom.sh $startice$mycyc`
-  export startdate=`$NDATE -\` expr $fcstdays \* 48 \`  ${enddate}'00' | cut -c1-8`
+  export startice=$($NDATE -$(expr $fcstdays \* 24) ${enddate}'00' | cut -c1-8)
+  export iday=$($USHrtofs/rtofs_date_normal2hycom.sh $startice$mycyc)
+  export startdate=$($NDATE -$(expr $fcstdays \* 48) ${enddate}'00' | cut -c1-8)
   export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #
 # 1  Set up the start time and end time for the analysis
-  sday=`$USHrtofs/rtofs_date_normal2hycom.sh $startdate$mycyc`
-  eday=`$USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc`
+  sday=$($USHrtofs/rtofs_date_normal2hycom.sh $startdate$mycyc)
+  eday=$($USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc)
   echo "  $sday $eday false false  " > limits
 
 # --------------------------------------------------------------------------- #
@@ -47,7 +47,7 @@ postmsg "$msg"
   $USHrtofs/${RUN}_prestaging.sh 
 
 #################################################
-msg="THE RTOFS_GLO_ANALYSIS_PRE JOB HAS ENDED NORMALLY on `hostname` at `date`"
+msg="THE RTOFS_GLO_ANALYSIS_PRE JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
 
 ################## END OF SCRIPT #######################

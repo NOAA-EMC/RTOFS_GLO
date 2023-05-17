@@ -9,7 +9,7 @@
 #########################################################################
 set -xa
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 export PS4='$SECONDS + '
 
 cd $DATA
@@ -30,8 +30,8 @@ fi
 
 # --------------------------------------------------------------------------- #
 # 1  Set up the start time and end time for the forecast
-  sday=`$USHrtofs/rtofs_date_normal2hycom.sh $startdate$mycyc`
-  eday=`$USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc`
+  sday=$($USHrtofs/rtofs_date_normal2hycom.sh $startdate$mycyc)
+  eday=$($USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc)
   echo "  $sday $eday false false  " > limits
 
 #
@@ -228,4 +228,4 @@ fi
     done
   done
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

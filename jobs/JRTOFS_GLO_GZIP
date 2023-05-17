@@ -52,7 +52,7 @@ mkdir -m 775 -p $COMOUT
 #################################################################
 #  Send a message indicating the start of the job
 #################################################################
-msg="JOB $jobid HAS BEGUN on `hostname`"
+msg="JOB $job HAS BEGUN on $(hostname)"
 postmsg "$msg"
 
 ####################
@@ -61,7 +61,7 @@ postmsg "$msg"
 export CFP_VERBOSE=1
 ${HOMErtofs}/scripts/exrtofs_glo_gzip.sh
 
-msg="JOB $jobid HAS COMPLETED NORMALLY." 
+msg="JOB $job HAS COMPLETED NORMALLY." 
 postmsg "$msg"
 
 cd $DATAROOT

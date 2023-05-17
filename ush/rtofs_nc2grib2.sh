@@ -43,7 +43,7 @@
 #set -xeu
 set -xu
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 typeset -Z3 fhr
 typeset -Z3 intvl_hrly
@@ -62,18 +62,18 @@ dhr=024
 if [ ${fcstdays_before_thisstep} -ge 3 ]
 then
    intvl_hrly=${intvl_3hrly}
-   fhr=`expr ${fcstdays_before_thisstep} \* 24 \+ 3`
+   fhr=$(expr ${fcstdays_before_thisstep} \* 24 \+ 3)
 else
    intvl_hrly=${intvl_1hrly}
 fi
-fhr=`expr ${fcstdays_before_thisstep} \* 24 \+ ${intvl_hrly}`
-nhr=`expr \( ${fcstdays_before_thisstep} \+ ${fcstdays} \) \* 24`
+fhr=$(expr ${fcstdays_before_thisstep} \* 24 \+ ${intvl_hrly})
+nhr=$(expr \( ${fcstdays_before_thisstep} \+ ${fcstdays} \) \* 24)
 echo "fhr=$fhr nhr=$nhr"
 
-export year=`echo $PDY | cut -c1-4`
+export year=$(echo $PDY | cut -c1-4)
 export mycyc=${mycyc:-00}
-export month=`echo $PDY | cut -c5-6`
-export day=`echo $PDY | cut -c7-8`
+export month=$(echo $PDY | cut -c5-6)
+export day=$(echo $PDY | cut -c7-8)
 
 if [ ${mode} = 'n' ]; then
 export gen_pro=14
@@ -89,12 +89,12 @@ test -f ${region}.out && rm ${region}.out
 touch nc.out ${region}.out
 
 # Set up for infiles here: get the lat0 lat1 lon0 lon1 dlat and dlon from des files
-xx=`grep -i "xsize" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
-yy=`grep -i "ysize" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
-x0=`grep -i "xfirst" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
-y0=`grep -i "yfirst" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
-xinc=`grep -i "xinc" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
-yinc=`grep -i "yinc" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" `
+xx=$(grep -i "xsize" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" )
+yy=$(grep -i "ysize" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" )
+x0=$(grep -i "xfirst" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" )
+y0=$(grep -i "yfirst" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" )
+xinc=$(grep -i "xinc" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" )
+yinc=$(grep -i "yinc" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" )
 
 # create infiles for each region below:
 
@@ -212,7 +212,7 @@ fi
      fi
     fi
   done
-  fhr=`expr $fhr + $intvl_hrly`
+  fhr=$(expr $fhr + $intvl_hrly)
 done
 
 # More cleaning up and housekeeping 
@@ -234,4 +234,4 @@ test -f ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_thickness.nc && rm ${RUN}_${mo
 
 #done
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

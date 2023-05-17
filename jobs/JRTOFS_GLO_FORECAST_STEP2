@@ -108,10 +108,10 @@ fcstdays_before_thisstep=0
 while [ ${cnum} -lt ${stepnum} ]
 do
    eval daysadd="\$fcstdays_step$cnum"
-   fcstdays_before_thisstep=`expr \${fcstdays_before_thisstep} + ${daysadd}`
-   cnum=`expr ${cnum} + 1`
+   fcstdays_before_thisstep=$(expr ${fcstdays_before_thisstep} + ${daysadd})
+   cnum=$(expr ${cnum} + 1)
 done
-export startdate=`$NDATE \` expr \${fcstdays_before_thisstep} \* 24 \`  ${PDY}${mycyc} | cut -c1-8`
+export startdate=$($NDATE $(expr ${fcstdays_before_thisstep} \* 24) ${PDY}${mycyc} | cut -c1-8)
 
 eval fcstdays="\$fcstdays_step$stepnum"
 eval SAVE_RESTART="\$SAVE_RESTART_FORECAST_STEP$stepnum"
@@ -124,7 +124,7 @@ export CONTINUE_FORECAST
 #################################################################
 #  Send a message indicating the start of the job
 #################################################################
-msg="JOB $jobid HAS BEGUN on `hostname`"
+msg="JOB $job HAS BEGUN on $(hostname)"
 postmsg "$msg"
 
 ####################
@@ -135,9 +135,9 @@ ksh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}.sh
 #===================================================================
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}.$(basename $pgmout)
 
-msg="JOB $jobid HAS COMPLETED NORMALLY."
+msg="JOB $job HAS COMPLETED NORMALLY."
 postmsg "$msg"
 
 cd $DATAROOT

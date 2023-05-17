@@ -9,7 +9,7 @@
 #########################################################################
 set -x
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 if [ $# -ne 1 ] ; then
   echo USAGE:  "$0 <idate> "
@@ -27,11 +27,7 @@ test -d $DATA/$idate && rm -rf $DATA/$idate ; mkdir -p $DATA/$idate
 ffile=none
 for sflux in sfcflxfv3 ## sfcflx2 sfcflx
 do
-#dbgz
-#  ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t ${sflux} -v $idate` 
-#  ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e prod -n ${netwk} -t ${sflux} -v $idate` 
-## ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e $envirges -n ${netwk} -t ${sflux} -v $idate` 
-  ffile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh  -e $envirges -n ${netwk} -t ${sflux} -v $idate` 
+  ffile=$(ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -e $envirges -n ${netwk} -t ${sflux} -v $idate) 
   err=$?
   if [ $err -eq 0 ]
   then
@@ -57,13 +53,12 @@ fi
 
 echo "forcefile $forcefile"
 
-fflxfile=${DATA}/${idate}/${RUN}'.'`basename $forcefile`
+fflxfile=${DATA}/${idate}/${RUN}'.'$(basename $forcefile)
 if [ $useslp = YES ] 
 then
-#  pgrbfile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e ${envir} -n ${netwk} -t pgbges -v $idate`
-  pgrbfile=`ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e $envirges -n ${netwk} -t pgbges -v $idate`
+  pgrbfile=$(ksh ${USHrtofs}/${RUN}_atmforcing_getges.sh -q -e $envirges -n ${netwk} -t pgbges -v $idate)
   echo "pgrbfile $pgrbfile"
-  prsfile=${DATA}/${idate}/${RUN}'.'`basename $pgrbfile`
+  prsfile=${DATA}/${idate}/${RUN}'.'$(basename $pgrbfile)
   $USHrtofs/${RUN}_atmforcing_extract.sh $forcefile $flxfile $pgrbfile $prsfile
 else
   if [ $fn1 == 'sfcflx' ]; then
@@ -84,7 +79,7 @@ fi
 # Shift grid 
 
 #dbgz
-#####> flxfile1=${DATA}/${idate}/${RUN}'.'`basename $forcefile`
+#####> flxfile1=${DATA}/${idate}/${RUN}'.'$(basename $forcefile)
 #####> cp -p $flxfile $flxfile1
 #####> time ${EXECutil}/copygb -g"255 0 4320 2180 89990 42 128 -89990 359958 83 83 00" -x -i -o $flxfile $flxfile1
 #####> time ${EXECutil}/copygb -g"255 0 2647 1324 89980 00 128 -89980 -136 136 136 64" -x -i -o $flxfile $flxfile1
@@ -106,13 +101,13 @@ then
      err=$?; export err ; err_chk
      echo " error from ${RUN}_getkpds=",$err
 
-     atmgds='255 '`cat kpds.dat`
+     atmgds='255 '$(cat kpds.dat)
     export err=$?; err_chk
   fi
   # NOTE: this extraction is important if $pgrbfile file is used instead of $prsfile.
   #       prs file is supposed to have only pressure field. Still, retained for 
   #       safety reasons. 
-  rec_number=`$WGRIB -v ${prsfile} | grep ${sea_lev_pres} | cut -c1-3`
+  rec_number=$($WGRIB -v ${prsfile} | grep ${sea_lev_pres} | cut -c1-3)
   $WGRIB -d ${rec_number} -grib ${prsfile} -o ${DATA}/${idate}/dump.grb 
   $COPYGB -g"$atmgds" -x -a -i0 ${DATA}/${idate}/dump.grb $flxfile 
 fi
@@ -134,4 +129,4 @@ else
 fi # fn1 loop
 fi #useslp loop
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

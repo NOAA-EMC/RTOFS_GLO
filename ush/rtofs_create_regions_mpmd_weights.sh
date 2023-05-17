@@ -30,7 +30,7 @@
 ###############################################################################
 set -xeu
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 cd $DATA 
 # Submit seperate scripts for the 11 regions
@@ -46,7 +46,7 @@ do
    echo "ksh $USHrtofs/${RUN}_nc2grib2.sh $region > out_${region} 2>&1"               >> cmdfile.$ifile
    chmod +x cmdfile.$ifile
    echo "./cmdfile.$ifile" >> cmdfile
-   ifile=`expr $ifile + 1`
+   ifile=$(expr $ifile + 1)
 
    echo "ksh $USHrtofs/${RUN}_nc2grib2.sh $region > out_${region} 2>&1" >> cmdfile.for.cfp
 done
@@ -63,4 +63,4 @@ echo mpirun cfp ./cmdfile.for.cfp > create.regions.out
 mpiexec -np 11 --cpu-bind verbose,core cfp ./cmdfile.for.cfp
 err=$? ; export err ; err_chk
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

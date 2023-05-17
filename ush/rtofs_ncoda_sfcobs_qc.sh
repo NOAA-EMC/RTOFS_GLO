@@ -2,7 +2,7 @@
 
 #   this script runs NCODA pre_QC and NCODA QC for SFCOBS
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
@@ -28,11 +28,16 @@ mkdir -p $OCN_DATA_DIR/sfc
 mkdir -p $OCN_DATA_DIR/velocity
 
 # link in forcing.wndspd so that ncoda programs find it
-mkdir ./data_${PDYm1}00
+mkdir -p ./data_${PDYm1}00
 if [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ]] && \
-   [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ]]; then 
-   ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ./data_${PDYm1}00/forcing.wndspd.a
-   ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ./data_${PDYm1}00/forcing.wndspd.b
+   [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ]]
+then
+   if [[ ! -s ./data_${PDYm1}00/forcing.wndspd.a ]] && \
+      [[ ! -s ./data_${PDYm1}00/forcing.wndspd.b ]]
+   then
+      ln -sf $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ./data_${PDYm1}00/forcing.wndspd.a
+      ln -sf $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ./data_${PDYm1}00/forcing.wndspd.b
+   fi
 else
    echo "using uniform 5 m/s wind speed"
 fi
@@ -110,11 +115,12 @@ ln -s $OCN_DATA_DIR/incoming/sfc.b.$cut_dtg $OCN_DATA_DIR/incoming/sfc.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg sfc > sfc_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 sfc_qc.$cut_dtg.rej
-#mv fort.46 sfc_qc_vel.$cut_dtg.rej
-#mv fort.50 sfc_qc_vel.$cut_dtg.rpt
+if [ -e fort.44 ]
+then
+  mv fort.44 sfc_qc.$cut_dtg.rej
+fi
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0
 

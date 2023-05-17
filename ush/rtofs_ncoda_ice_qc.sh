@@ -2,7 +2,7 @@
 
 #   this script runs NCODA pre_QC and NCODA QC for ICE
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
@@ -169,6 +169,6 @@ mv fort.44 amsr_ice_qc.$cut_dtg.rej
 
 #   cleanup
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0

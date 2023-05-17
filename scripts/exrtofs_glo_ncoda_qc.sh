@@ -35,35 +35,33 @@ export PS4='$SECONDS + '
 
 cd $DATA
 
-msg="RTOFS_GLO_NCODA_QC JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_NCODA_QC JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 # --------------------------------------------------------------------------- #
 
 # 1.a Populate DATA/ocnqc with QC files from COMINm1/ncoda/ocnqc
-echo timecheck RTOFS_GLO_NCODA_QC start get at `date`
+echo timecheck RTOFS_GLO_NCODA_QC start get at $(date)
 
 mkdir -p $DATA/ocnqc
 mkdir -p $DATA/ocnqc/incoming
 
-# if there is no qc data, then skip this step
+# if there is no qc data, then skip this step and cold-start QC
 if test -e $COMINm1/ncoda/ocnqc/
 then
+  cp -p -f $COMINm1/ncoda/ocnqc/incoming/*control $DATA/ocnqc/incoming
+  rm -f cmdfile.cpin
+  for dtyp in $(ls $COMINm1/ncoda/ocnqc); do
+    mkdir -p $DATA/ocnqc/$dtyp
+    if compgen -G "$COMINm1/ncoda/ocnqc/$dtyp/*" > /dev/null
+    then
+      echo "cp -p -f $COMINm1/ncoda/ocnqc/$dtyp/* $DATA/ocnqc/$dtyp" >> cmdfile.cpin
+    fi
+  done
 
-cp -p -f $COMINm1/ncoda/ocnqc/incoming/*control $DATA/ocnqc/incoming
-rm -f cmdfile.cpin
-for dtyp in amsr goes himawari ice metop profile sfc ssh sss velocity viirs; do
-  mkdir -p $DATA/ocnqc/$dtyp
-  if compgen -G "$COMINm1/ncoda/ocnqc/$dtyp/*" > /dev/null
-  then
-    echo "cp -p -f $COMINm1/ncoda/ocnqc/$dtyp/* $DATA/ocnqc/$dtyp" >> cmdfile.cpin
-  fi
-done
-
-chmod +x cmdfile.cpin
-mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin > cpin.out
-err=$? ; export err ; err_chk
-date
-
+  chmod +x cmdfile.cpin
+  mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin > cpin.out
+  err=$? ; export err ; err_chk
+  date
 fi
 
 # 1.b link in var restart files from COMINm1
@@ -80,10 +78,10 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b  ${DATA}/regio
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
 
-echo timecheck RTOFS_GLO_NCODA_QC finish get at `date`
+echo timecheck RTOFS_GLO_NCODA_QC finish get at $(date)
 
 # 2. Combine pre-qc and qc into one stream for ice and surface_obs/profile
-echo timecheck RTOFS_GLO_NCODA_QC start qc at `date`
+echo timecheck RTOFS_GLO_NCODA_QC start qc at $(date)
 
 # combine ice proccessing into one stream
 echo "#!/bin/ksh" > runiceqc.sh
@@ -120,7 +118,7 @@ echo "$USHrtofs/rtofs_ncoda_amsr_qc.sh > amsr.qc.out 2>&1" >> cmdfile.qc
 mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.qc
 err=$? ; export err ; err_chk
 date
-echo timecheck RTOFS_GLO_NCODA_QC finish qc at `date`
+echo timecheck RTOFS_GLO_NCODA_QC finish qc at $(date)
 
 # 4. Run data alarm (counts)
 
@@ -136,21 +134,25 @@ cp -p  fort.62 $DATA/logs/alarm/ncoda_alarm.qc.${PDYm1}00.out
 cp -p  fort.63 $DATA/logs/alarm/ncoda_alarm.qc_lvl.${PDYm1}00.out
 
 # 5. Copy last 15 days of qc data back to COMOUT/ncoda
-echo timecheck RTOFS_GLO_NCODA_QC start put at `date`
+echo timecheck RTOFS_GLO_NCODA_QC start put at $(date)
 
 mkdir -p $COMOUT/ncoda/ocnqc
 mkdir -p $COMOUT/ncoda/ocnqc/incoming
 
+# copy incoming data to COM
 cp -p -f $DATA/ocnqc/incoming/*obs_control $COMOUT/ncoda/ocnqc/incoming
-
-for typ in `ls $DATA/ocnqc/incoming/*obs_control`; do
-  fnam=`basename $typ`
+for typ in $(ls $DATA/ocnqc/incoming/*obs_control); do
+  fnam=$(basename $typ)
   cp -p $typ ${COMOUT}/${RUN}_${modID}.ncodaqc.t${cyc}z.$fnam
 done
 
+# copy ocnqc data to COM
 rm -f cmdfile.cpout
-for dtyp in amsr goes himawari ice metop profile sfc ssh sss velocity viirs; do
-  echo "$USHrtofs/rtofs_ncodaqc2com.sh $dtyp > $dtyp.cpout.out" >> cmdfile.cpout
+for dtyp in $(ls $DATA/ocnqc); do
+  if [ $dtyp != incoming ]
+  then
+    echo "$USHrtofs/rtofs_ncodaqc2com.sh $dtyp > $dtyp.cpout.out" >> cmdfile.cpout
+  fi
 done
 
 chmod +x cmdfile.cpout
@@ -158,16 +160,18 @@ echo mpirun cfp ./cmdfile.cpout > cpout.out
 mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout > cpout.out
 err=$? ; export err ; err_chk
 date
-echo timecheck RTOFS_GLO_NCODA_QC finish put at `date`
+echo timecheck RTOFS_GLO_NCODA_QC finish put at $(date)
 
+# copy all the fortran log files from the qc threads to ncoda/logs
 cd $DATA/logs
 for dtyp in $(ls $DATA/logs);do
   mkdir -p $COMOUT/ncoda/logs/$dtyp
   cp -p -f $dtyp/*.${PDYm1}00.* $COMOUT/ncoda/logs/$dtyp 
 done
 
-for dtyp in amsr goes himawari ice jpss metop npp ssh sss surf ; do
-  cat $DATA/${dtyp}.qc.out >> $DATA/$pgmout
+# copy all the script log files from the qc threads to pgmout
+for dtyp in $(ls $DATA/*.qc.out); do
+  cat ${dtyp} >> $DATA/$pgmout
 done
 
 # save dumps
@@ -176,7 +180,7 @@ cp -p $DATA/dump/* $COMOUT/dump
 cp -p $DATA/ice_nc/l2out.* $DATA/ice_nc/*.out $COMOUT/dump
 
 #################################################
-msg="THE RTOFS_GLO_NCODA_QC JOB HAS ENDED NORMALLY on `hostname` at `date`"
+msg="THE RTOFS_GLO_NCODA_QC JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
 
 ################## END OF SCRIPT #######################

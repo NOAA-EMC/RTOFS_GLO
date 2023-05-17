@@ -21,7 +21,7 @@ export PS4='$SECONDS + '
 
 cd $DATA
 
-msg="RTOFS_GLO_INCUP JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_INCUP JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 # --------------------------------------------------------------------------- #
@@ -31,25 +31,25 @@ postmsg "$msg"
 inc_hours=06
 
 dtg=${PDYm1}00
-dtginc=`$EXECrtofs/rtofs_dtg $dtg -h -$inc_hours`
-dtgm1=`$EXECrtofs/rtofs_dtg $dtg -d -1`
-dtgm2=`$EXECrtofs/rtofs_dtg $dtg -h -$inc_hours`
-dtgp1=`$EXECrtofs/rtofs_dtg $dtg -d 1`
-dtgp1inc=`$EXECrtofs/rtofs_dtg $dtgp1 -h -$inc_hours` 
-cisec=`echo ${dtginc:8:2} 86400 24 | awk '{printf ( "%5.5d", ($1 * $2 / $3))}'`
-jday2=`$USHutil/date2jday.sh ${dtgm2:0:8}`
+dtginc=$($EXECrtofs/rtofs_dtg $dtg -h -$inc_hours)
+dtgm1=$($EXECrtofs/rtofs_dtg $dtg -d -1)
+dtgm2=$($EXECrtofs/rtofs_dtg $dtg -h -$inc_hours)
+dtgp1=$($EXECrtofs/rtofs_dtg $dtg -d 1)
+dtgp1inc=$($EXECrtofs/rtofs_dtg $dtgp1 -h -$inc_hours) 
+cisec=$(echo ${dtginc:8:2} 86400 24 | awk '{printf ( "%5.5d", ($1 * $2 / $3))}')
+jday2=$($USHutil/date2jday.sh ${dtgm2:0:8})
 archday2=${jday2:0:4}_${jday2:4:3}_${dtgm2:8:2}
 
 # inc_hours with incremental update
-hday12=`$USHrtofs/rtofs_date_normal2hycom.sh $dtg`
-hday11=`echo $hday12 $inc_hours 24 | awk '{printf ("%12.3f", ($1 - ($2 / $3)))}'`
+hday12=$($USHrtofs/rtofs_date_normal2hycom.sh $dtg)
+hday11=$(echo $hday12 $inc_hours 24 | awk '{printf ("%12.3f", ($1 - ($2 / $3)))}')
 export iday=$hday11
 
 echo $hday11 $hday12 > limits
 
 ln -sf $COMIN/rtofs_glo.ssmi.$dtg.r ssmi.r
-dtgr0=`$EXECrtofs/rtofs_dtg $dtgm1 -f "%Y-%m-%d"`
-dtgr1=`$EXECrtofs/rtofs_dtg $dtg -f "%Y-%m-%d"`
+dtgr0=$($EXECrtofs/rtofs_dtg $dtgm1 -f "%Y-%m-%d")
+dtgr1=$($EXECrtofs/rtofs_dtg $dtg -f "%Y-%m-%d")
 
 # cp in yesterday's restart file produced at n-$inc_hours
 if [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a ]] &&  \
@@ -144,17 +144,17 @@ cp restart_out.a $COMOUT/rtofs_glo.t00z.n-24.restart.a
 cp restart_out.b $COMOUT/rtofs_glo.t00z.n-24.restart.b
 cp cice.restart.${dtgr1}-00000 $COMOUT/rtofs_glo.t00z.n-24.restart_cice
 mode=n
-for afile in `ls ${DATA}/archv.????_???_00.a ${DATA}/archs.????_???_00.a ${DATA}/arche.????_???_00.a` 
+for afile in $(ls ${DATA}/archv.????_???_00.a ${DATA}/archs.????_???_00.a ${DATA}/arche.????_???_00.a) 
 do
-  cfile=`basename $afile`
-  YYYY=`echo $cfile | cut -c7-10`
-  DDD=`echo $cfile | cut -c12-14`
-  HH=`echo $cfile | cut -c16-17`
-  YYYYMMDD=`${USHutil}/date2jday.sh ${YYYY}${DDD}`
-  MM=`echo $YYYYMMDD | cut -c5-6`
-  DD=`echo $YYYYMMDD | cut -c7-8`
-  LEAD=`$NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
-  arch=`echo $cfile | cut -d. -f1`
+  cfile=$(basename $afile)
+  YYYY=$(echo $cfile | cut -c7-10)
+  DDD=$(echo $cfile | cut -c12-14)
+  HH=$(echo $cfile | cut -c16-17)
+  YYYYMMDD=$(${USHutil}/date2jday.sh ${YYYY}${DDD})
+  MM=$(echo $YYYYMMDD | cut -c5-6)
+  DD=$(echo $YYYYMMDD | cut -c7-8)
+  LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
+  arch=$(echo $cfile | cut -d. -f1)
   HYCOMarchTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.${arch}
   if [ $arch = "archv" ] ; then
     cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
@@ -172,3 +172,5 @@ do
   fi
 done
 
+msg="THE RTOFS_GLO_INCUP JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
+postmsg "$msg"

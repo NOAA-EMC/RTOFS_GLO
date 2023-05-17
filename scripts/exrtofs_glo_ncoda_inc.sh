@@ -21,7 +21,7 @@ export PS4='$SECONDS + '
 
 cd $DATA
 
-msg="RTOFS_GLO_NCODA_INC JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_NCODA_INC JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 # --------------------------------------------------------------------------- #
@@ -31,12 +31,12 @@ postmsg "$msg"
 incup_hours=6
 
 dtg=${PDYm1}00
-dtgm1=`$EXECrtofs/rtofs_dtg $dtg -d -1`
-dtgm2=`$EXECrtofs/rtofs_dtg $dtg -h -$incup_hours`
-hday=`$USHrtofs/rtofs_date_normal2hycom.sh $dtg`
-hday2=`echo $hday $incup_hours 24 | awk '{printf("%9.3f", $1-($2/$3))}'`
-jday=`$USHutil/date2jday.sh ${dtg:0:8}`
-jday2=`$USHutil/date2jday.sh ${dtgm2:0:8}`
+dtgm1=$($EXECrtofs/rtofs_dtg $dtg -d -1)
+dtgm2=$($EXECrtofs/rtofs_dtg $dtg -h -$incup_hours)
+hday=$($USHrtofs/rtofs_date_normal2hycom.sh $dtg)
+hday2=$(echo $hday $incup_hours 24 | awk '{printf("%9.3f", $1-($2/$3))}')
+jday=$($USHutil/date2jday.sh ${dtg:0:8})
+jday2=$($USHutil/date2jday.sh ${dtgm2:0:8})
 archday=${jday:0:4}_${jday:4:3}_${dtg:8:2}
 archday2=${jday2:0:4}_${jday2:4:3}_${dtgm2:8:2}
 
@@ -46,9 +46,9 @@ echo archday $archday $archday2
 
 mode=incup
 BLKDATA_FILE=${PARMrtofs}/${RUN}_${modID}.${inputgrid}.${mode}.blkdat.input
-IDM=`cat ${BLKDATA_FILE} | grep idm | cut -d' ' -f1 | tr -d '[:space:]'`
-JDM=`cat ${BLKDATA_FILE} | grep jdm | cut -d' ' -f1 | tr -d '[:space:]'`
-JDMA=`expr ${JDM} \- 1`
+IDM=$(cat ${BLKDATA_FILE} | grep idm | cut -d' ' -f1 | tr -d '[:space:]')
+JDM=$(cat ${BLKDATA_FILE} | grep jdm | cut -d' ' -f1 | tr -d '[:space:]')
+JDMA=$(expr ${JDM} \- 1)
 SIZN="${IDM}x${JDM}"
 
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a  regional.grid.a
@@ -175,4 +175,7 @@ cp archd_1.$dtg.b2 $COMOUT/rtofs_glo.incupd.$archday2.b
 cp archv_1_inc.$archday.a $COMOUT/rtofs_glo.archv_1_inc.$archday.a
 cp archv_1_inc.$archday.b $COMOUT/rtofs_glo.archv_1_inc.$archday.b
 cp ssmi.$dtg.r     $COMOUT/rtofs_glo.ssmi.$dtg.r
+
+msg="THE RTOFS_GLO_NCODA_INC JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
+postmsg "$msg"
 

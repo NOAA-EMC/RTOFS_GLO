@@ -15,7 +15,7 @@
 # B.Rajan/EMC           05/05/15 modified file to work as part of RTOFS
 ##############################################################################
 set -xa
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 cd ${DATA_opc}
 
@@ -47,5 +47,5 @@ gzip grtofs_uv_${yyyymmdd}_hcasts.nc
 
 
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

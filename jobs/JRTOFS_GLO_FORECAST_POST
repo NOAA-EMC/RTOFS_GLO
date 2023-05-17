@@ -93,21 +93,20 @@ test -d $COMOUT || mkdir -p $COMOUT
 ############################################
 ## This assumes that the $job has the name structure of the type job_*NN
 ## where NN is two-digit number
-export postday=`echo $job | rev |cut -c1-2 | rev`
-export digitest=`echo $postday |cut -c1`
+export postday=$(echo $job | rev |cut -c1-2 | rev)
+export digitest=$(echo $postday |cut -c1)
 if [ $digitest -eq 0 ]; then
-  export postday=`echo $postday|cut -c2`
+  export postday=$(echo $postday|cut -c2)
 fi
-export startdate=`${NDATE} \`expr 24 \* \( $postday \- 1 \) \` $PDY$mycyc |cut -c1-8`
-#export startdate=${startdate:-${PDY}}
-export fcstdays_before_thisstep=` expr \` $NHOUR $startdate$mycyc $PDY$mycyc \` \/ 24 `
+export startdate=$(${NDATE} $(expr 24 \* $postday - 1) $PDY$mycyc |cut -c1-8)
+export fcstdays_before_thisstep=$(expr $($NHOUR $startdate$mycyc $PDY$mycyc) \/ 24)
 eval fcstdays="\$fcst_post_ndays"
 export fcstdays
 
 ################################################################
 # Send a message indicating the start of the job
 ################################################################
-msg="JOB $jobid HAS BEGUN on `hostname`"
+msg="JOB $job HAS BEGUN on $(hostname)"
 postmsg "$msg"
 
 ####################
@@ -116,9 +115,9 @@ postmsg "$msg"
 ksh ${HOMErtofs}/scripts/exrtofs_glo_post.sh
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.post.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.post.$(basename $pgmout)
 
-msg="JOB $jobid HAS COMPLETED NORMALLY." 
+msg="JOB $job HAS COMPLETED NORMALLY." 
 postmsg "$msg"
 
 cd $DATAROOT

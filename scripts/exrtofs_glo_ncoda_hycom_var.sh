@@ -22,7 +22,7 @@ set -xa
 
 export PS4='$SECONDS + '
 
-msg="RTOFS_GLO_NCODA_HYCOM_VAR JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_NCODA_HYCOM_VAR JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 cd $DATA
@@ -30,14 +30,14 @@ cd $DATA
 # --------------------------------------------------------------------------- #
 
 # 1.a Populate DATA/hycom_var with hycom_var files from COMINm1/ncoda
-echo timecheck RTOFS_GLO_HYCOM start get at `date`
+echo timecheck RTOFS_GLO_HYCOM start get at $(date)
 
 mkdir -p $DATA/restart
 mkdir -p $DATA/work
 rm -f cmdfile.cpin
 if compgen -G "$COMINm1/ncoda/hycom_var/restart/*" > /dev/null
 then
-  for hv in `ls $COMINm1/ncoda/hycom_var/restart/`; do
+  for hv in $(ls $COMINm1/ncoda/hycom_var/restart/); do
     echo "cp -p -f $COMINm1/ncoda/hycom_var/restart/$hv $DATA/restart" >> cmdfile.cpin
   done
   chmod +x cmdfile.cpin
@@ -75,18 +75,18 @@ ln -s $COMROOTrtofs/${RUN}.${PDYm1}/* $RUN/${RUN}.${PDYm1}/.
 # rename n-24:n00  to  n00:n24
 cd $RUN/${RUN}.${PDYm1}
 
-for n in `ls rtofs_glo.t00z.n*.[ab]`;do 
-p1=`echo $n | cut -d. -f1-2`
-p2=`echo $n | cut -d. -f4-`
-hh=`echo $n | cut -d. -f3`
+for n in $(ls rtofs_glo.t00z.n*.[ab]);do 
+p1=$(echo $n | cut -d. -f1-2)
+p2=$(echo $n | cut -d. -f4-)
+hh=$(echo $n | cut -d. -f3)
 if [ $hh == n00 ]; then
   N=24
 else
-  h2=`echo $hh | cut -c3-3`
+  h2=$(echo $hh | cut -c3-3)
   if [ $h2 -eq 0 ] ; then
-    h=`echo $hh | cut -c4-`
+    h=$(echo $hh | cut -c4-)
   else
-    h=`echo $hh | cut -c3-`
+    h=$(echo $hh | cut -c3-)
   fi
   let N=24-$h
 fi
@@ -94,7 +94,7 @@ if [[ $N -le 9 && $N -ge 0 ]]; then
  N=0${N}
 fi
 if [ $N -lt 0 ]; then
- N=`echo $N | cut -c2-`
+ N=$(echo $N | cut -c2-)
  N=-0${N}
 fi
 mv $n ${p1}.n${N}.${p2}
@@ -147,7 +147,7 @@ cat << eof4 > omapnl
   do_data_raw  = .true.,
  &end
 eof4
-echo timecheck RTOFS_GLO_HYCOM finish build at `date`
+echo timecheck RTOFS_GLO_HYCOM finish build at $(date)
 
 # 3. Run Hycom var (NCODA 3D)
 
@@ -155,28 +155,28 @@ ddtg=${PDYm1}00
 log_dir=$DATA/logs
 mkdir -p $log_dir
 
-echo timecheck RTOFS_GLO_HYCOM start setup at `date`
+echo timecheck RTOFS_GLO_HYCOM start setup at $(date)
 #NCODA setup
 $EXECrtofs/rtofs_ncoda_setup 3D hycom ogridnl $ddtg > pout1
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
-echo timecheck RTOFS_GLO_HYCOM start prep at `date`
+echo timecheck RTOFS_GLO_HYCOM start prep at $(date)
 mpiexec -n 72 --cpu-bind core $EXECrtofs/rtofs_ncoda_prep 3D hycom ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
-echo timecheck RTOFS_GLO_HYCOM start ncoda3d at `date`
+echo timecheck RTOFS_GLO_HYCOM start ncoda3d at $(date)
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 3D hycom ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
-echo timecheck RTOFS_GLO_HYCOM start post at `date`
+echo timecheck RTOFS_GLO_HYCOM start post at $(date)
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda_post 3D hycom ogridnl $ddtg relax > pout4
-echo timecheck RTOFS_GLO_HYCOM finish post at `date`
+echo timecheck RTOFS_GLO_HYCOM finish post at $(date)
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
@@ -214,7 +214,7 @@ cat pout* > $log_dir/hycom_var.$ddtg.out
 cat $log_dir/hycom_var.$ddtg.out > $pgmout
 
 # 4. Copy last 15 days of data back to COMOUT/ncoda
-echo timecheck RTOFS_GLO_HYCOM start put at `date`
+echo timecheck RTOFS_GLO_HYCOM start put at $(date)
 
 # taken car of at code level
 #mkdir -p $DATA/nokeep
@@ -227,7 +227,7 @@ rm -f cmdfile.cpout
 for d in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
   backymdh=$( $EXECrtofs/rtofs_dtg -d -$d ${PDY}00 )
   backymd=${backymdh:0:8}
-  for f in `ls $DATA/restart/*${backymd}*`; do
+  for f in $(ls $DATA/restart/*${backymd}*); do
     echo "cp -p -f $f $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
   done
 done
@@ -240,10 +240,10 @@ date
 mkdir -p $COMOUT/ncoda/logs/hycom_var
 cp -p -f $DATA/logs/*.$ddtg.* $COMOUT/ncoda/logs/hycom_var
 
-echo timecheck RTOFS_GLO_HYCOM finish put at `date`
+echo timecheck RTOFS_GLO_HYCOM finish put at $(date)
 
 #################################################
-msg="THE RTOFS_GLO_NCODA_HYCOM_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
+msg="THE RTOFS_GLO_NCODA_HYCOM_VAR JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
 
 ################## END OF SCRIPT #######################

@@ -21,7 +21,7 @@
 
 set -xa
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 cd $DATA
 
@@ -41,17 +41,17 @@ fi
 #
 # Write archive files copying commands in CMD
 #
-for afile in `ls ${DATA}/archv.????_???_??.a ${DATA}/archs.????_???_??.a ${DATA}/arche.????_???_??.a`
+for afile in $(ls ${DATA}/archv.????_???_??.a ${DATA}/archs.????_???_??.a ${DATA}/arche.????_???_??.a)
 do
-  cfile=`basename $afile`
-  YYYY=`echo $cfile | cut -c7-10`
-  DDD=`echo $cfile | cut -c12-14`
-  HH=`echo $cfile | cut -c16-17`
-  YYYYMMDD=`${USHutil}/date2jday.sh ${YYYY}${DDD}`
-  MM=`echo $YYYYMMDD | cut -c5-6`
-  DD=`echo $YYYYMMDD | cut -c7-8`
-  LEAD=`$NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
-  arch=`echo $cfile | cut -d. -f1`
+  cfile=$(basename $afile)
+  YYYY=$(echo $cfile | cut -c7-10)
+  DDD=$(echo $cfile | cut -c12-14)
+  HH=$(echo $cfile | cut -c16-17)
+  YYYYMMDD=$(${USHutil}/date2jday.sh ${YYYY}${DDD})
+  MM=$(echo $YYYYMMDD | cut -c5-6)
+  DD=$(echo $YYYYMMDD | cut -c7-8)
+  LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
+  arch=$(echo $cfile | cut -d. -f1)
   HYCOMarchTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.${arch}
   if [ $arch = "archv" ] ; then
     echo "cp -p -f $afile ${COMOUT}/${HYCOMarchTplate}.a" >> cmdfile_tmp_v
@@ -70,33 +70,33 @@ do
     fi
   fi
 done
-for ifile in `ls ${DATA}/cice_inst.????-??-??-?????.nc`
+for ifile in $(ls ${DATA}/cice_inst.????-??-??-?????.nc)
 do
- cfile=`basename $ifile`
- YYYY=`echo $cfile | cut -c11-14`
- MM=`echo $cfile | cut -c16-17`
- DD=`echo $cfile | cut -c19-20`
- SSSSS=`echo $cfile | cut -c22-26`
- HH=`expr $SSSSS \/ 3600`
- LEAD=`$NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
+ cfile=$(basename $ifile)
+ YYYY=$(echo $cfile | cut -c11-14)
+ MM=$(echo $cfile | cut -c16-17)
+ DD=$(echo $cfile | cut -c19-20)
+ SSSSS=$(echo $cfile | cut -c22-26)
+ HH=$(expr $SSSSS \/ 3600)
+ LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
  echo "cp -p -f $cfile ${COMOUT}/${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.cice_inst" >> cmdfile_tmp_c # dont work w/ hourly
 done
 #
 # Write restart files copying commands in CMD files if necessary
 #
-for rfile in `ls ${DATA}/restart_out*.b`
+for rfile in $(ls ${DATA}/restart_out*.b)
 do
   # get HYCOM date from the restart file.
-  cdate=`${USHrtofs}/rtofs_date4restart.sh $rfile`
-  YYYYMMDD=`echo $cdate | cut -c1-8`
-  YYYYDDD=`${USHutil}/date2jday.sh $YYYYMMDD`
-  YYYY=`echo $YYYYDDD | cut -c1-4`
-  DDD=`echo $YYYYDDD | cut -c5-7`
-  HH=`echo $cdate | cut -c9-10`
-  MM=`echo $YYYYMMDD | cut -c5-6`
-  DD=`echo $YYYYMMDD | cut -c7-8`
-  SSSSS=`expr $HH \* 3600`
-  LEAD=`$NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc}`
+  cdate=$(${USHrtofs}/rtofs_date4restart.sh $rfile)
+  YYYYMMDD=$(echo $cdate | cut -c1-8)
+  YYYYDDD=$(${USHutil}/date2jday.sh $YYYYMMDD)
+  YYYY=$(echo $YYYYDDD | cut -c1-4)
+  DDD=$(echo $YYYYDDD | cut -c5-7)
+  HH=$(echo $cdate | cut -c9-10)
+  MM=$(echo $YYYYMMDD | cut -c5-6)
+  DD=$(echo $YYYYMMDD | cut -c7-8)
+  SSSSS=$(expr $HH \* 3600)
+  LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
   HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart
   CICErestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart_cice
   CICEworkRestTplate=cice.restart.${YYYY}-${MM}-${DD}-${SSSSS}
@@ -139,4 +139,4 @@ else
   err=$? ; export err ; err_chk
 fi
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

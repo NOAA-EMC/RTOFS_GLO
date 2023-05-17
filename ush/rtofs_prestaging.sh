@@ -10,7 +10,7 @@
 #########################################################################
 set -xa
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 export PS4='$SECONDS + '
 
 cd $DATA
@@ -35,8 +35,8 @@ fi
 
 # --------------------------------------------------------------------------- #
 # 1  Set up the start time and end time for the analysis or forecast
-  sday=`$USHrtofs/rtofs_date_normal2hycom.sh $startdate$mycyc`
-  eday=`$USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc`
+  sday=$($USHrtofs/rtofs_date_normal2hycom.sh $startdate$mycyc)
+  eday=$($USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc)
   echo "  $sday $eday false false  " > limits
 
 # 2. Copy the necessary input files for the model forecast
@@ -105,11 +105,6 @@ fi
 # 3.a call atmforcing to get the forcing files 
 
   $USHrtofs/${RUN}_atmforcing.sh $startdate$mycyc $enddate$mycyc $intvl 
-#dbgz link monthly forcing
-#-  for cfile in `ls /marine/noscrub/wx20am/global_0.08/data/forcing.*.[ab]`
-#-  do
-#-    ln -s -f $cfile .
-#-  done
 
 # 3.b correct air temperature over ice.
    
@@ -172,4 +167,4 @@ fi
     done
   done
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
