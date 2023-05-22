@@ -145,6 +145,6 @@ if [ $SENDDBN = YES ] ; then
 fi
 
 #################################################
-msg='THE $job JOB HAS ENDED NORMALLY.'
+msg="THE $job JOB HAS ENDED NORMALLY."
 postmsg "$msg"
 ################## END OF SCRIPT #######################
