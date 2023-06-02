@@ -15,7 +15,7 @@ mkdir -p $DIROUT
 mkdir -p $DIRTMP
 # set DATA to the directory where the data is to dumped to (for dumpjb)
 DATAsave=$DATA
-export DATA=$DIRTMP
+#export DATA=$DIRTMP
 export TMPDIR=$DIRTMP
 cd $DIRTMP
 
@@ -43,74 +43,69 @@ export interval=11.999
 export DUPC="off" #turn off duplicate check
 
 #SURFACE and SURFACE RESTRICTED, go back to $startdate_s
-for dtyp in shipsu ships shipub shipsb; do
-ADATE=${startdate_s}
-rm -f $dtyp.${enddate}
-rm -f $dtyp.out.${enddate}
-touch $dtyp.${enddate}
-touch $dtyp.out.${enddate}
-while [[ $ADATE -le $enddate ]]
+for dtyp in shipsu ships shipub shipsb
 do
-  #------------------------------------------------------------------------
-  #  dump data to current running directory
-  $DUMPJB ${ADATE}$CenterTime $interval $dtyp
-  ls -l
-  mv $dtyp.ibm $dtyp.ibm.$ADATE 
-  mv $dtyp.out $dtyp.out1.$ADATE 
-  cat $dtyp.ibm.$ADATE >> $dtyp.${enddate}
-  cat $dtyp.out1.$ADATE >> $dtyp.out.${enddate}
-  ADATE=$ADATE'00'
-  ADATE=$($NDATE +24 $ADATE | cut -c1-8)
-done # while [[ $ADATE -le  $enddate ]]
-mv $dtyp.${enddate} $DIROUT/.
-mv $dtyp.out.${enddate} $DIROUT/.
+  ADATE=${startdate_s}
+  rm -f $dtyp.${enddate}
+  rm -f $dtyp.out.${enddate}
+  touch $dtyp.${enddate}
+  touch $dtyp.out.${enddate}
+  while [[ $ADATE -le $enddate ]]
+  do
+    #------------------------------------------------------------------------
+    #  dump data to current running directory
+    $DUMPJB ${ADATE}$CenterTime $interval $dtyp
+    mv $DATA/$dtyp.ibm $DIRTMP/$dtyp.ibm.$ADATE
+    mv $DATA/$dtyp.out $DIRTMP/$dtyp.out1.$ADATE
+    cat $DIRTMP/$dtyp.ibm.$ADATE >> $DIRTMP/$dtyp.${enddate}
+    cat $DIRTMP/$dtyp.out1.$ADATE >> $DIRTMP/$dtyp.out.${enddate}
+    ADATE=$ADATE'00'
+    ADATE=$($NDATE +24 $ADATE | cut -c1-8)
+  done # while [[ $ADATE -le  $enddate ]]
+  mv $DIRTMP/$dtyp.${enddate} $DIROUT/.
+  mv $DIRTMP/$dtyp.out.${enddate} $DIROUT/.
 done # dtyp
 
 #PROFILES, DAILY, go back daily to $startdate_p
-for dtyp in mbuoyb dbuoyb ; do
-ADATE=${startdate_p}
-rm -f $dtyp.${enddate}
-rm -f $dtyp.out.${enddate}
-touch $dtyp.${enddate}
-touch $dtyp.out.${enddate}
-while [[ $ADATE -le $enddate ]]
+for dtyp in mbuoyb dbuoyb
 do
-  #------------------------------------------------------------------------
-  #  dump data to current running directory
-  $DUMPJB $ADATE$CenterTime $interval $dtyp
-  mv $dtyp.ibm $dtyp.ibm.$ADATE 
-  mv $dtyp.out $dtyp.out1.$ADATE 
-  cat $dtyp.ibm.$ADATE >> $dtyp.${enddate}
-  cat $dtyp.out1.$ADATE >> $dtyp.out.${enddate}
-  ADATE=$ADATE'00'
-  ADATE=$($NDATE +24 $ADATE | cut -c1-8)
-done # while [[ $ADATE -le  $enddate ]]
-mv $dtyp.${enddate} $DIROUT/.
-mv $dtyp.out.${enddate} $DIROUT/.
+  ADATE=${startdate_p}
+  rm -f $dtyp.${enddate}
+  rm -f $dtyp.out.${enddate}
+  touch $dtyp.${enddate}
+  touch $dtyp.out.${enddate}
+  while [[ $ADATE -le $enddate ]]
+  do
+    #------------------------------------------------------------------------
+    #  dump data to current running directory
+    $DUMPJB $ADATE$CenterTime $interval $dtyp
+    mv $DATA/$dtyp.ibm $DIRTMP/$dtyp.ibm.$ADATE
+    mv $DATA/$dtyp.out $DIRTMP/$dtyp.out1.$ADATE
+    cat $DIRTMP/$dtyp.ibm.$ADATE >> $DIRTMP/$dtyp.${enddate}
+    cat $DIRTMP/$dtyp.out1.$ADATE >> $DIRTMP/$dtyp.out.${enddate}
+    ADATE=$ADATE'00'
+    ADATE=$($NDATE +24 $ADATE | cut -c1-8)
+  done # while [[ $ADATE -le  $enddate ]]
+  mv $DIRTMP/$dtyp.${enddate} $DIROUT/.
+  mv $DIRTMP/$dtyp.out.${enddate} $DIROUT/.
 done # dtyp
 
 #PROFILES, monthly, go back to $startdate_p
 ADATE=${startdate_p}
 export CenterTime=12
 export interval=$HHback
-for dtyp in subpfl bathy tesac xbtctd ; do
-ADATE=$enddate
+for dtyp in subpfl bathy tesac xbtctd
+do
+  ADATE=$enddate
   #------------------------------------------------------------------------
   #  dump data to current running directory
   echo $dtyp
   $DUMPJB $ADATE$CenterTime $interval $dtyp
-  mv $dtyp.ibm $dtyp.$ADATE
-  mv $dtyp.out $dtyp.out.$ADATE
-  mv $dtyp.$ADATE $DIROUT/.
-  mv $dtyp.out.$ADATE $DIROUT/.
+  mv $DATA/$dtyp.ibm $DIRTMP/$dtyp.$ADATE
+  mv $DATA/$dtyp.out $DIRTMP/$dtyp.out.$ADATE
+  mv $DIRTMP/$dtyp.$ADATE $DIROUT/.
+  mv $DIRTMP/$dtyp.out.$ADATE $DIROUT/.
 done #dtyp
-
-##### this is so we can test with emc.ncodapa dumps
-##cd $DATAsave
-##mv dump dump.dan
-##mkdir dump
-##ln -s /gpfs/dell2/emc/modeling/noscrub/Dan.Iredell/COMDIR/com/rtofs/prod/dump.$enddate/* dump/.
-##### this is so we can test with emc.ncodapa dumps
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

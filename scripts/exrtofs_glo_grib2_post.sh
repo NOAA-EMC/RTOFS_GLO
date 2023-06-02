@@ -26,6 +26,7 @@
 #                    PARMrtofs                                                #
 #                    USHrtofs                                                 #
 #                    DATA                                                     #
+#                    COMIN                                                    #
 #                    COMOUT                                                   #
 #                    RUN_MODE                                                 #  
 #                    SENDCOM                                                  #
@@ -68,8 +69,6 @@ cd $DATA
 
 msg="RTOFS_GLO_GRIB_POST JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
-
-procstatus=0
 
 typeset -Z3 fhr
 typeset -Z3 fhr0
@@ -221,32 +220,32 @@ do
 
   if [ $fhr -eq 00 -a ${RUN_MODE} = 'forecast' ] ;then
 # n00:48hr  is same as f00 forecaast
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.archs.a archv.a
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.archs.b archv.b
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.arche.b arche.b
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n00.arche.a arche.a
+     ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n00.archs.a archv.a
+     ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n00.archs.b archv.b
+     ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n00.arche.b arche.b
+     ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n00.arche.a arche.a
   else
-   if [ -s $COMOUT/${arfile_tplate}.a ]; then
-    ln -s -f $COMOUT/${arfile_tplate}.a archv.a
-    ln -s -f $COMOUT/${arfile_tplate}.b archv.b
-    ln -s -f $COMOUT/${arefile_tplate}.a arche.a
-    ln -s -f $COMOUT/${arefile_tplate}.b arche.b
+   if [ -s $COMIN/${arfile_tplate}.a ]; then
+    ln -s -f $COMIN/${arfile_tplate}.a archv.a
+    ln -s -f $COMIN/${arfile_tplate}.b archv.b
+    ln -s -f $COMIN/${arefile_tplate}.a arche.a
+    ln -s -f $COMIN/${arefile_tplate}.b arche.b
    else
      if [ $fhr -eq 00 ]; then
 # This is for n00 or n-24 nowcast 
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.archs.a archv.a
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.archs.b archv.b
+     ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n-24.archs.a archv.a
+     ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n-24.archs.b archv.b
    else
-    echo Missing archs file $COMOUT/${arfile_tplate}. >>${RUN}_${modID}.t${mycyc}z.nav.log
+    echo "Missing archs file $COMIN/${arfile_tplate}." >>${RUN}_${modID}.t${mycyc}z.nav.log
     echo "NOTdone due to missing archs file" >>${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk
   fi
      if [ $fhr -eq 00 ]; then
 # This is for n00 or n-24 nowcast 
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.arche.a arche.a
-     ln -s -f $COMOUT/${RUN}_${modID}.t${mycyc}z.n-24.arche.b arche.b
+     ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n-24.arche.a arche.a
+     ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n-24.arche.b arche.b
    else
-    echo Missing archs file $COMOUT/${arefile_tplate}. >>${RUN}_${modID}.t${mycyc}z.nav.log
+    echo "Missing archs file $COMIN/${arefile_tplate}." >>${RUN}_${modID}.t${mycyc}z.nav.log
     echo "NOTdone due to missing arche file" >>${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk
   fi
@@ -258,7 +257,7 @@ fi
     if [ ! -f $fn ]
     then
       missing=yes
-      echo Missing file $fn, will not be able to run >> ${RUN}_${modID}.t${mycyc}z.nav.log
+      echo "Missing file $fn, will not be able to run" >> ${RUN}_${modID}.t${mycyc}z.nav.log
     fi
   done
   if [ $missing = 'yes' ]
@@ -448,9 +447,10 @@ if [ $SENDCOM = 'YES' ]
        done
      done
 fi
-      
-#################################################
+
 echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
-msg='THE RTOFS_GLO_GRI_POST JOB HAS ENDED NORMALLY.'
+
+#################################################
+msg='THE RTOFS_GLO_GRIB_POST JOB HAS ENDED NORMALLY.'
 postmsg "$msg"
 ################## END OF SCRIPT #######################

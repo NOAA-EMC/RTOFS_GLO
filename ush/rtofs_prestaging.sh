@@ -51,8 +51,8 @@ fi
         ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.${fil}.${type} regional.${fil}.${type}
         echo "regional.${fil}.${type} copied" 
       else
-        $USHrtofs/${RUN}_abort.sh "Missing Topography files" \
-          "ABNORMAL EXIT FORECAST_PRE: NO FILE for regional.${fil}.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
+          "NO FILE for regional.${fil}.${type}" 2
       fi
     done
   done
@@ -65,8 +65,8 @@ fi
         ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.relax_ssh.${type} relax.ssh.${type}
         echo "relax.ssh.${type} copied" 
       else
-        $USHrtofs/${RUN}_abort.sh "Missing SSH Relaxation files" \
-          "ABNORMAL EXIT FORECAST_PRE: NO FILE for relax.ssh.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing SSH Relaxation files" \
+          "NO FILE for relax.ssh.${type}" 2
       fi
    done
 
@@ -75,8 +75,8 @@ then
   ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.cice.r regional.cice.r
   echo "regional.cice.r copied" 
 else
-  $USHrtofs/${RUN}_abort.sh "Missing Topography files" \
-    "ABNORMAL EXIT FORECAST_PRE: NO FILE for regional.cice.r" 2
+  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
+    "NO FILE for regional.cice.r" 2
 fi
 if [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.a ] \
   && [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.b ] 
@@ -85,8 +85,8 @@ then
   ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.b  forcing.offlux.b 
   echo "forcing.offlux.[ab] copied" 
 else
-  $USHrtofs/${RUN}_abort.sh "Missing Topography files" \
-    "ABNORMAL EXIT FORECAST_PRE: NO FILE for forcing.offlux.[ab]" 2
+  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
+    "NO FILE for forcing.offlux.[ab]" 2
 fi
 
 # 2.h copy interpolator data
@@ -96,8 +96,8 @@ fi
   then
       echo "interpolator data copied"
   else
-      $USHrtofs/${RUN}_abort.sh "Missing Interpolator Data" \
-        "ABNORMAL EXIT $runmode : NO FILE for intp_pars.dat" 2
+      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Interpolator Data" \
+        "NO FILE for intp_pars.dat" 2
   fi
 
 # 3. Create Forcing files
@@ -137,8 +137,8 @@ fi
             fi
           fi
        else
-        $USHrtofs/${RUN}_abort.sh "Missing Fix Forcing File" \
-          "ABNORMAL EXIT FORECAST: NO FILE for forcing.${fil}.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Fix Forcing File" \
+          "NO FILE for forcing.${fil}.${type}" 2
       fi
     done
   done
@@ -161,8 +161,8 @@ fi
             fi
           fi
       else
-        $USHrtofs/${RUN}_abort.sh "Missing cice Forcing File" \
-          "ABNORMAL EXIT FORECAST: NO FILE for cice.${fil}.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing cice Forcing File" \
+          "NO FILE for cice.${fil}.${type}" 2
       fi
     done
   done

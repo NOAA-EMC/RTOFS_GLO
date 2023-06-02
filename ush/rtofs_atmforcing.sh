@@ -131,9 +131,13 @@ export FORT12=jpdt_table.dat
 export FORT33=listflx.dat
 
 $EXECrtofs/${RUN}_atmforcing >>$pgmout 2>errfile
-err=$?; export err ; err_chk
+err=$?
+if [ $err -ne 0 ]
+then
+  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job" "return code $err" $err
+fi
 echo " error from ${RUN}_atmforcing=",$err
 
-# End of genrating the forcing files
+# End of generating the forcing files
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

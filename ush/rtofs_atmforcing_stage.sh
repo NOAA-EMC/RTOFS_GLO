@@ -39,16 +39,16 @@ done
 
 if [ -z $ffile ] || [ $ffile == 'none' ]
 then
-  $USHrtofs/${RUN}_abort.sh "Missing Atmospheric Forcing File " \
-    "ABNORMAL EXIT FORECAST: NO VALID FILE sfcflx for time $idate" 4
+  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Atmospheric Forcing File" \
+    "No Valid flux file for time $idate" 4
 fi
 # check on validity of file
 $WGRIB2 -checksum -1 $forcefile > /dev/null
 err=$?
 if [ $err -ne 0 ]
 then
-  $USHrtofs/${RUN}_abort.sh "Corrupted Atmospheric Forcing File " \
-    "ABNORMAL EXIT FORECAST: CORRUPTED FLUX FILE $forcefile" 4
+  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Corrupted Atmospheric Forcing File " \
+    "FLUX FILE $forcefile failed checksum" 4
 fi
 
 echo "forcefile $forcefile"
@@ -98,11 +98,13 @@ then
      . prep_step
      startmsg
      $EXECrtofs/${RUN}_getkpds >>$pgmout 2>errfile
-     err=$?; export err ; err_chk
+     err=$?
+     if [ $err -ne 0 ]
+     then
+       $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job" "return code $err" $err
+     fi
      echo " error from ${RUN}_getkpds=",$err
-
      atmgds='255 '$(cat kpds.dat)
-    export err=$?; err_chk
   fi
   # NOTE: this extraction is important if $pgrbfile file is used instead of $prsfile.
   #       prs file is supposed to have only pressure field. Still, retained for 

@@ -45,8 +45,8 @@ fi
         ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.${fil}.${type} regional.${fil}.${type}
         echo "regional.${fil}.${type} copied" 
       else
-        $USHrtofs/${RUN}_abort.sh "Missing Topography files" \
-          "ABNORMAL EXIT ${runmode}: NO FILE for regional.${fil}.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
+          "${runmode}: NO FILE for regional.${fil}.${type}" 2
       fi
     done
   done
@@ -56,8 +56,8 @@ fi
     ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.cice.r regional.cice.r
     echo "regional.cice.r copied" 
   else
-    $USHrtofs/${RUN}_abort.sh "Missing Topography files" \
-     "ABNORMAL EXIT ${runmode}: NO FILE for regional.cice.r" 2
+    $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
+     "${runmode}: NO FILE for regional.cice.r" 2
   fi
  
 
@@ -74,8 +74,8 @@ fi
         ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.relax_${xx}.${type} relax.${yy}.${type}
         echo "relax.${yy}.${type} copied" 
       else
-        $USHrtofs/${RUN}_abort.sh "Missing Relaxation File" \
-          "ABNORMAL EXIT ${runmode}: NO FILE for relax.${yy}.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Relaxation File" \
+          "${runmode}: NO FILE for relax.${yy}.${type}" 2
       fi
     done
   done
@@ -86,8 +86,8 @@ fi
     then
       ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.${Cb}.${type} cb.${type}
     else
-      $USHrtofs/${RUN}_abort.sh "Missing Drag Relaxation File" \
-        "ABNORMAL EXIT ${runmode}: NO FILE for cb.${type}" 2
+      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Drag Relaxation File" \
+        "${runmode}: NO FILE for cb.${type}" 2
     fi
   done
 
@@ -102,8 +102,8 @@ fi
         ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.${fil}.${type} ${fil}.${type} 
         echo "${fil}.${type} copied" 
        else
-        $USHrtofs/${RUN}_abort.sh "Missing Fix File" \
-          "ABNORMAL EXIT ${runmode}: NO FILE for ${fil}.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Fix File" \
+          "${runmode}: NO FILE for ${fil}.${type}" 2
       fi
     done
   done
@@ -120,8 +120,8 @@ fi
       ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.${fil}.${type} thkdf4.${type} 
       echo "${fil}.${type} copied" 
      else
-      $USHrtofs/${RUN}_abort.sh "Missing Fix File" \
-        "ABNORMAL EXIT ${runmode}: NO FILE for thkdf4.${type}" 2
+      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Fix File" \
+        "${runmode}: NO FILE for thkdf4.${type}" 2
     fi
   done
   # Get CICE fixed files
@@ -133,8 +133,8 @@ fi
       ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.${fil} ${fil}
       echo "${fil} copied" 
      else
-      $USHrtofs/${RUN}_abort.sh "Missing Fix File" \
-        "ABNORMAL EXIT ${runmode}: NO FILE for ${fil}" 2
+      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Fix File" \
+        "${runmode}: NO FILE for ${fil}" 2
     fi
   done
 
@@ -152,8 +152,8 @@ fi
         ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.${fil}.${type} forcing.${fil}.${type}
         echo "forcing.${fil}.${type} copied" 
        else
-        $USHrtofs/${RUN}_abort.sh "Missing Fix Forcing File" \
-          "ABNORMAL EXIT ${runmode}: NO FILE for forcing.${fil}.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Fix Forcing File" \
+          "${runmode}: NO FILE for forcing.${fil}.${type}" 2
       fi
     done
   done
@@ -167,8 +167,8 @@ fi
        ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.tbaric.${type} tbaric.${type}
        echo "tbaric.${type} copied" 
     else
-        $USHrtofs/${RUN}_abort.sh "Missing Drift File" \
-          "ABNORMAL EXIT ${runmode}: NO FILE for tbaric.${type}"
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Drift File" \
+          "${runmode}: NO FILE for tbaric.${type}"
     fi
   done
   
@@ -182,8 +182,8 @@ fi
       ln -s -f $PARMrtofs/${RUN}_${modID}.${inputgrid}${mode}.${fil}.input ${fil}.input 
       echo "${fil}.input copied" 
     else
-      $USHrtofs/${RUN}_abort.sh "Missing Initialization File" \
-        "ABNORMAL EXIT ${runmode}: NO FILE for ${fil}.input" 2
+      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Initialization File" \
+        "${runmode}: NO FILE for ${fil}.input" 2
     fi
   done
     if [ -s $PARMrtofs/${RUN}_${modID}.${inputgrid}.${runmode}.ice_in ]
@@ -191,8 +191,8 @@ fi
       ln -s -f $PARMrtofs/${RUN}_${modID}.${inputgrid}.${runmode}.ice_in ice_in
       echo "ice_in copied" 
     else
-      $USHrtofs/${RUN}_abort.sh "Missing Initialization File" \
-        "ABNORMAL EXIT ${runmode}: NO FILE for ice_in" 2
+      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Initialization File" \
+        "${runmode}: NO FILE for ice_in" 2
     fi
 
 # 3. Get Forcing files
@@ -207,8 +207,8 @@ fi
         ln -s -f $FORCEfile forcing.${fil}.${type}
         echo "forcing.${fil}.${type} copied" 
       else
-        $USHrtofs/${RUN}_abort.sh "Missing Fix Forcing File" \
-          "ABNORMAL EXIT ${runstep}: NO FILE for forcing.${fil}.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Fix Forcing File" \
+          "${runstep}: NO FILE for forcing.${fil}.${type}" 2
       fi
     done
   done
@@ -222,8 +222,8 @@ fi
         ln -s -f $FORCEfile cice.${fil}.${type}
         echo "cice.${fil}.${type} copied" 
       else
-        $USHrtofs/${RUN}_abort.sh "Missing Fix Forcing File" \
-          "ABNORMAL EXIT ${runstep}: NO FILE for cice.${fil}.${type}" 2
+        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Fix Forcing File" \
+          "${runstep}: NO FILE for cice.${fil}.${type}" 2
       fi
     done
   done

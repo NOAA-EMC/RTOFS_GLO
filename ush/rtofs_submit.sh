@@ -73,8 +73,8 @@ fi
     fi
     echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.${runmode}.log
   else
-    $USHrtofs/${RUN}_abort.sh "Abnormal model exit from ${RUN_MODE}" \
-       "ABNORMAL EXIT ${runname}: problem with ${RUN_MODE} model run" -1
+    $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit from ${RUN_MODE}" \
+       "${runname} ${RUN_MODE}: return code $modelstatus" $modelstatus
  fi
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

@@ -76,8 +76,8 @@ postmsg "$msg"
      done
      if [ $anal_hour -lt $LEAD ]
      then
-        $USHrtofs/${RUN}_abort.sh  "Missing Restart File" \
-          "ABNORMAL EXIT ANALYSIS: NO FILE for restart_in.[ab] or cice.restart_in" 2
+        $USHrtofs/${RUN}_abort.sh  "FATAL ERROR: $job Missing Restart File" \
+          "No restart_in.[ab] or cice.restart_in in $GESIN" 2
     fi 
 
   else 
@@ -90,8 +90,8 @@ postmsg "$msg"
       ln -s -f ${COMIN}/${CICErestTplate} cice.restart_in
       echo "Analysis is started from restart: ${COMIN}/${HYCOMrestTplate}.[ab] and ${COMIN}/${CICErestTplate}"
     else
-      $USHrtofs/${RUN}_abort.sh "Missing Restart File" \
-        "ABNORMAL EXIT ANALYSIS: NO FILE for restart_in.[ab] or cice.restart_in" 2
+      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Restart File" \
+        "No restart_in.[ab] or cice.restart_in in $COMIN" 3
     fi
   fi
   echo './cice.restart_in' > cice.restart_file
@@ -104,12 +104,12 @@ postmsg "$msg"
     dater=$($NDATE $(expr $hdate \* 24)  ${basetime})
     if [ ${dater} -ne ${startdate}${mycyc} ] 
     then 
-      $USHrtofs/${RUN}_abort.sh  "RESTART DATES: expected=${startdate}${mycyc} actual=$dater" \
-        "ABNORMAL EXIT ANALYSIS: WRONG DATE in the restart file" 2
+      $USHrtofs/${RUN}_abort.sh  "FATAL ERROR: $job Mismatch Restart dates" \
+        "expected=${startdate}${mycyc} actual=$dater" 2
     fi
   else
-      $USHrtofs/${RUN}_abort.sh "Missing Restart File" \
-        "ABNORMAL EXIT ANALYSIS: FATAL ERROR--NO RESTART FILE" 911
+      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Restart File" \
+        "No restart_in.[ab] or cice.restart_in in $DATA" 911
   fi
 
 # --------------------------------------------------------------------------- #
@@ -149,8 +149,8 @@ postmsg "$msg"
       done
     echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.anal.log
   else
-    $USHrtofs/${RUN}_abort.sh "Abnormal model exit from analyis" \
-       "ABNORMAL EXIT ANALYSIS: problem with analysis model run" -1
+    $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit" \
+       "problem with analysis model run - return code $modelstatus" $modelstatus
   fi
 
 # --------------------------------------------------------------------------- #

@@ -42,7 +42,11 @@ export pgm="${RUN}_atmforcing_correct"
 . prep_step
 startmsg
 $EXECrtofs/${RUN}_atmforcing_correct < atmforcing_correct.in >>$pgmout 2>errfile
-err=$?; export err ; err_chk
+err=$?
+if [ $err -ne 0 ]
+then
+  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job" "return code $err" $err
+fi
 echo " error from ${RUN}_atmforcing_correct=",$err
 
 mv ${DATA}/forcing.airtmp.a ${DATA}/forcing.airtm1.a 

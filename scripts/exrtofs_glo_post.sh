@@ -20,6 +20,7 @@
 #                    PARMrtofs                                                #
 #                    USHrtofs                                                 #
 #                    DATA                                                     #
+#                    COMIN                                                    #
 #                    COMOUT                                                   #
 #                    RUN_MODE                                                 #  
 #                    SENDCOM                                                  #
@@ -47,8 +48,6 @@ cd $DATA
 msg="RTOFS_GLO_POST JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
-procstatus=0
-
 typeset -Z3 fhr
 typeset -Z3 fhr0
 typeset -Z3 intvl_daily
@@ -75,7 +74,6 @@ then
 fi
 
 # define what functions to do (default to operational settings)
-export running_realtime=${running_realtime:-YES}
 export run_parallel=${run_parallel:-NO}
 export volume_3z_daily=${volume_3z_daily:-YES}
 export volume_3z_6hrly=${volume_3z_6hrly:-YES}
@@ -173,11 +171,11 @@ do
   # link current archive to the working directory
   rm -rf archv.a archv.b > /dev/null
 
-  if [ -s $COMOUT/${arfile_tplate}.a ]; then
-    ln -s -f $COMOUT/${arfile_tplate}.a archv.a
-    ln -s -f $COMOUT/${arfile_tplate}.b archv.b
+  if [ -s $COMIN/${arfile_tplate}.a ]; then
+    ln -s -f $COMIN/${arfile_tplate}.a archv.a
+    ln -s -f $COMIN/${arfile_tplate}.b archv.b
   else
-    echo Missing archv file $COMOUT/${arfile_tplate}.
+    echo Missing archv file $COMIN/${arfile_tplate}.
     echo "NOTdone due to missing archv file" >${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk  
   fi
@@ -236,7 +234,7 @@ do
       touch cmdfile
       for reg in hvr_US_east hvr_US_west hvr_alaska
       do
-       echo "${USHrtofs}/${RUN}_glo3z_6hrly.sh $reg " >> cmdfile
+       echo "${USHrtofs}/${RUN}_glo3z_6hrly.sh $reg > $reg.$fhr.out 2>&1" >> cmdfile
       done
       chmod +x cmdfile
       #mpirun.lsf cfp cmdfile > mpirun_6hrly.out
@@ -265,29 +263,9 @@ do
   fhr=$(expr $fhr + $intvl_6hrly) 
 done
 
-if [ $procstatus = 0 ]
-then
-  if [ $running_realtime = 'YES' ]
-  then
-    md5=/usr/bin/md5sum
-    if [ -x $md5 ]
-    then
-      cd $COMOUT
-      # need definition of files
-      for gfile in $(ls *.grb2)
-      do
-        $md5 $gfile >> $DATA/csum.$PDY$mycyc
-      done
-    fi
-  fi
-
-  echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
-  msg='THE RTOFS_GLO_POST JOB HAS ENDED NORMALLY.'
-  postmsg "$msg"
-fi
+echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
 
 #################################################
 msg='THE RTOFS_GLO_POST JOB HAS ENDED NORMALLY.'
 postmsg "$msg"
-
 ################## END OF SCRIPT #######################
