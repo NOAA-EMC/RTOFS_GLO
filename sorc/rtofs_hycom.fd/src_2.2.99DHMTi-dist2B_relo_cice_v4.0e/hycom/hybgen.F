@@ -2794,3 +2794,5 @@ c> Aug. 2015 - changed k-2 to k-N in lowest layer "runaway" unmixing test
 c> Aug. 2015 - overturn with the layer above if bottom layer is very light
 c> Aug. 2015 - entrain into too dense layer (only move upper interface up)
 c> Aug. 2015 - allow entrainment to increase fixlay by 1
+c> ...
+c> Feb. 2023 - bugfix to dp0cum
