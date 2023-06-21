@@ -29,6 +29,7 @@
   fgat        = 1,  1,  1, -1, -1, 24, 
   fgat_rec    = 8, 16, 17, -1, -1,  1,
   global      = .true.,
+  grd_mn      = 1.e-3
   himem       = .true.,
   ice_asm     = .true.,
   ice_rec     = 8, 15, 16, 1,
