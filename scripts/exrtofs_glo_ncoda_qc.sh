@@ -62,6 +62,8 @@ then
   mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin > cpin.out
   err=$? ; export err ; err_chk
   date
+else
+  echo "WARNING - Cold starting $job"
 fi
 
 # 1.b link in var restart files from COMINm1
@@ -69,6 +71,8 @@ for v in glbl_var hycom_var nhem_var shem_var;do
    if test -e $COMINm1/ncoda/$v
    then
       ln -sf $COMINm1/ncoda/$v $DATA/
+   else
+      echo "WARNING - $job cannot find $v - will run without it" 
    fi
 done
 

@@ -61,10 +61,10 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export COMROOTrtofs=${COMROOTrtofs:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+export COMROOTrtofs=$(dirname $COMIN)
 
 mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT

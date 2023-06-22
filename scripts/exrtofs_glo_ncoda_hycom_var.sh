@@ -45,7 +45,7 @@ then
   err=$? ; export err ; err_chk
   date
 else
-  echo "Cold starting hycom var!"
+  echo "WARNING - Cold starting $job"
 fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
@@ -56,54 +56,13 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b ${DATA}/region
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
 
-# BEGIN LINKING
-# build links needed for hycom_var
-
-sameold=1
-if [ $sameold -eq 0 ]
+# 1.c check if hycom restart file available
+if [[ ! -s $COMINm1/${RUN}_${modID}.t00z.n00.restart.a ||
+      ! -s $COMINm1/${RUN}_${modID}.t00z.n00.restart.b ]]
 then
-mkdir -p $RUN
-ln -s $COMROOTrtofs/${RUN}.${PDYm2} $RUN/${RUN}.${PDYm2}
-ln -s $COMROOTrtofs/${RUN}.${PDYm3} $RUN/${RUN}.${PDYm3}
-ln -s $COMROOTrtofs/${RUN}.${PDYm4} $RUN/${RUN}.${PDYm4}
-ln -s $COMROOTrtofs/${RUN}.${PDYm5} $RUN/${RUN}.${PDYm5}
-ln -s $COMROOTrtofs/${RUN}.${PDYm6} $RUN/${RUN}.${PDYm6}
-ln -s $COMROOTrtofs/${RUN}.${PDYm7} $RUN/${RUN}.${PDYm7}
-mkdir -p $RUN/$RUN.$PDYm1
-ln -s $COMROOTrtofs/${RUN}.${PDYm1}/* $RUN/${RUN}.${PDYm1}/.
-
-# rename n-24:n00  to  n00:n24
-cd $RUN/${RUN}.${PDYm1}
-
-for n in $(ls rtofs_glo.t00z.n*.[ab]);do 
-p1=$(echo $n | cut -d. -f1-2)
-p2=$(echo $n | cut -d. -f4-)
-hh=$(echo $n | cut -d. -f3)
-if [ $hh == n00 ]; then
-  N=24
-else
-  h2=$(echo $hh | cut -c3-3)
-  if [ $h2 -eq 0 ] ; then
-    h=$(echo $hh | cut -c4-)
-  else
-    h=$(echo $hh | cut -c3-)
-  fi
-  let N=24-$h
+  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job No restart file found" \
+    "in $COMINm1" 15
 fi
-if [[ $N -le 9 && $N -ge 0 ]]; then
- N=0${N}
-fi
-if [ $N -lt 0 ]; then
- N=$(echo $N | cut -c2-)
- N=-0${N}
-fi
-mv $n ${p1}.n${N}.${p2}
-done
-
-cd $DATA
-
-#end LINKING
-fi #sameold
 
 # 2. build namelists
 
@@ -111,14 +70,11 @@ rm -f odsetnl
 rm -f ogridnl
 rm -f oanl
 
-#  deny metop-a: 110, 111, 112
-#  deny metop-b: 115, 116, 117
-
 cat << eof1 > odsetnl
  &dsetnl
   dsoclim = '$FIXrtofs/codaclim'
   dsogdem = '$FIXrtofs/gdem'
-  dsomrff = '$COMIN/..'
+  dsomrff = '$COMROOTrtofs'
   dsomfix = '$DATA'
   dsorff  = '$DATA/restart'
   dsoudat = '$DATA/ocnqc'
@@ -126,6 +82,7 @@ cat << eof1 > odsetnl
  &end
 eof1
 
+# kkm, kko, m, and n can be pulled from parm blkdat.input
 cat << eof2 > ogridnl
  &gridnl
   delx(1) = 8896.78809,

@@ -45,7 +45,7 @@ then
   err=$? ; export err ; err_chk
   date
 else
-  echo "cold starting global var!"
+  echo "WARNING - Cold starting $job"
 fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA

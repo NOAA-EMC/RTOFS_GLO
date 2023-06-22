@@ -48,7 +48,7 @@ then
     echo "cp -p -f $COMINm1/ncoda/nhem_var/restart/$nv $DATA/nhem_var/restart" >> cmdfile.cpin
   done
 else
-  echo "Cold starting north polar var!"
+  echo "WARNING - Cold starting $job - north hemisphere"
 fi
 
 if compgen -G "$COMINm1/ncoda/shem_var/restart/*" > /dev/null
@@ -57,7 +57,7 @@ then
     echo "cp -p -f $COMINm1/ncoda/shem_var/restart/$sv $DATA/shem_var/restart" >> cmdfile.cpin
   done
 else
-  echo "Cold starting north polar var!"
+  echo "WARNING - Cold starting $job - south hemisphere"
 fi
 
 if [ -s cmdfile.cpin ]
