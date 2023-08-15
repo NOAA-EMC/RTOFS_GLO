@@ -2,7 +2,7 @@
   bias_lmt    = 3., 8.,
   bias_opt    = 'tsuv',
   bias_wt     = 1.,
-  clm_wt      = 0.5, 0.5, 4.,
+  clm_wt      = 0.5, 0.5, 2.5,
   cluster(2)  = 2.,
   cluster(3)  = 2.,
   cluster(6)  = 2.,
