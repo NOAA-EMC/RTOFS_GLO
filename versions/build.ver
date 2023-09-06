@@ -1,5 +1,5 @@
 export model=rtofs_glo
-export rtofs_glo_ver=v2.3.3
+export rtofs_glo_ver=v2.3.4
 export model_ver=${rtofs_glo_ver}
 
 export envar_ver=1.0
