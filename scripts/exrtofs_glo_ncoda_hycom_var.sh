@@ -37,7 +37,7 @@ mkdir -p $DATA/work
 rm -f cmdfile.cpin
 if compgen -G "$COMINm1/ncoda/hycom_var/restart/*" > /dev/null
 then
-  for hv in $(ls $COMINm1/ncoda/hycom_var/restart/); do
+  for hv in $(ls -S $COMINm1/ncoda/hycom_var/restart/); do
     echo "cp -p -f $COMINm1/ncoda/hycom_var/restart/$hv $DATA/restart" >> cmdfile.cpin
   done
   chmod +x cmdfile.cpin

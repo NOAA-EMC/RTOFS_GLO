@@ -39,9 +39,9 @@ for k in 00 24 48
 do
    prv_dtg=$( $EXECrtofs/rtofs_dtg -w -h -$k $cut_dtg )
    ymd=${prv_dtg:0:8}
-   cmd=$ymd/wtxtbul/satSSS/SMOS/"SM_OPER_MIR*$ymd*"
+   cmd=$ymd/wtxtbul/satSSS/SMOS/"SM_OPER_MIR*$ymd*nc"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/smos_$k.$cut_dtg
+      ls $cmd > $log_dir/smos_$k.${cut_dtg}_prelim
    else
       echo "WARNING $cmd does not exist"
    fi
@@ -53,7 +53,7 @@ do
    ymd=${prv_dtg:0:8}
    cmd=$ymd/wtxtbul/satSSS/SMAP/"SMAP_L2B_SSS_NRT*$ymd*h5"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/smap_$k.$cut_dtg
+      ls $cmd > $log_dir/smap_$k.${cut_dtg}_prelim
    else
       echo "WARNING $cmd does not exist"
    fi
@@ -61,8 +61,39 @@ done
 
 #   change to working directory
 cd $log_dir
-cat smos_*.$cut_dtg > smos_sss_files.$cut_dtg
-cat smap_*.$cut_dtg > smap_sss_files.$cut_dtg
+cat smos_*.${cut_dtg}_prelim > smos_sss_files.${cut_dtg}_prelim
+cat smap_*.${cut_dtg}_prelim > smap_sss_files.${cut_dtg}_prelim
+
+# check on readability of smos files
+echo timecheck smos start ncdump at $(date)
+while read line
+do
+  ncdump -k $SSS_DATA_DIR/$line > /dev/null
+  ncrc=$?
+    if [ $ncrc -eq 0 ]
+  then
+     echo $line >> smos_sss_files.$cut_dtg
+  else
+     echo "WARNING - file $SSS_DATA_DIR/$line appears to be corrupt."
+  fi
+done < smos_sss_files.${cut_dtg}_prelim
+echo timecheck smos finish ncdump at $(date)
+
+# check on readability of smap files
+echo timecheck smap start h5dump at $(date)
+while read line
+do
+  h5dump -H $SSS_DATA_DIR/$line > /dev/null
+  h5rc=$?
+    if [ $h5rc -eq 0 ]
+  then
+     echo $line >> smap_sss_files.$cut_dtg
+  else
+     echo "WARNING - file $SSS_DATA_DIR/$line appears to be corrupt."
+  fi
+done < smap_sss_files.${cut_dtg}_prelim
+echo timecheck smos finish h5dump at $(date)
+
 if [[ ! -f smos_sss_files.$cut_dtg || ! -s smos_sss_files.$cut_dtg ]]; then
    echo "WARNING - smos_sss_files.$cut_dtg does not exist/is empty. No SMOS files to process."
 fi
