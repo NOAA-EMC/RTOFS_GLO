@@ -246,7 +246,13 @@ fi
         for ftype in diag prog ice
         do
           cfile=${RUN}_${modID}_2ds_${mode}${fhr}_${ftype}.nc
-          cp -f -p $cfile  $COMOUT/.
+          if [ -x cpfs ]   # rc=1 means cpfs not found
+          then
+            cp -f -p $cfile  $COMOUT/.
+          else
+            cpfs $cfile  $COMOUT/.
+          fi
+
           if [ $SENDDBN = 'YES' ]
           then
 #              $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile

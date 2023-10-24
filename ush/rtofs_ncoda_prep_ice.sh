@@ -10,9 +10,6 @@ set -x
 
 mkdir -p $DATA/ice_nc
 cd $DATA/ice_nc
-# set DATA to the directory where the data is to dumped to (for dumpjb)
-# export DATA=$DATA/ice_nc
-# export TMPDIR=$DATA/ice_nc
 
 dtyp=ssmisu
 HH=12

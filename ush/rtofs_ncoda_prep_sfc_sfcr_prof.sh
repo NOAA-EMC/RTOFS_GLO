@@ -13,9 +13,7 @@ DIROUT=$DATA/dump
 DIRTMP=$DATA/tmp
 mkdir -p $DIROUT
 mkdir -p $DIRTMP
-# set DATA to the directory where the data is to dumped to (for dumpjb)
 DATAsave=$DATA
-#export DATA=$DIRTMP
 export TMPDIR=$DIRTMP
 cd $DIRTMP
 

@@ -209,7 +209,12 @@ do
         for fld in 3zuio 3zvio 3ztio 3zsio
         do
           cfile=${RUN}_${modID}_3dz_${mode}${fhr}_daily_${fld}.nc
-          cp -f -p $cfile $COMOUT/.
+          if [ -x cpfs ]   # rc=1 means cpfs not found
+          then
+            cp -f -p $cfile  $COMOUT/.
+          else
+            cpfs $cfile  $COMOUT/.
+          fi
           if [ $SENDDBN = YES ]
           then
             $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
@@ -247,7 +252,12 @@ do
         if [ $SENDCOM = 'YES' ]
         then
           cfile=${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
-          cp -f -p $cfile  $COMOUT/.
+          if [ -x cpfs ]   # rc=1 means cpfs not found
+          then
+            cp -f -p $cfile  $COMOUT/.
+          else
+            cpfs $cfile  $COMOUT/.
+          fi
           if [ $SENDDBN = YES ]
           then
             $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile

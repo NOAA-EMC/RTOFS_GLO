@@ -34,10 +34,12 @@ do
     forcefile=$ffile
     fn1=$sflux
     break
+  else
+    ffile=none
   fi
 done
 
-if [ -z $ffile ] || [ $ffile == 'none' ]
+if [ ! -s $ffile ] || [ $ffile == 'none' ]
 then
   $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Atmospheric Forcing File" \
     "No Valid flux file for time $idate" 4

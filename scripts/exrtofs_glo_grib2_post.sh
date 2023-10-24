@@ -282,7 +282,12 @@ fi
         for ftype in diag prog ice
         do
           cfile=${RUN}_${modID}_2ds_${mode}${fhr}_${ftype}.nc
-          cp -f -p $cfile  $COMOUT/.
+          if [ -x cpfs ]   # rc=1 means cpfs not found
+          then
+            cp -f -p $cfile  $COMOUT
+          else
+            cpfs $cfile  $COMOUT
+          fi
           if [ $SENDDBN = 'YES' ]
           then
 #	      $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
@@ -308,7 +313,12 @@ fi
         for ftype in diag prog ice
         do
           cfile=${RUN}_${modID}_2ds_${mode}${fhr}_${ftype}.nc
-          cp -f -p $cfile  $COMOUT/.
+          if [ -x cpfs ]   # rc=1 means cpfs not found
+          then
+            cp -f -p $cfile  $COMOUT
+          else
+            cpfs $cfile  $COMOUT
+          fi
           if [ $SENDDBN = 'YES' ]
           then
 #              $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
@@ -342,7 +352,12 @@ done
 	 do
 	     cfile_new=${cfile/grtofs/rtofs_glo}
 	     mv $cfile $cfile_new
-             cp -f -p $cfile_new  ${COMOUT}/.
+             if [ -x cpfs ]   # rc=1 means cpfs not found
+             then
+               cp -f -p $cfile_new  $COMOUT
+             else
+               cpfs $cfile_new  $COMOUT
+             fi
 	     cname=$(basename $cfile_new)
              if [ $SENDDBN = 'YES' ]
              then
@@ -368,7 +383,12 @@ done
 	 do
 	     cfile_new=${cfile/grtofs/rtofs_glo}
 	     mv $cfile $cfile_new
-             cp -f -p $cfile_new  ${COMOUT}/.
+             if [ -x cpfs ]   # rc=1 means cpfs not found
+             then
+               cp -f -p $cfile_new  $COMOUT
+             else
+               cpfs $cfile_new  $COMOUT
+             fi
 	     cname=$(basename $cfile_new)
              if [ $SENDDBN = 'YES' ]
              then
@@ -398,7 +418,12 @@ if [ $SENDCOM = 'YES' ]
       for cfile in $(ls -C1 $DATA/$ftype/${RUN}_${modID}.t${mycyc}z.${mode}*_${ftype}_std.grb2)
       do
           cname=$(basename $cfile)
-          cp -f -p $cfile  ${COMOUT}/.
+          if [ -x cpfs ]   # rc=1 means cpfs not found
+          then
+            cp -f -p $cfile  ${COMOUT}/.
+          else
+            cpfs $cfile  ${COMOUT}/.
+          fi
           file=$(echo $cfile |awk -F/ '{print $5}')
           fhour=$(echo $cname | cut -c17-19)
 
