@@ -6,9 +6,11 @@ MMAB_LIBF4=./mmablib/libombf_4.a
 ###
         
 # include ../makeall.mk
+CMD = rtofs_ssmis_tol2
 NCEPLIB=$(BUFR_LIB4) $(W3EMC_LIB4) $(W3NCO_LIB4)
 FC=ftn
 FOPTS=-c -O2 -I$(MMAB_INC) -I$(NETCDF_INCLUDES)
+DEBUG=-c -g -O0 -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv -I$(MMAB_INC) -I$(NETCDF_INCLUDES)
 
 LIBS=$(MMAB_LIBF4)
 CPP=g++
@@ -53,7 +55,14 @@ ssmis_tol2 : algorithm.o filter.o bufr.o skel.o ssmisu_decode.o
 	$(FC) ssmisu_decode.o filter.o skel.o bufr.o algorithm.o -L$(NETCDF_LIBRARIES) -lnetcdf  $(NCEPLIB) $(LIBS) -o $(@)
 
 install: 
-	 -mv ssmis_tol2 ${BINDIR}/rtofs_ssmis_tol2
+	 -mv ssmis_tol2 ${BINDIR}/$(CMD)
+
+debug: FOPTS = $(DEBUG)
+debug: all
+
+test:
+	$(CMD) < input.txt > output.txt
+	diff output.txt valid_output.txt
 
 # ---------------------------------------------------------------------
 

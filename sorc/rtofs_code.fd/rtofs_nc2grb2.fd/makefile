@@ -29,6 +29,7 @@ CMD =      rtofs_nc2grb2
 #DEBUG =    
 DEBUG =     
 FFLAGS =   -O3  -I $(INC) $(DEBUG)
+DEBUGF = -g -O0 -I$(INC) -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv
 
 # Lines from here down should not need to be changes.  They are
 # the actual rules which make uses to build CMD.
@@ -38,6 +39,13 @@ everything: clean $(CMD) install finish
 
 $(CMD):      $(OBJS)
 	$(FC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+debug: FFLAGS = $(DEBUGF)
+debug: all
+
+test:
+	$(CMD) < input.txt > output.txt
+	diff output.txt valid_output.txt
 
 clean:
 	-rm -f $(OBJS) *.mod $(CMD)

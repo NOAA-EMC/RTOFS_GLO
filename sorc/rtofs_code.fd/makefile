@@ -22,9 +22,10 @@ all: $(SUBDIRS)
 	   ( cd $$dir; echo "Making $@ in `pwd`" ; make ); \
 	done
 
-check: $(SUBDIRS)
+debug: $(SUBDIRS)
 	for dir in $(SUBDIRS); do \
-	   ( cd $$dir; echo "Making $@ in `pwd`" ; make -f makefile.check ); \
+	   ( cd $$dir; echo "Making $@ in `pwd`" ; \
+	   make $@) ; \
 	done
 
 clean: $(SUBDIRS)
@@ -34,6 +35,12 @@ clean: $(SUBDIRS)
 	done
 
 install: $(SUBDIRS)
+	for dir in $(SUBDIRS); do \
+	   ( cd $$dir; echo "Making $@ in `pwd`" ; \
+	   make $@) ; \
+	done
+
+test: $(SUBDIRS)
 	for dir in $(SUBDIRS); do \
 	   ( cd $$dir; echo "Making $@ in `pwd`" ; \
 	   make $@) ; \

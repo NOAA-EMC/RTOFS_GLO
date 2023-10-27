@@ -17,6 +17,10 @@ CPPFLAGS=-DIA32 -DREAL4 -DARCTIC
 FFLAGS=-O -fixed  -assume byterecl -convert big_endian -I$(INC1) -I$(INC2) # -03
 F90FLAGS=-free -O -assume byterecl -convert big_endian -I$(INC1) -I$(INC2) # -03
 FCFLAGS= -c -fixed -fp-model strict -assume byterecl -convert big_endian -I$(INC1) -I$(INC2)
+DEBUGFF = -g -O0 -check all -check noarg_temp_created -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv -I$(INC1) -I$(INC2)
+DEBUGF90 = -g -O0 -check all -check noarg_temp_created -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv -I$(INC1) -I$(INC2)
+DEBUGFC = -c -g -O0 -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv -I$(INC1) -I$(INC2)
+
 LDFLAGS=-O2
 #-AIX AR=ar
 #-AIX CPP=/usr/lib/cpp -P 
@@ -66,6 +70,15 @@ everything: clean $(CMD)  install finish
 #
 clean:
 	-rm -f ${OBJS} *.x *.mod *.F.f $(CMD) 
+
+debug:  FFLAGS = $(DEBUGFF)
+debug:  FCFLAGS = $(DEBUGFC)
+debug:  F90FLAGS = $(DEBUGF90)
+debug:  all
+
+test:
+	$(CMD) < input.txt > output.txt
+	diff output.txt valid_output.txt
         
 finish:
 	-rm -f ${OBJS} *.mod 

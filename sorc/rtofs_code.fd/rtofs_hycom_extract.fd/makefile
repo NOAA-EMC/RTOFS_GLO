@@ -15,6 +15,7 @@ CPPFLAGS=
 FLIBS=-shared-intel
 CCFLAGS= -O -mcmodel=medium -fPIC -c 
 FCFLAGS= -g -O3 -fp-model source -convert big_endian -assume byterecl -mcmodel=medium -fPIC -c 
+DEBUGFC= -g -O0 -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -nogen-interfaces -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv
 LDFLAGS= -g -O3 -fp-model source -convert big_endian -assume byterecl -mcmodel=medium -fPIC  
 BINDIR= ../../../exec
 CMD   =		rtofs_hycom_extract
@@ -43,13 +44,20 @@ $(CMD): ${OBJS}
 #
 #
 clean:
-	-rm ${OBJS} $(CMD) 
+	-rm -f ${OBJS} $(CMD)
         
 finish:
 	-rm ${OBJS} *.F.f *.mod 
 
 install:
 	-mv $(CMD) ${BINDIR}
+
+debug: FCFLAGS = $(DEBUGFC)
+debug: all
+
+test:
+	$(CMD) < input.txt > output.txt
+	diff output.txt valid_output.txt
 
 #
 makedep:

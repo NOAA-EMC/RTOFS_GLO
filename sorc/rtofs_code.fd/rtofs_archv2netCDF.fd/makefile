@@ -29,6 +29,7 @@
 #
 FC            = ftn
 FCFFLAGS      = -fixed -assume byterecl -convert big_endian -I$(NETCDF_INCLUDES)
+DEBUG         = -g -O0 -fixed -assume byterecl -convert big_endian -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -nogen-interfaces -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv -I$(NETCDF_INCLUDES)
 CC            = cc
 CCFLAGS       =
 CPP           = /usr/bin/cpp 
@@ -76,6 +77,13 @@ all: ${CMD}
 
 install:
 	-mv $(CMD) ${BINDIR}
+
+debug:  FCFFLAGS = $(DEBUG)
+debug:  all
+
+test:
+	$(CMD) < input.txt > output.txt
+	diff output.txt valid_output.txt
 
 clean:
 	/bin/rm -f *.o *.a *.mod M*log *2archv *2d *2t *3z *sf *sfl *sig2a *restart *hv *ncombc $(CMD)
