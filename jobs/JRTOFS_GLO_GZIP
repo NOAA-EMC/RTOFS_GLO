@@ -19,7 +19,7 @@ export RUN=rtofs
 export modID=glo
 export RUN_MODE=gzip
 #export HOMErtofs=${HOMErtofs:-${NWROOT:?}/rtofs_glo.${rtofs_glo_ver}}
-
+export PARMrtofs=${HOMErtofs}/parm
 
 ####################################
 # Determine Job Output Name on System
@@ -48,6 +48,11 @@ setpdy.sh
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
+
+#########################################
+# Check how many days to run the gzip for (affect fcst1 only)
+#########################################
+. $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
 
 #################################################################
 #  Send a message indicating the start of the job
