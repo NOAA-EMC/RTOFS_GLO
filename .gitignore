@@ -1,0 +1,21 @@
+# Ignore compiled binaries
+#exec/
+sorc/rtofs_code.fd/rtofs*fd/rtofs_*
+sorc/rtofs_code.fd/rtofs*cd/ssmis_tol2
+
+# Ignore compiled objects in sorc directories
+libs/*.a
+libs/incmod
+sorc/rtofs_code.fd/*/*.o
+sorc/rtofs_code.fd/*/*.mod
+sorc/rtofs_code.fd/*/*/*.a
+sorc/rtofs_hycom.fd/*/*/*.o
+sorc/rtofs_hycom.fd/*/*/*.mod
+sorc/rtofs_hycom.fd/esmf_4_0_0rp2/lib
+sorc/rtofs_hycom.fd/esmf_4_0_0rp2/mod
+sorc/rtofs_hycom.fd/esmf_4_0_0rp2/obj
+
+# Ignore compilation logs
+sorc/rtofs_hycom.fd/esmf_4_0_0rp2/make.out
+sorc/*/*.log
+
