@@ -1,5 +1,5 @@
 # Ignore compiled binaries
-#exec/
+exec/
 sorc/rtofs_code.fd/rtofs*fd/rtofs_*
 sorc/rtofs_code.fd/rtofs*cd/ssmis_tol2
 
