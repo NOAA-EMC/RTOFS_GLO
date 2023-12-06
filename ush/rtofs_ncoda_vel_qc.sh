@@ -60,19 +60,34 @@ cd $HFR_DATA_DIR
 ymd=${prv_dtg:0:8}
 for k in 12 13 14 15 16 17 18 19 20 21 22 23
 do
-   cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*"
-   ls $cmd > $log_dir/hfr_$k.$cut_dtg
+   cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*.nc"
+   ls $cmd > $log_dir/hfr_$k.${cut_dtg}_prelim
 done
 ymd=${cut_dtg:0:8}
 for k in 00 01 02 03 04 05 06 07 08 09 10 11
 do
-   cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*"
-   ls $cmd > $log_dir/hfr_$k.$cut_dtg
+   cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*.nc"
+   ls $cmd > $log_dir/hfr_$k.${cut_dtg}_prelim
 done
 
 #   change to working directory
 cd $log_dir
-cat hfr_*.$cut_dtg > hfr_files.$cut_dtg
+cat hfr_*.${cut_dtg}_prelim > hfr_files.${cut_dtg}_prelim
+
+# check on readability of hfr files
+echo timecheck hfr start ncdump at $(date)
+while read line
+do
+  ncdump -k $HFR_DATA_DIR/$line > /dev/null
+  ncrc=$?
+  if [ $ncrc -eq 0 ]
+  then
+     echo $line >> hfr_files.$cut_dtg
+  else
+     echo "WARNING - file $HFR_DATA_DIR/$line and will not be processed."
+  fi
+done < hfr_files.${cut_dtg}_prelim
+echo timecheck hfr finish ncdump at $(date)
 
 #   execute ncoda pre_qc for HF Radar netCDF files
 $EXECrtofs/rtofs_ncoda_hf_radar_nc $cut_dtg > pout1

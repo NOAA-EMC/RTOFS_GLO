@@ -74,7 +74,6 @@ ln -sf $COMIN/ncoda/ocnqc $DATA
 
 cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./nhem_var/oanl
 cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./shem_var/oanl
-echo timecheck RTOFS_GLO_POLAR finish build at $(date)
 
 # 3. Run NHEM (NCODA 2Dvar)
 
@@ -126,19 +125,16 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
-#mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 mpiexec -n 1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
-#mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
-#mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 mpiexec -n $NPROCS $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
@@ -151,6 +147,7 @@ mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
 #   create graphics
 DoGraphics=NO
 if [ $DoGraphics = YES ] ; then
+  echo timecheck RTOFS_GLO_POLAR start ncoda_map at $(date)
   export OCN_OUTPUT_DIR=$DATA/nhem_var/restart
   export OCN_CLIM_DIR=$FIXrtofs/codaclim
   #NCODA map
@@ -162,7 +159,6 @@ fi
 
 cat pout* > $DATA/logs/nhem_var/nhem_var.$ddtg.out
 cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $DATA/$pgmout
-echo timecheck RTOFS_GLO_POLAR finish nhem at $(date)
 
 # 4. Run SHEM (NCODA 2Dvar)
 
@@ -215,19 +211,16 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
-#mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 mpiexec -n 1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
-#mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
-#mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 mpiexec -n $NPROCS $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post",$err
@@ -251,7 +244,6 @@ fi
 
 cat pout* > $DATA/logs/shem_var/shem_var.$ddtg.out
 cat $DATA/logs/shem_var/shem_var.$ddtg.out >> $DATA/$pgmout
-echo timecheck RTOFS_GLO_POLAR finish shem at $(date)
 
 # 5. Copy data back to COMOUT/ncoda
 

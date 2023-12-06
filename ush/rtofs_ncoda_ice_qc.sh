@@ -43,7 +43,7 @@ cd $SSMI_ICE_DATA_DIR
 
 # SSMI
 ymd=${prv_dtg:0:8}
-cmd="l2out*$ymd*"
+cmd="l2out*$ymd*.nc"
 if [ -s $cmd ] ; then
    ls $cmd > $log_dir/ssmi_01.$cut_dtg
 else
@@ -51,7 +51,7 @@ else
 fi
 
 ymd=${cut_dtg:0:8}
-cmd="l2out*$ymd*"
+cmd="l2out*$ymd*.nc"
 if [ -s $cmd ] ; then
    ls $cmd > $log_dir/ssmi_02.$cut_dtg
 else
@@ -61,17 +61,17 @@ fi
 # AMSR
 cd $AMSR_ICE_DATA_DIR
 ymd=${prv_dtg:0:8}
-cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
+cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*.nc"
 if [ -s $cmd ] ; then
-   ls $cmd > $log_dir/amsr_01.$cut_dtg
+   ls $cmd > $log_dir/amsr_01.${cut_dtg}_prelim
 else
    echo "WARNING $cmd does not exist"
 fi
 
 ymd=${cut_dtg:0:8}
-cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
+cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*.nc"
 if [ -s $cmd ] ; then
-   ls $cmd > $log_dir/amsr_02.$cut_dtg
+   ls $cmd > $log_dir/amsr_02.${cut_dtg}_prelim
 else
    echo "WARNING $cmd does not exist"
 fi
@@ -83,7 +83,23 @@ if [[ ! -f ssmi_files.$cut_dtg || ! -s ssmi_files.$cut_dtg ]]; then
    echo "WARNING - ssmi_files.$cut_dtg does not exist/is empty. No SSMI files to process."
    echo "SSMI.obs_control file will not be updated"
 fi
-cat amsr_*.$cut_dtg > amsr_ice_files.$cut_dtg
+
+cat amsr_*.${cut_dtg}_prelim > amsr_ice_files.${cut_dtg}_prelim
+# check on readability of amsr ice files
+echo timecheck amsr_ice start ncdump at $(date)
+while read line
+do
+  ncdump -k $AMSR_ICE_DATA_DIR/$line > /dev/null
+  ncrc=$?
+  if [ $ncrc -eq 0 ]
+  then
+     echo $line >> amsr_ice_files.$cut_dtg
+  else
+     echo "WARNING - file $AMSR_ICE_DATA_DIR/$line and will not be processed."
+  fi
+done < amsr_ice_files.${cut_dtg}_prelim
+echo timecheck amsr_ice finish ncdump at $(date)
+
 if [[ ! -f amsr_ice_files.$cut_dtg || ! -s amsr_ice_files.$cut_dtg ]]; then
    echo "WARNING - amsr_ice_files.$cut_dtg does not exist/is empty. No AMSR_ICE files to process."
    echo "AMSR_ICE.obs_control file will not be updated"

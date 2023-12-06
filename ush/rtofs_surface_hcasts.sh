@@ -45,7 +45,5 @@ mv rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_hcasts.nc grtofs_uv_${yyyymmdd}_hcasts.nc
 
 gzip grtofs_uv_${yyyymmdd}_hcasts.nc
 
-
-
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

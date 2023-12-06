@@ -13,7 +13,6 @@ DIROUT=$DATA/dump
 DIRTMP=$DATA/tmp
 mkdir -p $DIROUT
 mkdir -p $DIRTMP
-DATAsave=$DATA
 export TMPDIR=$DIRTMP
 cd $DIRTMP
 

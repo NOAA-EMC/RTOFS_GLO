@@ -104,7 +104,6 @@ cat << eof4 > omapnl
   do_data_raw  = .true.,
  &end
 eof4
-echo timecheck RTOFS_GLO_HYCOM finish build at $(date)
 
 # 3. Run Hycom var (NCODA 3D)
 
@@ -133,7 +132,6 @@ echo " error from rtofs_ncoda=",$err
 #NCODA post
 echo timecheck RTOFS_GLO_HYCOM start post at $(date)
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda_post 3D hycom ogridnl $ddtg relax > pout4
-echo timecheck RTOFS_GLO_HYCOM finish post at $(date)
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
@@ -157,6 +155,7 @@ mv fort.88 $log_dir/hycom_var.$ddtg.dbg
 #   create data coverage graphics
 DoGraphics=NO
 if [ $DoGraphics = YES ] ; then
+  echo timecheck RTOFS_GLO_HYCOM start ncoda_map at $(date)
   export OCN_OUTPUT_DIR=$DATA/restart
   export OCN_CLIM_DIR=$FIXrtofs/codaclim
   # NCODA map
@@ -172,11 +171,6 @@ cat $log_dir/hycom_var.$ddtg.out > $pgmout
 
 # 4. Copy last 15 days of data back to COMOUT/ncoda
 echo timecheck RTOFS_GLO_HYCOM start put at $(date)
-
-# taken car of at code level
-#mkdir -p $DATA/nokeep
-#mv $DATA/restart/*_01??_*fcstfld          $DATA/nokeep
-#mv $DATA/restart/*_00[456789]?_*fcstfld   $DATA/nokeep
 
 mkdir -p $COMOUT/ncoda/hycom_var/restart
 rm -f cmdfile.cpout

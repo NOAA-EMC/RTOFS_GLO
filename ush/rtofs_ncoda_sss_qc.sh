@@ -70,11 +70,11 @@ while read line
 do
   ncdump -k $SSS_DATA_DIR/$line > /dev/null
   ncrc=$?
-    if [ $ncrc -eq 0 ]
+  if [ $ncrc -eq 0 ]
   then
      echo $line >> smos_sss_files.$cut_dtg
   else
-     echo "WARNING - file $SSS_DATA_DIR/$line appears to be corrupt."
+     echo "WARNING - file $SSS_DATA_DIR/$line and will not be processed."
   fi
 done < smos_sss_files.${cut_dtg}_prelim
 echo timecheck smos finish ncdump at $(date)
@@ -89,10 +89,10 @@ do
   then
      echo $line >> smap_sss_files.$cut_dtg
   else
-     echo "WARNING - file $SSS_DATA_DIR/$line appears to be corrupt."
+     echo "WARNING - file $SSS_DATA_DIR/$line and will not be processed."
   fi
 done < smap_sss_files.${cut_dtg}_prelim
-echo timecheck smos finish h5dump at $(date)
+echo timecheck smap finish h5dump at $(date)
 
 if [[ ! -f smos_sss_files.$cut_dtg || ! -s smos_sss_files.$cut_dtg ]]; then
    echo "WARNING - smos_sss_files.$cut_dtg does not exist/is empty. No SMOS files to process."

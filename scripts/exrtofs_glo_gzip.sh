@@ -48,7 +48,8 @@ case $CYC in
 	    if [ -s $file ]; then
 		filename=$(basename $file)
                 # use pigz if available (parallel gzip)
-                if [ -x pigz ];then
+                if [ -x pigz ]
+		then
 			echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
 		else
 			echo "tar -c -I pigz -f ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
@@ -59,7 +60,6 @@ case $CYC in
 	    fi
 	done
 	chmod 775 $DATA/poescript
-#	mpirun cfp $DATA/poescript
         mpiexec -np $NPROCS --cpu-bind verbose,core cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
@@ -96,7 +96,13 @@ case $CYC in
             file=${COMIN}/${filepre}.f$f.archv.a
 	    if [ -s $file ]; then
 		filename=$(basename $file)
-		echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                # use pigz if available (parallel gzip)
+                if [ -x pigz ]
+		then
+                        echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                else
+                        echo "tar -c -I pigz -f ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                fi
 	    else
 		echo " $file missing, exiting now."
 		export err=1;err_chk
@@ -108,7 +114,12 @@ case $CYC in
             file=${COMIN}/${filepre}.f$f.archs.a
 	    if [ -s $file ]; then
 		filename=$(basename $file)
-		echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                if [ -x pigz ]
+		then
+                        echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                else
+                        echo "tar -c -I pigz -f ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                fi
 	    else
 		echo " $file missing, exiting now."
 		export err=1;err_chk
@@ -120,7 +131,12 @@ case $CYC in
             file=${COMIN}/${filepre}.f$f.arche.a
             if [ -s $file ]; then
                 filename=$(basename $file)
-                echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                if [ -x pigz ]
+		then
+                        echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                else
+                        echo "tar -c -I pigz -f ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                fi
             else
                 echo " $file missing, exiting now."
                 export err=1;err_chk
@@ -128,7 +144,6 @@ case $CYC in
         done
 
 	chmod 775 $DATA/poescript
-	#mpirun cfp $DATA/poescript
         mpiexec -np $NPROCS --cpu-bind verbose,core cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier
@@ -156,14 +171,19 @@ case $CYC in
 	do
 	    if [ -s $file ]; then
 		filename=$(basename $file)
-		echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                # use pigz if available (parallel gzip)
+                if [ -x pigz ]
+		then
+                        echo "tar zcf ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                else
+                        echo "tar -c -I pigz -f ${COMOUT:?}/$filename.tgz -C ${COMIN} $filename " >> $DATA/poescript
+                fi
 	    else
 		echo " $file missing, exiting now."
 		export err=1;err_chk
 	    fi
 	done
 	chmod 775 $DATA/poescript
-	#mpirun cfp $DATA/poescript
         mpiexec -np $NPROCS --cpu-bind verbose,core cfp $DATA/poescript
 	export err=$?; err_chk
 # send smaller files earlier

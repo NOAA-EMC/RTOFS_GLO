@@ -13,7 +13,7 @@
 #           nodes to create GRIB2 files directly                              #
 #                                                                             #
 #                                                                             #
-# Sub-scripts called:    cmdfile.$i (i from 1 to 11)                          # 
+# Sub-scripts called:    cmdfile.for.cfp                                      # 
 #                                                                             #
 # Executables called:                                                         #
 #                                                                             #
@@ -21,7 +21,7 @@
 # Imported variables:                                                         #
 #                    RUN                                                      #
 #                    utilexec                                                 #
-#                    USHrtofs                                                #
+#                    USHrtofs                                                 #
 #                                                                             #
 #                                                                             #
 # Script history log:                                                         #
@@ -38,29 +38,14 @@ cd $DATA
 test -f cmdfile && rm -f cmdfile cmdfile.*
 rm -f cmdfile.for.cfp
 
-ifile=1
 for region in alaska arctic bering guam gulf_alaska honolulu hudson_baffin samoa trop_paci_lowres west_atl west_conus
-
 do
-   
-   echo "ksh $USHrtofs/${RUN}_nc2grib2.sh $region > out_${region} 2>&1"               >> cmdfile.$ifile
-   chmod +x cmdfile.$ifile
-   echo "./cmdfile.$ifile" >> cmdfile
-   ifile=$(expr $ifile + 1)
-
    echo "ksh $USHrtofs/${RUN}_nc2grib2.sh $region > out_${region} 2>&1" >> cmdfile.for.cfp
 done
 
-chmod +x cmdfile
-#echo "mpirun.lsf ${utilexec}/mpiserial"
-#mpirun.lsf ${utilexec}/mpiserial
-#echo mpirun cfp ./cmdfile > create.regions.out
-#mpirun cfp ./cmdfile > create.regions.out
-
 chmod +x cmdfile.for.cfp
 echo mpirun cfp ./cmdfile.for.cfp > create.regions.out
-#mpirun cfp ./cmdfile.for.cfp > create.regions.out
-mpiexec -np 11 --cpu-bind verbose,core cfp ./cmdfile.for.cfp
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.for.cfp
 err=$? ; export err ; err_chk
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

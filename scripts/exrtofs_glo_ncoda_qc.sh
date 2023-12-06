@@ -82,8 +82,6 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b  ${DATA}/regio
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
 
-echo timecheck RTOFS_GLO_NCODA_QC finish get at $(date)
-
 # 2. Combine pre-qc and qc into one stream for ice and surface_obs/profile
 echo timecheck RTOFS_GLO_NCODA_QC start qc at $(date)
 
@@ -122,10 +120,10 @@ echo "$USHrtofs/rtofs_ncoda_amsr_qc.sh > amsr.qc.out 2>&1" >> cmdfile.qc
 mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.qc
 err=$? ; export err ; err_chk
 date
-echo timecheck RTOFS_GLO_NCODA_QC finish qc at $(date)
 
 # 4. Run data alarm (counts)
 
+echo timecheck RTOFS_GLO_NCODA_QC start alarm at $(date)
 export OCN_DATA_DIR=$DATA/ocnqc
 echo "NCODA DATA ALARM"
 #NCODA alarm
@@ -160,7 +158,6 @@ for dtyp in $(ls $DATA/ocnqc); do
 done
 
 chmod +x cmdfile.cpout
-echo mpirun cfp ./cmdfile.cpout > cpout.out
 mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout > cpout.out
 err=$? ; export err ; err_chk
 date

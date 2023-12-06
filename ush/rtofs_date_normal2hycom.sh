@@ -3,7 +3,7 @@
 # This script converts the date to the day since 1901010100
 # it is used by the HYCOM part of the Ocean Forecast Model
 #
-# Usage: date2hycomday.sh 2001010200
+# Usage: rtofs_date2hycomday.sh 2001010200
 #
 #############################################################
 # Set the basetime corresponding to the date 1901010100 

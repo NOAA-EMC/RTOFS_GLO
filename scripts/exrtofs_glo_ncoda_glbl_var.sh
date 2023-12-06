@@ -49,9 +49,9 @@ else
 fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
-echo timecheck RTOFS_GLO_GLBL finish get at $(date)
 
 # 2. build namelists
+echo timecheck RTOFS_GLO_GLBL start setup at $(date)
 
 rm -f odsetnl
 rm -f ogridnl
@@ -109,28 +109,28 @@ log_dir=$DATA/logs
 mkdir -p $log_dir
 
 #   execute ncoda variational programs
-echo timecheck RTOFS_GLO_GLBL start setup at $(date)
 #NCODA setup
 $EXECrtofs/rtofs_ncoda_setup 2D ncoda ogridnl $ddtg > pout1
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
+echo timecheck RTOFS_GLO_GLBL start prep at $(date)
 mpiexec -n 24 --cpu-bind core $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
+echo timecheck RTOFS_GLO_GLBL start ncoda2d at $(date)
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
+echo timecheck RTOFS_GLO_GLBL start post at $(date)
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
-
-echo timecheck RTOFS_GLO_GLBL finish post at $(date)
 
 #   rename local files
 #mv fort.40 $log_dir/glbl_var.$ddtg.sus
@@ -140,6 +140,7 @@ mv fort.68 $log_dir/glbl_var.$ddtg.grd
 #   create graphics
 DoGraphics=NO
 if [ $DoGraphics = YES ] ; then
+  echo timecheck RTOFS_GLO_GLBL start ncoda_map at $(date)
   export OCN_OUTPUT_DIR=$DATA/restart
   export OCN_CLIM_DIR=$FIXrtofs/codaclim
   #NCODA map

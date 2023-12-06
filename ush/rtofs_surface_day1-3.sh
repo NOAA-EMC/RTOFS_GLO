@@ -10,10 +10,8 @@
 #
 # B.Daniels/OPC         05/10/13 modified file to work on WCOSS
 #################################################################################
-
-####
-# log
-#####
+set -xa
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 cd ${DATA_opc}
 
@@ -63,3 +61,4 @@ ${cdo_r} merge rtofs_glo_2ds_1hrly_u_velocity_${yyyymmdd}_day3.nc rtofs_glo_2ds_
 tar -cvf grtofs_uv_${yyyymmdd}.tar rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day1.nc rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day2.nc rtofs_glo_2ds_1hrly_uv_${yyyymmdd}_day3.nc
 gzip grtofs_uv_${yyyymmdd}.tar 
 
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

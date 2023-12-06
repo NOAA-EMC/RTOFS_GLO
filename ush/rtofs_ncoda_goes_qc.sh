@@ -88,7 +88,7 @@ do
   then
      echo $line >> acspo_sst_files.$cut_dtg
   else
-     echo "WARNING - file $SST_DATA_DIR/$line appears to be corrupt."
+     echo "WARNING - file $SST_DATA_DIR/$line is unreadable and will not be processed."
   fi
 done < acspo_sst_files.${cut_dtg}_prelim
 echo timecheck goes finish ncdump at $(date)
