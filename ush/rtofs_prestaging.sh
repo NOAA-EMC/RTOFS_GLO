@@ -35,8 +35,8 @@ fi
 
 # --------------------------------------------------------------------------- #
 # 1  Set up the start time and end time for the analysis or forecast
-  sday=$($USHrtofs/rtofs_date_normal2hycom.sh $startdate$mycyc)
-  eday=$($USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc)
+  sday=$($USHrtofs/rtofs_date_normal2hycom.sh $startdate)
+  eday=$($USHrtofs/rtofs_date_normal2hycom.sh $enddate)
   echo "  $sday $eday false false  " > limits
 
 # 2. Copy the necessary input files for the model forecast
@@ -104,7 +104,7 @@ fi
 
 # 3.a call atmforcing to get the forcing files 
 
-  $USHrtofs/${RUN}_atmforcing.sh $startdate$mycyc $enddate$mycyc $intvl 
+  $USHrtofs/${RUN}_atmforcing.sh $startdate $enddate $intvl
 
 # 3.b correct air temperature over ice.
    

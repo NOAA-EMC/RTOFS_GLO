@@ -38,7 +38,7 @@ postmsg "$msg"
 
   export pgm="$EXECrtofs/rtofs_hycom"
   mpiexec -n $NPROCS -ppn 120 --cpu-bind core $EXECrtofs/rtofs_hycom >> $pgmout 2>errfile
-  err=$?; export err ; err_chk
+  err=$?
   echo " error from rtofs_hycom=",$err
 
   date >> TRACK
@@ -73,8 +73,8 @@ fi
     fi
     echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.${runmode}.log
   else
-    $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit from ${RUN_MODE}" \
-       "${runname} ${RUN_MODE}: return code $modelstatus" $modelstatus
- fi
+    msg="ALERT - Job $job in ${RUN_MODE} has failed. Will do some housekeeping before aborting"
+    postmsg "$msg"
+  fi
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

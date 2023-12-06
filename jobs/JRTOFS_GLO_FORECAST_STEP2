@@ -67,6 +67,7 @@ setpdy.sh
 export GETGES_NWG=${GETGES_NWG:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/nwges}
 export GESIN=${GESIN:-${GETGES_NWG}/${RUN}.${PDY}}
 export GESOUT=${GESOUT:-${GETGES_NWG}/${RUN}.${PDY}}
+test -d $GESOUT || mkdir -p $GESOUT
 
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
@@ -74,7 +75,6 @@ export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 
 mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT
-test -d $GESOUT || mkdir -p $GESOUT
 
 ###################
 # Define model grid
@@ -91,8 +91,10 @@ export DBL_THKDF=NO # YES or NO
 ##############################################
 # Check for restart
 ##############################################
-restart_f=${RUN}_${modID}.t${cyc}z.restart_f
-if [ -s $GESIN/${restart_f}*.a -a -s $GESIN/${restart_f}*.b ]
+restart_f=${RUN}_${modID}.t${cyc}z.f
+if compgen -G "$GESIN/${restart_f}*restart.a" > /dev/null && \
+   compgen -G "$GESIN/${restart_f}*restart.b" > /dev/null && \
+   compgen -G "$GESIN/${restart_f}*restart_cice" > /dev/null
 then
     export RESTART=YES
 else
@@ -111,7 +113,7 @@ do
    fcstdays_before_thisstep=$(expr ${fcstdays_before_thisstep} + ${daysadd})
    cnum=$(expr ${cnum} + 1)
 done
-export startdate=$($NDATE $(expr ${fcstdays_before_thisstep} \* 24) ${PDY}${mycyc} | cut -c1-8)
+export startdate=$($NDATE $(expr ${fcstdays_before_thisstep} \* 24) ${PDY}${mycyc})
 
 eval fcstdays="\$fcstdays_step$stepnum"
 eval SAVE_RESTART="\$SAVE_RESTART_FORECAST_STEP$stepnum"

@@ -41,7 +41,7 @@ fi
 #
 # Write archive files copying commands in CMD
 #
-for afile in $(ls ${DATA}/archv.????_???_??.a ${DATA}/archs.????_???_??.a ${DATA}/arche.????_???_??.a)
+for afile in $(ls ${DATA}/arch?.????_???_??.a)
 do
   cfile=$(basename $afile)
   YYYY=$(echo $cfile | cut -c7-10)
@@ -82,53 +82,16 @@ do
  echo "cp -p -f $cfile ${COMOUT}/${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.cice_inst" >> cmdfile_tmp_c # dont work w/ hourly
 done
 #
-# Write restart files copying commands in CMD files if necessary
+# This script no longer writes restart files to COMOUT.
+# The calling program determines whether the program
+#   - succeeded (and copies the restart files to COMOUT)
+#   - fails (and copies the restart files to GESOUT)
 #
-for rfile in $(ls ${DATA}/restart_out*.b)
-do
-  # get HYCOM date from the restart file.
-  cdate=$(${USHrtofs}/rtofs_date4restart.sh $rfile)
-  YYYYMMDD=$(echo $cdate | cut -c1-8)
-  YYYYDDD=$(${USHutil}/date2jday.sh $YYYYMMDD)
-  YYYY=$(echo $YYYYDDD | cut -c1-4)
-  DDD=$(echo $YYYYDDD | cut -c5-7)
-  HH=$(echo $cdate | cut -c9-10)
-  MM=$(echo $YYYYMMDD | cut -c5-6)
-  DD=$(echo $YYYYMMDD | cut -c7-8)
-  SSSSS=$(expr $HH \* 3600)
-  LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
-  HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart
-  CICErestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart_cice
-  CICEworkRestTplate=cice.restart.${YYYY}-${MM}-${DD}-${SSSSS}
-  if [[ $LEAD -eq 0 || $LEAD -eq -06 ]]
-  then
-    OUTDIR=$COMOUT
-  else
-    OUTDIR=$GESOUT
-  fi
-  copy_restart='t'
-  if [ -f ${OUTDIR}/${HYCOMrestTplate}.b ] 
-  then
-    cmp $rfile ${OUTDIR}/${HYCOMrestTplate}.b  > /dev/null
-    if [ $? -eq 0 ]
-    then
-       copy_restart='f'
-    fi
-  fi
-  if [ ${copy_restart} = 't' ] 
-  then
-    cp -p -f $rfile ${OUTDIR}/${HYCOMrestTplate}.b
-    echo "cp -p -f ${rfile%.b}.a ${OUTDIR}/${HYCOMrestTplate}.a" >> cmdfile_tmp_v
-    echo "cp -p -f ${CICEworkRestTplate} ${OUTDIR}/${CICErestTplate}" >> cmdfile_tmp_c
-  fi
-done
-#
-# Copy restart and archive files in permanent location.
-#
+
 cat cmdfile_tmp_v cmdfile_tmp_c cmdfile_tmp_e cmdfile_tmp_s > cmdfile_tmp_all
 chmod +x cmdfile_tmp_all
 
-runpara=0
+runpara=1
 if [[ $NPROCS -gt 1 && $runpara -eq 1 ]]
 then
 #  mpirun cfp ./cmdfile_tmp_all >> cptmp2out.out

@@ -29,10 +29,10 @@ postmsg "$msg"
 # 0. date and time stuff
 
   export fcstdays=${fcstdays:-4}
-  export startdate=${startdate:-$(echo $PDY | cut -c1-8)}
-  export startice=$startdate
-  export iday=$($USHrtofs/rtofs_date_normal2hycom.sh $startice$mycyc)
-  export enddate=$($NDATE $(expr $fcstdays \* 24) ${startdate}'00' | cut -c1-8)
+  export startdate=${startdate:-${PDY}${mycyc}}
+  startice=$startdate
+  export iday=$($USHrtofs/rtofs_date_normal2hycom.sh $startice)
+  export enddate=$($NDATE $(expr $fcstdays \* 24) ${startdate})
   export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #

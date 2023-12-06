@@ -96,7 +96,7 @@ postmsg "$msg"
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_incup.sh
+ksh ${HOMErtofs}/scripts/ex${RUN}_${modID}_incup.sh
 
 #===================================================================
 

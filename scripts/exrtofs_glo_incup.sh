@@ -1,5 +1,4 @@
 #!/bin/sh
-set -xa
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
@@ -8,7 +7,7 @@ set -xa
 #                                                                             #
 # Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
 #                                                                             #
-# Abstract: Runs 3hour HYCOM with incremental update
+# Abstract: Runs 6hour HYCOM with incremental update                          #
 #                                                                             #
 # Sub-scripts called:                                                         #
 #                                                                             #
@@ -16,6 +15,7 @@ set -xa
 # 2020-07-30  Dan Iredell                                                     #
 #                                                                             #
 ###############################################################################
+set -xa
 
 export PS4='$SECONDS + '
 
@@ -28,7 +28,10 @@ postmsg "$msg"
 
 # 1. Set up inputs for run
 
+typeset -Z5 SSSSS
 inc_hours=06
+# NOTE - if inc_hours changes then it probably requires changes to
+# exrtofs_glo_analysis.sh when it copies the restart file to COMOUT
 
 dtg=${PDYm1}00
 dtginc=$($EXECrtofs/rtofs_dtg $dtg -h -$inc_hours)
@@ -132,45 +135,76 @@ cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.patch.input        ./patch.input
 touch core
 
 date
-#mpirun -l $EXECrtofs/rtofs_hycom -procs $NPROCS >> $pgmout 2>errfile
 mpiexec -np $NPROCS --cpu-bind core $EXECrtofs/rtofs_hycom >> $pgmout 2>errfile
-err=$?; export err ; err_chk
-echo " error from rtofs_hycom=",$err
+err=$?
+ok="unknown"
+test -s ${DATA}/summary_out && ok=$(tail -1 ${DATA}/summary_out)
+if [ "$ok" = "normal stop" ]
+then
+  modelstatus=0
+else
+  modelstatus=1
+fi
 
-date
-
-# cp to COMOUT
-cp restart_out.a $COMOUT/rtofs_glo.t00z.n-24.restart.a
-cp restart_out.b $COMOUT/rtofs_glo.t00z.n-24.restart.b
-cp cice.restart.${dtgr1}-00000 $COMOUT/rtofs_glo.t00z.n-24.restart_cice
-mode=n
-for afile in $(ls ${DATA}/archv.????_???_00.a ${DATA}/archs.????_???_00.a ${DATA}/arche.????_???_00.a) 
-do
-  cfile=$(basename $afile)
-  YYYY=$(echo $cfile | cut -c7-10)
-  DDD=$(echo $cfile | cut -c12-14)
-  HH=$(echo $cfile | cut -c16-17)
-  YYYYMMDD=$(${USHutil}/date2jday.sh ${YYYY}${DDD})
-  MM=$(echo $YYYYMMDD | cut -c5-6)
-  DD=$(echo $YYYYMMDD | cut -c7-8)
-  LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
-  arch=$(echo $cfile | cut -d. -f1)
-  HYCOMarchTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.${arch}
-  if [ $arch = "archv" ] ; then
-    cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
-    cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
-    cp -p -f ${afile%.a}.txt ${COMOUT}/${HYCOMarchTplate}.txt
+# cp restart and arch to COMOUT
+if [ $modelstatus = 0 ]
+then
+  #restart
+  date_out=0 ; date_out1=0
+  test -s ${DATA}/restart_out.b && date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out.b)
+  test -s ${DATA}/restart_out1.b &&  date_out1=$(${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out1.b)
+  if [ ${date_out} -gt ${date_out1} ]
+  then
+    rfile=${DATA}/restart_out.b
+    cdate=${date_out}
+  else
+    rfile=${DATA}/restart_out1.b
+    cdate=${date_out1}
   fi
-  if [ $arch = "archs" ] ; then
-    cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
-    cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
-    cp -p -f ${afile%.a}.txt ${COMOUT}/${HYCOMarchTplate}.txt
-  fi
-  if [ $arch = "arche" ] ; then
-    cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
-    cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
-  fi
-done
+  mode=n
+  YYYY=$(echo $cdate | cut -c1-4)
+  MM=$(echo $cdate | cut -c5-6)
+  DD=$(echo $cdate | cut -c7-8)
+  HH=$(echo $cdate | cut -c9-10)
+  SSSSS=$(expr $HH \* 3600)
+  LEAD=$($NHOUR ${cdate} ${PDY}${mycyc})
+  HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart
+  CICErestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart_cice
+  cp -p $rfile ${COMOUT}/${HYCOMrestTplate}.b
+  cp -p ${rfile%.b}.a ${COMOUT}/${HYCOMrestTplate}.a
+  cp -p cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} ${COMOUT}/${CICErestTplate}
+  #archv, archs, arche
+  for afile in $(ls ${DATA}/archv.????_???_00.a ${DATA}/archs.????_???_00.a ${DATA}/arche.????_???_00.a)
+  do
+    cfile=$(basename $afile)
+    YYYY=$(echo $cfile | cut -c7-10)
+    DDD=$(echo $cfile | cut -c12-14)
+    HH=$(echo $cfile | cut -c16-17)
+    YYYYMMDD=$(${USHutil}/date2jday.sh ${YYYY}${DDD})
+    MM=$(echo $YYYYMMDD | cut -c5-6)
+    DD=$(echo $YYYYMMDD | cut -c7-8)
+    LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
+    arch=$(echo $cfile | cut -d. -f1)
+    HYCOMarchTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.${arch}
+    if [ $arch = "archv" ] ; then
+      cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
+      cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
+      cp -p -f ${afile%.a}.txt ${COMOUT}/${HYCOMarchTplate}.txt
+    fi
+    if [ $arch = "archs" ] ; then
+      cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
+      cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
+      cp -p -f ${afile%.a}.txt ${COMOUT}/${HYCOMarchTplate}.txt
+    fi
+    if [ $arch = "arche" ] ; then
+      cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
+      cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
+    fi
+  done
+else
+  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit" \
+   "problem with incup  model run - return code $modelstatus" $modelstatus
+fi
 
 msg="THE RTOFS_GLO_INCUP JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"

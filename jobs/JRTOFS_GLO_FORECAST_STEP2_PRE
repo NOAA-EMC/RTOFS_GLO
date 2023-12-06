@@ -111,7 +111,7 @@ do
    fcstdays_before_thisstep=$(expr ${fcstdays_before_thisstep} + ${daysadd})
    cnum=$(expr ${cnum} + 1)
 done
-export startdate=$($NDATE $(expr ${fcstdays_before_thisstep} \* 24) ${PDY}${mycyc} | cut -c1-8)
+export startdate=$($NDATE $(expr ${fcstdays_before_thisstep} \* 24) ${PDY}${mycyc})
 
 eval fcstdays="\$fcstdays_step$stepnum"
 eval SAVE_RESTART="\$SAVE_RESTART_FORECAST_STEP$stepnum"

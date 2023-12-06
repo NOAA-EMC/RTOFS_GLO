@@ -82,21 +82,10 @@ typeset -Z3 ENDHOUR
 typeset -Z3 firsthr
 typeset -Z3 lasthr
 
-
-
 # Define the end forecast hour here:
 
 export fcstdays=${fcstdays:-1}
-if [ ${RUN_MODE} = 'analysis' ]
-then
-  export startdate=${startdate:-${PDYm1}}
-fi
-if [ ${RUN_MODE} = 'forecast' ]
-then
-  export startdate=${startdate:-${PDY}}
-fi
-  export enddate=$($NDATE $(expr $fcstdays \* 24 ) ${startdate}${mycyc} | cut -c1-8)
-  export ENDHOUR=$(expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24)
+export ENDHOUR=$(expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24)
 
 # define what functions to do (default to operational settings)
 export run_parallel=${run_parallel:-NO}

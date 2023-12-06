@@ -30,8 +30,8 @@ fi
 
 # --------------------------------------------------------------------------- #
 # 1  Set up the start time and end time for the forecast
-  sday=$($USHrtofs/rtofs_date_normal2hycom.sh $startdate$mycyc)
-  eday=$($USHrtofs/rtofs_date_normal2hycom.sh $enddate$mycyc)
+  sday=$($USHrtofs/rtofs_date_normal2hycom.sh $startdate)
+  eday=$($USHrtofs/rtofs_date_normal2hycom.sh $enddate)
   echo "  $sday $eday false false  " > limits
 
 #

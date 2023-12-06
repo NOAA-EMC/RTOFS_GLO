@@ -83,7 +83,7 @@ if [ ${RUN_MODE} = 'forecast' ]
 then
   export startdate=${startdate:-${PDY}}
 fi
-  export enddate=$($NDATE $(expr $fcstdays \* 24 ) ${startdate}${mycyc} | cut -c1-8)
+  export enddate=$($NDATE $(expr $fcstdays \* 24 ) ${startdate})
   export ENDHOUR=$(expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24)
 
 # define what functions to do (default to operational settings)

@@ -61,15 +61,11 @@ typeset -Z3 ENDHOUR
 if [ ${RUN_MODE} = 'analysis' ]
 then
   export fcstdays=${fcstdays:-2}
-  export enddate=${analysis_end:-$PDY}
-  export startdate=$($NDATE -$(expr $fcstdays \* 24 ) ${enddate}'00' | cut -c1-8)
   export ENDHOUR=$(expr $fcstdays \* 24)
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
   export fcstdays=${fcstdays:-1}
-  export startdate=${startdate:-${PDY}}
-  export enddate=$($NDATE $(expr $fcstdays \* 24 ) ${startdate}${mycyc} | cut -c1-8)
   export ENDHOUR=$(expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24)
 fi
 
@@ -242,8 +238,6 @@ do
        echo "${USHrtofs}/${RUN}_glo3z_6hrly.sh $reg > $reg.$fhr.out 2>&1" >> cmdfile
       done
       chmod +x cmdfile
-      #mpirun.lsf cfp cmdfile > mpirun_6hrly.out
-      #mpirun cfp cmdfile > mpirun_6hrly.out
       mpiexec -np $NPROCS --cpu-bind verbose,core cfp cmdfile
       export err=$?; err_chk
 ## Copy all the regions to com

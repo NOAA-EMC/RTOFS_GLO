@@ -101,8 +101,8 @@ export digitest=$(echo $postday |cut -c1)
 if [ $digitest -eq 0 ]; then
   export postday=$(echo $postday|cut -c2)
 fi
-export startdate=$(${NDATE} $(expr -24 \* $postday) $PDY$mycyc |cut -c1-8)
-export fcstdays_before_thisstep=$(expr $($NHOUR $startdate$mycyc $PDYm1$mycyc) \/ 24)
+export startdate=$(${NDATE} $(expr -24 \* $postday) $PDY$mycyc)
+export fcstdays_before_thisstep=$(expr $($NHOUR $startdate $PDYm1$mycyc) \/ 24)
 eval fcstdays="\$fcst_post_ndays" # length of the current post run.
 export fcstdays
 eval analdays="\$analdays" # length of the analysis.

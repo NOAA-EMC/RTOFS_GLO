@@ -63,10 +63,10 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-#export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
-#export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
 export GETGES_NWG=${GETGES_NWG:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/nwges}
 export GESIN=${GESIN:-${GETGES_NWG}/${RUN}.${PDY}}
+export GESOUT=${GESOUT:-${GETGES_NWG}/${RUN}.${PDY}}
+test -d $GESOUT || mkdir -p $GESOUT
 
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
@@ -90,8 +90,10 @@ export DBL_THKDF=NO # YES or NO
 ##############################################
 # Check for restart
 ##############################################
-restart_n=${RUN}_${modID}.t${cyc}z.restart_n
-if [ -s $GESIN/${restart_n}*.a -a -s $GESIN/${restart_n}*.b ]
+restart_n=${RUN}_${modID}.t${cyc}z.n
+if compgen -G "$GESIN/${restart_n}*restart.a" > /dev/null && \
+   compgen -G "$GESIN/${restart_n}*restart.b" > /dev/null && \
+   compgen -G "$GESIN/${restart_n}*restart_cice" > /dev/null
 then
     export RESTART=YES
 else
