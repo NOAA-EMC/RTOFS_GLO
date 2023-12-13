@@ -46,7 +46,7 @@ export inputgrid=${inputgrid:-navy_0.08}
   if [ $RESTART = YES ]
   then
      # LEAD is the last forecast hour minus one, f01 is fist forecast hour plus one
-     LEAD=$(expr $($NHOUR $($NDATE $(expr $fcstdays \* 24 ) ${startdate}${mycyc}) ${PDY}${mycyc}) \- 1)
+     LEAD=$(expr $($NHOUR $($NDATE $(expr $fcstdays \* 24 ) ${startdate}) ${PDY}${mycyc}) \- 1)
      f01=$(expr $LEAD \-  $fcstdays \* 24 \+ 2)
 # NOTE - this logic does not calculate the width correctly in some cases (when moving from 3 chars to 2 chars)
 # NOTE - since this is a very infrequent occurrence, it will be left in as is
@@ -138,7 +138,7 @@ export inputgrid=${inputgrid:-navy_0.08}
 # Note that on a failure, tmp2com will still copy archives after the latest restart
   if [ $SENDCOM = 'YES' ]
   then
-    ksh ${USHrtofs}/${RUN}_tmp2com.sh
+    ${USHrtofs}/${RUN}_tmp2com.sh
   fi
 
 # --------------------------------------------------------------------------- #

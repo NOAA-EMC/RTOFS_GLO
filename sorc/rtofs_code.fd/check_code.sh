@@ -30,5 +30,6 @@ module load hdf5/${hdf5_ver}
 
 module list
 
+make clean
 make debug > rtofsglo.debug.code.log 2>&1
 

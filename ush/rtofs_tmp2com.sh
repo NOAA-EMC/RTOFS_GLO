@@ -25,8 +25,8 @@ echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 cd $DATA
 
-typeset -Z5 SSSSS
-typeset -Z2 HH
+#typeset -Z5 SSSSS
+#typeset -Z2 HH
 
 if [ ${RUN_MODE} = 'analysis' ] ; then
   mode=n
@@ -70,17 +70,21 @@ do
     fi
   fi
 done
-for ifile in $(ls ${DATA}/cice_inst.????-??-??-?????.nc)
-do
- cfile=$(basename $ifile)
- YYYY=$(echo $cfile | cut -c11-14)
- MM=$(echo $cfile | cut -c16-17)
- DD=$(echo $cfile | cut -c19-20)
- SSSSS=$(echo $cfile | cut -c22-26)
- HH=$(expr $SSSSS \/ 3600)
- LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
- echo "cp -p -f $cfile ${COMOUT}/${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.cice_inst" >> cmdfile_tmp_c # dont work w/ hourly
-done
+if compgen -G "${DATA}/cice_inst.????-??-??-?????.nc" > /dev/null
+then
+  for ifile in $(ls ${DATA}/cice_inst.????-??-??-?????.nc)
+  do
+    cfile=$(basename $ifile)
+    YYYY=$(echo $cfile | cut -c11-14)
+    MM=$(echo $cfile | cut -c16-17)
+    DD=$(echo $cfile | cut -c19-20)
+    SSSSS=$(echo $cfile | cut -c22-26)
+#    HH=$(expr $SSSSS \/ 3600)
+    HH=$(printf "%02d\n" $(expr $SSSSS \/ 3600))
+    LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
+    echo "cp -p -f $cfile ${COMOUT}/${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.cice_inst" >> cmdfile_tmp_c # dont work w/ hourly
+  done
+fi
 #
 # This script no longer writes restart files to COMOUT.
 # The calling program determines whether the program
@@ -88,6 +92,7 @@ done
 #   - fails (and copies the restart files to GESOUT)
 #
 
+touch cmdfile_tmp_v cmdfile_tmp_c cmdfile_tmp_e cmdfile_tmp_s
 cat cmdfile_tmp_v cmdfile_tmp_c cmdfile_tmp_e cmdfile_tmp_s > cmdfile_tmp_all
 chmod +x cmdfile_tmp_all
 

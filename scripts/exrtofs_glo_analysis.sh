@@ -127,7 +127,7 @@ export inputgrid=${inputgrid:-navy_0.08}
 # Note that on a failure, tmp2com will still copy archives after the latest restart
   if [ $SENDCOM = 'YES' ]
   then
-    ksh ${USHrtofs}/${RUN}_tmp2com.sh
+    ${USHrtofs}/${RUN}_tmp2com.sh
   fi
 
 # --------------------------------------------------------------------------- #
