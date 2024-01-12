@@ -28,10 +28,10 @@ include intelIF_setup
 #
 
 all:
-	/bin/csh Make_all.csh
+	/bin/csh compile_ncoda_archv_lyrinc.csh
 
 clean:
-	/bin/rm -f *.o *.a *.mod *.inc M*log *2archv *2d *2data *2b *2t *3z *sf *sfl *sfz *sig2a *restart *hv *ncombc *_inc *_inc2 *gen *ncdf *oam *oam_m *_nc
+	/bin/rm -f *.o *.a *.mod *.inc make*log *2archv *2d *2data *2b *2t *3z *sf *sfl *sfz *sig2a *restart *hv *ncombc *_inc *_inc2 *gen *ncdf *oam *oam_m *_nc
 
 MODS     =	mod_plot.o mod_xc.o mod_za.o               wtime.o
 MODM     =      mod_plot.o mod_xc.o mod_za.o               wtime.o mom_eos_wright.o
@@ -70,7 +70,7 @@ ARCHV_SRC = 	hycomarchv.f \
                 hybgen_archv_old.f \
                 ncoda_archv.f     \
                 ncoda_archv_inc.f \
-                ncoda_archv_inc2.f \
+                ncoda_archv_lyrinc.f \
                 remap_archv.f remaph_archv.f remapi_archv.f \
                 f2d_archv.f     \
                 stats_archv.f   \
@@ -188,8 +188,8 @@ ncoda_archv:        $(MODS) ncoda_archv.o      $(ARCHV_OBJ)
 ncoda_archv_inc:    $(MODS) ncoda_archv_inc.o  $(ARCHV_OBJ)
 	$(LD) $(LDFLAGS) -o ncoda_archv_inc  ncoda_archv_inc.o  $(MODS) $(ARCHV_OBJ)
 
-ncoda_archv_inc2:   $(MODS) ncoda_archv_inc2.o $(ARCHV_OBJ)
-	$(LD) $(LDFLAGS) -o ncoda_archv_inc2 ncoda_archv_inc2.o $(MODS) $(ARCHV_OBJ)
+ncoda_archv_lyrinc:   $(MODS) ncoda_archv_lyrinc.o $(ARCHV_OBJ)
+	$(LD) $(LDFLAGS) -o ncoda_archv_lyrinc ncoda_archv_lyrinc.o $(MODS) $(ARCHV_OBJ)
 
 remap_archv:        $(MODS) remap_archv.o  $(ARCHV_OBJ)
 	$(LD) $(LDFLAGS) -o remap_archv  remap_archv.o  $(MODS) $(ARCHV_OBJ)
@@ -248,7 +248,7 @@ hybgen_archv_old.o: hybgen_archv_old.f mod_plot.o mod_za.o
 
 ncoda_archv.o:      ncoda_archv.f      mod_plot.o mod_za.o
 ncoda_archv_inc.o:  ncoda_archv_inc.f  mod_plot.o mod_za.o
-ncoda_archv_inc2.o: ncoda_archv_inc2.f mod_plot.o mod_za.o
+ncoda_archv_lyrinc.o: ncoda_archv_lyrinc.f mod_plot.o mod_za.o
 
 insitu_archv.o:     steric_archv.f     mod_plot.o mod_za.o mom_eos_wright.o
 steric_archv.o:     steric_archv.f     mod_plot.o mod_za.o

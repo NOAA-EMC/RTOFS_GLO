@@ -38,7 +38,7 @@ echo "previous date time group is " $prv_dtg
 echo " "
 echo "NCODA GOES pre_QC"
 
-#   create list of ABI_G16 and ABI_G17 sst netCDF files to process
+#   create list of ABI_G16 and ABI_G18 sst netCDF files to process
 cd $SST_DATA_DIR
 
 ymd=${prv_dtg:0:8}
@@ -50,9 +50,9 @@ do
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*ABI_G17*.nc"
+   cmd="$ymd/sst/$ymd$k*L2P*ABI_G18*.nc"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/g17_$k.$cut_dtg
+      ls $cmd > $log_dir/g18_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
@@ -67,9 +67,9 @@ do
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*ABI_G17*.nc"
+   cmd="$ymd/sst/$ymd$k*L2P*ABI_G18*.nc"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/g17_$k.$cut_dtg
+      ls $cmd > $log_dir/g18_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
@@ -77,7 +77,7 @@ done
 
 #   change to working directory
 cd $log_dir
-cat g16_*.$cut_dtg g17_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
+cat g16_*.$cut_dtg g18_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
 
 echo timecheck goes start ncdump at $(date)
 while read line

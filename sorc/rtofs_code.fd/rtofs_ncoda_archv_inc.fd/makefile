@@ -37,8 +37,9 @@ RM            = \rm -f
 .F.o:
 	$(FC) $(CPPFLAGS) $(FCFFLAGS) -c $*.F
 FC            =	ftn
+FCFFLAGS      =	-g -O3 -fp-model source -convert big_endian
+FCFFLAGS      =	-g -O3 -fp-model precise -ftz -align array64byte -convert big_endian
 FCFFLAGS      =	-traceback -g -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl
-DEBUGFCF      = -g -O0 -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -nogen-interfaces -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv
 CC            =	cc
 CCFLAGS       =	-O
 CPP           =	cpp -P
@@ -47,7 +48,7 @@ LD            =	$(FC)
 LDFLAGS       =	-V $(FCFFLAGS)
 LDFLAGS       =	-V $(FCFFLAGS) -shared-intel
 EXTRALIBS     =
-CMD           = rtofs_ncoda_archv_inc
+CMD           = rtofs_ncoda_archv_lyrinc
 BINDIR        = ../../../exec
 #
 # ---------------------------------------------------------------------
@@ -75,15 +76,9 @@ DATAR_OBJ = 	$(DATAX_OBJ) putdat.o
 all:	$(CMD)
 everything: clean $(CMD)  install finish
 
-${CMD}:      $(MODR) ncoda_archv_inc.o $(DATAR_OBJ)
-	$(LD) $(LDFLAGS) -o ${CMD} ncoda_archv_inc.o $(MODR) $(DATAR_OBJ)
+${CMD}:      $(MODR) ncoda_archv_lyrinc.o $(DATAR_OBJ)
+	$(LD) $(LDFLAGS) -o ${CMD} ncoda_archv_lyrinc.o $(MODR) $(DATAR_OBJ)
 
-debug: FCFFLAGS = $(DEBUGFCF)
-debug: all
-
-test:
-	$(CMD) < input.txt > output.txt
-	diff output.txt valid_output.txt
 
 clean:
 	/bin/rm -f *.o *.a *.mod ${CMD} 
@@ -98,6 +93,7 @@ install:
 # --- explicit dependencies for each .[fF] file.
 #
 
+ncoda_archv_lyrinc.o: ncoda_archv_lyrinc.f mod_plot.o mod_za.o
 ncoda_archv_inc.o: ncoda_archv_inc.f mod_plot.o mod_za.o
 
 bigrid.o:   bigrid.f      mod_plot.o
