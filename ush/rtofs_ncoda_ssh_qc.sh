@@ -46,7 +46,7 @@ for apdy in $PDYm7 $PDYm6 $PDYm5 $PDYm4 $PDYm3 $PDYm2 $PDYm1
 do
   verified_location=$DATA/$apdy/$SSH_DATA_DIR_2
   mkdir -p $verified_location
-  for file in $(ls $DCOMINSSH/$PDYm1/$SSH_DATA_DIR_2/rads_adt_ncoda_*.nc)
+  for file in $(ls $DCOMINSSH/$apdy/$SSH_DATA_DIR_2/rads_adt_ncoda_*.nc)
   do
     ncdump -k $file > /dev/null
     ncrc=$?

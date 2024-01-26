@@ -82,7 +82,7 @@ then
 #    HH=$(expr $SSSSS \/ 3600)
     HH=$(printf "%02d\n" $(expr $SSSSS \/ 3600))
     LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
-    echo "cp -p -f $cfile ${COMOUT}/${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.cice_inst" >> cmdfile_tmp_c # dont work w/ hourly
+    echo "cp -p -f $cfile ${COMOUT}/${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.cice_inst.nc" >> cmdfile_tmp_c # dont work w/ hourly
   done
 fi
 #
