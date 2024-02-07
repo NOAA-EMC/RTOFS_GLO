@@ -104,15 +104,15 @@ chmod +x runsurf.sh
 
 date
 rm -f cmdfile.qc
-echo "$USHrtofs/rtofs_ncoda_ssh_qc.sh > ssh.qc.out 2>&1" > cmdfile.qc
+#echo "$USHrtofs/rtofs_ncoda_ssh_qc.sh > ssh.qc.out 2>&1" > cmdfile.qc
 echo "./runsurf.sh > surf.qc.out 2>&1" >> cmdfile.qc
 echo "./runiceqc.sh > ice.qc.out 2>&1" >> cmdfile.qc
-echo "$USHrtofs/rtofs_ncoda_npp_qc.sh > npp.qc.out 2>&1" >> cmdfile.qc
+#echo "$USHrtofs/rtofs_ncoda_npp_qc.sh > npp.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_jpss_qc.sh > jpss.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_metop_qc.sh > metop.qc.out 2>&1" >> cmdfile.qc
-echo "$USHrtofs/rtofs_ncoda_himawari_qc.sh > himawari.qc.out 2>&1" >> cmdfile.qc
-echo "$USHrtofs/rtofs_ncoda_goes_qc.sh > goes.qc.out 2>&1" >> cmdfile.qc
-echo "$USHrtofs/rtofs_ncoda_amsr_qc.sh > amsr.qc.out 2>&1" >> cmdfile.qc
+#echo "$USHrtofs/rtofs_ncoda_himawari_qc.sh > himawari.qc.out 2>&1" >> cmdfile.qc
+#echo "$USHrtofs/rtofs_ncoda_goes_qc.sh > goes.qc.out 2>&1" >> cmdfile.qc
+#echo "$USHrtofs/rtofs_ncoda_amsr_qc.sh > amsr.qc.out 2>&1" >> cmdfile.qc
 # sss and vel moved to runsurf
 #echo "$USHrtofs/rtofs_ncoda_sss_qc.sh > sss.qc.out 2>&1" >> cmdfile.qc
 #echo "$USHrtofs/rtofs_ncoda_vel_qc.sh > vel.qc.out 2>&1" >> cmdfile.qc

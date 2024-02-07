@@ -55,6 +55,8 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a ${DATA}/region
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b ${DATA}/regional.grid.b
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.a      iso.sigma.a
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.b      iso.sigma.b
 
 # BEGIN LINKING
 # build links needed for hycom_var
@@ -122,6 +124,7 @@ cat << eof1 > odsetnl
   dsomfix = '$DATA'
   dsorff  = '$DATA/restart'
   dsoudat = '$DATA/ocnqc'
+  dsordat = '/lfs/h2/emc/couple/noscrub/zulema.garraffo/wcoss2.synobs/ocnqc'
   dsowork = '$DATA/work'
  &end
 eof1

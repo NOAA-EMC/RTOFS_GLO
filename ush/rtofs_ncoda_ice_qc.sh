@@ -59,22 +59,22 @@ else
 fi
 
 # AMSR
-cd $AMSR_ICE_DATA_DIR
-ymd=${prv_dtg:0:8}
-cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
-if [ -s $cmd ] ; then
-   ls $cmd > $log_dir/amsr_01.$cut_dtg
-else
-   echo "WARNING $cmd does not exist"
-fi
-
-ymd=${cut_dtg:0:8}
-cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
-if [ -s $cmd ] ; then
-   ls $cmd > $log_dir/amsr_02.$cut_dtg
-else
-   echo "WARNING $cmd does not exist"
-fi
+#cd $AMSR_ICE_DATA_DIR
+#ymd=${prv_dtg:0:8}
+#cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
+#if [ -s $cmd ] ; then
+#   ls $cmd > $log_dir/amsr_01.$cut_dtg
+#else
+#   echo "WARNING $cmd does not exist"
+#fi
+#
+#ymd=${cut_dtg:0:8}
+#cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*"
+#if [ -s $cmd ] ; then
+#   ls $cmd > $log_dir/amsr_02.$cut_dtg
+#else
+#   echo "WARNING $cmd does not exist"
+#fi
 
 #   change to working directory
 cd $log_dir
@@ -83,11 +83,11 @@ if [[ ! -f ssmi_files.$cut_dtg || ! -s ssmi_files.$cut_dtg ]]; then
    echo "WARNING - ssmi_files.$cut_dtg does not exist/is empty. No SSMI files to process."
    echo "SSMI.obs_control file will not be updated"
 fi
-cat amsr_*.$cut_dtg > amsr_ice_files.$cut_dtg
-if [[ ! -f amsr_ice_files.$cut_dtg || ! -s amsr_ice_files.$cut_dtg ]]; then
-   echo "WARNING - amsr_ice_files.$cut_dtg does not exist/is empty. No AMSR_ICE files to process."
-   echo "AMSR_ICE.obs_control file will not be updated"
-fi
+#cat amsr_*.$cut_dtg > amsr_ice_files.$cut_dtg
+#if [[ ! -f amsr_ice_files.$cut_dtg || ! -s amsr_ice_files.$cut_dtg ]]; then
+#   echo "WARNING - amsr_ice_files.$cut_dtg does not exist/is empty. No AMSR_ICE files to process."
+#   echo "AMSR_ICE.obs_control file will not be updated"
+#fi
 
 #   execute ncoda pre_qc for ICE netCDF files
 #SSMI
@@ -95,9 +95,9 @@ $EXECrtofs/rtofs_ncoda_ncep_ice_nc ssmi $cut_dtg > ssmi_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_ncep_ice_nc ssmi=",$err
 #AMSR
-$EXECrtofs/rtofs_ncoda_ncep_ice_nc amsr_ice $cut_dtg > amsr_ice_preqc.$cut_dtg.out
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_ncep_ice_nc amsr_ice=",$err
+#$EXECrtofs/rtofs_ncoda_ncep_ice_nc amsr_ice $cut_dtg > amsr_ice_preqc.$cut_dtg.out
+#err=$?; export err ; err_chk
+#echo " error from rtofs_ncoda_ncep_ice_nc amsr_ice=",$err
 #--------------------------------------------------------------------------------------
 echo "  "
 echo "NCODA ICE QC"
@@ -160,12 +160,12 @@ echo " error from rtofs_ncoda_qc ssmi=",$err
 mv fort.44 ssmi_qc.$cut_dtg.rej
 
 #AMSR
-ln -s $OCN_DATA_DIR/incoming/amsr_ice.a.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.a
-ln -s $OCN_DATA_DIR/incoming/amsr_ice.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.b
-$EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_ice > amsr_ice_qc.$cut_dtg.out
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_qc amsr_ice=",$err
-mv fort.44 amsr_ice_qc.$cut_dtg.rej
+#ln -s $OCN_DATA_DIR/incoming/amsr_ice.a.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.a
+#ln -s $OCN_DATA_DIR/incoming/amsr_ice.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.b
+#$EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_ice > amsr_ice_qc.$cut_dtg.out
+#err=$?; export err ; err_chk
+#echo " error from rtofs_ncoda_qc amsr_ice=",$err
+#mv fort.44 amsr_ice_qc.$cut_dtg.rej
 
 #   cleanup
 

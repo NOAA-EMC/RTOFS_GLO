@@ -110,6 +110,7 @@ cat << eof3 > odsetnl
   dsogdem = '$FIXrtofs/gdem'
   dsorff  = '$DATA/nhem_var/restart'
   dsoudat = '$DATA/ocnqc'
+  dsordat = '/lfs/h2/emc/couple/noscrub/zulema.garraffo/wcoss2.synobs/ocnqc'
   dsowork = '$DATA/nhem_var/work'
  &end
 eof3
@@ -198,6 +199,7 @@ cat << eof6 > odsetnl
   dsogdem = '$FIXrtofs/gdem'
   dsorff  = '$DATA/shem_var/restart'
   dsoudat = '$DATA/ocnqc'
+  dsordat = '/lfs/h2/emc/couple/noscrub/zulema.garraffo/wcoss2.synobs/ocnqc'
   dsowork = '$DATA/shem_var/work'
  &end
 eof6

@@ -48,7 +48,7 @@ LD            =	$(FC)
 LDFLAGS       =	-V $(FCFFLAGS)
 LDFLAGS       =	-V $(FCFFLAGS) -shared-intel
 EXTRALIBS     =
-CMD           = rtofs_ncoda_archv_inc
+CMD           = rtofs_ncoda_archv_lyrinc
 BINDIR        = ../../../exec
 #
 # ---------------------------------------------------------------------
@@ -76,8 +76,8 @@ DATAR_OBJ = 	$(DATAX_OBJ) putdat.o
 all:	$(CMD)
 everything: clean $(CMD)  install finish
 
-${CMD}:      $(MODR) ncoda_archv_inc.o $(DATAR_OBJ)
-	$(LD) $(LDFLAGS) -o ${CMD} ncoda_archv_inc.o $(MODR) $(DATAR_OBJ)
+${CMD}:      $(MODR) ncoda_archv_lyrinc.o $(DATAR_OBJ)
+	$(LD) $(LDFLAGS) -o ${CMD} ncoda_archv_lyrinc.o $(MODR) $(DATAR_OBJ)
 
 
 clean:
@@ -93,6 +93,7 @@ install:
 # --- explicit dependencies for each .[fF] file.
 #
 
+ncoda_archv_lyrinc.o: ncoda_archv_lyrinc.f mod_plot.o mod_za.o
 ncoda_archv_inc.o: ncoda_archv_inc.f mod_plot.o mod_za.o
 
 bigrid.o:   bigrid.f      mod_plot.o
