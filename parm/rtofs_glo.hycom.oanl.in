@@ -74,7 +74,7 @@
   vc_adj      = 0.3,
   vc_mdl      = 'dens',
   vc_src      = 'clim',
-  vel_asm     = .true.,
+  vel_asm     = .false.,
   vscl(1)     = 12.,
   vscl(2)     = 3.,
   vscl(3)     = 3.,
