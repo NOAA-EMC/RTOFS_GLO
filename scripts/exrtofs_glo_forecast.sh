@@ -53,15 +53,20 @@ export inputgrid=${inputgrid:-navy_0.08}
      for fcst_hour in $(seq -w $LEAD -1 $f01)
      do
 # find most recent forecast restart
-       if [ -s $GESIN/${RUN}_${modID}.t${mycyc}z.f${fcst_hour}.restart.a -a \
-            -s $GESIN/${RUN}_${modID}.t${mycyc}z.f${fcst_hour}.restart.b -a \
-            -s $GESIN/${RUN}_${modID}.t${mycyc}z.f${fcst_hour}.restart_cice ]
+       fh2=$fcst_hour
+       if [[ $LEAD -ge 100 && $fh2 -lt 100 ]]
        then
-         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.f${fcst_hour}.restart.b restart_in.b
-         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.f${fcst_hour}.restart.a restart_in.a
-         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.f${fcst_hour}.restart_cice cice.restart_in
-         echo "Forecast $RUN_STEP is started from restart: $GESIN/${RUN}_${modID}.t${mycyc}z.f${fcst_hour}.restart.[ab]" \
-              "and ${RUN}_${modID}.t${mycyc}z.f${fcst_hour}.restart_cice"
+         fh2=$(echo $fcst_hour | cut -c2-)
+       fi
+       if [ -s $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.a -a \
+            -s $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.b -a \
+            -s $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart_cice ]
+       then
+         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.b restart_in.b
+         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.a restart_in.a
+         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart_cice cice.restart_in
+         echo "Forecast $RUN_STEP is started from restart: $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.[ab]" \
+              "and ${RUN}_${modID}.t${mycyc}z.f${fh2}.restart_cice"
          restart_found=yes
          break
        fi

@@ -88,19 +88,6 @@ export useslp=NO # YES or NO, use sea level pressure
 . $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
 export DBL_THKDF=NO # YES or NO
 
-##############################################
-# Check for restart
-##############################################
-restart_f=${RUN}_${modID}.t${cyc}z.f
-if compgen -G "$GESIN/${restart_f}*restart.a" > /dev/null && \
-   compgen -G "$GESIN/${restart_f}*restart.b" > /dev/null && \
-   compgen -G "$GESIN/${restart_f}*restart_cice" > /dev/null
-then
-    export RESTART=YES
-else
-    export RESTART=NO
-fi
-
 #################################
 # Set up forecast step parameters
 #################################
@@ -122,6 +109,28 @@ export fcstdays
 export stepnum
 export SAVE_RESTART
 export CONTINUE_FORECAST
+
+##############################################
+# Check for restart in this timespan
+##############################################
+RESTART=NO
+restart_f=${RUN}_${modID}.t${cyc}z.f
+if compgen -G "$GESIN/${restart_f}*restart.a" > /dev/null && \
+   compgen -G "$GESIN/${restart_f}*restart.b" > /dev/null && \
+   compgen -G "$GESIN/${restart_f}*restart_cice" > /dev/null
+then
+    fzz=$(expr $($NHOUR $($NDATE $(expr $fcstdays \* 24 ) ${startdate}) ${PDY}${mycyc}) \- 1)
+    faa=$(expr $fzz \-  $fcstdays \* 24 \+ 2)
+    for rfile in $(ls $GESIN/${restart_f}*restart.a)
+    do
+      thisf=$(basename $rfile | cut -d. -f3 | cut -c2-)
+      if [[ $thisf -le $fzz && $thisf -ge $faa ]]
+      then
+        RESTART=YES
+      fi
+    done
+fi
+export $RESTART
 
 #################################################################
 #  Send a message indicating the start of the job
