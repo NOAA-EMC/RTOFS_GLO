@@ -63,7 +63,14 @@ then
   err=$? ; export err ; err_chk
   date
 else
-  echo "WARNING - Cold starting $job"
+  echo "WARNING - Cold starting $jobid"
+  echo "WARNING - Cold starting $jobid"
+  echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/ocnqc.coldstart.email
+  echo "This is an abnormal event."                                            >> $DATA/ocnqc.coldstart.email
+  echo "The following directories are empty:"                                  >> $DATA/ocnqc.coldstart.email
+  echo "$COMINm1/ncoda/ocnqc/*"                                                >> $DATA/ocnqc.coldstart.email
+  echo "This job will continue to run as a cold-start."                        >> $DATA/ocnqc.coldstart.email
+  cat $DATA/ocnqc.coldstart.email | mail.py -s "WARNING - Job $job cold started"
 fi
 
 # 1.b link in var restart files from COMINm1

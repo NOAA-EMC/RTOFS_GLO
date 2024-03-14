@@ -131,12 +131,17 @@ cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.incup.blkdat.input ./blkdat.input
 cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.incup.ice_in       ./ice_in
 cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.patch.input        ./patch.input
 
-/bin/rm -f core
-touch core
+touch ok
+rm -f ok
+date >> TRACK
 
 date
 mpiexec -np $NPROCS --cpu-bind core $EXECrtofs/rtofs_hycom >> $pgmout 2>errfile
 err=$?
+echo " error from rtofs_hycom=",$err
+
+date >> TRACK
+
 ok="unknown"
 test -s ${DATA}/summary_out && ok=$(tail -1 ${DATA}/summary_out)
 if [ "$ok" = "normal stop" ]

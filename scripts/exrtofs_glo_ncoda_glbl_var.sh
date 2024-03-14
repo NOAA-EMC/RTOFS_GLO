@@ -45,7 +45,13 @@ then
   err=$? ; export err ; err_chk
   date
 else
-  echo "WARNING - Cold starting $job"
+  echo "WARNING - Cold starting $jobid"
+  echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/glbl.coldstart.email
+  echo "This is an abnormal event."                                            >> $DATA/glbl.coldstart.email
+  echo "The following directory is empty:"                                     >> $DATA/glbl.coldstart.email
+  echo "$COMINm1/ncoda/glbl_var/restart"                                       >> $DATA/glbl.coldstart.email
+  echo "This job will continue to run as a cold-start."                        >> $DATA/glbl.coldstart.email
+  cat $DATA/glbl.coldstart.email | mail.py -s "WARNING - Job $job cold started"
 fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
@@ -133,9 +139,9 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
 #   rename local files
-#mv fort.40 $log_dir/glbl_var.$ddtg.sus
-mv fort.67 $log_dir/glbl_var.$ddtg.obs
-mv fort.68 $log_dir/glbl_var.$ddtg.grd
+[[ -f fort.40 ]] && mv fort.40 $log_dir/glbl_var.$ddtg.sus
+[[ -f fort.67 ]] && mv fort.67 $log_dir/glbl_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $log_dir/glbl_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO

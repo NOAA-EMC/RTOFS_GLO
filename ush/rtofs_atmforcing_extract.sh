@@ -64,6 +64,7 @@ do
      | grep ${FLUX} | grep "${LEVEL}" | grep "${TYPE}" \
      | $WGRIB  $sfluxgrb -i -grib -append \
     -o $sfluxgrbout
+  err=$?; export err ; err_chk
 done
 #
 # Extract forcing from pgrb
@@ -73,6 +74,7 @@ if [ $# -eq 4 ] ; then
     | grep PRMSL \
     | $WGRIB $pgrb -i -grib -append \
     -o $pgrbout
+  err=$?; export err ; err_chk
 fi
 
 #   kpds567=reshape (source=  &

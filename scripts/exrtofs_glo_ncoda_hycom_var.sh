@@ -45,7 +45,13 @@ then
   err=$? ; export err ; err_chk
   date
 else
-  echo "WARNING - Cold starting $job"
+  echo "WARNING - Cold starting $jobid"
+  echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/hycom.coldstart.email
+  echo "This is an abnormal event."                                            >> $DATA/hycom.coldstart.email
+  echo "The following directory is empty:"                                     >> $DATA/hycom.coldstart.email
+  echo "$COMINm1/ncoda/hycom_var/restart"                                      >> $DATA/hycom.coldstart.email
+  echo "This job will continue to run as a cold-start."                        >> $DATA/hycom.coldstart.email
+  cat $DATA/hycom.coldstart.email | mail.py -s "WARNING - Job $job cold started"
 fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
@@ -55,6 +61,8 @@ ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a ${DATA}/region
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b ${DATA}/regional.grid.b
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.a      iso.sigma.a
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.b      iso.sigma.b
 
 # 1.c check if hycom restart file available
 if [[ ! -s $COMINm1/${RUN}_${modID}.t00z.n00.restart.a ||
@@ -136,21 +144,21 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
 #   rename local files
-mv fort.32 $log_dir/hycom_var.$ddtg.rej
-mv fort.33 $log_dir/hycom_var.$ddtg.prf
-mv fort.34 $log_dir/hycom_var.$ddtg.gpt
-mv fort.36 $log_dir/hycom_var.$ddtg.mvo
-mv fort.37 $log_dir/hycom_var.$ddtg.drc
-mv fort.38 $log_dir/hycom_var.$ddtg.lyp
-mv fort.39 $log_dir/hycom_var.$ddtg.fix
-#mv fort.40 $log_dir/hycom_var.$ddtg.sus
-mv fort.41 $log_dir/hycom_var.$ddtg.dup
-mv fort.42 $log_dir/hycom_var.$ddtg.ssh
-mv fort.52 $log_dir/hycom_var.$ddtg.sal
-mv fort.67 $log_dir/hycom_var.$ddtg.obs
-mv fort.68 $log_dir/hycom_var.$ddtg.grd
-mv fort.69 $log_dir/hycom_var.$ddtg.via
-mv fort.88 $log_dir/hycom_var.$ddtg.dbg
+[[ -f fort.32 ]] && mv fort.32 $log_dir/hycom_var.$ddtg.rej
+[[ -f fort.33 ]] && mv fort.33 $log_dir/hycom_var.$ddtg.prf
+[[ -f fort.34 ]] && mv fort.34 $log_dir/hycom_var.$ddtg.gpt
+[[ -f fort.36 ]] && mv fort.36 $log_dir/hycom_var.$ddtg.mvo
+[[ -f fort.37 ]] && mv fort.37 $log_dir/hycom_var.$ddtg.drc
+[[ -f fort.38 ]] && mv fort.38 $log_dir/hycom_var.$ddtg.lyp
+[[ -f fort.39 ]] && mv fort.39 $log_dir/hycom_var.$ddtg.fix
+[[ -f fort.40 ]] && mv fort.40 $log_dir/hycom_var.$ddtg.sus
+[[ -f fort.41 ]] && mv fort.41 $log_dir/hycom_var.$ddtg.dup
+[[ -f fort.42 ]] && mv fort.42 $log_dir/hycom_var.$ddtg.ssh
+[[ -f fort.52 ]] && mv fort.52 $log_dir/hycom_var.$ddtg.sal
+[[ -f fort.67 ]] && mv fort.67 $log_dir/hycom_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $log_dir/hycom_var.$ddtg.grd
+[[ -f fort.69 ]] && mv fort.69 $log_dir/hycom_var.$ddtg.via
+[[ -f fort.88 ]] && mv fort.88 $log_dir/hycom_var.$ddtg.dbg
 
 #   create data coverage graphics
 DoGraphics=NO

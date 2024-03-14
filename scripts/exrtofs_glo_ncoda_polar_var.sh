@@ -41,6 +41,7 @@ mkdir -p $DATA/logs/nhem_var
 mkdir -p $DATA/logs/shem_var
 ddtg=${PDYm1}00
 
+coldstart=0
 rm -f cmdfile.cpin
 if compgen -G "$COMINm1/ncoda/nhem_var/restart/*" > /dev/null
 then
@@ -49,6 +50,7 @@ then
   done
 else
   echo "WARNING - Cold starting $job - north hemisphere"
+  coldstart=2
 fi
 
 if compgen -G "$COMINm1/ncoda/shem_var/restart/*" > /dev/null
@@ -58,6 +60,24 @@ then
   done
 else
   echo "WARNING - Cold starting $job - south hemisphere"
+  let coldstart=coldstart+1
+fi
+if [ $coldstart -gt 0 ]
+then
+  echo "WARNING - Cold starting $jobid"
+  echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/polar.coldstart.email
+  echo "This is an abnormal event."                                            >> $DATA/polar.coldstart.email
+  echo "The following directories are empty:"                                  >> $DATA/polar.coldstart.email
+  if [[ $coldstart -eq 2 || $coldstart -eq 3 ]]
+  then
+      echo "$COMINm1/ncoda/nhem_var/restart"                                   >> $DATA/polar.coldstart.email
+  fi
+  if [[ $coldstart -eq 1 || $coldstart -eq 3 ]]
+  then
+      echo "$COMINm1/ncoda/shem_var/restart"                                   >> $DATA/polar.coldstart.email
+  fi
+  echo "This job will continue to run as a cold-start."                        >> $DATA/polar.coldstart.email
+  cat $DATA/polar.coldstart.email | mail.py -s "WARNING - Job $job cold started"
 fi
 
 if [ -s cmdfile.cpin ]
@@ -140,9 +160,9 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
 #   rename local files
-#mv fort.40 $DATA/logs/nhem_var/nhem_var.$ddtg.sus
-mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
-mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
+[[ -f fort.40 ]] && mv fort.40 $DATA/logs/nhem_var/nhem_var.$ddtg.sus
+[[ -f fort.67 ]] && mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO
@@ -226,9 +246,9 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post",$err
 
 #   rename local files
-#mv fort.40 $DATA/logs/shem_var/shem_var.$ddtg.sus
-mv fort.67 $DATA/logs/shem_var/shem_var.$ddtg.obs
-mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
+[[ -f fort.40 ]] && mv fort.40 $DATA/logs/shem_var/shem_var.$ddtg.sus
+[[ -f fort.67 ]] && mv fort.67 $DATA/logs/shem_var/shem_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO
