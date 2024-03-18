@@ -155,7 +155,7 @@ sed -i -e "s/&archday/$archday/" \
        -e "s/&vpvelinc/${vpvelinc}/g" ./ncoda_archv.input
 #ln -s ${PARMrtofs}/${RUN}_${modID}.zlevels zi.txt
 
-$EXECrtofs/rtofs_ncoda_archv_lyrinc < ncoda_archv.input
+$EXECrtofs/rtofs_ncoda_archv_lyrinc < ncoda_archv.input >> $pgmout
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_archv_lyrinc=",$err
 

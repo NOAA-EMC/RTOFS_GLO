@@ -160,9 +160,9 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
 #   rename local files
-#mv fort.40 $DATA/logs/nhem_var/nhem_var.$ddtg.sus
-mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
-mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
+[[ -f fort.40 ]] && mv fort.40 $DATA/logs/nhem_var/nhem_var.$ddtg.sus
+[[ -f fort.67 ]] && mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO
@@ -246,9 +246,9 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post",$err
 
 #   rename local files
-#mv fort.40 $DATA/logs/shem_var/shem_var.$ddtg.sus
-mv fort.67 $DATA/logs/shem_var/shem_var.$ddtg.obs
-mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
+[[ -f fort.40 ]] && mv fort.40 $DATA/logs/shem_var/shem_var.$ddtg.sus
+[[ -f fort.67 ]] && mv fort.67 $DATA/logs/shem_var/shem_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO

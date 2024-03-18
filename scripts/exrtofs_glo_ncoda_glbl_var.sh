@@ -139,9 +139,9 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
 #   rename local files
-#mv fort.40 $log_dir/glbl_var.$ddtg.sus
-mv fort.67 $log_dir/glbl_var.$ddtg.obs
-mv fort.68 $log_dir/glbl_var.$ddtg.grd
+[[ -f fort.40 ]] && mv fort.40 $log_dir/glbl_var.$ddtg.sus
+[[ -f fort.67 ]] && mv fort.67 $log_dir/glbl_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $log_dir/glbl_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO
