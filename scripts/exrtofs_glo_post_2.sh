@@ -270,7 +270,8 @@ fi
 done
 
 md5=/usr/bin/md5sum
-if [ -x $md5 ]
+dochecksum=0
+if [ -x $md5 && $dochecksum -eq 1 ]]
 then
   cd $COMOUT
   # need definition of files

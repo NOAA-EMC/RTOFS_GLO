@@ -139,7 +139,7 @@ cp ${PARMrtofs}/${RUN}_${modID}.ncoda_archv.input ./ncoda_archv.input
 sed -i -e "s/&archday/$archday/" -e "s/&archname/$ar/" -e "s/&IDM/$IDM/g" -e "s/&JDM/$JDM/g" -e "s/&dtg/$dtg/g" ./ncoda_archv.input
 ln -s ${PARMrtofs}/${RUN}_${modID}.zlevels zi.txt
 
-$EXECrtofs/rtofs_ncoda_archv_inc < ncoda_archv.input
+$EXECrtofs/rtofs_ncoda_archv_inc < ncoda_archv.input >> $pgmout
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_archv_inc=",$err
 

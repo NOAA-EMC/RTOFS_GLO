@@ -245,7 +245,7 @@ do
       do
         if [ $SENDCOM = 'YES' ]
         then
-          cfile=${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
+          cfile=$reg/${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
           if [ -x cpfs ]   # rc=1 means cpfs not found
           then
             cp -f -p $cfile  $COMOUT/.
@@ -268,6 +268,11 @@ do
 done
 
 echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
+
+for pout in $(ls */$pgmout)
+do
+  cat $pout >> $pgmout
+done
 
 #################################################
 msg='THE RTOFS_GLO_POST JOB HAS ENDED NORMALLY.'

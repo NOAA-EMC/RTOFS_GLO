@@ -40,13 +40,21 @@ cp -f -p ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv_full.in archv.in
 touch mltio.nc 3diio.nc 3ztio.nc 3zsio.nc 3zrio.nc 3zvio.nc 3zuio.nc 3zcio.nc 3zwio.nc
 rm -f mltio.nc 3diio.nc 3ztio.nc 3zsio.nc 3zrio.nc 3zvio.nc 3zuio.nc 3zcio.nc 3zwio.nc
 
-export CDF033=${RUN}_${modID}_3dz_${mode}${fhr}_daily_3zuio.nc
-export CDF034=${RUN}_${modID}_3dz_${mode}${fhr}_daily_3zvio.nc
-export CDF035=${RUN}_${modID}_3dz_${mode}${fhr}_daily_3ztio.nc
-export CDF036=${RUN}_${modID}_3dz_${mode}${fhr}_daily_3zsio.nc
+export CDF033=$DATA/${RUN}_${modID}_3dz_${mode}${fhr}_daily_3zuio.nc
+export CDF034=$DATA/${RUN}_${modID}_3dz_${mode}${fhr}_daily_3zvio.nc
+export CDF035=$DATA/${RUN}_${modID}_3dz_${mode}${fhr}_daily_3ztio.nc
+export CDF036=$DATA/${RUN}_${modID}_3dz_${mode}${fhr}_daily_3zsio.nc
 
 touch run_script.sh; rm run_script.sh
 echo \#!/bin/sh > run_script.sh
+echo mkdir \$1 >> run_script.sh
+echo cd \$1 >> run_script.sh
+echo ln -sf ../regional.depth.a . >> run_script.sh
+echo ln -sf ../regional.depth.b . >> run_script.sh
+echo ln -sf ../regional.grid.a . >> run_script.sh
+echo ln -sf ../regional.grid.b . >> run_script.sh
+echo ln -sf ../archv.a . >> run_script.sh
+echo ln -sf ../archv.b . >> run_script.sh
 echo ${EXECrtofs}/${RUN}_archv2ncdf3z \< $DATA/archv2ncdf3z_\$1.in \>\> $pgmout 2\>\>errfile >> run_script.sh
 
 for fnam in uvl vvl tem sal 
@@ -86,10 +94,10 @@ export NPROCS=${NPROCS:-4}
 if [ $NPROCS -gt 1 ] 
 then
     touch scp.sh; rm -f scp.sh
-    echo sh ./run_script.sh tem > scp.sh
-    echo sh ./run_script.sh sal >> scp.sh
-    echo sh ./run_script.sh uvl >> scp.sh
-    echo sh ./run_script.sh vvl >> scp.sh
+    echo sh "./run_script.sh tem > tem.out" > scp.sh
+    echo sh "./run_script.sh sal > sal.out" >> scp.sh
+    echo sh "./run_script.sh uvl > uvl.out" >> scp.sh
+    echo sh "./run_script.sh vvl > vvl.out" >> scp.sh
     chmod +x scp.sh
     #mpirun.lsf cfp scp.sh > mpirun_daily.out
     #mpirun cfp scp.sh > mpirun_daily.out

@@ -98,13 +98,13 @@ ln -s $OCN_DATA_DIR/incoming/profile.b.$cut_dtg $OCN_DATA_DIR/incoming/profile.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg profile > prof_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.45 prof_qc.$cut_dtg.rpt
-mv fort.47 prof_qc.$cut_dtg.err
-mv fort.48 prof_qc.$cut_dtg.vgd
-mv fort.49 prof_qc.$cut_dtg.inc
-mv fort.51 prof_qc.$cut_dtg.dup
-mv fort.52 prof_qc.$cut_dtg.stb
-mv fort.53 prof_qc.$cut_dtg.arg
+[[ -f fort.45 ]] && mv fort.45 prof_qc.$cut_dtg.rpt
+[[ -f fort.47 ]] && mv fort.47 prof_qc.$cut_dtg.err
+[[ -f fort.48 ]] && mv fort.48 prof_qc.$cut_dtg.vgd
+[[ -f fort.49 ]] && mv fort.49 prof_qc.$cut_dtg.inc
+[[ -f fort.51 ]] && mv fort.51 prof_qc.$cut_dtg.dup
+[[ -f fort.52 ]] && mv fort.52 prof_qc.$cut_dtg.stb
+[[ -f fort.53 ]] && mv fort.53 prof_qc.$cut_dtg.arg
 #mv gmeta prof_qc.$cut_dtg.gmeta
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

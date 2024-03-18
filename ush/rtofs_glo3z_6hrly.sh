@@ -42,13 +42,21 @@ echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 export reg=$1
 export CDF033=${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
+mkdir -p $reg
+cd $reg
+ln -sf ../regional.depth.a .
+ln -sf ../regional.depth.b .
+ln -sf ../regional.grid.a .
+ln -sf ../regional.grid.b .
+ln -sf ../archv.a .
+ln -sf ../archv.b .
 
-cp ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv_$reg.in $DATA/archv_$reg.in
+cp ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv_$reg.in ./archv_$reg.in
 
 export pgm=${RUN}_archv2ncdf3z
 . prep_step
 startmsg
-${EXECrtofs}/${RUN}_archv2ncdf3z < $DATA/archv_$reg.in >> $pgmout 2>>errfile
+${EXECrtofs}/${RUN}_archv2ncdf3z < ./archv_$reg.in >> $pgmout 2>>errfile
 export err=$?; err_chk
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
