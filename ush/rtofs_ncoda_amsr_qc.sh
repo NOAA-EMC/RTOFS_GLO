@@ -146,7 +146,7 @@ ln -s $OCN_DATA_DIR/incoming/amsr.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_sst > amsr_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 amsr_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 amsr_qc.$cut_dtg.rej
 
 #   cleanup
 

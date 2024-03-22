@@ -147,7 +147,7 @@ ln -s $OCN_DATA_DIR/incoming/jpss.b.$cut_dtg $OCN_DATA_DIR/incoming/jpss.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg jpss > jpss_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 jpss_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 jpss_qc.$cut_dtg.rej
 
 #   cleanup
 

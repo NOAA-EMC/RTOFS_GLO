@@ -147,7 +147,7 @@ ln -s $OCN_DATA_DIR/incoming/npp.b.$cut_dtg $OCN_DATA_DIR/incoming/npp.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg npp > npp_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 npp_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 npp_qc.$cut_dtg.rej
 
 #   cleanup
 

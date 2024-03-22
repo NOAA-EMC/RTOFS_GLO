@@ -115,10 +115,7 @@ ln -s $OCN_DATA_DIR/incoming/sfc.b.$cut_dtg $OCN_DATA_DIR/incoming/sfc.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg sfc > sfc_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-if [ -e fort.44 ]
-then
-  mv fort.44 sfc_qc.$cut_dtg.rej
-fi
+[[ -e fort.44 ]] && mv fort.44 sfc_qc.$cut_dtg.rej
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

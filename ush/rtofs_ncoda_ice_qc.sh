@@ -173,7 +173,7 @@ ln -s $OCN_DATA_DIR/incoming/ssmi.b.$cut_dtg $OCN_DATA_DIR/incoming/ssmi.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg ssmi > ssmi_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc ssmi=",$err
-mv fort.44 ssmi_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 ssmi_qc.$cut_dtg.rej
 
 #AMSR
 ln -s $OCN_DATA_DIR/incoming/amsr_ice.a.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.a
@@ -181,7 +181,7 @@ ln -s $OCN_DATA_DIR/incoming/amsr_ice.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_ice > amsr_ice_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc amsr_ice=",$err
-mv fort.44 amsr_ice_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 amsr_ice_qc.$cut_dtg.rej
 
 #   cleanup
 

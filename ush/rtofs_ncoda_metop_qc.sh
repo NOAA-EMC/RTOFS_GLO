@@ -171,7 +171,7 @@ ln -s $OCN_DATA_DIR/incoming/metop.b.$cut_dtg $OCN_DATA_DIR/incoming/metop.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg metop > metop_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 metop_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 metop_qc.$cut_dtg.rej
 
 #   cleanup
 

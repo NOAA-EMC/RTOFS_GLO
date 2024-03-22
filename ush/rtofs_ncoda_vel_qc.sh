@@ -103,10 +103,7 @@ $EXECrtofs/rtofs_ncoda_drft_decode $cut_dtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_drft_decode=",$err
 
-if [ -e fort.71 ]
-then
-  mv -f fort.71 drifter_frames.$cut_dtg.out
-fi
+[[ -e fort.71 ]] && mv -f fort.71 drifter_frames.$cut_dtg.out
 cat pout1 pout2 > vel_preqc.$cut_dtg.out
 
 #--------------------------------------------------------------------------------------
@@ -145,18 +142,9 @@ ln -s $OCN_DATA_DIR/incoming/drft.b.$cut_dtg $OCN_DATA_DIR/incoming/drft.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg velocity > vel_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-if [ -e fort.44 ]
-then
-  mv fort.44 vel_qc.$cut_dtg.rej
-fi
-if [ -e fort.46 ]
-then
-  mv fort.46 vel_qc_rpt.$cut_dtg.rej
-fi
-if [ -e gmeta ]
-then
-  mv -f gmeta vel_qc.$cut_dtg.gmeta
-fi
+[[ -e fort.44 ]] && mv fort.44 vel_qc.$cut_dtg.rej
+[[ -e fort.46 ]] && mv fort.46 vel_qc_rpt.$cut_dtg.rej
+[[ -e gmeta ]] && mv -f gmeta vel_qc.$cut_dtg.gmeta
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

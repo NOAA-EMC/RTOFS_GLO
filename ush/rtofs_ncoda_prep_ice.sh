@@ -31,7 +31,7 @@ do
   ${EXECrtofs}/rtofs_ssmis_tol2 >>$pgmout 2>errfile
   err=$? ; export err ; err_chk
   mv l2out.f285.51.nc l2out.f285.51.${rundate}00.nc
-  mv fort.52 $rundate.fort.52
+  [[ -f fort.52 ]] && mv fort.52 $rundate.fort.52
 
 done
 
