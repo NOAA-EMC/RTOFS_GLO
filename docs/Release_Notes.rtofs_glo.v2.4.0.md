@@ -61,6 +61,11 @@ cd /lfs/h2/emc/eib/noscrub/dan.iredell/RTOFSFIX/20230615
 tar cf - ./fix | (cd <topdir>/rtofs.v2.4.0; tar xf -)
 ```
 
+RUN INSTRUCTIONS
+----------------
+
+This implementation continues directly from rtofs.v2.3.4. There isn't a parallel run to start from.
+
 VERSION FILE CHANGES
 --------------------
 
@@ -217,6 +222,11 @@ JOB DEPENDENCIES AND FLOW DIAGRAM
 ---------------------------------
 
 * No changes
+
+
+DCOM DEPENDENCIES
+-----------------
+All dcom data is data of opportunity.
 
 DOCUMENTATION
 -------------
