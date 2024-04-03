@@ -59,22 +59,22 @@ else
 fi
 
 # AMSR
-cd $AMSR_ICE_DATA_DIR
-ymd=${prv_dtg:0:8}
-cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*.nc"
-if [ -s $cmd ] ; then
-   ls $cmd > $log_dir/amsr_01.${cut_dtg}_prelim
-else
-   echo "WARNING $cmd does not exist"
-fi
-
-ymd=${cut_dtg:0:8}
-cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*.nc"
-if [ -s $cmd ] ; then
-   ls $cmd > $log_dir/amsr_02.${cut_dtg}_prelim
-else
-   echo "WARNING $cmd does not exist"
-fi
+#cd $AMSR_ICE_DATA_DIR
+#ymd=${prv_dtg:0:8}
+#cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*.nc"
+#if [ -s $cmd ] ; then
+#   ls $cmd > $log_dir/amsr_01.${cut_dtg}_prelim
+#else
+#   echo "WARNING $cmd does not exist"
+#fi
+#
+#ymd=${cut_dtg:0:8}
+#cmd="$ymd/seaice/pda/AMSR2-SEAICE*s$ymd*.nc"
+#if [ -s $cmd ] ; then
+#   ls $cmd > $log_dir/amsr_02.${cut_dtg}_prelim
+#else
+#   echo "WARNING $cmd does not exist"
+#fi
 
 #   change to working directory
 cd $log_dir
@@ -84,26 +84,26 @@ if [[ ! -f ssmi_files.$cut_dtg || ! -s ssmi_files.$cut_dtg ]]; then
    echo "SSMI.obs_control file will not be updated"
 fi
 
-cat amsr_*.${cut_dtg}_prelim > amsr_ice_files.${cut_dtg}_prelim
-# check on readability of amsr ice files
-echo timecheck amsr_ice start ncdump at $(date)
-while read line
-do
-  ncdump -k $AMSR_ICE_DATA_DIR/$line > /dev/null
-  ncrc=$?
-  if [ $ncrc -eq 0 ]
-  then
-     echo $line >> amsr_ice_files.$cut_dtg
-  else
-     echo "WARNING - file $AMSR_ICE_DATA_DIR/$line and will not be processed."
-  fi
-done < amsr_ice_files.${cut_dtg}_prelim
-echo timecheck amsr_ice finish ncdump at $(date)
-
-if [[ ! -f amsr_ice_files.$cut_dtg || ! -s amsr_ice_files.$cut_dtg ]]; then
-   echo "WARNING - amsr_ice_files.$cut_dtg does not exist/is empty. No AMSR_ICE files to process."
-   echo "AMSR_ICE.obs_control file will not be updated"
-fi
+#cat amsr_*.${cut_dtg}_prelim > amsr_ice_files.${cut_dtg}_prelim
+## check on readability of amsr ice files
+#echo timecheck amsr_ice start ncdump at $(date)
+#while read line
+#do
+#  ncdump -k $AMSR_ICE_DATA_DIR/$line > /dev/null
+#  ncrc=$?
+#  if [ $ncrc -eq 0 ]
+#  then
+#     echo $line >> amsr_ice_files.$cut_dtg
+#  else
+#     echo "WARNING - file $AMSR_ICE_DATA_DIR/$line and will not be processed."
+#  fi
+#done < amsr_ice_files.${cut_dtg}_prelim
+#echo timecheck amsr_ice finish ncdump at $(date)
+#
+#if [[ ! -f amsr_ice_files.$cut_dtg || ! -s amsr_ice_files.$cut_dtg ]]; then
+#   echo "WARNING - amsr_ice_files.$cut_dtg does not exist/is empty. No AMSR_ICE files to process."
+#   echo "AMSR_ICE.obs_control file will not be updated"
+#fi
 
 #   execute ncoda pre_qc for ICE netCDF files
 #SSMI
@@ -111,9 +111,9 @@ $EXECrtofs/rtofs_ncoda_ncep_ice_nc ssmi $cut_dtg > ssmi_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_ncep_ice_nc ssmi=",$err
 #AMSR
-$EXECrtofs/rtofs_ncoda_ncep_ice_nc amsr_ice $cut_dtg > amsr_ice_preqc.$cut_dtg.out
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_ncep_ice_nc amsr_ice=",$err
+#$EXECrtofs/rtofs_ncoda_ncep_ice_nc amsr_ice $cut_dtg > amsr_ice_preqc.$cut_dtg.out
+#err=$?; export err ; err_chk
+#echo " error from rtofs_ncoda_ncep_ice_nc amsr_ice=",$err
 #--------------------------------------------------------------------------------------
 echo "  "
 echo "NCODA ICE QC"
@@ -176,12 +176,12 @@ echo " error from rtofs_ncoda_qc ssmi=",$err
 mv fort.44 ssmi_qc.$cut_dtg.rej
 
 #AMSR
-ln -s $OCN_DATA_DIR/incoming/amsr_ice.a.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.a
-ln -s $OCN_DATA_DIR/incoming/amsr_ice.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.b
-$EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_ice > amsr_ice_qc.$cut_dtg.out
-err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_qc amsr_ice=",$err
-mv fort.44 amsr_ice_qc.$cut_dtg.rej
+#ln -s $OCN_DATA_DIR/incoming/amsr_ice.a.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.a
+#ln -s $OCN_DATA_DIR/incoming/amsr_ice.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr_ice.b
+#$EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_ice > amsr_ice_qc.$cut_dtg.out
+#err=$?; export err ; err_chk
+#echo " error from rtofs_ncoda_qc amsr_ice=",$err
+#mv fort.44 amsr_ice_qc.$cut_dtg.rej
 
 #   cleanup
 

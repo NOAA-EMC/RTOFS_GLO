@@ -25,7 +25,7 @@ then
   # Set intvl=3 for retrospectives when only 3 hour forcing is available.
   # Remember to change 3 lines in parm/rtofs_glo.navy_0.08.anal.ice_in.
   # Change atm_data_type, sss_data_type, sst_data_type from 'cfsr' to 'nogaps'.
-  intvl=1 #atmospheric forcing frequency
+  intvl=3 #atmospheric forcing frequency
 else
   runmode='fcst'
   runstep=${runmode}${stepnum}

@@ -86,6 +86,7 @@ cat << eof1 > odsetnl
   dsomfix = '$DATA'
   dsorff  = '$DATA/restart'
   dsoudat = '$DATA/ocnqc'
+  dsordat = '/lfs/h2/emc/couple/noscrub/zulema.garraffo/wcoss2.synobs/ocnqc'
   dsowork = '$DATA/work'
  &end
 eof1
