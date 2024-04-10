@@ -7,7 +7,7 @@ The global-workflow depends on the following prerequisities to be available on t
 
 RTOFS-GLO current supports the following machines:
 
-* WCOSS-Cray
+* WCOSS2
 
 ## Building RTOFS:
 
