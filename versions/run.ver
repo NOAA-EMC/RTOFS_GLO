@@ -14,7 +14,7 @@ export cray_mpich_ver=8.1.19
 export cray_pals_ver=1.0.17
 export cfp_ver=2.0.4
 
-export bufr_dump_ver=1.0.0
+export bufr_dump_ver=1.1.2
 export cdo_ver=1.9.8
 export gempak_ver=7.14.1
 export libjpeg_ver=9c

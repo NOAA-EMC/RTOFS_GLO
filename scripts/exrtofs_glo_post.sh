@@ -245,12 +245,12 @@ do
       do
         if [ $SENDCOM = 'YES' ]
         then
-          cfile=$reg/${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
+          cfile=${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
           if [ -x cpfs ]   # rc=1 means cpfs not found
           then
-            cp -f -p $cfile  $COMOUT/.
+            cp -f -p $reg/$cfile  $COMOUT/.
           else
-            cpfs $cfile  $COMOUT/.
+            cpfs $reg/$cfile  $COMOUT/.
           fi
           if [ $SENDDBN = YES ]
           then

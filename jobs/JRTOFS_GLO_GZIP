@@ -49,6 +49,11 @@ export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
 
+###################
+# Define model grid
+###################
+export inputgrid=navy_0.08
+
 #########################################
 # Check how many days to run the gzip for (affect fcst1 only)
 #########################################
