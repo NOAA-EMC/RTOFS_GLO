@@ -2214,14 +2214,14 @@ c
       flnmshlf = 'regional.iceshelf'
       flnmdep  = 'regional.depth'
       flnmgrd  = 'regional.grid'
-      flnmarc  = 'archv.0000_000_00'
-      flnmarcs = 'archs.0000_000_00'
+      flnmarc  = '../archive/archv.0000_000_00'
+      flnmarcs = '../archive/archs.0000_000_00'
       flnmarcm = 'archm.0000_000_00'
       flnmarct = 'archt.0000_000_00'
       flnmovr  = 'ovrtn_out'
       flnmflx  = 'flxdp_out'
       flnmrsi  = 'restart_in'
-      flnmrso  = 'restart_out'
+      flnmrso  = '../restart/restart_out'
 c
 c --- i/o directory names
 c

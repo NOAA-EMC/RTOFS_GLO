@@ -37,48 +37,73 @@ export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #
 # 1. Get initial conditions (restart files)
-
+#     if this is a restart, then find latest restart files in DATArestart
+#     if this is not a restart, then find restart files in COMin
+ 
   test -f restart_in.a && rm -f restart_in.a
   test -f restart_in.b && rm -f restart_in.b
 
-# loop through forecast hours starting with most recent checking if restart files exist
   restart_found=no
   if [ $RESTART = YES ]
   then
-     # LEAD is the last forecast hour minus one, f01 is fist forecast hour plus one
-     LEAD=$(expr $($NHOUR $($NDATE $(expr $fcstdays \* 24 ) ${startdate}) ${PDY}${mycyc}) \- 1)
-     f01=$(expr $LEAD \-  $fcstdays \* 24 \+ 2)
-# NOTE - this logic does not calculate the width correctly in some cases (when moving from 3 chars to 2 chars)
-# NOTE - since this is a very infrequent occurrence, it will be left in as is
-     for fcst_hour in $(seq -w $LEAD -1 $f01)
-     do
-# find most recent forecast restart
-       fh2=$fcst_hour
-       if [[ $LEAD -ge 100 && $fh2 -lt 100 ]]
-       then
-         fh2=$(echo $fcst_hour | cut -c2-)
-       fi
-       if [ -s $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.a -a \
-            -s $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.b -a \
-            -s $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart_cice ]
-       then
-         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.b restart_in.b
-         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.a restart_in.a
-         ln -s -f $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart_cice cice.restart_in
-         echo "Forecast $RUN_STEP is started from restart: $GESIN/${RUN}_${modID}.t${mycyc}z.f${fh2}.restart.[ab]" \
-              "and ${RUN}_${modID}.t${mycyc}z.f${fh2}.restart_cice"
-         restart_found=yes
-         break
-       fi
-     done
+    for rtype in out out1   # rename restarts with out string to use timestamp
+    do
+      if [ -s ${DATArestart}/restart_${rtype}.b ]
+      then
+        date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_${rtype}.b)
+        mv ${DATArestart}/restart_${rtype}.a ${DATArestart}/restart_${date_out}.a
+        mv ${DATArestart}/restart_${rtype}.b ${DATArestart}/restart_${date_out}.b
+      fi
+    done
 
-     if [ $restart_found = no ]
-     then
-        $USHrtofs/${RUN}_abort.sh  "FATAL ERROR: $job Missing Restart File" \
-          "No restart_in.[ab] or cice.restart_in in $GESIN" 2
-     fi
+    latestdate=0
+    for rfileb in $(ls ${DATArestart}/restart_*.b)  # find and link to latest restart file
+    do
+      date_out=$(${USHrtofs}/rtofs_date4restart.sh ${rfileb})
+      if [ $date_out -gt $latestdate ]
+      then
+        latestdate=$date_out
+        rfile=$rfileb
+      fi
+    done
 
-  else
+    # find cice restart file for this restart time and link them
+    if [ $latestdate -ne 0 ]
+    then
+      YYYY=$(echo $latestdate | cut -c1-4)
+      MM=$(echo $latestdate | cut -c5-6)
+      DD=$(echo $latestdate | cut -c7-8)
+      HH=$(echo $latestdate | cut -c9-10)
+      SSSSS=$(expr $HH \* 3600)
+      ln -sf $rfile $DATA/restart_in.b
+      ln -sf ${rfile%.b}.a $DATA/restart_in.a
+      ln -sf $DATArestart/cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} $DATA/cice.restart_in
+      echo INFO - restarting simulation from $latestdate using $rfile
+      restart_found=yes
+    fi
+
+    if [ $restart_found = no ]
+    then
+       $USHrtofs/${RUN}_abort.sh  "FATAL ERROR: $job Missing Restart File" \
+         "No restart_in.[ab] or cice.restart_in in $DATArestart" 2
+    fi
+
+# remove archives created after most recent restart; hycom will fail if these files exist
+    rdate=$(${USHrtofs}/rtofs_date4restart.sh $DATA/restart_in.b)
+    for afile in $(ls $DATAarchive/*.b)
+    do
+      archivedate=$(basename $afile | cut -d. -f2 | cut -c1-4,6-8,10-11)
+      ayjul=$(echo $archivedate | cut -c1-7)
+      ahour=$(echo $archivedate | cut -c8-9)
+      adate=$($UTILROOT/ush/date2jday.sh $ayjul)$ahour
+      if [ $adate -gt $rdate ]
+      then
+        echo removing ${afile%.b} files
+        rm -f ${afile} ${afile%.b}.a ${afile%.b}.txt
+      fi
+    done
+
+  else # RESTART=NO
     if [ ${CONTINUE_FORECAST} = NO ]
     then
       # Restart from the nowcast restart
@@ -103,6 +128,8 @@ export inputgrid=${inputgrid:-navy_0.08}
       $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Restart File" \
         "No restart_in.[ab] or cice.restart_in in $COMIN" 3
     fi
+    # remove any possible archives created
+    rm -f $DATAarchive/*
   fi
 
   echo './cice.restart_in' > cice.restart_file
@@ -110,8 +137,8 @@ export inputgrid=${inputgrid:-navy_0.08}
   if [ -s restart_in.a -a -s restart_in.b -a -s cice.restart_in ]
   then
     echo "Initial restart files copied"
-    export startdate=$(${USHrtofs}/rtofs_date4restart.sh restart_in.b)
     export enddate=$($NDATE $(expr $fcstdays \* 24 ) ${startdate})
+    export startdate=$(${USHrtofs}/rtofs_date4restart.sh restart_in.b)
   else
     $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Restart File" \
         "No restart_in.[ab] or cice.restart_in in $DATA" 911
@@ -121,6 +148,12 @@ export inputgrid=${inputgrid:-navy_0.08}
 # 2. get input files
 
   ksh ${USHrtofs}/${RUN}_runstaging.sh
+  if [ $RESTART = YES ]
+  then # create new cice files to this start time
+    rm -f cice.??????.?
+    export iday=$($USHrtofs/rtofs_date_normal2hycom.sh $startdate)
+    $USHrtofs/${RUN}_iceforcing.sh
+  fi
 
 # --------------------------------------------------------------------------- #
 # 3. Run forecast
@@ -136,34 +169,28 @@ export inputgrid=${inputgrid:-navy_0.08}
     modelstatus=1
   fi 
 
-# --------------------------------------------------------------------------- #
-# 4. Copy results to com
-
 #
-# Note that on a failure, tmp2com will still copy archives after the latest restart
-  if [ $SENDCOM = 'YES' ]
-  then
-    ${USHrtofs}/${RUN}_tmp2com.sh
-  fi
-
 # --------------------------------------------------------------------------- #
-# 5. Check if run ran to completion and copy restart files to appropriate
-#    place depending on that status.
-
+# 4. If run ran to completion and copy restart and archive files to COMOUT
 # if model ran, then copy last restart files to comout
+
   if [ $modelstatus = 0 ]
   then
+      if [ $SENDCOM = 'YES' ]
+      then
+        ${USHrtofs}/${RUN}_tmp2com.sh
+      fi
       if [ ${SAVE_RESTART} = YES ]
       then
         date_out=0 ; date_out1=0 
-        test -s ${DATA}/restart_out.b && date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out.b)
-        test -s ${DATA}/restart_out1.b &&  date_out1=$(${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out1.b)
+        test -s ${DATArestart}/restart_out.b && date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_out.b)
+        test -s ${DATArestart}/restart_out1.b &&  date_out1=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_out1.b)
         if [ ${date_out} -gt ${date_out1} ]
         then
-          rfile=${DATA}/restart_out.b
+          rfile=${DATArestart}/restart_out.b
           cdate=${date_out}
         else
-          rfile=${DATA}/restart_out1.b
+          rfile=${DATArestart}/restart_out1.b
           cdate=${date_out1}
         fi
         YYYY=$(echo $cdate | cut -c1-4)
@@ -176,44 +203,10 @@ export inputgrid=${inputgrid:-navy_0.08}
         CICErestTplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart_cice
         cp -p $rfile ${COMOUT}/${HYCOMrestTplate}.b
         cp -p ${rfile%.b}.a ${COMOUT}/${HYCOMrestTplate}.a
-        cp -p cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} ${COMOUT}/${CICErestTplate}
+        cp -p ${DATArestart}/cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} ${COMOUT}/${CICErestTplate}
        fi
     echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.fcst$RUN_STEP.log
   else
-    date_out=0 ; date_out1=0; rcount=0
-    if [ -s ${DATA}/restart_out.b ]
-    then
-      date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out.b)
-      let rcount=rcount+1
-    fi
-    if [ -s ${DATA}/restart_out1.b ]
-    then
-      date_out1=$(${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out1.b)
-      let rcount=rcount+1
-    fi
-# copy latest restart file (if found) to GESOUT
-    if [ $rcount -ne 0 ]
-    then
-      if [ ${date_out} -gt ${date_out1} ]
-      then
-        rfile=${DATA}/restart_out.b
-        cdate=${date_out}
-      else
-        rfile=${DATA}/restart_out1.b
-        cdate=${date_out1}
-      fi
-      YYYY=$(echo $cdate | cut -c1-4)
-      MM=$(echo $cdate | cut -c5-6)
-      DD=$(echo $cdate | cut -c7-8)
-      HH=$(echo $cdate | cut -c9-10)
-      SSSSS=$(expr $HH \* 3600)
-      LEAD=$($NHOUR ${cdate} ${PDY}${mycyc})
-      HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart
-      CICErestTplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart_cice
-      cp -p $rfile ${GESOUT}/${HYCOMrestTplate}.b
-      cp -p ${rfile%.b}.a ${GESOUT}/${HYCOMrestTplate}.a
-      cp -p cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} ${GESOUT}/${CICErestTplate}
-    fi
     $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit" \
        "problem with forecast model run - return code $modelstatus" $modelstatus
   fi

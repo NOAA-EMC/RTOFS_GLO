@@ -51,6 +51,7 @@ export iday=$hday11
 echo $hday11 $hday12 > limits
 
 ln -sf $COMIN/rtofs_glo.ssmi.$dtg.r ssmi.r
+ln -sf $COMIN/rtofs_glo.ssmi.$dtg.r ../restart/ssmi.r
 dtgr0=$($EXECrtofs/rtofs_dtg $dtgm1 -f "%Y-%m-%d")
 dtgr1=$($EXECrtofs/rtofs_dtg $dtg -f "%Y-%m-%d")
 
@@ -156,14 +157,19 @@ if [ $modelstatus = 0 ]
 then
   #restart
   date_out=0 ; date_out1=0
-  test -s ${DATA}/restart_out.b && date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out.b)
-  test -s ${DATA}/restart_out1.b &&  date_out1=$(${USHrtofs}/rtofs_date4restart.sh ${DATA}/restart_out1.b)
+  test -s ${DATArestart}/restart_out.b && date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_out.b)
+  test -s ${DATArestart}/restart_out1.b && date_out1=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_out1.b)
+  if [[ ${date_out} -eq 0 && ${date_out1} -eq 0 ]]
+  then
+    $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit" \
+     "problem with incup  model run - no restart files created" -99
+  fi
   if [ ${date_out} -gt ${date_out1} ]
   then
-    rfile=${DATA}/restart_out.b
+    rfile=${DATArestart}/restart_out.b
     cdate=${date_out}
   else
-    rfile=${DATA}/restart_out1.b
+    rfile=${DATArestart}/restart_out1.b
     cdate=${date_out1}
   fi
   mode=n
@@ -177,9 +183,9 @@ then
   CICErestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart_cice
   cp -p $rfile ${COMOUT}/${HYCOMrestTplate}.b
   cp -p ${rfile%.b}.a ${COMOUT}/${HYCOMrestTplate}.a
-  cp -p cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} ${COMOUT}/${CICErestTplate}
+  cp -p ${DATArestart}/cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} ${COMOUT}/${CICErestTplate}
   #archv, archs, arche
-  for afile in $(ls ${DATA}/archv.????_???_00.a ${DATA}/archs.????_???_00.a ${DATA}/arche.????_???_00.a)
+  for afile in $(ls ${DATAarchive}/archv.????_???_00.a ${DATAarchive}/archs.????_???_00.a ${DATAarchive}/arche.????_???_00.a)
   do
     cfile=$(basename $afile)
     YYYY=$(echo $cfile | cut -c7-10)

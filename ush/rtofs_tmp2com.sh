@@ -41,7 +41,7 @@ fi
 #
 # Write archive files copying commands in CMD
 #
-for afile in $(ls ${DATA}/arch?.????_???_??.a)
+for afile in $(ls ${DATAarchive}/arch?.????_???_??.a)
 do
   cfile=$(basename $afile)
   YYYY=$(echo $cfile | cut -c7-10)
@@ -70,9 +70,9 @@ do
     fi
   fi
 done
-if compgen -G "${DATA}/cice_inst.????-??-??-?????.nc" > /dev/null
+if compgen -G "${DATAarchive}/cice_inst.????-??-??-?????.nc" > /dev/null
 then
-  for ifile in $(ls ${DATA}/cice_inst.????-??-??-?????.nc)
+  for ifile in $(ls ${DATAarchive}/cice_inst.????-??-??-?????.nc)
   do
     cfile=$(basename $ifile)
     YYYY=$(echo $cfile | cut -c11-14)
@@ -82,14 +82,12 @@ then
 #    HH=$(expr $SSSSS \/ 3600)
     HH=$(printf "%02d\n" $(expr $SSSSS \/ 3600))
     LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
-    echo "cp -p -f $cfile ${COMOUT}/${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.cice_inst.nc" >> cmdfile_tmp_c # dont work w/ hourly
+    echo "cp -p -f $ifile ${COMOUT}/${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.cice_inst.nc" >> cmdfile_tmp_c # dont work w/ hourly
   done
 fi
 #
 # This script no longer writes restart files to COMOUT.
-# The calling program determines whether the program
-#   - succeeded (and copies the restart files to COMOUT)
-#   - fails (and copies the restart files to GESOUT)
+# The calling program does that task
 #
 
 touch cmdfile_tmp_v cmdfile_tmp_c cmdfile_tmp_e cmdfile_tmp_s

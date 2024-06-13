@@ -28,8 +28,12 @@ export cycle=t${mycyc}z
 ##########################################################
  # obtain unique process id (pid) and make temp directories
 ##########################################################
-export DATA=${DATA:-${DATAROOT}/${jobid}}
-mkdir $DATA
+jobname=${PBS_JOBNAME}
+export DATA=${DATA:-${DATAROOT}/${jobname}_${model_ver}/${jobid}}
+export DATArestart=${DATAROOT}/${jobname}_${model_ver}/restart
+export DATAarchive=${DATAROOT}/${jobname}_${model_ver}/archive
+mkdir -p $DATA
+mkdir -p $DATArestart $DATAarchive
 cd $DATA
 
 ####################################
@@ -63,11 +67,6 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export GETGES_NWG=${GETGES_NWG:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/nwges}
-export GESIN=${GESIN:-${GETGES_NWG}/${RUN}.${PDY}}
-export GESOUT=${GESOUT:-${GETGES_NWG}/${RUN}.${PDY}}
-test -d $GESOUT || mkdir -p $GESOUT
-
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
@@ -88,12 +87,50 @@ export useslp=NO # YES or NO, use sea level pressure
 export DBL_THKDF=NO # YES or NO
 
 ##############################################
-# Check for restart
+# Check for viable restart files - remove any files that are not part of a complete set
 ##############################################
-restart_n=${RUN}_${modID}.t${cyc}z.n
-if compgen -G "$GESIN/${restart_n}*restart.a" > /dev/null && \
-   compgen -G "$GESIN/${restart_n}*restart.b" > /dev/null && \
-   compgen -G "$GESIN/${restart_n}*restart_cice" > /dev/null
+goodsizea=25472139264
+goodsizeb=31039
+goodsizei=8189748580
+for rtype in out out1
+do
+  if [[ -s ${DATArestart}/restart_${rtype}.a && ${DATArestart}/restart_${rtype}.b ]]
+  then # rtype exists
+    sizea=$(stat -c %s ${DATArestart}/restart_${rtype}.a)
+    sizeb=$(stat -c %s ${DATArestart}/restart_${rtype}.b)
+    if [[ $sizea -ne $goodsizea || $sizeb -ne $goodsizeb ]]
+    then # bad size so remove
+      echo "INFO - removing partial restart file ${DATArestart}/restart_${rtype}"
+      rm -f ${DATArestart}/restart_${rtype}.?
+    else # check on cice restart file
+      rdate=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_${rtype}.b)
+      YYYY=$(echo $rdate | cut -c1-4)
+      MM=$(echo $rdate | cut -c5-6)
+      DD=$(echo $rdate | cut -c7-8)
+      HH=$(echo $rdate | cut -c9-10)
+      SSSSS=$(printf "%05d\n" $(expr $HH \* 3600))
+      rice=$DATArestart/cice.restart.${YYYY}-${MM}-${DD}-${SSSSS}
+      if [ -s $rice ]
+      then # cice restart file exists
+        sizei=$(stat -c %s $rice)
+        if [ $sizei -ne $goodsizei ]
+        then
+          echo "INFO - removing partial restart file $rice and associated restart_out files"
+          rm -f $rice ${DATArestart}/restart_${rtype}.?
+        fi
+      else # cice file does not exist
+        echo "INFO - removing restart_out files for missing $rice file"
+        rm -f ${DATArestart}/restart_${rtype}.?
+      fi
+    fi
+  else # if only one of a or b exists, remove the other
+    rm -f ${DATArestart}/restart_${rtype}.?
+  fi
+done
+
+if compgen -G "$DATArestart/restart_*.a" > /dev/null && \
+   compgen -G "$DATArestart/restart_*.b" > /dev/null && \
+   compgen -G "$DATArestart/cice.restart.*" > /dev/null
 then
     export RESTART=YES
 else

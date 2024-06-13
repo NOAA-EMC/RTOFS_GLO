@@ -68,13 +68,6 @@ export DCOMINSST=${DCOMINSST:-${DCOMROOT}}
 export DCOMINHFR=${DCOMINHFR:-${DCOMROOT}}
 export TANK=${TANK:-${DCOMROOT}}
 
-#export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
-#export COMROOT=${COMROOT:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
-#export COMIN=${COMIN:-${COMROOT}/${RUN}.${PDY}}
-#export COMINm1=${COMINm1:-${COMROOT}/${RUN}.${PDYm1}}
-#export COMOUT=${COMOUT:-${COMROOT}/${RUN}.${PDY}}
-#export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
-
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}

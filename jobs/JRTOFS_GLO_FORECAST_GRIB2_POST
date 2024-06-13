@@ -84,9 +84,6 @@ export inputgrid=navy_0.08
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export GETGES_NWG=${GETGES_NWG:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/nwges}
-export GESIN=${GESIN:-${GETGES_NWG}/${RUN}.${PDY}}
-
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMOUTwmo=${COMOUTwmo:-${COMOUT}/wmo}

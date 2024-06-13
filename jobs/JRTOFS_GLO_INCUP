@@ -31,8 +31,16 @@ export cycle=t${mycyc}z
 ##########################################################
  # obtain unique process id (pid) and make temp directories
 ##########################################################
-export DATA=${DATA:-${DATAROOT}/${jobid}}
-mkdir $DATA
+jobname=${PBS_JOBNAME}
+export DATA=${DATA:-${DATAROOT}/${jobname}_${model_ver}/${jobid}}
+export DATArestart=${DATAROOT}/${jobname}_${model_ver}/restart
+export DATAarchive=${DATAROOT}/${jobname}_${model_ver}/archive
+mkdir -p $DATA
+mkdir -p $DATArestart $DATAarchive
+# remove archives since restart time
+rm -f $DATAarchive/*
+# remove restart directory since incup is too short to have multiple restart instances
+rm -f $DATArestart/*
 cd $DATA
 
 ####################################
@@ -66,10 +74,6 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-#export GETGES_NWG=${GETGES_NWG:-${GESROOT}}
-#export GESIN=${GESIN:-${GESROOTp3}/${envir}/${RUN}.${PDY}}
-
-#export COMINgdas=${COMINgdas:-$(compath.py ${envir}/com/gdas/${gdas_ver})}
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
@@ -110,4 +114,5 @@ cd $DATAROOT
 if [ "$KEEPDATA" != YES ]; then
   rm -rf $DATA
 fi
+
 date
