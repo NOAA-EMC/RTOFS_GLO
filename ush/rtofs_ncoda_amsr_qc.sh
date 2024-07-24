@@ -38,7 +38,7 @@ echo "previous date time group is " $prv_dtg
 echo " "
 echo "NCODA AMSR pre_QC"
 
-#   create list of ABI_G16 and ABI_G17 sst netCDF files to process
+#   create list of AMSR sst netCDF files to process
 cd $SST_DATA_DIR
 
 ymd=${prv_dtg:0:8}

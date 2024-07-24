@@ -1,0 +1,102 @@
+#!/bin/sh
+
+####################################
+# Ensure environment is defined.
+####################################
+set +x
+echo cyc is ${cyc:?} 
+echo envir is ${envir:?} 
+echo rtofs_glo_ver is ${rtofs_glo_ver:?}
+
+export PS4='$SECONDS + '
+date
+env
+set -xa
+
+#######################################
+# Specify NET and RUN Name and model ID
+#######################################
+export NET=rtofs
+export RUN=rtofs
+export modID=glo
+export HYCOM_EXPT=930
+
+export cycle=t${cyc}z
+
+##########################################################
+ # obtain unique process id (pid) and make temp directories
+##########################################################
+export DATA=${DATA:-${DATAROOT}/${jobid}}
+mkdir $DATA
+cd $DATA
+
+####################################
+# Determine Job Output Name on System
+####################################
+export pgmout="OUTPUT.$$"
+
+####################################
+# Specify Execution Areas
+####################################
+#export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
+export EXECrtofs=${HOMErtofs}/exec
+export PARMrtofs=${HOMErtofs}/parm
+export FIXrtofs=${HOMErtofs}/fix
+export USHrtofs=${HOMErtofs}/ush
+
+#############################
+# Set up the UTILITIES
+##############################
+export USHutil=${UTILROOT:?}/ush
+export EXECutil=${UTILROOT:?}/exec
+export utilexec=$EXECutil    # needed by some scripts in USHutil
+
+###########################################################
+# Run setpdy and initialize PDY variables
+# For any retrospecitve run, set the PDY in the ECF script
+###########################################################
+setpdy.sh
+. ./PDY
+
+##############################################
+# Define Input/Output/Restart directories
+##############################################
+export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
+export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+
+mkdir -m 775 -p $COMOUT
+test -d $COMOUT || mkdir -p $COMOUT
+
+###################
+# Define model grid
+###################
+export inputgrid=navy_0.08
+
+##################################################################
+# Run the config file to set up specific model variables if needed
+##################################################################
+. $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
+
+#################################################################
+#  Send a message indicating the start of the job
+#################################################################
+msg="JOB $job HAS BEGUN on $(hostname)"
+postmsg "$msg"
+
+####################
+# execute the script
+####################
+sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_ncoda_glbl_var_2dvar.sh
+
+#===================================================================
+
+cat $pgmout
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.ncoda_glbl_var_2dvar.$(basename $pgmout)
+
+msg="JOB $job HAS COMPLETED NORMALLY."
+postmsg "$msg"
+
+cd $DATAROOT
+
+date
