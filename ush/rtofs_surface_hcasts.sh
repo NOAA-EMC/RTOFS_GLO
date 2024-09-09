@@ -24,7 +24,7 @@ yyyymmdd=${PDY}
 /bin/rm -rf *.nc *.nc
 
 for fcast in n000 n003 n006 n009 n012 n015 n018 n021 n024; do
-  ln -sf  ${COMOUT}/rtofs_glo_2ds_${fcast}_prog.nc ${DATA_opc}/.
+  ln -sf  ${COMIN}/rtofs_glo_2ds_${fcast}_prog.nc ${DATA_opc}/.
   ${cdo_r} splitname rtofs_glo_2ds_${fcast}_prog.nc rtofs_glo_2ds_${fcast}_1hrly_
   err=$?; export err ; err_chk
 done

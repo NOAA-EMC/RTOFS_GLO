@@ -21,7 +21,7 @@ yyyymmdd=${PDY}
 
 for fcast in f072 f075 f078 f081 f084 f087 f090 f093 f096 f099 f102 f105 f108 f111 f114 f117 f120
 do
-  ln -sf ${COMOUT}/rtofs_glo_2ds_${fcast}_prog.nc ${DATA_opc}/.
+  ln -sf ${COMIN}/rtofs_glo_2ds_${fcast}_prog.nc ${DATA_opc}/.
   ${cdo_r} splitname rtofs_glo_2ds_${fcast}_prog.nc rtofs_glo_2ds_${fcast}_3hrly_
   err=$?; export err ; err_chk
 done

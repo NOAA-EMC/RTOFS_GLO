@@ -182,6 +182,8 @@ postmsg "$msg"
 cd $DATAROOT
 if [ "$KEEPDATA" != YES ]; then
   rm -rf $DATA
+  rm -rf $DATAarchive
+  rm -rf $DATArestart
 fi
 
 date
