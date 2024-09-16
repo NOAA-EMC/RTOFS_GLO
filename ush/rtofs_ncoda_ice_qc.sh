@@ -107,11 +107,11 @@ fi
 
 #   execute ncoda pre_qc for ICE netCDF files
 #SSMI
-$EXECrtofs/rtofs_ncoda_ncep_ice_nc ssmi $cut_dtg > ssmi_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_ncep_ice_nc ssmi $cut_dtg 24 > ssmi_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_ncep_ice_nc ssmi=",$err
 #AMSR
-$EXECrtofs/rtofs_ncoda_ncep_ice_nc amsr_ice $cut_dtg > amsr_ice_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_ncep_ice_nc amsr_ice $cut_dtg 24 > amsr_ice_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_ncep_ice_nc amsr_ice=",$err
 #--------------------------------------------------------------------------------------

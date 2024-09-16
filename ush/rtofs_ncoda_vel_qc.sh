@@ -90,7 +90,7 @@ done < hfr_files.${cut_dtg}_prelim
 echo timecheck hfr finish ncdump at $(date)
 
 #   execute ncoda pre_qc for HF Radar netCDF files
-$EXECrtofs/rtofs_ncoda_hf_radar_nc $cut_dtg > pout1
+$EXECrtofs/rtofs_ncoda_hf_radar_nc $cut_dtg 24 > pout1
 err=$?; export err ; err_chk
 echo " error from rtofs_hf_radar_nc=",$err
 
@@ -99,7 +99,7 @@ echo " "
 echo "NCODA Drifter pre_QC"
 
 #   execute ncoda pre_qc for BUFR drifter files
-$EXECrtofs/rtofs_ncoda_drft_decode $cut_dtg > pout2
+$EXECrtofs/rtofs_ncoda_drft_decode $cut_dtg 24 > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_drft_decode=",$err
 

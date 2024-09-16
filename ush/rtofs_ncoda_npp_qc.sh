@@ -87,7 +87,7 @@ if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
 fi
 
 #   execute ncoda pre_qc for NPP netCDF files
-$EXECrtofs/rtofs_ncoda_acspo_sst_nc npp $cut_dtg > npp_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_acspo_sst_nc npp $cut_dtg 24 > npp_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_acspo_sst_nc=",$err
 

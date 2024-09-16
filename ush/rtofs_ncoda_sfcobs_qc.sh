@@ -56,7 +56,7 @@ echo "NCODA SFCOBS pre_QC"
 cd $log_dir
 
 #   execute ncoda pre_qc for SFCOBS bufr files
-$EXECrtofs/rtofs_ncoda_bufr_decode sfc $cut_dtg > sfc_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_bufr_decode sfc $cut_dtg 24 > sfc_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_bufr_decode=",$err
 

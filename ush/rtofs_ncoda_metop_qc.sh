@@ -111,7 +111,7 @@ if [[ ! -f  acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
 fi
 
 #   execute ncoda pre_qc for METOP netCDF files
-$EXECrtofs/rtofs_ncoda_acspo_sst_nc metop $cut_dtg > metop_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_acspo_sst_nc metop $cut_dtg 24 > metop_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_acspo_sst_nc=",$err
 

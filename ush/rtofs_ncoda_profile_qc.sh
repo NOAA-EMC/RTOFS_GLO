@@ -39,7 +39,7 @@ echo "NCODA PROFILE pre_QC"
 cd $log_dir
 
 #   execute ncoda pre_qc for PROFILE bufr files
-$EXECrtofs/rtofs_ncoda_bufr_decode prof $cut_dtg > prof_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_bufr_decode prof $cut_dtg 24 > prof_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_bufr_decode=",$err
 

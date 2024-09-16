@@ -6,7 +6,7 @@ echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
-log_dir=$run_dir/logs/jpss_qc
+log_dir=$run_dir/logs/noaa_qc
 mkdir -p $log_dir
 
 cut_dtg=${PDYm1}00
@@ -50,6 +50,12 @@ do
    else
       echo "WARNING $cmd does not exist"
    fi
+   cmd="$ymd/sst/$ymd$k*L2P*VIIRS_N21*.nc"
+   if [ -s $cmd ] ; then
+      ls $cmd > $log_dir/n21_$k.$cut_dtg
+   else
+      echo "WARNING $cmd does not exist"
+   fi
 done
 
 ymd=${cut_dtg:0:8}
@@ -61,13 +67,19 @@ do
    else
       echo "WARNING $cmd does not exist"
    fi
+   cmd="$ymd/sst/$ymd$k*L2P*VIIRS_N21*.nc"
+   if [ -s $cmd ] ; then
+      ls $cmd > $log_dir/n21_$k.$cut_dtg
+   else
+      echo "WARNING $cmd does not exist"
+   fi
 done
 
 #   change to working directory
 cd $log_dir
-cat n20_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
+cat n20_*.$cut_dtg n21_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
 
-echo timecheck jpss start ncdump at $(date)
+echo timecheck noaa start ncdump at $(date)
 while read line
 do
   ncdump -k $SST_DATA_DIR/$line > /dev/null
@@ -79,7 +91,7 @@ do
      echo "WARNING - file $SST_DATA_DIR/$line and will not be processed."
   fi
 done < acspo_sst_files.${cut_dtg}_prelim
-echo timecheck jpss finish ncdump at $(date)
+echo timecheck noaa finish ncdump at $(date)
 
 if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
    echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No VIIRS JPSS files to process."
@@ -87,7 +99,7 @@ if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
 fi
 
 #   execute ncoda pre_qc for JPSS netCDF files
-$EXECrtofs/rtofs_ncoda_acspo_sst_nc jpss $cut_dtg > jpss_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_acspo_sst_nc noaa $cut_dtg 24 > noaa_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_acspo_sst_nc=",$err
 
@@ -138,16 +150,16 @@ cat << eof1 > prednl
 eof1
 
 #   clear symbolic links
-rm -f $OCN_DATA_DIR/incoming/jpss.a
-rm -f $OCN_DATA_DIR/incoming/jpss.b
+rm -f $OCN_DATA_DIR/incoming/noaa.a
+rm -f $OCN_DATA_DIR/incoming/noaa.b
 
 #   execute ncoda qc
-ln -s $OCN_DATA_DIR/incoming/jpss.a.$cut_dtg $OCN_DATA_DIR/incoming/jpss.a
-ln -s $OCN_DATA_DIR/incoming/jpss.b.$cut_dtg $OCN_DATA_DIR/incoming/jpss.b
-$EXECrtofs/rtofs_ncoda_qc $cut_dtg jpss > jpss_qc.$cut_dtg.out
+ln -s $OCN_DATA_DIR/incoming/noaa.a.$cut_dtg $OCN_DATA_DIR/incoming/noaa.a
+ln -s $OCN_DATA_DIR/incoming/noaa.b.$cut_dtg $OCN_DATA_DIR/incoming/noaa.b
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg noaa > noaa_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-[[ -f fort.44 ]] && mv fort.44 jpss_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 noaa_qc.$cut_dtg.rej
 
 #   cleanup
 

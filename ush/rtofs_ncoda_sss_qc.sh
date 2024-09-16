@@ -104,7 +104,7 @@ if [[ ! -f smos_sss_files.$cut_dtg || ! -s smos_sss_files.$cut_dtg ]] && [[ ! -f
    echo "SSS.obs_control file will not be updated"
 fi
 #   execute ncoda pre_qc for SSS netCDF files
-$EXECrtofs/rtofs_ncoda_sat_sss_nc $cut_dtg > sss_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_sat_sss_nc $cut_dtg 24 > sss_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_sat_sss_nc=",$err
 
