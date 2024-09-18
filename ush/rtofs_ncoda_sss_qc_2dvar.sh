@@ -10,7 +10,8 @@ log_dir=$run_dir/logs/sss_qc
 mkdir -p $log_dir
 
 cut_dtg=${PDY}00
-ddtg=${PDY}${cyc}
+cut_dtg=${PDYm1}00
+ddtg=${PDYm1}${cyc}
 upd=6
 
 #   set QC environmental variables

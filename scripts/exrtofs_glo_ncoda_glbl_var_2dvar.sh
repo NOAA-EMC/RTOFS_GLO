@@ -42,15 +42,15 @@ echo timecheck RTOFS_GLO_GLBL start get at $(date)
 export previous=$(${NDATE} -6 ${PDY}${cyc})
 export prevday=$(echo $previous | cut -c1-8)
 export prevcyc=$(echo $previous | cut -c9-10)
-export COMprev=$COMROOT/$RUN.$prevday/2dvar
+export COMprev=$COMROOTrtofs/$RUN.$prevday/2dvar
 
 mkdir -p $DATA/restart
 mkdir -p $DATA/work
 rm -f cmdfile.cpin
-if compgen -G "$COMprev/glbl_var$cyc/restart/*" > /dev/null
+if compgen -G "$COMprev/glbl_var$prevcyc/restart/*" > /dev/null
 then
-  for gv in $(ls $COMprev/glbl_var$cyc/restart/); do
-    echo "cp -p -f $COMprev/glbl_var$cyc/restart/$gv $DATA/restart" >> cmdfile.cpin
+  for gv in $(ls $COMprev/glbl_var$prevcyc/restart/); do
+    echo "cp -p -f $COMprev/glbl_var$prevcyc/restart/$gv $DATA/restart" >> cmdfile.cpin
   done
   chmod +x cmdfile.cpin
   mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin
@@ -61,14 +61,28 @@ else
   echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/glbl.coldstart.email
   echo "This is an abnormal event."                                            >> $DATA/glbl.coldstart.email
   echo "The following directory is empty:"                                     >> $DATA/glbl.coldstart.email
-  echo "$COMprev/glbl_var$cyc/restart"                                       >> $DATA/glbl.coldstart.email
+  echo "$COMprev/glbl_var$prevcyc/restart"                                     >> $DATA/glbl.coldstart.email
   echo "This job will continue to run as a cold-start."                        >> $DATA/glbl.coldstart.email
   cat $DATA/glbl.coldstart.email | mail.py -s "WARNING - Job $job cold started"
 fi
 
-ln -sf $COMprev/ocnqc$cyc $DATA/ocnqc
+# 2. build namelists and .
 
-# 2. build namelists
+ddtg=${PDY}${cyc}      # ncoda hycom_var files do not exist
+#ddtg=${PDYm1}${cyc}
+
+log_dir=$DATA/logs
+mkdir -p $log_dir
+
+ln -sf $COMIN/2dvar/ocnqc$cyc $DATA/ocnqc
+
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a ${DATA}/regional.grid.a
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b ${DATA}/regional.grid.b
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
+ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
+#ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.a      iso.sigma.a
+#ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.b      iso.sigma.b
+
 echo timecheck RTOFS_GLO_GLBL start setup at $(date)
 
 rm -f odsetnl
@@ -79,8 +93,8 @@ cat << eof1 > odsetnl
  &dsetnl
   dsoclim = '$FIXrtofs/codaclim'
   dsogdem = '$FIXrtofs/gdem'
-  dsomrff = '/scratch2/NCEPDEV/marine/Jim.Cummings/rtofs_da/ncoda_dev/restart'
-  dsomfix = '$FIXrtofs'
+  dsomrff = '$COMROOTrtofs'
+  dsomfix = '$DATA'
   dsorff  = '$DATA/restart'
   dsoudat = '$DATA/ocnqc'
   dsowork = '$DATA/work'
@@ -107,6 +121,7 @@ cat << eof3 > oanl
   cluster(6)  = 1.,
   debug(4)    = .true.,
   dh_flow     = 'SST',
+  fgat_rec    =  8, 16, 17, 13, 14, 1,
   global      = .true.,
   hafs        = .true.,
   ice_asm     = .false.,
@@ -126,7 +141,9 @@ cat << eof3 > oanl
   rscl_cap    = 150.,
   ssh_asm     = .false.,
   sss_asm     = .true.,
+  sss_time    = 'synt',
   sst_asm     = .true.,
+  sst_time    = 'synt',
   upd_cyc     = 6,
   vscl(1)     = 16.,
   vscl(2)     = 4.,
@@ -137,10 +154,6 @@ cat << eof3 > oanl
 eof3
 
 # 3 run global var (NCODA 2D)
-
-ddtg=${PDYm1}00
-log_dir=$DATA/logs
-mkdir -p $log_dir
 
 #   execute ncoda variational programs
 #NCODA setup
@@ -170,19 +183,6 @@ echo " error from rtofs_ncoda_post=",$err
 [[ -f fort.40 ]] && mv fort.40 $log_dir/glbl_var.$ddtg.sus
 [[ -f fort.67 ]] && mv fort.67 $log_dir/glbl_var.$ddtg.obs
 [[ -f fort.68 ]] && mv fort.68 $log_dir/glbl_var.$ddtg.grd
-
-#   create graphics
-DoGraphics=NO
-if [ $DoGraphics = YES ] ; then
-  echo timecheck RTOFS_GLO_GLBL start ncoda_map at $(date)
-  export OCN_OUTPUT_DIR=$DATA/restart
-  export OCN_CLIM_DIR=$FIXrtofs/codaclim
-  #NCODA map
-  $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
-  err=$?; export err ; err_chk
-  echo " error from rtofs_ncoda_map=",$err
-  mv gmeta $log_dir/glbl_var.$ddtg.gmeta
-fi
 
 #
 #   combine work files

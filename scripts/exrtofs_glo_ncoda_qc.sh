@@ -100,7 +100,7 @@ chmod +x runiceqc.sh
 
 # combine surface obs and profiles into one stream
 echo "#!/bin/ksh" > runsurf.sh
-echo "$USHrtofs/rtofs_ncoda_prep_sfc_sfcr_prof.sh $PDYm1" >> runsurf.sh
+echo "$USHrtofs/rtofs_ncoda_prep_sfc_sfcr_prof.sh" >> runsurf.sh
 echo "$USHrtofs/rtofs_ncoda_profile_qc.sh" >> runsurf.sh
 echo "$USHrtofs/rtofs_ncoda_sfcobs_qc.sh" >> runsurf.sh
 echo "$USHrtofs/rtofs_ncoda_sss_qc.sh" >> runsurf.sh

@@ -9,13 +9,6 @@
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -x
 
-if [ $# -ne 1 ]
-then
-  echo "USAGE: $0 <date>"
-  exit 2
-fi
-thisday=$1
-
 DIROUT=$DATA/dump
 DIRTMP=$DATA/tmp
 mkdir -p $DIROUT
@@ -23,8 +16,8 @@ mkdir -p $DIRTMP
 export TMPDIR=$DIRTMP
 cd $DIRTMP
 
-#today=${PDY}00
-run_dtg=${1}00   # yowza... may need to put in hours in the calling sequence
+today=${PDY}00
+run_dtg=${PDYm1}00
 
 export HHback=132  # monthly tanks look back (in hours)
 export HHbacks=48  # surface lookup back (in hours)

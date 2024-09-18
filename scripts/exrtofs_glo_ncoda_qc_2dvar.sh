@@ -23,6 +23,7 @@ set -xa
 #    rtofs_ncoda_himawari_qc.sh
 #    rtofs_ncoda_jpss_qc.sh
 #    rtofs_ncoda_metop_qc.sh 
+#    rtofs_ncoda_msg_qc.sh 
 #    rtofs_ncoda_npp_qc.sh 
 #    rtofs_ncodaqc2com.sh 
 #                                                                             #
@@ -42,55 +43,9 @@ postmsg "$msg"
 # 1.a Populate DATA/ocnqc with QC files from COMprev/2dvar
 echo timecheck RTOFS_GLO_NCODA_QC start get at $(date)
 
-if [ $cyc -eq 00 ]
-then
-   export COMprev=$COMINm1/2dvar
-else
-   export COMprev=$COMIN/2dvar
-fi
-
-export prevcyc=$(${NDATE} -6 ${PDY}${cyc} | cut -c9-10)
-
-mkdir -p $DATA/ocnqc
-mkdir -p $DATA/ocnqc/incoming
-
-# if there is no qc data, then skip this step and cold-start QC
-if test -e $COMprev/ocnqc$prevcyc
-then
-  cp -p -f $$COMprev/ocnqc$prevcyc/incoming/*control $DATA/ocnqc/incoming
-  rm -f cmdfile.cpin
-  for dtyp in $(ls $COMprev/ocnqc$prevcyc); do
-    mkdir -p $DATA/ocnqc/$dtyp
-    if compgen -G "$COMprev/ocnqc$prevcyc/$dtyp/*" > /dev/null
-    then
-      echo "cp -p -f $COMprev/ocnqc$prevcyc/$dtyp/* $DATA/ocnqc/$dtyp" >> cmdfile.cpin
-    fi
-  done
-
-  chmod +x cmdfile.cpin
-  mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin > cpin.out
-  err=$? ; export err ; err_chk
-  date
-else
-  echo "WARNING - Cold starting $jobid"
-  echo "WARNING - Cold starting $jobid"
-  echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/ocnqc.coldstart.email
-  echo "This is an abnormal event."                                            >> $DATA/ocnqc.coldstart.email
-  echo "The following directories are empty:"                                  >> $DATA/ocnqc.coldstart.email
-  echo "$COMprev/ocnqc$prevcyc/*"                                              >> $DATA/ocnqc.coldstart.email
-  echo "This job will continue to run as a cold-start."                        >> $DATA/ocnqc.coldstart.email
-  cat $DATA/ocnqc.coldstart.email | mail.py -s "WARNING - Job $job cold started"
-fi
-
 # 1.b link in glbl_var restart files from COMprev
-if test -e $COMprev/glbl_var$prevcyc
-then
-   ln -sf $COMprev/glbl_var$prevcyc $DATA/glbl_var
-else
-   echo "WARNING - $job cannot find glbl_var - will run without it" 
-fi
 
-# 1.c link in topo files
+# 1. link in topo files
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a  ${DATA}/regional.grid.a
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b  ${DATA}/regional.grid.b
 ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
@@ -107,7 +62,7 @@ echo timecheck RTOFS_GLO_NCODA_QC start qc at $(date)
 
 # combine surface obs and profiles into one stream
 echo "#!/bin/ksh" > runsurf.sh
-echo "$USHrtofs/rtofs_ncoda_prep_sfc_sfcr_prof.sh $PDY" >> runsurf.sh
+echo "$USHrtofs/rtofs_ncoda_prep_sfc_sfcr_prof_2dvar.sh $PDY$cyc" >> runsurf.sh
 #####################################echo "$USHrtofs/rtofs_ncoda_profile_qc.sh" >> runsurf.sh
 echo "$USHrtofs/rtofs_ncoda_sfcobs_qc_2dvar.sh" >> runsurf.sh
 echo "$USHrtofs/rtofs_ncoda_sss_qc_2dvar.sh" >> runsurf.sh
@@ -127,6 +82,7 @@ echo "$USHrtofs/rtofs_ncoda_metop_qc_2dvar.sh > metop.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_himawari_qc_2dvar.sh > himawari.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_goes_qc_2dvar.sh > goes.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_amsr_qc_2dvar.sh > amsr.qc.out 2>&1" >> cmdfile.qc
+echo "$USHrtofs/rtofs_ncoda_msg_qc_2dvar.sh > msg.qc.out 2>&1" >> cmdfile.qc
 # sss and vel moved to runsurf
 #echo "$USHrtofs/rtofs_ncoda_sss_qc.sh > sss.qc.out 2>&1" >> cmdfile.qc
 #echo "$USHrtofs/rtofs_ncoda_vel_qc.sh > vel.qc.out 2>&1" >> cmdfile.qc
