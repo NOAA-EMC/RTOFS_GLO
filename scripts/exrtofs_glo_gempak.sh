@@ -48,7 +48,7 @@ for last in 24 48 72 ; do
 > mpirun.dat
     for stepnum in $(seq -w $((last-23)) $last) # 01..24, 25..48, 49..72
     do
-	echo "./gempak.sh $last $stepnum $instr $outstr $COMOUTgempak > $instr.$stepnum.log" >> mpirun.dat
+	echo "./gempak.sh $last $stepnum $instr $outstr $COMOUTgempak > $instr.$stepnum.log 2>&1" >> mpirun.dat
     done
     chmod 775 mpirun.dat
     #mpirun cfp mpirun.dat >> mpirun.log
@@ -69,8 +69,10 @@ gemfile=grtofs_${outstr}_${PDY}00f000
 # JY $WGRIB2 rtofs_glo.t00z.n048_${instr}_std.grb2 -for 162:166 -grib grtofs_${instr}_${PDY}00f000.grb2
 if [ ${instr} = 'alaska' -o ${instr} = 'bering' ]; then
 $WGRIB2 rtofs_glo.t00z.n024_${instr}_std.grb2 -for 208:212 -grib grtofs_${instr}_${PDY}00f000.grb2
+export err=$?; err_chk
 else
 $WGRIB2 rtofs_glo.t00z.n024_${instr}_std.grb2 -for 162:166 -grib grtofs_${instr}_${PDY}00f000.grb2
+export err=$?; err_chk
 fi
 
 
