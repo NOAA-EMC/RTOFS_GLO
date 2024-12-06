@@ -1030,8 +1030,8 @@ c ---             below the mixed layer and isotop
 c
 c ---           preserve thin layer when thick-thin-thick
 c
-                if     (k.gt.2 .and.
-     &                  th3d(  ih,jh,k-2).lt.
+                if     (k.gt.2) then
+                if     (th3d(  ih,jh,k-2).lt.
      &                  theta3(ih,jh,k-1)-epsil .and.
      &                  th3d(  ih,jh,k)  .gt.
      &                  theta3(ih,jh,k-1)+epsil      ) then
@@ -1079,6 +1079,7 @@ c
                     endif
                   endif !thick-thin-thick
                 endif !potentially isopycnal
+                endif !k.gt.2
 c
 *                if     (ih.eq.itest .and. jh.eq.jtest) then
 *                  write(lp,*) 'k,l,po = ',

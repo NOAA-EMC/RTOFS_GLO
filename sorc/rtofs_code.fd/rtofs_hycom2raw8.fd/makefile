@@ -15,7 +15,7 @@ CPPFLAGS=
 FLIBS=-shared-intel
 CCFLAGS= -O -mcmodel=medium -fPIC -c 
 FCFLAGS= -g -O3 -fp-model source -convert big_endian -assume byterecl -mcmodel=medium -fPIC -c 
-DEBUGFC= -g -O0 -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -nogen-interfaces -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv
+DEBUGFC= -g -O0 -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -nogen-interfaces -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv -convert big_endian
 LDFLAGS= -g -O3 -fp-model source -convert big_endian -assume byterecl -mcmodel=medium -fPIC  
 BINDIR= ../../../exec
 CMD   =		rtofs_hycom2raw8

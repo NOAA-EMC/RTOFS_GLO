@@ -850,7 +850,7 @@ c
       call mem_stat_add( 8*(idm+2*nbdy)*(jdm+2*nbdy) )
 #endif
               corio = r_init
-             potvor = r_init
+             potvor = 0.0
              srfhgt = r_init
              steric = r_init
              sshgmn = r_init
@@ -920,8 +920,8 @@ c
      &        vflux3(1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy) )
       call mem_stat_add( 16*(idm+2*nbdy)*(jdm+2*nbdy) )
 #endif
-              defor1 = r_init
-              defor2 = r_init
+              defor1 = 0.0
+              defor2 = 0.0
                ubrhs = r_init
                vbrhs = r_init
                utotm = r_init
@@ -1132,8 +1132,8 @@ c
               flxice = r_init
               fswice = r_init
               sflice = r_init
-                si_c = r_init
-                si_h = r_init
+                si_c = 0.0 !r_init
+                si_h = 0.0 !r_init
                 si_t = r_init
                 si_u = r_init
                 si_v = r_init
@@ -1223,20 +1223,20 @@ c
      &         rivers(1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy,4) )
       call mem_stat_add( 2*(idm+2*nbdy)*(jdm+2*nbdy)*4 )
 #endif
-                 taux = r_init
-                 tauy = r_init
+                 taux = 0.
+                 tauy = 0.
                wndspd = r_init
                ustara = r_init
-               mslprs = r_init
-               airtmp = r_init
-               vapmix = r_init
-               precip = r_init
-               radflx = r_init
-                swflx = r_init
-               surtmp = r_init
-               seatmp = r_init
-                akpar = r_init
-               rivers = r_init
+               mslprs = 0.
+               airtmp = 0.
+               vapmix = 0.
+               precip = 0.
+               radflx = 0.
+                swflx = 0.
+               surtmp = 0.
+               seatmp = 0.
+                akpar = 0.
+               rivers = 0.
 c
 #if defined(RELO)
       allocate(
@@ -1245,9 +1245,9 @@ c
      &     offlux(1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy) )
       call mem_stat_add( 3*(idm+2*nbdy)*(jdm+2*nbdy) )
 #endif
-           offlux = r_init
-           oftaux = r_init
-           oftauy = r_init
+           offlux = 0.
+           oftaux = 0.
+           oftauy = 0.
 c
 #if defined(RELO)
       allocate(
