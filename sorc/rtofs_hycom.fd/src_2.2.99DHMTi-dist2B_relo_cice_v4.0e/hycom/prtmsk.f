@@ -42,12 +42,12 @@ c
       do 1 n=1,ii/ncols+1
       i1=ncols*(n-1)+1
       i2=min0(ncols*n,ii)
-      if (i1.gt.i2) go to 1
+      if (i1.gt.i2) return
       write (lp,'(/'' Sec.'',i2,'' (cols'',i4,'' -'',i4,'') -- '',a)')
      .   n,i1,i2,title
 ccc      if (i2.lt.i1+5) then
 ccc      write (lp,'('' (Not printed. Too few columns. Save paper.)'')')
-ccc      go to 1
+ccc      return
 ccc      end if
       do 2 j=jj,1,-1
       do 3 i=i1,i2

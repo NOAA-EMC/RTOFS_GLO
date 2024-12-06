@@ -740,7 +740,7 @@
                else             ! yr = fyear_init, no prior data exists
                   if (maxrec > 12) then ! extrapolate from first record
                      if (ixx == 1) n2 = ixx
-                  else          ! go to end of fyear_final
+                  else          ! jump to end of fyear_final
                      call file_year (data_file, fyear_final)
                   endif
                endif            ! yr > fyear_init
@@ -776,7 +776,7 @@
                else             ! yr = fyear_final, no more data exists
                   if (maxrec > 12) then ! extrapolate from ixx
                      n4 = ixx
-                  else          ! go to beginning of fyear_init
+                  else          ! jump to beginning of fyear_init
                      if (my_task == master_task) close(nu_forcing)
                      call file_year (data_file, fyear_init)
 
@@ -907,7 +907,7 @@
                else             ! yr = fyear_init, no prior data exists
                   if (maxrec > 12) then ! extrapolate from first record
                      if (ixx == 1) n2 = ixx
-                  else          ! go to end of fyear_final
+                  else          ! jump to end of fyear_final
                      call file_year (data_file, fyear_final)
                   endif
                endif            ! yr > fyear_init
@@ -947,7 +947,7 @@
                else             ! yr = fyear_final, no more data exists
                   if (maxrec > 12) then ! extrapolate from ixx
                      n4 = ixx
-                  else          ! go to beginning of fyear_init
+                  else          ! jump to beginning of fyear_init
                      call ice_close_nc(fid)
                      call file_year (data_file, fyear_init)
                      call ice_open_nc (data_file, fid)
