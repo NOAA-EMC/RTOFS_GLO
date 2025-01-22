@@ -54,13 +54,14 @@ MKDIR         = /bin/mkdir -p
 	$(FC) -c $(FFLAGS) $<
 	ar $(ARFLAGS) $@ $*.o
 
-$(LIB):	cleanall $(LIB)(mod_dump.o  mod_hytime.o mod_hycomio1.o mod_grib2io.o)
-#-- $(LIB):	cleanall $(LIB)(flush.o mod_dump.o  mod_hytime.o mod_hycomio1.o mod_grib2io.o)
+all: $(LIB) install
 
-cleanall:
+$(LIB):	$(LIB)(mod_dump.o  mod_hytime.o mod_hycomio1.o mod_grib2io.o)
+
+clean:
 	-$(RM) *.F.f *.mod *.o $(LIB) core $(MODDIR)/*.mod
 
-install: cleanall $(LIB)
+install:
 	$(TESTD) $(MODDIR) || $(MKDIR) $(MODDIR) ; \
 	$(MV) mod_dump.mod mod_grib2io.mod mod_hycomio1.mod mod_hytime.mod $(MODDIR)
 	-$(RM) *.o

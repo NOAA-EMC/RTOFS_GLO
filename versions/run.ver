@@ -2,6 +2,7 @@
 export rtofs_glo_ver=v2.5.0
 export model_ver=${rtofs_glo_ver}
 export version=${rtofs_glo_ver}
+export envvar_ver=1.0
 
 export gfs_ver=v16.3
 

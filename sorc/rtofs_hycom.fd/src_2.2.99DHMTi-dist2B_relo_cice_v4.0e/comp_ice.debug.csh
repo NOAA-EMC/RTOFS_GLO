@@ -33,7 +33,6 @@ setenv SITE NCEP.wcoss2SMSSE
 ### SYSTEM_USERDIR is predefined on ORNL machines
 #setenv SYSTEM_USERDIR /scr/$user
 #setenv SYSTEM_USERDIR /work/$user
-setenv SYSTEM_USERDIR /gpfs/dell2/emc/modeling/noscrub/$LOGNAME/tmp
 
 ### Grid resolution
 # GLBb0.08 
