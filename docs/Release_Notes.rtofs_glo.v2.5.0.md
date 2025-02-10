@@ -473,7 +473,7 @@ PRE-IMPLEMENTATION TESTING REQUIREMENTS
 ---------------------------------------
 
 * Which production jobs should be tested as part of this implementation?
-  * The entire RTOFS v2.5.0 package needs to be installed and tested on WCOSS-2
+  * The entire RTOFS V2.5.0 package needs to be installed and tested on WCOSS-2
 * Does this change require a 30-day evaluation?
   * Yes
 
@@ -491,7 +491,9 @@ All dcom data is data of opportunity.
 DOCUMENTATION
 -------------
 
-* RTOFS V2.4.0 Implementation Kick-off Meeting Slides: https://docs.google.com/presentation/d/1axYq2Vr-FMt5wBx7pIBt5XAHZA-1MRt8T7v5H0cS6RA/edit#slide=id.g29ffeee96c9_0_1006
+* [RTOFS V2.5.0 Implementation Kickoff Meeting Slides](https://docs.google.com/presentation/d/1WrK7eu5utiRtJS38dyW7xMIdMfWx7aUkvLk5Wkgs33g/edit?usp=sharing)
+
+* [RTOFS V2.5.0 Science Brief](https://docs.google.com/presentation/d/1Xry8HUAs9HZBgETOdEHFq-6LxFlDcDGH/edit?usp=sharing&ouid=115027874917169300751&rtpof=true&sd=true)
 
 PREPARED BY
 -----------
