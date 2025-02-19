@@ -1,4 +1,25 @@
 #!/bin/ksh
+#
+# Program Name: rtofs_ncoda_sfcobs_qc.sh
+#   
+# Abstract: run NCODA pre_QC and NCODA QC for SFCOBS
+#
+# Usage: rtofs_ncoda_sfcobs_qc.sh
+#
+# Executables called:
+# rtofs_ncoda_bufr_decode
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# $DATA/dump/*.ibm
+#
+# Output Files:
+# logs/sfc_qc/sfc_preqc.yyyymmddhh.out
+# logs/sfc_qc/sfc_qc.yyyymmddhh.out
+# logs/sfc_qc/sfc_qc.yyyymmddhh.rej
+# ocnqc/sfc/yyyymmddhh.sfc
+#
+
 
 #   this script runs NCODA pre_QC and NCODA QC for SFCOBS
 

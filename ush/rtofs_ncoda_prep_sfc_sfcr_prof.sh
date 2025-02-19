@@ -1,4 +1,21 @@
 #!/bin/sh
+#
+# Program Name: rtofs_ncoda_prep_sfc_sfcr_prof.sh
+#
+# Abstract:
+#   Get sub surface data from bufr tanks 
+#
+# Usage: rtofs_ncoda_prep_sfc_sfcr_prof.sh
+#
+# Input Files: bufr data types for surface, profiles, and monthly data
+#   shipsu ships shipub shipsb
+#   mbuoyb dbuoyb
+#   subpfl bathy tesac xbtctd
+#
+# Output Files:
+# $DATA/dump/dtyp.yyyymmdd
+#
+
 #NOTE:############################################################################
 ##  This script gets the sub surface data from the bufr tank and then
 ##  writes out dump text files

@@ -1,6 +1,30 @@
 #!/bin/ksh
-
-#   this script runs NCODA pre_QC and NCODA QC for ICE
+#
+# Program Name: rtofs_ncoda_ice_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for ICE products
+#
+# Usage: rtofs_ncoda_ice_qc.sh
+#
+# Executables called:
+# rtofs_dtg
+# rtofs_ncoda_ncep_ice_nc
+# rtofs_ncoda_qc
+#
+# Input Files:
+# ssmi in $DATA/ice_nc/l2out.f285.51.yyyymmddhh.nc
+# amsr in dcom/yyyymmdd/seaice/pda/AMSR2-SEAICE*yyyymmdd*.nc
+#
+# Output Files:
+# logs/ice_qc/amsr_preqc.yyyymmddhh.out
+# logs/ice_qc/amsr_qc.yyyymmddhh.out
+# logs/ice_qc/amsr_qc.yyyymmddhh.rej
+# logs/ice_qc/ssmi_preqc.yyyymmddhh.out
+# logs/ice_qc/ssmi_qc.yyyymmddhh.out
+# logs/ice_qc/ssmi_qc.yyyymmddhh.rej
+# ocnqc/ice/yyyymmddhh.amsr
+# ocnqc/ice/yyyymmddhh.ssmi
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
@@ -182,8 +206,6 @@ $EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_ice > amsr_ice_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc amsr_ice=",$err
 [[ -f fort.44 ]] && mv fort.44 amsr_ice_qc.$cut_dtg.rej
-
-#   cleanup
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

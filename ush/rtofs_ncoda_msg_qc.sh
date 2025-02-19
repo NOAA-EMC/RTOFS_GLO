@@ -1,6 +1,26 @@
 #!/bin/ksh
-
-#   this script runs NCODA pre_QC and NCODA QC for MSG
+#
+# Program Name: rtofs_ncoda_msg_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for MSG SST products
+#
+# Usage: rtofs_ncoda_msg_qc.sh
+#
+# Executables called:
+# rtofs_dtg
+# rtofs_ncoda_acspo_sst_nc
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# yyyymmdd/sst/yyyymmdd*L2P*MSG02*.nc (from 20220601)
+# yyyymmdd/sst/yyyymmdd*L2P*MSG03*.nc (from 20230321)
+#
+# Output Files:
+# logs/msg_qc/msg_preqc.yyyymmddhh.out
+# logs/msg_qc/msg_qc.yyyymmddhh.out
+# logs/msg_qc/msg_qc.yyyymmddhh.rej
+# ocnqc/msg/yyyymmddhh.msg
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
@@ -160,8 +180,6 @@ $EXECrtofs/rtofs_ncoda_qc $cut_dtg msg > msg_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
 [[ -f fort.44 ]] && mv fort.44 msg_qc.$cut_dtg.rej
-
-#   cleanup
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

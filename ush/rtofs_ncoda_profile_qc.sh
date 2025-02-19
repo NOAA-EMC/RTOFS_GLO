@@ -1,6 +1,23 @@
 #!/bin/ksh
-
-#   this script runs NCODA pre_QC and NCODA QC for PROFILEs
+#
+# Program Name: rtofs_ncoda_profile_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for PROFILES
+#
+# Usage: rtofs_ncoda_profile_qc.sh
+#
+# Executables called:
+# rtofs_ncoda_bufr_decode
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# $DATA/dump/*.ibm
+#
+# Output Files:
+# logs/profile_qc/prof_preqc.yyyymmddhh.out
+# logs/profile_qc/prof_qc.yyyymmddhh.out
+# ocnqc/profile/yyyymmddhh.profile
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa

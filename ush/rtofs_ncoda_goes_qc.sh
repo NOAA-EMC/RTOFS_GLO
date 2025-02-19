@@ -1,4 +1,27 @@
 #!/bin/ksh
+#
+# Program Name: rtofs_ncoda_goes_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for GOES SST products
+#
+# Usage: rtofs_ncoda_goes_qc.sh
+#
+# Executables called:
+# rtofs_dtg
+# rtofs_ncoda_acspo_sst_nc
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# yyyymmdd/sst/yyyymmdd*L2P*ABI_G16*.nc
+# yyyymmdd/sst/yyyymmdd*L2P*ABI_G17*.nc (to 20230110)
+# yyyymmdd/sst/yyyymmdd*L2P*ABI_G18*.nc (from 20220612)
+#
+# Output Files:
+# logs/goes_qc/goes_preqc.yyyymmddhh.out
+# logs/goes_qc/goes_qc.yyyymmddhh.out
+# logs/goes_qc/goes_qc.yyyymmddhh.rej
+# ocnqc/goes/yyyymmddhh.goes
+#
 
 #   this script runs NCODA pre_QC and NCODA QC for GOES
 
@@ -38,7 +61,7 @@ echo "previous date time group is " $prv_dtg
 echo " "
 echo "NCODA GOES pre_QC"
 
-#   create list of ABI_G16 and ABI_G18 sst netCDF files to process
+#   create list of ABI_G16, ABI_G17 and ABI_G18 sst netCDF files to process
 cd $SST_DATA_DIR
 
 ymd=${prv_dtg:0:8}
@@ -49,6 +72,10 @@ do
       ls $cmd > $log_dir/g16_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
+   fi
+   cmd="$ymd/sst/$ymd$k*L2P*ABI_G17*.nc"
+   if [ -s $cmd ] ; then
+      ls $cmd > $log_dir/g17_$k.$cut_dtg
    fi
    cmd="$ymd/sst/$ymd$k*L2P*ABI_G18*.nc"
    if [ -s $cmd ] ; then
@@ -67,6 +94,10 @@ do
    else
       echo "WARNING $cmd does not exist"
    fi
+   cmd="$ymd/sst/$ymd$k*L2P*ABI_G17*.nc"
+   if [ -s $cmd ] ; then
+      ls $cmd > $log_dir/g17_$k.$cut_dtg
+   fi
    cmd="$ymd/sst/$ymd$k*L2P*ABI_G18*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/g18_$k.$cut_dtg
@@ -77,7 +108,7 @@ done
 
 #   change to working directory
 cd $log_dir
-cat g16_*.$cut_dtg g18_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
+cat g16_*.$cut_dtg g17_*.$cut_dtg g18_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
 
 echo timecheck goes start ncdump at $(date)
 while read line
@@ -160,10 +191,6 @@ $EXECrtofs/rtofs_ncoda_qc $cut_dtg goes > goes_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
 [[ -f fort.44 ]] && mv fort.44 goes_qc.$cut_dtg.rej
-
-#   cleanup
-#rm -f g16_*.*
-#rm -f g17_*.*
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

@@ -1,6 +1,24 @@
 #!/bin/sh
-
-#   this script runs NCODA pre_QC and NCODA QC for ADT SSH
+#
+# Program Name: rtofs_ncoda_ssh_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for ADT SSH products
+#
+# Usage: rtofs_ncoda_ssh_qc.sh
+#
+# Executables called:
+# rtofs_ncoda_acspo_sst_nc
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# yyyymmdd/wgrdbul/adt/rads_adt_ncoda_*.nc
+#
+# Output Files:
+# logs/ssh_qc/ssh_preqc.yyyymmddhh.out
+# logs/ssh_qc/ssh_qc.yyyymmddhh.out
+# logs/ssh_qc/ssh_qc.yyyymmddhh.rej
+# ocnqc/ssh/yyyymmddhh.goes
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa

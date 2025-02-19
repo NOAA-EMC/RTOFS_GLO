@@ -1,7 +1,27 @@
 #!/bin/sh
-
-#   this script runs NCODA pre_QC and NCODA QC for HF Radar
-#   and drifting buoy velocity observations
+#
+# Program Name: rtofs_ncoda_vel_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for HF Radar and drifting buoy velocity observations
+#
+# Usage: rtofs_ncoda_vel_qc.sh
+#
+# Executables called:
+# rtofs_dtg
+# rtofs_ncoda_hf_radar_nc
+# rtofs_ncoda_drft_decode
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# $DATA/dump/*.ibm
+#
+# Output Files:
+# logs/vel_qc/vel_preqc.yyyymmddhh.out
+# logs/vel_qc/vel_qc.yyyymmddhh.out
+# logs/vel_qc/vel_qc.yyyymmddhh.rej
+# ocnqc/velocity/yyyymmddhh.velocity
+# ocnqc/sss/yyyymmddhh.sss
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa

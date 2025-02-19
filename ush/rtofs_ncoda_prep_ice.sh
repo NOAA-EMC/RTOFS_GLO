@@ -1,10 +1,22 @@
 #!/bin/sh
+#
+# Program Name: rtofs_ncoda_prep_ice.sh
+#
+# Abstract: 
+#   Get ice concentration L1b data from bufr tank.
+#   Run ssmis_tol2 to create Level 2 NetCDF file.   
+#
+# Usage: rtofs_ncoda_prep_ice.sh
+#
+# Executables called:
+# rtofs_ssmis_tol2
+#
+# Input Files: bufr data type ssmisu
+#
+# Output Files:
+# $DATA/ice_nc/l2out.f285.51.yyyymmddhh.nc
+#
 
-#NOTE:############################################################################
-##  1. Get ice concentration L1b data from bufr tank.
-##  2. Run ssmis_tol2 to create Level 2 NetCDF file.   
-##  Hao,Y  IMSG AT EMC/NCEP/NOAA  03/26/2019
-###################################################################################
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -x
 
