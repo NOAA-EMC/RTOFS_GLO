@@ -1,0 +1,4 @@
+[submodule "sorc/HYCOM_tools.fd"]
+	path = sorc/HYCOM_tools.fd
+	url = git@github.com:HYCOM/HYCOM-tools.git
+	branch = master
