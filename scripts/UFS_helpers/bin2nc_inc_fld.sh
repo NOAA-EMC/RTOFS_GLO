@@ -41,5 +41,5 @@ else
 fi
 
 # convert format of file: bin to netcdf 
-#python driver.py ${dataDate} ${inputPath}
+#python convert_bin_nc_format.py ${dataDate} ${inputPath}
 

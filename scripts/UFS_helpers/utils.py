@@ -22,13 +22,15 @@ def gather_fNames(data_path_pref, data_path_suff, proc_date, varName, fType, var
    ncoda_fType = "analfld"
 
   data_path = data_path_pref + "rtofs.{}/".format(proc_date) + data_path_suff
-  print(f'Looking for {varName}_{varType}_*{ncoda_fType} files at path:\n{data_path}')
+  print(f'\nLooking for {varName}_{varType}_*{ncoda_fType} files at path:\n{data_path}')
   fNames = sorted( glob.glob( data_path + varName + "_" + varType + "*" + ncoda_fType))
-  print(fNames)
+  #print(fNames)
 
-  return fNames
+  return data_path, fNames
 
-def read_ncoda_increment_2d(data_path, fName):
+def read_ncoda_increment_2d(data_path, fName_full):
+
+  fName = fName_full.replace(data_path, "") # get rid of path from _full_ file name
 
   vName =fName.split('_')[0] + ' ' + fName.split('_')[-1]
   im, jm = [int(fName.split('_')[2][2:6]), int(fName.split('_')[2][7:11])]
@@ -36,7 +38,7 @@ def read_ncoda_increment_2d(data_path, fName):
   fDate = fDate[0:4] + '-' + fDate[4:6] + '-' + fDate[6:8]# + ':' + fDate[8:10] # Always at 00 UTC
   fTime = np.array([str(fDate)], dtype='datetime64')
 
-  print(f'\nReading RTOFS DA {vName} increment on\n{fTime} with [x,y] dim = {im,jm}.\n')
+  print(f'\nReading RTOFS DA {vName} increment on\n{fTime} with [x,y] dim = {im,jm}.')
 
   f = open(data_path + fName, 'rb')
   vals = []
@@ -47,7 +49,7 @@ def read_ncoda_increment_2d(data_path, fName):
   vals = dummy.reshape((jm,im))
   f.close()
 
-  return vName, fTime, vals
+  return fName, vName, fTime, vals
 
 def land_sea_mask(topo_fName, save_forLater=False):
 
@@ -71,7 +73,7 @@ def land_sea_mask(topo_fName, save_forLater=False):
 def bin_to_nc_2d_incr(data_path, fName, topo_fName):
 
   # Read binary increment file
-  vName, incDate, ice_cov = read_ncoda_increment_2d(data_path, fName)
+  fName_bin, vName, incDate, ice_cov = read_ncoda_increment_2d(data_path, fName)
 
   # This increment in ice coverage is in percentage (why??!!)
   ice_cov = ice_cov / 100 # convert it to [-1, 1]
@@ -98,8 +100,10 @@ def bin_to_nc_2d_incr(data_path, fName, topo_fName):
   #ds_inc = ds_inc.drop_attrs() # Won't work unless additional packages are install- can't on wcoss!
   ds_inc.ice_cov.attrs['units'] = '1'
   ds_inc.ice_cov.attrs['standard_name'] = vName
-  ds_inc.ice_cov.attrs['description'] = 'Increment in sea ice concentration'
+  ds_inc.ice_cov.attrs['description'] = 'Increment in sea ice coverage or concentration'
   ds_inc.attrs['source'] = 'NCEP RTOFS v2.5'
 
   print(ds_inc.ice_cov.attrs)
+
+  ds_inc.to_netcdf(fName_bin+'.nc')
   return ds_inc
