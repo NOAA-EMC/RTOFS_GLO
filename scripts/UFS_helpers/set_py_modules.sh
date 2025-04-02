@@ -11,18 +11,21 @@ then
 fi
 mach=$1
 
-echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-echo "Purging all modules and loading EVS python"
-echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-
+echo " "
 
 if [ ${mach} == "dwood" ] ||\
    [ ${mach} == "cac" ]
 then
+  module reset
+
   export py_mod="ve/evs/2.0"
   module use /apps/dev/modulefiles/
+else
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "Purging all modules and loading EVS python"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  module purge
 fi
 
-module purge
 module load ${py_mod}
 module list
