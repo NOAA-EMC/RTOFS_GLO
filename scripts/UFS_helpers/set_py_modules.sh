@@ -1,7 +1,6 @@
 #!/bin/bash
 
-if [[ $# -lt 1 ]]
-then
+if [[ $# -lt 1 ]]; then
   echo " "
   echo "Usage: "
   echo "$0" "machine name"
@@ -13,9 +12,7 @@ mach=$1
 
 echo " "
 
-if [ ${mach} == "dwood" ] ||\
-   [ ${mach} == "cac" ]
-then
+if [[ (${mach} == "dwood")  ||  (${mach} == "cac") ]]; then
   module reset
 
   export py_mod="ve/evs/2.0"

@@ -32,13 +32,14 @@ def read_ncoda_increment_2d(data_path, fName_full):
 
   fName = fName_full.replace(data_path, "") # get rid of path from _full_ file name
 
-  vName =fName.split('_')[0] + ' ' + fName.split('_')[-1]
+  vName = fName.split('_')[0]
+  vName_full =vName + ' ' + fName.split('_')[-1]
   im, jm = [int(fName.split('_')[2][2:6]), int(fName.split('_')[2][7:11])]
   fDate = fName.split('_')[3]
   fDate = fDate[0:4] + '-' + fDate[4:6] + '-' + fDate[6:8]# + ':' + fDate[8:10] # Always at 00 UTC
   fTime = np.array([str(fDate)], dtype='datetime64')
 
-  print(f'\nReading RTOFS DA {vName} increment on\n{fTime} with [x,y] dim = {im,jm}.')
+  print(f'\nReading RTOFS DA {vName_full} on\n{fTime} with [x,y] dim = {im,jm}.')
 
   f = open(data_path + fName, 'rb')
   vals = []
@@ -49,7 +50,7 @@ def read_ncoda_increment_2d(data_path, fName_full):
   vals = dummy.reshape((jm,im))
   f.close()
 
-  return fName, vName, fTime, vals
+  return vName, fName, vName_full, fTime, vals
 
 def land_sea_mask(topo_fName, save_forLater=False):
 
@@ -70,25 +71,22 @@ def land_sea_mask(topo_fName, save_forLater=False):
 
   return ls_mask
 
-def bin_to_nc_2d_incr(data_path, fName, topo_fName):
+def bin_to_nc_2d_incr(data_path, fName, outPath, topo_fName):
 
   # Read binary increment file
-  fName_bin, vName, incDate, ice_cov = read_ncoda_increment_2d(data_path, fName)
-
-  # This increment in ice coverage is in percentage (why??!!)
-  ice_cov = ice_cov / 100 # convert it to [-1, 1]
+  vName, fName_bin, vName_full, incDate, vals = read_ncoda_increment_2d(data_path, fName)
 
   # Create a dataset using topography file as a template
   ds_inc= xr.open_dataset(topo_fName, decode_times=False)
-  ds_inc['ice_cov'] = (('Y', 'X'), ice_cov)
+  ds_inc[vName] = (('Y', 'X'), vals)
 
   ls_mask = land_sea_mask(topo_fName)
   # Make sure concentration over land = 0.
   # Land values will be made to nan anyway, so this is done only for sanity sake!
-  ds_inc['ice_cov'] = ds_inc.ice_cov * ls_mask.mask.squeeze()
+  ds_inc[vName] = ds_inc[vName] * ls_mask.mask.squeeze()
 
   # Apply the land sea mask created above
-  ds_inc['ice_cov'] = ds_inc.ice_cov.where(ls_mask.mask == 1, np.nan)
+  ds_inc[vName] = ds_inc[vName].where(ls_mask.mask == 1, np.nan)
 
   # Delete depth, fix attributes
   ds_inc = ds_inc.drop_vars(['depth', 'Date']) # drop bathymetry
@@ -98,12 +96,12 @@ def bin_to_nc_2d_incr(data_path, fName, topo_fName):
 
   # fix attributes
   #ds_inc = ds_inc.drop_attrs() # Won't work unless additional packages are install- can't on wcoss!
-  ds_inc.ice_cov.attrs['units'] = '1'
-  ds_inc.ice_cov.attrs['standard_name'] = vName
-  ds_inc.ice_cov.attrs['description'] = 'Increment in sea ice coverage or concentration'
+  ds_inc[vName].attrs['units'] = '1'
+  ds_inc[vName].attrs['standard_name'] = vName
+  ds_inc[vName].attrs['description'] = vName_full
   ds_inc.attrs['source'] = 'NCEP RTOFS v2.5'
 
-  print(ds_inc.ice_cov.attrs)
+  #print(ds_inc[vName].attrs)
 
-  ds_inc.to_netcdf(fName_bin+'.nc')
+  ds_inc.to_netcdf(outPath+'/'+fName_bin+'.nc')
   return ds_inc
