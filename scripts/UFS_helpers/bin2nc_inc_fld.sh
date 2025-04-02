@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ $# -lt 1 ]
+if [[ $# -lt 1 ]]
 then
   echo " "
   echo "Usage: "
-  echo $0 "machine_name, path_to_input_file, date"
+  echo "$0" "machine_name, path_to_input_file, date"
   echo " "
   echo "Allowed machine names: dwood (dogwood), cac (cactus)"
   exit 1
