@@ -70,8 +70,6 @@ do
    cmd="$ymd/sst/$ymd$k*L2P*ABI_G16*.nc"
    if [ -s $cmd ] ; then
       ls $cmd > $log_dir/g16_$k.$cut_dtg
-   else
-      echo "WARNING $cmd does not exist"
    fi
    cmd="$ymd/sst/$ymd$k*L2P*ABI_G17*.nc"
    if [ -s $cmd ] ; then
