@@ -9,7 +9,7 @@
 #########################################################################
 set -xa
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 export PS4='$SECONDS + '
 
 cd $DATA
@@ -26,7 +26,7 @@ else
   runname='FORECAST'
 fi 
 
-msg="RTOFS_GLO_FORECAST_PRE JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_$runname JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 #
@@ -36,12 +36,9 @@ postmsg "$msg"
   rm -f ok
   date >> TRACK
 
-export pgm="$EXECrtofs/rtofs_hycom"
-#dbzg
-#. ./prep_step
-#startmsg
+  export pgm="$EXECrtofs/rtofs_hycom"
   mpiexec -n $NPROCS -ppn 120 --cpu-bind core $EXECrtofs/rtofs_hycom >> $pgmout 2>errfile
-  err=$?; export err ; err_chk
+  err=$?
   echo " error from rtofs_hycom=",$err
 
   date >> TRACK
@@ -50,7 +47,7 @@ export pgm="$EXECrtofs/rtofs_hycom"
 # 2.  Check for errors
 
 ok="unknown"
-test -s ${DATA}/summary_out && ok=`tail -1 ${DATA}/summary_out`
+test -s ${DATA}/summary_out && ok=$(tail -1 ${DATA}/summary_out)
 if [ "$ok" = "normal stop" ]; then
    modelstatus=0
 else
@@ -64,7 +61,7 @@ fi
     if compgen -G "probe_out_*" > /dev/null
     then
        # Copy probes to /com
-       for prb in `ls probe_out_*`
+       for prb in $(ls probe_out_*)
        do
          if [ -s $COMOUT/${RUN}_${modID}.t${mycyc}z.${runmode}.${prb} ]
          then
@@ -76,8 +73,8 @@ fi
     fi
     echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.${runmode}.log
   else
-    $USHrtofs/${RUN}_abort.sh "Abnormal model exit from ${RUN_MODE}" \
-       "ABNORMAL EXIT ${runname}: problem with ${RUN_MODE} model run" -1
- fi
+    msg="ALERT - Job $job in ${RUN_MODE} has failed. Will do some housekeeping before aborting"
+    postmsg "$msg"
+  fi
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

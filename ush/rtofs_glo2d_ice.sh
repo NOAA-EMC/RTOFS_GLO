@@ -34,7 +34,7 @@
 set -x
 typeset -Z3 fhr
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 export CDF021=${RUN}_${modID}_2ds_${mode}${fhr}_ice.nc
 
@@ -44,4 +44,4 @@ startmsg
 ${EXECrtofs}/rtofs_field2ncdf2d < ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.field2ncdf2d.in >> $pgmout 2>>errfile 
 export err=$? ; err_chk
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

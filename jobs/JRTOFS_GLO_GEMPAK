@@ -51,6 +51,12 @@ mkdir -p -m 775 $COMOUTgempak
 
 export DBN_ALERT_TYPE=RTOFS_GLO_GEMPAK
 
+#################################################################
+#  Send a message indicating the start of the job
+#################################################################
+msg="JOB $job HAS BEGUN on $(hostname)"
+postmsg "$msg"
+
 ####################
 # execute the script
 ####################

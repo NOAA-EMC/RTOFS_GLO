@@ -2,7 +2,7 @@
 
 #   this script runs NCODA pre_QC and NCODA QC for GOES
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
@@ -38,7 +38,7 @@ echo "previous date time group is " $prv_dtg
 echo " "
 echo "NCODA GOES pre_QC"
 
-#   create list of ABI_G16 and ABI_G17 sst netCDF files to process
+#   create list of ABI_G16 and ABI_G18 sst netCDF files to process
 cd $SST_DATA_DIR
 
 ymd=${prv_dtg:0:8}
@@ -50,9 +50,9 @@ do
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*ABI_G17*.nc"
+   cmd="$ymd/sst/$ymd$k*L2P*ABI_G18*.nc"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/g17_$k.$cut_dtg
+      ls $cmd > $log_dir/g18_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
@@ -67,9 +67,9 @@ do
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*ABI_G17*.nc"
+   cmd="$ymd/sst/$ymd$k*L2P*ABI_G18*.nc"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/g17_$k.$cut_dtg
+      ls $cmd > $log_dir/g18_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
@@ -77,7 +77,7 @@ done
 
 #   change to working directory
 cd $log_dir
-cat g16_*.$cut_dtg g17_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
+cat g16_*.$cut_dtg g18_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
 
 echo timecheck goes start ncdump at $(date)
 while read line
@@ -88,7 +88,7 @@ do
   then
      echo $line >> acspo_sst_files.$cut_dtg
   else
-     echo "WARNING - file $SST_DATA_DIR/$line appears to be corrupt."
+     echo "WARNING - file $SST_DATA_DIR/$line is unreadable and will not be processed."
   fi
 done < acspo_sst_files.${cut_dtg}_prelim
 echo timecheck goes finish ncdump at $(date)
@@ -159,13 +159,13 @@ ln -s $OCN_DATA_DIR/incoming/goes.b.$cut_dtg $OCN_DATA_DIR/incoming/goes.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg goes > goes_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 goes_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 goes_qc.$cut_dtg.rej
 
 #   cleanup
 #rm -f g16_*.*
 #rm -f g17_*.*
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0
 

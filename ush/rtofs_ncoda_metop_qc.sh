@@ -2,7 +2,7 @@
 
 #   this script runs NCODA pre_QC and NCODA QC for METOP
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
@@ -100,7 +100,7 @@ do
   then
      echo $line >> acspo_sst_files.$cut_dtg
   else
-     echo "WARNING - file $SST_DATA_DIR/$line appears to be corrupt."
+     echo "WARNING - file $SST_DATA_DIR/$line and will not be processed."
   fi
 done < acspo_sst_files.${cut_dtg}_prelim
 echo timecheck metop finish ncdump at $(date)
@@ -171,11 +171,11 @@ ln -s $OCN_DATA_DIR/incoming/metop.b.$cut_dtg $OCN_DATA_DIR/incoming/metop.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg metop > metop_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 metop_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 metop_qc.$cut_dtg.rej
 
 #   cleanup
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0
 

@@ -1,7 +1,5 @@
 #!/bin/sh 
 
-set -x
-
 BASE=`pwd`
 dir_mod0="$(dirname ${BASE})"
 echo ${dir_mod0}
@@ -18,6 +16,8 @@ module load bacio/${bacio_ver}
 module load w3nco/${w3nco_ver}
 module load g2/${g2_ver}
 module list
+
+set -x
 
  mkdir -p incmod
  rm -f incmod/rtofs*/*.mod

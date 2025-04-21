@@ -2,7 +2,7 @@
 
 #   this script runs NCODA pre_QC and NCODA QC for AMSR
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
@@ -38,7 +38,7 @@ echo "previous date time group is " $prv_dtg
 echo " "
 echo "NCODA AMSR pre_QC"
 
-#   create list of ABI_G16 and ABI_G17 sst netCDF files to process
+#   create list of AMSR sst netCDF files to process
 cd $SST_DATA_DIR
 
 ymd=${prv_dtg:0:8}
@@ -76,7 +76,7 @@ do
   then
      echo $line >> acspo_sst_files.$cut_dtg
   else
-     echo "WARNING - file $SST_DATA_DIR/$line appears to be corrupt."
+     echo "WARNING - file $SST_DATA_DIR/$line is unreadable and will not be processed."
   fi
 done < acspo_sst_files.${cut_dtg}_prelim
 echo timecheck amsr finish ncdump at $(date)
@@ -146,11 +146,11 @@ ln -s $OCN_DATA_DIR/incoming/amsr.b.$cut_dtg $OCN_DATA_DIR/incoming/amsr.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_sst > amsr_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 amsr_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 amsr_qc.$cut_dtg.rej
 
 #   cleanup
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0
 

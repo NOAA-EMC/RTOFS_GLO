@@ -866,7 +866,7 @@ c --- Report
       call ESMF_LogFlush(rc=rc)
 c
       write(cfile,'(a,i4.4,a1,i3.3,a1,i2.2)')
-     &   'arche.',iyear,'_',jday,'_',ihour
+     &   '../archive/arche.',iyear,'_',jday,'_',ihour
       nopa=13
       nop =13+uoff
 c

@@ -70,9 +70,6 @@ setpdy.sh
 # Define Input/Output/Restart directories
 ##############################################
 export GETGES_COM=${GETGES_COM:-$(compath.py ${envir}/com/gfs/${gfs_ver})}
-export GETGES_NWG=${GETGES_NWG:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/nwges}
-export GESIN=${GESIN:-${GETGES_NWG}/${RUN}.${PDY}}
-
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
@@ -89,17 +86,6 @@ export useslp=NO # YES or NO, use sea level pressure
 ##################################################################
 . $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
 
-##############################################
-# Check for restart
-##############################################
-restart_f=${RUN}_${modID}.t${cyc}z.restart_f
-if [ -s $GESIN/${restart_f}*.a -a -s $GESIN/${restart_f}*.b ]
-then
-    export RESTART=YES
-else
-    export RESTART=NO
-fi
-
 #################################
 # Set up analysis_pre parameters
 #################################
@@ -108,7 +94,7 @@ eval fcstdays="\$analdays"
 #################################################################
 #  Send a message indicating the start of the job
 #################################################################
-msh="HAS BEGUN on `hostname`"
+msg="JOB $job HAS BEGUN on $(hostname)"
 postmsg "$msg"
 
 ####################
@@ -119,7 +105,7 @@ sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_${RUN_MODE}_pre.sh
 #===================================================================
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}_pre.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.${RUN_MODE}_pre.$(basename $pgmout)
 
 msg="JOB $job HAS COMPLETED NORMALLY."
 postmsg "$msg"

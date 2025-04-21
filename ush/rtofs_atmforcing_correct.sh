@@ -16,7 +16,7 @@ set -x
 #    02-02-2007 Ilya Rivin                                              #
 #########################################################################
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 # It is assumed that forcing.imput files
 # forcing.airtmp.[ab] forcing.surtmp.[ab] and regional.mask.[ab]
@@ -25,11 +25,11 @@ echo "*** Started script $0 on hostname "`hostname`' at time '`date`
 cd $DATA
 
 # prepare input file 
-blines=`cat ${DATA}/forcing.surtmp.b | wc -l`
-num_frames=`grep 'surtmp: date,span,range' ${DATA}/forcing.surtmp.b | wc -l`
-ihead=`expr ${blines} \- ${num_frames} `
-sname=`grep span ${DATA}/forcing.surtmp.b |head -1 |cut -c1-8`
-aname=`grep span ${DATA}/forcing.airtmp.b |head -1 |cut -c1-8`
+blines=$(cat ${DATA}/forcing.surtmp.b | wc -l)
+num_frames=$(grep 'surtmp: date,span,range' ${DATA}/forcing.surtmp.b | wc -l)
+ihead=$(expr ${blines} \- ${num_frames})
+sname=$(grep span ${DATA}/forcing.surtmp.b |head -1 |cut -c1-8)
+aname=$(grep span ${DATA}/forcing.airtmp.b |head -1 |cut -c1-8)
 
 cat > atmforcing_correct.in <<EOF
 $ihead
@@ -42,7 +42,11 @@ export pgm="${RUN}_atmforcing_correct"
 . prep_step
 startmsg
 $EXECrtofs/${RUN}_atmforcing_correct < atmforcing_correct.in >>$pgmout 2>errfile
-err=$?; export err ; err_chk
+err=$?
+if [ $err -ne 0 ]
+then
+  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job" "return code $err" $err
+fi
 echo " error from ${RUN}_atmforcing_correct=",$err
 
 mv ${DATA}/forcing.airtmp.a ${DATA}/forcing.airtm1.a 
@@ -53,4 +57,4 @@ mv ${DATA}/forcing.airtem.b ${DATA}/forcing.airtmp.b
 #cp ${DATA}/forcing.airtm1.a ${DATA}/forcing.airtmp.a 
 #cp ${DATA}/forcing.airtm1.b ${DATA}/forcing.airtmp.b
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

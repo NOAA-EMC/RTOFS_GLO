@@ -22,7 +22,7 @@
 # future: use $cyc to grab latest flux files (not always 00z cycle)
 set -x
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 if [ $# -ne 0 ] ; then 
   echo USAGE:  ${RUN}_iceforcing.sh 
@@ -42,19 +42,19 @@ else
 fi
 
 BLKDATA_FILE=${PARMrtofs}/${RUN}_${modID}.${inputgrid}.${mode}.blkdat.input
-IDM=`cat ${BLKDATA_FILE} | grep idm | cut -d' ' -f1`
-JDM=`cat ${BLKDATA_FILE} | grep jdm | cut -d' ' -f1`
-JDMA=`expr ${JDM} \- 1`
+IDM=$(cat ${BLKDATA_FILE} | grep idm | cut -d' ' -f1)
+JDM=$(cat ${BLKDATA_FILE} | grep jdm | cut -d' ' -f1)
+JDMA=$(expr ${JDM} \- 1)
 
 # Determine NREC
 ftime=0.0
 NREC=0
 while read line
 do
-  str=`echo $line | awk '{printf ("%-7s\n", $1)}'`
+  str=$(echo $line | awk '{printf ("%-7s\n", $1)}')
   if [ .$str == .wndspd: ]
   then
-     tim=`echo $line | awk '{printf ("%11.5f\n", $4)}'`
+     tim=$(echo $line | awk '{printf ("%11.5f\n", $4)}')
      let NREC=NREC+1
      if [[ $tim > $iday ]]
      then
@@ -65,7 +65,7 @@ do
 done < forcing.wndspd.b
 echo starting cice forcing at record $NREC at timemark $ftime
 
-totrec=`grep -c wndspd forcing.wndspd.b`
+totrec=$(grep -c wndspd forcing.wndspd.b)
 let tailrec=totrec-NREC
 
 #Create the ice forcing starting at the specified time step
@@ -145,4 +145,4 @@ do
 done
 # End of generating the ice forcing files
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

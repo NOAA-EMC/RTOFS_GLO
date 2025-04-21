@@ -23,7 +23,7 @@ set -xa
 
 export PS4='$SECONDS + '
 
-msg="RTOFS_GLO_NCODA_POLAR_VAR JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_NCODA_POLAR_VAR JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 cd $DATA
@@ -31,7 +31,7 @@ cd $DATA
 # --------------------------------------------------------------------------- #
 
 # 1. Populate DATA/polar_var with polar_var files from COMINm1/ncoda
-echo timecheck RTOFS_GLO_POLAR start get at `date`
+echo timecheck RTOFS_GLO_POLAR start get at $(date)
 
 mkdir -p $DATA/nhem_var/restart
 mkdir -p $DATA/shem_var/restart
@@ -41,23 +41,43 @@ mkdir -p $DATA/logs/nhem_var
 mkdir -p $DATA/logs/shem_var
 ddtg=${PDYm1}00
 
+coldstart=0
 rm -f cmdfile.cpin
 if compgen -G "$COMINm1/ncoda/nhem_var/restart/*" > /dev/null
 then
-  for nv in `ls $COMINm1/ncoda/nhem_var/restart/`; do
+  for nv in $(ls $COMINm1/ncoda/nhem_var/restart/); do
     echo "cp -p -f $COMINm1/ncoda/nhem_var/restart/$nv $DATA/nhem_var/restart" >> cmdfile.cpin
   done
 else
-  echo "Cold starting north polar var!"
+  echo "WARNING - Cold starting $job - north hemisphere"
+  coldstart=2
 fi
 
 if compgen -G "$COMINm1/ncoda/shem_var/restart/*" > /dev/null
 then
-  for sv in `ls $COMINm1/ncoda/shem_var/restart/`; do
+  for sv in $(ls $COMINm1/ncoda/shem_var/restart/); do
     echo "cp -p -f $COMINm1/ncoda/shem_var/restart/$sv $DATA/shem_var/restart" >> cmdfile.cpin
   done
 else
-  echo "Cold starting north polar var!"
+  echo "WARNING - Cold starting $job - south hemisphere"
+  let coldstart=coldstart+1
+fi
+if [ $coldstart -gt 0 ]
+then
+  echo "WARNING - Cold starting $jobid"
+  echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/polar.coldstart.email
+  echo "This is an abnormal event."                                            >> $DATA/polar.coldstart.email
+  echo "The following directories are empty:"                                  >> $DATA/polar.coldstart.email
+  if [[ $coldstart -eq 2 || $coldstart -eq 3 ]]
+  then
+      echo "$COMINm1/ncoda/nhem_var/restart"                                   >> $DATA/polar.coldstart.email
+  fi
+  if [[ $coldstart -eq 1 || $coldstart -eq 3 ]]
+  then
+      echo "$COMINm1/ncoda/shem_var/restart"                                   >> $DATA/polar.coldstart.email
+  fi
+  echo "This job will continue to run as a cold-start."                        >> $DATA/polar.coldstart.email
+  cat $DATA/polar.coldstart.email | mail.py -s "WARNING - Job $job cold started"
 fi
 
 if [ -s cmdfile.cpin ]
@@ -74,11 +94,10 @@ ln -sf $COMIN/ncoda/ocnqc $DATA
 
 cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./nhem_var/oanl
 cp $PARMrtofs/${RUN}_${modID}.polar.oanl.in   ./shem_var/oanl
-echo timecheck RTOFS_GLO_POLAR finish build at `date`
 
 # 3. Run NHEM (NCODA 2Dvar)
 
-echo timecheck RTOFS_GLO_POLAR start nhem at `date`
+echo timecheck RTOFS_GLO_POLAR start nhem at $(date)
 cd $DATA/nhem_var
 #   build local nhem namelist files
 rm -f odsetnl
@@ -126,31 +145,29 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
-#mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 mpiexec -n 1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
-#mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
-#mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 mpiexec -n $NPROCS $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
 #   rename local files
-#mv fort.40 $DATA/logs/nhem_var/nhem_var.$ddtg.sus
-mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
-mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
+[[ -f fort.40 ]] && mv fort.40 $DATA/logs/nhem_var/nhem_var.$ddtg.sus
+[[ -f fort.67 ]] && mv fort.67 $DATA/logs/nhem_var/nhem_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $DATA/logs/nhem_var/nhem_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO
 if [ $DoGraphics = YES ] ; then
+  echo timecheck RTOFS_GLO_POLAR start ncoda_map at $(date)
   export OCN_OUTPUT_DIR=$DATA/nhem_var/restart
   export OCN_CLIM_DIR=$FIXrtofs/codaclim
   #NCODA map
@@ -162,11 +179,10 @@ fi
 
 cat pout* > $DATA/logs/nhem_var/nhem_var.$ddtg.out
 cat $DATA/logs/nhem_var/nhem_var.$ddtg.out >> $DATA/$pgmout
-echo timecheck RTOFS_GLO_POLAR finish nhem at `date`
 
 # 4. Run SHEM (NCODA 2Dvar)
 
-echo timecheck RTOFS_GLO_POLAR start shem at `date`
+echo timecheck RTOFS_GLO_POLAR start shem at $(date)
 cd $DATA/shem_var
 #   build local shem namelist files
 rm -f odsetnl
@@ -215,33 +231,30 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
-#mpirun -n  1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 mpiexec -n 1 $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
-#mpirun -n 24 $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
-#mpirun -n 24 $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 mpiexec -n $NPROCS $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post",$err
 
 #   rename local files
-#mv fort.40 $DATA/logs/shem_var/shem_var.$ddtg.sus
-mv fort.67 $DATA/logs/shem_var/shem_var.$ddtg.obs
-mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
+[[ -f fort.40 ]] && mv fort.40 $DATA/logs/shem_var/shem_var.$ddtg.sus
+[[ -f fort.67 ]] && mv fort.67 $DATA/logs/shem_var/shem_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $DATA/logs/shem_var/shem_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO
 if [ $DoGraphics = YES ] ; then
-  export OCEAN_OUTPUT_DIR=$DATA/shem_var/restart
-  export OCEAN_CLIM_DIR=$FIXrtofs/codaclim
+  export OCN_OUTPUT_DIR=$DATA/shem_var/restart
+  export OCN_CLIM_DIR=$FIXrtofs/codaclim
   #NCODA map
   $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
   err=$?; export err ; err_chk
@@ -251,11 +264,10 @@ fi
 
 cat pout* > $DATA/logs/shem_var/shem_var.$ddtg.out
 cat $DATA/logs/shem_var/shem_var.$ddtg.out >> $DATA/$pgmout
-echo timecheck RTOFS_GLO_POLAR finish shem at `date`
 
 # 5. Copy data back to COMOUT/ncoda
 
-echo timecheck RTOFS_GLO_POLAR start put at `date`
+echo timecheck RTOFS_GLO_POLAR start put at $(date)
 cd $DATA
 mkdir -p $COMOUT/ncoda/nhem_var/restart
 mkdir -p $COMOUT/ncoda/shem_var/restart
@@ -283,12 +295,12 @@ mkdir -p $COMOUT/ncoda/logs/shem_var
 cp -p -f $DATA/logs/nhem_var/*.$ddtg.* $COMOUT/ncoda/logs/nhem_var
 cp -p -f $DATA/logs/shem_var/*.$ddtg.* $COMOUT/ncoda/logs/shem_var
 
-echo timecheck RTOFS_GLO_POLAR finish put at `date`
+echo timecheck RTOFS_GLO_POLAR finish put at $(date)
 
 date
 
 #################################################
-msg="THE RTOFS_GLO_NCODA_POLAR_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
+msg="THE RTOFS_GLO_NCODA_POLAR_VAR JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
 
 ################## END OF SCRIPT #######################

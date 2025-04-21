@@ -22,7 +22,7 @@ set -xa
 
 export PS4='$SECONDS + '
 
-msg="RTOFS_GLO_NCODA_GLBL_VAR JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_NCODA_GLBL_VAR JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 cd $DATA
@@ -30,14 +30,14 @@ cd $DATA
 # --------------------------------------------------------------------------- #
 
 # 1. Populate DATA with glbl_var files from COMINm1/ncoda
-echo timecheck RTOFS_GLO_GLBL start get at `date`
+echo timecheck RTOFS_GLO_GLBL start get at $(date)
 
 mkdir -p $DATA/restart
 mkdir -p $DATA/work
 rm -f cmdfile.cpin
 if compgen -G "$COMINm1/ncoda/glbl_var/restart/*" > /dev/null
 then
-  for gv in `ls $COMINm1/ncoda/glbl_var/restart/`; do
+  for gv in $(ls $COMINm1/ncoda/glbl_var/restart/); do
     echo "cp -p -f $COMINm1/ncoda/glbl_var/restart/$gv $DATA/restart" >> cmdfile.cpin
   done
   chmod +x cmdfile.cpin
@@ -45,13 +45,19 @@ then
   err=$? ; export err ; err_chk
   date
 else
-  echo "cold starting global var!"
+  echo "WARNING - Cold starting $jobid"
+  echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/glbl.coldstart.email
+  echo "This is an abnormal event."                                            >> $DATA/glbl.coldstart.email
+  echo "The following directory is empty:"                                     >> $DATA/glbl.coldstart.email
+  echo "$COMINm1/ncoda/glbl_var/restart"                                       >> $DATA/glbl.coldstart.email
+  echo "This job will continue to run as a cold-start."                        >> $DATA/glbl.coldstart.email
+  cat $DATA/glbl.coldstart.email | mail.py -s "WARNING - Job $job cold started"
 fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
-echo timecheck RTOFS_GLO_GLBL finish get at `date`
 
 # 2. build namelists
+echo timecheck RTOFS_GLO_GLBL start setup at $(date)
 
 rm -f odsetnl
 rm -f ogridnl
@@ -109,37 +115,38 @@ log_dir=$DATA/logs
 mkdir -p $log_dir
 
 #   execute ncoda variational programs
-echo timecheck RTOFS_GLO_GLBL start setup at `date`
 #NCODA setup
 $EXECrtofs/rtofs_ncoda_setup 2D ncoda ogridnl $ddtg > pout1
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
+echo timecheck RTOFS_GLO_GLBL start prep at $(date)
 mpiexec -n 24 --cpu-bind core $EXECrtofs/rtofs_ncoda_prep 2D ncoda ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
+echo timecheck RTOFS_GLO_GLBL start ncoda2d at $(date)
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 2D ncoda ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
+echo timecheck RTOFS_GLO_GLBL start post at $(date)
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
-echo timecheck RTOFS_GLO_GLBL finish post at `date`
-
 #   rename local files
-#mv fort.40 $log_dir/glbl_var.$ddtg.sus
-mv fort.67 $log_dir/glbl_var.$ddtg.obs
-mv fort.68 $log_dir/glbl_var.$ddtg.grd
+[[ -f fort.40 ]] && mv fort.40 $log_dir/glbl_var.$ddtg.sus
+[[ -f fort.67 ]] && mv fort.67 $log_dir/glbl_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $log_dir/glbl_var.$ddtg.grd
 
 #   create graphics
 DoGraphics=NO
-if [ $DoGraphcs = YES ] ; then
+if [ $DoGraphics = YES ] ; then
+  echo timecheck RTOFS_GLO_GLBL start ncoda_map at $(date)
   export OCN_OUTPUT_DIR=$DATA/restart
   export OCN_CLIM_DIR=$FIXrtofs/codaclim
   #NCODA map
@@ -155,7 +162,7 @@ cat pout* > $log_dir/glbl_var.$ddtg.out
 cat $log_dir/glbl_var.$ddtg.out >> $pgmout
 
 # 4. Copy last 15 days of data back to COMOUT/ncoda
-echo timecheck RTOFS_GLO_GLBL start put at `date`
+echo timecheck RTOFS_GLO_GLBL start put at $(date)
 
 mkdir -p $COMOUT/ncoda/glbl_var/restart
 rm -f cmdfile.cpout
@@ -164,7 +171,7 @@ for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
   backymd=${backymdh:0:8}
   if compgen -G "$DATA/restart/*${backymd}*" > /dev/null
   then
-     for gv in `ls $DATA/restart/*${backymd}*`; do
+     for gv in $(ls $DATA/restart/*${backymd}*); do
          echo "cp -p -f $gv $COMOUT/ncoda/glbl_var/restart" >> cmdfile.cpout
      done
 #     echo "cp -p -f $DATA/restart/*${backymd}* $COMOUT/ncoda/glbl_var/restart" >> cmdfile.cpout
@@ -178,10 +185,10 @@ date
 
 mkdir -p $COMOUT/ncoda/logs/glbl_var
 cp -p -f $DATA/logs/*.$ddtg.* $COMOUT/ncoda/logs/glbl_var
-echo timecheck RTOFS_GLO_GLBL finish put at `date`
+echo timecheck RTOFS_GLO_GLBL finish put at $(date)
 
 #################################################
-msg="THE RTOFS_GLO_NCODA_GLBL_VAR JOB HAS ENDED NORMALLY on `hostname` at `date`"
+msg="THE RTOFS_GLO_NCODA_GLBL_VAR JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
 
 ################## END OF SCRIPT #######################

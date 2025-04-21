@@ -3,7 +3,7 @@
 Z(7):1-7,Z(16):8,Z(2):10-16,Z(13):dp00/f/x=36/1.18/262;Z(3):400-600m; NOGAPSsnow
 sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
   22	  'iversn' = hycom version number x10
- 928	  'iexpt ' = experiment number x10
+ 930	  'iexpt ' = experiment number x10
 4500	  'idm   ' = longitudinal array size
 3298	  'jdm   ' = latitudinal  array size
  555	  'itest ' = grid point where detailed diagnostics are desired

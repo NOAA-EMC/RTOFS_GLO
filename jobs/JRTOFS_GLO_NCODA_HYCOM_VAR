@@ -61,10 +61,10 @@ setpdy.sh
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export COMROOTrtofs=${COMROOTrtofs:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})}
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMINm1=${COMINm1:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDYm1}}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
+export COMROOTrtofs=$(dirname $COMIN)
 
 mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT
@@ -82,7 +82,7 @@ export inputgrid=navy_0.08
 #################################################################
 #  Send a message indicating the start of the job
 #################################################################
-msh="HAS BEGUN on `hostname`"
+msg="JOB $job HAS BEGUN on $(hostname)"
 postmsg "$msg"
 
 ####################
@@ -93,11 +93,13 @@ sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_ncoda_hycom_var.sh
 #===================================================================
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.ncoda_hycom_var.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.ncoda_hycom_var.$(basename $pgmout)
 
 msg="JOB $job HAS COMPLETED NORMALLY."
 postmsg "$msg"
 
 cd $DATAROOT
-
+if [ "$KEEPDATA" != YES ]; then
+  rm -rf $DATA
+fi
 date

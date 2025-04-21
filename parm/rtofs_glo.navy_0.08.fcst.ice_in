@@ -9,12 +9,13 @@
   , runtype      = 'continue'
   , ice_ic       = 'default'
   , restart      = .true.
-  , restart_dir  = './'
+  , restart_dir  = '../restart/'
   , restart_file = 'cice.restart'
   , pointer_file = './cice.restart_file'
+  , history_dir  = '../archive/'
   , histfreq     = 'd'
   , histfreq_n   =  1
-  , dumpfreq     = 'd'
+  , dumpfreq     = 'f'
   , dumpfreq_n   = 1
   , diagfreq     = 8
   , diag_type    = 'stdout'

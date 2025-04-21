@@ -474,7 +474,8 @@ c
 c
       icount = icount + 1
 c
-      if     (flnmra.ne.flnmrb .or. last .or. mod(icount,2).eq.0) then
+cdhi - remove check on 'last' so that restarts toggle (out, out1)
+      if     (flnmra.ne.flnmrb .or. mod(icount,2).eq.0) then
         iunta = 12  ! standard restart file
       else
         iunta = 22  ! backup   restart file

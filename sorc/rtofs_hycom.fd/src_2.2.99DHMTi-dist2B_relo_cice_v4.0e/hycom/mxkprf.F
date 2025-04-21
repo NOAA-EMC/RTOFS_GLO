@@ -633,7 +633,11 @@ c --- locate lowest substantial mass-containing layer.
         p(i,j,k+1)=pij(k+1)
       enddo
       do k=kk,1,-1
+#if defined(MASSLESS_1MM)
+        if (dpmm(k).gt.onemm) then
+#else
         if (dpmm(k).gt.tencm) then
+#endif
           exit
         endif
       enddo
@@ -1830,7 +1834,11 @@ c --- locate lowest substantial mass-containing layer.
         p(i,j,k+1)=pij(k+1)
       enddo
       do k=kk,1,-1
+#if defined(MASSLESS_1MM)
+        if (dpmm(k).gt.onemm) then
+#else
         if (dpmm(k).gt.tencm) then
+#endif
           exit
         endif
       enddo
@@ -2112,7 +2120,11 @@ c --- locate lowest substantial mass-containing layer.
         p(i,j,k+1)=pij(k+1)
       enddo
       do k=kk,1,-1
+#if defined(MASSLESS_1MM)
+        if (dpmm(k).gt.onemm) then
+#else
         if (dpmm(k).gt.tencm) then
+#endif
           exit
         endif
       enddo
@@ -2351,7 +2363,11 @@ c --- locate lowest substantial mass-containing layer.
         p(i,j,k+1)=pij(k+1)
       enddo
       do k=kk,1,-1
+#if defined(MASSLESS_1MM)
+        if (dpmm(k).gt.onemm) then
+#else
         if (dpmm(k).gt.tencm) then
+#endif
           exit
         endif
       enddo
@@ -3357,7 +3373,11 @@ c
       nlayer=1
       presu=0.
       do k=1,kk
+#if defined(MASSLESS_1MM)
+        if (presu.lt.depthu(i,j)-onemm) then
+#else
         if (presu.lt.depthu(i,j)-tencm) then
+#endif
           diffm(k+1)=.5*(vcty(i,j,k+1)+vcty(i-1,j,k+1))
           u1do(k)=u(i,j,k,n)
           hm(k)=max(onemm,dpu(i,j,k,n))*qonem
@@ -3460,7 +3480,11 @@ c
       nlayer=1
       presv=0.
       do k=1,kk
+#if defined(MASSLESS_1MM)
+        if (presv.lt.depthv(i,j)-onemm) then
+#else
         if (presv.lt.depthv(i,j)-tencm) then
+#endif
           diffm(k+1)=.5*(vcty(i,j,k+1)+vcty(i,j-1,k+1))
           v1do(k)=v(i,j,k,n)
           hm(k)=max(onemm,dpv(i,j,k,n))*qonem
@@ -3699,3 +3723,5 @@ c> Oct. 2013 - added jerlv0=-1 and calls to swfrac_ij and swfrml_ij
 c> Jan. 2014 - homogenize the bottom 10 cm velocities
 c> May  2014 - use land/sea masks (e.g. ip) to skip land
 c> Sep  2014 - added 3 new options for langmr
+c> ...
+c> Mar  2023 - added /* MASSLESS_1MM */ macro

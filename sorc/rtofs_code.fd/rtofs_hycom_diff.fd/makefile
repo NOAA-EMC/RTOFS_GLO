@@ -39,6 +39,7 @@ RM            = \rm -f
 FC            =	ftn
 FCFFLAGS      =	-g -O3 -fp-model source -convert big_endian
 FCFFLAGS      =	-traceback -g -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl
+DEBUGFC       = -g -O0 -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -nogen-interfaces -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv
 CC            =	cc
 CCFLAGS       =	-O
 CPP           =	cpp -P
@@ -78,6 +79,13 @@ finish:
 
 install:
 	-mv $(CMD) ${BINDIR}
+
+debug: FCFFLAGS = $(DEBUGFC)
+debug: all
+
+test:
+	$(CMD) < input.txt > output.txt
+	diff output.txt valid_output.txt
 
 #
 # --- explicit dependencies for each .[fF] file.

@@ -1,4 +1,4 @@
-
+#!/bin/sh
 ################################################################################
 #
 # Name:  getges.sh            Author:  Mark Iredell
@@ -183,12 +183,6 @@ elif [[ $typef = enggri ]];then
 fi
 
 #-------------------------------------------------------------------------------
-# Default top level directories.
-#export GETGES_COM=${GETGES_COM:-/com}
-#export GETGES_NWG=${GETGES_NWG:-/nwges}
-#export GETGES_GLO=${GETGES_GLO:-/gloptmp}
-
-#-------------------------------------------------------------------------------
 # Assemble guess list in descending order from the best guess.
 geslist=""
 geslist00=""
@@ -263,8 +257,6 @@ if [[ $netwk = gdas ]];then
    ;;
   sfcflxfv3) geslist='
    $GETGES_COM/gdas.$day/${cyc}/atmos/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2'
-# /lfs/h1/ops/canned/com/gfs/v16.2/gdas.20210823/00/atmos/
-#old   $GETGES_COM/gfs/${envirges}/gdas.$day/${cyc}/atmos/gdas.t${cyc}z.sfluxgrbf${fh3}.grib2
    fhinc=01
    ;;
   pgbges) geslist='
@@ -441,8 +433,6 @@ elif [[ $netwk = gfs ]];then
    ;;
   sfcflxfv3) geslist='
    $GETGES_COM/gfs.$day/${cyc}/atmos/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
-# /lfs/h1/ops/canned/com/gfs/v16.2/gfs.20210824/18/atmos
-#old   $GETGES_COM/gfs/${envirges}/gfs.$day/${cyc}/atmos/gfs.t${cyc}z.sfluxgrbf${fh3}.grib2'
    ;;
   pgbges) geslist='
    $GETGES_COM/gfs/$envirges/gfs.$day/gfs.t${cyc}z.pgrbf$fh'

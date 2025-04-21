@@ -19,7 +19,7 @@
 
 set -xa
 
-echo "*** Started script $0 for $1 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 for $1 on hostname "$(hostname)' at time '$(date)
 
 if [ $# -ne 1 ]
 then
@@ -39,4 +39,4 @@ for d in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
   fi
 done
 
-echo "*** Finished script $0 for $1 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 for $1 on hostname "$(hostname)' at time '$(date)

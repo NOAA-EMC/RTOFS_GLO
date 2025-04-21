@@ -52,7 +52,7 @@ export USHrtofs=${HOMErtofs}/ush
 # export cdo_r=$cdo_ROOT/bin/cdo
 
 # if cdo is in $PATH
-export cdo_r=`which cdo`
+export cdo_r=$(which cdo)
 
 #############################
 # Set up the UTILITIES
@@ -81,10 +81,6 @@ export inputgrid=navy_0.08
 ##############################################
 # Define Input/Output/Restart directories
 ##############################################
-export GETGES_COM=${GETGES_COM:-$(compath.py ${envir}/com/gfs/${gfs_ver})}
-export GETGES_NWG=${GETGES_NWG:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/nwges}
-export GESIN=${GESIN:-${GETGES_NWG}/${RUN}.${PDY}}
-
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
@@ -96,13 +92,12 @@ test -d $COMOUT || mkdir -p $COMOUT
 ## This assumes that the $job has the name structure of the type job_*NN
 ## where NN is two-digit number
 export postday=07
-export digitest=`echo $postday |cut -c1`
+export digitest=$(echo $postday |cut -c1)
 if [ $digitest -eq 0 ]; then
-  export postday=`echo $postday|cut -c2`
+  export postday=$(echo $postday|cut -c2)
 fi
-export startdate=`${NDATE} \`expr 24 \* \( $postday \- 1 \) \` $PDY$mycyc |cut -c1-8`
-#export startdate=${startdate:-${PDY}}
-export fcstdays_before_thisstep=` expr \` $NHOUR $startdate$mycyc $PDY$mycyc \` \/ 24 `
+export startdate=$(${NDATE} $(expr 24 \* $postday - 1) $PDY$mycyc)
+export fcstdays_before_thisstep=$(expr $($NHOUR $startdate $PDY$mycyc) \/ 24)
 if [ ${fcstdays_before_thisstep} -lt 3 ]
 then
   eval fcstdays="\$fcst_post_ndays"
@@ -119,7 +114,7 @@ export fcstdays
 ################################################################
 # Send a message indicating the start of the job
 ################################################################
-msg="HAS BEGUN on `hostname`"
+msg="JOB $job HAS BEGUN on $(hostname)"
 postmsg "$msg"
 
 ####################
@@ -128,7 +123,7 @@ postmsg "$msg"
 ksh ${HOMErtofs}/scripts/exrtofs_glo_post_2.sh
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.forecast_d7-8_post_2.`basename $pgmout`
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.forecast_d7-8_post_2.$(basename $pgmout)
 
 msg="JOB $job HAS COMPLETED NORMALLY." 
 postmsg "$msg"

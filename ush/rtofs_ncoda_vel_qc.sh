@@ -3,7 +3,7 @@
 #   this script runs NCODA pre_QC and NCODA QC for HF Radar
 #   and drifting buoy velocity observations
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
@@ -28,16 +28,21 @@ mkdir -p $OCN_DATA_DIR/sfc
 mkdir -p $OCN_DATA_DIR/velocity
 
 # link in forcing.wndspd so that ncoda programs find it
-mkdir ./data_${PDYm1}00
+mkdir -p ./data_${PDYm1}00
 if [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ]] && \
-   [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ]]; then 
-   ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ./data_${PDYm1}00/forcing.wndspd.a
-   ln -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ./data_${PDYm1}00/forcing.wndspd.b
+   [[ -s $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ]]
+then
+   if [[ ! -s ./data_${PDYm1}00/forcing.wndspd.a ]] && \
+      [[ ! -s ./data_${PDYm1}00/forcing.wndspd.b ]] 
+   then
+      ln -sf $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.a ./data_${PDYm1}00/forcing.wndspd.a
+      ln -sf $COMINm1/rtofs_glo.anal.t00z.forcing.wndspd.b ./data_${PDYm1}00/forcing.wndspd.b
+   fi
 else
    echo "using uniform 5 m/s wind speed"
 fi
 
-#use dcominsss for now
+# path to location of hfr data
 export HFR_DATA_DIR=$DCOMINHFR
 
 #   set path to BUFR dump files
@@ -55,19 +60,34 @@ cd $HFR_DATA_DIR
 ymd=${prv_dtg:0:8}
 for k in 12 13 14 15 16 17 18 19 20 21 22 23
 do
-   cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*"
-   ls $cmd > $log_dir/hfr_$k.$cut_dtg
+   cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*.nc"
+   ls $cmd > $log_dir/hfr_$k.${cut_dtg}_prelim
 done
 ymd=${cut_dtg:0:8}
 for k in 00 01 02 03 04 05 06 07 08 09 10 11
 do
-   cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*"
-   ls $cmd > $log_dir/hfr_$k.$cut_dtg
+   cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*.nc"
+   ls $cmd > $log_dir/hfr_$k.${cut_dtg}_prelim
 done
 
 #   change to working directory
 cd $log_dir
-cat hfr_*.$cut_dtg > hfr_files.$cut_dtg
+cat hfr_*.${cut_dtg}_prelim > hfr_files.${cut_dtg}_prelim
+
+# check on readability of hfr files
+echo timecheck hfr start ncdump at $(date)
+while read line
+do
+  ncdump -k $HFR_DATA_DIR/$line > /dev/null
+  ncrc=$?
+  if [ $ncrc -eq 0 ]
+  then
+     echo $line >> hfr_files.$cut_dtg
+  else
+     echo "WARNING - file $HFR_DATA_DIR/$line and will not be processed."
+  fi
+done < hfr_files.${cut_dtg}_prelim
+echo timecheck hfr finish ncdump at $(date)
 
 #   execute ncoda pre_qc for HF Radar netCDF files
 $EXECrtofs/rtofs_ncoda_hf_radar_nc $cut_dtg > pout1
@@ -83,7 +103,7 @@ $EXECrtofs/rtofs_ncoda_drft_decode $cut_dtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_drft_decode=",$err
 
-mv -f fort.71 drifter_frames.$cut_dtg.out
+[[ -e fort.71 ]] && mv -f fort.71 drifter_frames.$cut_dtg.out
 cat pout1 pout2 > vel_preqc.$cut_dtg.out
 
 #--------------------------------------------------------------------------------------
@@ -122,11 +142,11 @@ ln -s $OCN_DATA_DIR/incoming/drft.b.$cut_dtg $OCN_DATA_DIR/incoming/drft.b
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg velocity > vel_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-mv fort.44 vel_qc.$cut_dtg.rej
-mv fort.46 vel_qc_rpt.$cut_dtg.rej
-mv -f gmeta vel_qc.$cut_dtg.gmeta
+[[ -e fort.44 ]] && mv fort.44 vel_qc.$cut_dtg.rej
+[[ -e fort.46 ]] && mv fort.46 vel_qc_rpt.$cut_dtg.rej
+[[ -e gmeta ]] && mv -f gmeta vel_qc.$cut_dtg.gmeta
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 
 exit 0
 

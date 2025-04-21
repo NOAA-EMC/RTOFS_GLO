@@ -14,7 +14,7 @@
 # 
 set -x
 
-echo "*** Started script $0 on hostname "`hostname`' at time '`date`
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 if [ $# -ne 4 ] && [ $# -ne 2 ] ; then
   echo USAGE:  "$0 <sfluxgrb in> <sfluxgrb out> [ <pgrb in> <pgrb out> ]"
@@ -37,7 +37,7 @@ then
 else
   TYPEx='ave'
 fi
-cd `dirname $sfluxgrbout`
+cd $(dirname $sfluxgrbout)
 #
 # Extract forcing from sfluxgrb
 test -f $sfluxgrbout && mv $sfluxgrbout $sfluxgrbout.$$
@@ -64,6 +64,7 @@ do
      | grep ${FLUX} | grep "${LEVEL}" | grep "${TYPE}" \
      | $WGRIB  $sfluxgrb -i -grib -append \
     -o $sfluxgrbout
+  err=$?; export err ; err_chk
 done
 #
 # Extract forcing from pgrb
@@ -73,6 +74,7 @@ if [ $# -eq 4 ] ; then
     | grep PRMSL \
     | $WGRIB $pgrb -i -grib -append \
     -o $pgrbout
+  err=$?; export err ; err_chk
 fi
 
 #   kpds567=reshape (source=  &
@@ -94,4 +96,4 @@ fi
 #  &         , 81,   1 , 0 /) &  ! LAND
 #  &         ,shape = (/ 3,nmrf /) )  
 
-echo "*** Finished script $0 on hostname "`hostname`' at time '`date`
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

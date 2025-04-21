@@ -20,6 +20,7 @@
 #                    PARMrtofs                                                #
 #                    USHrtofs                                                 #
 #                    DATA                                                     #
+#                    COMIN                                                    #
 #                    COMOUT                                                   #
 #                    RUN_MODE                                                 #  
 #                    SENDCOM                                                  #
@@ -44,10 +45,8 @@ cd $DATA
 ### NOTE: Move copying to forecast step
 ###
 
-msg="RTOFS_GLO_POST JOB has begun on `hostname` at `date`"
+msg="RTOFS_GLO_POST JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
-
-procstatus=0
 
 typeset -Z3 fhr
 typeset -Z3 fhr0
@@ -62,20 +61,15 @@ typeset -Z3 ENDHOUR
 if [ ${RUN_MODE} = 'analysis' ]
 then
   export fcstdays=${fcstdays:-2}
-  export enddate=${analysis_end:-$PDY}
-  export startdate=`$NDATE -\` expr $fcstdays \* 24 \`  ${enddate}'00' | cut -c1-8`
-  export ENDHOUR=`expr $fcstdays \* 24`
+  export ENDHOUR=$(expr $fcstdays \* 24)
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
   export fcstdays=${fcstdays:-1}
-  export startdate=${startdate:-${PDY}}
-  export enddate=`$NDATE \` expr $fcstdays \* 24 \`  ${startdate}${mycyc} | cut -c1-8`
-  export ENDHOUR=`expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24 `
+  export ENDHOUR=$(expr \( $fcstdays \+ ${fcstdays_before_thisstep} \) \* 24)
 fi
 
 # define what functions to do (default to operational settings)
-export running_realtime=${running_realtime:-YES}
 export run_parallel=${run_parallel:-NO}
 export volume_3z_daily=${volume_3z_daily:-YES}
 export volume_3z_6hrly=${volume_3z_6hrly:-YES}
@@ -104,19 +98,19 @@ if [ ${RUN_MODE} = 'analysis' ]
 then
   fhr=00
   export mode=n
-  analhrs=`expr $fcstdays \* 24` 
+  analhrs=$(expr $fcstdays \* 24) 
 fi
 if [ ${RUN_MODE} = 'forecast' ]
 then
-  fhr=`expr \${fcstdays_before_thisstep} \* 24`
+  fhr=$(expr ${fcstdays_before_thisstep} \* 24)
   export mode=f
 fi
 export fhr0=$fhr
-fhr=`expr $fhr + 6`
+fhr=$(expr $fhr + 6)
 
 # srtarting hours
-export hr_daily=`expr $fhr0 \+ 24`
-export hr_3z_6hrly=`expr $fhr0 \+ 6`
+export hr_daily=$(expr $fhr0 \+ 24)
+export hr_3z_6hrly=$(expr $fhr0 \+ 6)
 
 
 echo fhr $fhr ENDHOUR $ENDHOUR
@@ -143,7 +137,7 @@ do
   if [ ${RUN_MODE} = 'analysis' ]
   then
     typeset -Z2 fhr3
-    fhr3=`expr $analhrs - $fhr2`
+    fhr3=$(expr $analhrs - $fhr2)
     if [ $fhr -eq $ENDHOUR ]; then
        arfile_tplate=${RUN}_${modID}.t${mycyc}z.${mode}00.archv
     else
@@ -173,11 +167,11 @@ do
   # link current archive to the working directory
   rm -rf archv.a archv.b > /dev/null
 
-  if [ -s $COMOUT/${arfile_tplate}.a ]; then
-    ln -s -f $COMOUT/${arfile_tplate}.a archv.a
-    ln -s -f $COMOUT/${arfile_tplate}.b archv.b
+  if [ -s $COMIN/${arfile_tplate}.a ]; then
+    ln -s -f $COMIN/${arfile_tplate}.a archv.a
+    ln -s -f $COMIN/${arfile_tplate}.b archv.b
   else
-    echo Missing archv file $COMOUT/${arfile_tplate}.
+    echo Missing archv file $COMIN/${arfile_tplate}.
     echo "NOTdone due to missing archv file" >${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk  
   fi
@@ -201,7 +195,7 @@ do
 #*********************************************************************
   if [ $fhr -eq $hr_daily ]
   then
-    hr_daily=`expr $hr_daily + $intvl_daily`
+    hr_daily=$(expr $hr_daily + $intvl_daily)
 ###
     if [ $volume_3z_daily = 'YES' ]
     then
@@ -211,7 +205,12 @@ do
         for fld in 3zuio 3zvio 3ztio 3zsio
         do
           cfile=${RUN}_${modID}_3dz_${mode}${fhr}_daily_${fld}.nc
-          cp -f -p $cfile $COMOUT/.
+          if [ -x cpfs ]   # rc=1 means cpfs not found
+          then
+            cp -f -p $cfile  $COMOUT/.
+          else
+            cpfs $cfile  $COMOUT/.
+          fi
           if [ $SENDDBN = YES ]
           then
             $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
@@ -228,7 +227,7 @@ do
   # 6 hourlies for volume files in 3 regions
   #
   if [ $fhr -eq $hr_3z_6hrly ]; then
-    hr_3z_6hrly=`expr $hr_3z_6hrly + $intvl_6hrly`
+    hr_3z_6hrly=$(expr $hr_3z_6hrly + $intvl_6hrly)
     if [ $volume_3z_6hrly = 'YES' ]
     then
       cmdtype='poe'
@@ -236,11 +235,9 @@ do
       touch cmdfile
       for reg in hvr_US_east hvr_US_west hvr_alaska
       do
-       echo "${USHrtofs}/${RUN}_glo3z_6hrly.sh $reg " >> cmdfile
+       echo "${USHrtofs}/${RUN}_glo3z_6hrly.sh $reg > $reg.$fhr.out 2>&1" >> cmdfile
       done
       chmod +x cmdfile
-      #mpirun.lsf cfp cmdfile > mpirun_6hrly.out
-      #mpirun cfp cmdfile > mpirun_6hrly.out
       mpiexec -np $NPROCS --cpu-bind verbose,core cfp cmdfile
       export err=$?; err_chk
 ## Copy all the regions to com
@@ -249,7 +246,12 @@ do
         if [ $SENDCOM = 'YES' ]
         then
           cfile=${RUN}_${modID}_3dz_${mode}${fhr}_6hrly_${reg}.nc
-          cp -f -p $cfile  $COMOUT/.
+          if [ -x cpfs ]   # rc=1 means cpfs not found
+          then
+            cp -f -p $reg/$cfile  $COMOUT/.
+          else
+            cpfs $reg/$cfile  $COMOUT/.
+          fi
           if [ $SENDDBN = YES ]
           then
             $DBNROOT/bin/dbn_alert MODEL RTOFS_GLO_NETCDF $job $COMOUT/$cfile
@@ -262,32 +264,17 @@ do
     fi # 6hrly loop 
   fi # volume 3z loop
 
-  fhr=`expr $fhr + $intvl_6hrly` 
+  fhr=$(expr $fhr + $intvl_6hrly) 
 done
 
-if [ $procstatus = 0 ]
-then
-  if [ $running_realtime = 'YES' ]
-  then
-    md5=/usr/bin/md5sum
-    if [ -x $md5 ]
-    then
-      cd $COMOUT
-      # need definition of files
-      for gfile in *.grb2
-      do
-        $md5 $gfile >> $DATA/csum.$PDY$mycyc
-      done
-    fi
-  fi
+echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
 
-  echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
-  msg='THE RTOFS_GLO_POST JOB HAS ENDED NORMALLY.'
-  postmsg "$msg"
-fi
+for pout in $(ls */$pgmout)
+do
+  cat $pout >> $pgmout
+done
 
 #################################################
 msg='THE RTOFS_GLO_POST JOB HAS ENDED NORMALLY.'
 postmsg "$msg"
-
 ################## END OF SCRIPT #######################

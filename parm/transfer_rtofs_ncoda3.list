@@ -23,16 +23,30 @@
 # Rules higher in the list take precedence over lower ones.  By default, all files in a
 # directory are included, so if no exclude patterns match that file, it will be
 # transferred.
-
-
 _COMROOT_/rtofs/_SHORTVER_/rtofs._PDY_/
-- *tgz*
-- /ncoda/
-- *arche.a
-+ */
++ /ncoda/
++ /ncoda/glbl_var/
++ /ncoda/glbl_var/***
++ /ncoda/logs/
++ /ncoda/logs/***
++ /ncoda/nhem_var/
++ /ncoda/nhem_var/***
++ /ncoda/ocnqc/
++ /ncoda/ocnqc/***
++ /ncoda/shem_var/
++ /ncoda/shem_var/***
+- *
 
 _COMROOT_/rtofs/_SHORTVER_/rtofs._PDYm1_/
-- *tgz*
-- /ncoda/
-- *arche.a
-+ */
++ /ncoda/
++ /ncoda/glbl_var/
++ /ncoda/glbl_var/***
++ /ncoda/logs/
++ /ncoda/logs/***
++ /ncoda/nhem_var/
++ /ncoda/nhem_var/***
++ /ncoda/ocnqc/
++ /ncoda/ocnqc/***
++ /ncoda/shem_var/
++ /ncoda/shem_var/***
+- *

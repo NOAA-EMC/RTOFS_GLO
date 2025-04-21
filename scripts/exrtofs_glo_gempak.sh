@@ -24,7 +24,7 @@ export PS4='$SECONDS + '
 
 cd $DATA
 
-msg="$job JOB has begun on `hostname` at `date`"
+msg="$job JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 yymmdd=${PDY:2}
@@ -46,7 +46,7 @@ done
 > mpirun.log
 for last in 24 48 72 ; do
 > mpirun.dat
-    for stepnum in `seq -w $((last-23)) $last` # 01..24, 25..48, 49..72
+    for stepnum in $(seq -w $((last-23)) $last) # 01..24, 25..48, 49..72
     do
 	echo "./gempak.sh $last $stepnum $instr $outstr $COMOUTgempak > $instr.$stepnum.log" >> mpirun.dat
     done
@@ -145,6 +145,6 @@ if [ $SENDDBN = YES ] ; then
 fi
 
 #################################################
-msg='THE $job JOB HAS ENDED NORMALLY.'
+msg="THE $job JOB HAS ENDED NORMALLY."
 postmsg "$msg"
 ################## END OF SCRIPT #######################

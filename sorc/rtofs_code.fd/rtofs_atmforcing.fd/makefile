@@ -64,6 +64,7 @@ PROFLIB =	-lprof
 # To compile giving profile additonal information, use the third line
 # WARNING:  SIMULTANEOUSLY PROFILING AND FLOWTRACING IS NOT RECOMMENDED 
 FFLAGS = -free -O2 -assume byterecl -convert big_endian
+DEBUGF = -g -O0 -check all -check noarg_temp_created -check nopointer -warn -warn noerrors -fp-stack-check -fstack-protector-all -fpe0 -debug -traceback -ftrapuv
 LDFLAGS = -O2
 
 # Lines from here on down should not need to be changed.  They are the
@@ -74,6 +75,13 @@ everything: clean $(CMD)  install finish
 
 $(CMD):	$(OBJS) 
 	$(CF) $(LDFLAGS) -o $(CMD) $(OBJS) $(LIBS)
+
+debug:  FFLAGS = $(DEBUGF)
+debug:  all
+
+test:
+	$(CMD) < input.txt > output.txt
+	diff output.txt valid_output.txt
 
 #$(CMD):		$(OBJS) 
 #	$(CF) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
