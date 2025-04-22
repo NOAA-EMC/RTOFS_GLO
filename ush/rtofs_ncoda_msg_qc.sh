@@ -1,10 +1,10 @@
 #!/bin/ksh
 #
-# Program Name: rtofs_ncoda_jpss_qc.sh
+# Program Name: rtofs_ncoda_msg_qc.sh
 #
-# Abstract: run NCODA pre_QC and NCODA QC for JPSS (noaa) SST products
+# Abstract: run NCODA pre_QC and NCODA QC for MSG SST products
 #
-# Usage: rtofs_ncoda_jpss_qc.sh
+# Usage: rtofs_ncoda_msg_qc.sh
 #
 # Executables called:
 # rtofs_dtg
@@ -12,21 +12,21 @@
 # rtofs_ncoda_qc
 #
 # Input Files: files in dcom with name
-# yyyymmdd/sst/yyyymmdd*L2P*VIIRS_N20*.nc
-# yyyymmdd/sst/yyyymmdd*L2P*VIIRS_N21*.nc (from 20240508)
+# yyyymmdd/sst/yyyymmdd*L2P*MSG02*.nc (from 20220601)
+# yyyymmdd/sst/yyyymmdd*L2P*MSG03*.nc (from 20230321)
 #
 # Output Files:
-# logs/noaa_qc/noaa_preqc.yyyymmddhh.out
-# logs/noaa_qc/noaa_qc.yyyymmddhh.out
-# logs/noaa_qc/noaa_qc.yyyymmddhh.rej
-# ocnqc/viirs/yyyymmddhh.jpss
+# logs/msg_qc/msg_preqc.yyyymmddhh.out
+# logs/msg_qc/msg_qc.yyyymmddhh.out
+# logs/msg_qc/msg_qc.yyyymmddhh.rej
+# ocnqc/msg/yyyymmddhh.msg
 #
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
 
 export run_dir=$DATA
-log_dir=$run_dir/logs/noaa_qc
+log_dir=$run_dir/logs/msg_qc
 mkdir -p $log_dir
 
 cut_dtg=${PDYm1}00
@@ -42,7 +42,7 @@ export LSEA_CLIM_DIR=$FIXrtofs/codaclim
 export MODAS_CLIM_DIR=$FIXrtofs/modas
 export OCN_DATA_DIR=$run_dir/ocnqc
 mkdir -p $OCN_DATA_DIR/incoming
-mkdir -p $OCN_DATA_DIR/viirs
+mkdir -p $OCN_DATA_DIR/msg
 
 #   set paths to NCEP netCDF files
 export SST_DATA_DIR=$DCOMINSST
@@ -56,23 +56,23 @@ echo "previous date time group is " $prv_dtg
 
 #--------------------------------------------------------------------------------------
 echo " "
-echo "NCODA JPSS pre_QC"
+echo "NCODA MSG pre_QC"
 
-#   create list of VIIRS JPSS (N20) sst netCDF files to process
+#   create list of MTA, MTB and MTC sst netCDF files to process
 cd $SST_DATA_DIR
 
 ymd=${prv_dtg:0:8}
 for k in 12 13 14 15 16 17 18 19 20 21 22 23
 do
-   cmd="$ymd/sst/$ymd$k*L2P*VIIRS_N20*.nc"
+   cmd="$ymd/sst/$ymd$k*L2P*MSG02*.nc"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/n20_$k.$cut_dtg
+      ls $cmd > $log_dir/msg02_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*VIIRS_N21*.nc"
+   cmd="$ymd/sst/$ymd$k*L2P*MSG03*.nc"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/n21_$k.$cut_dtg
+      ls $cmd > $log_dir/msg03_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
@@ -81,15 +81,15 @@ done
 ymd=${cut_dtg:0:8}
 for k in 00 01 02 03 04 05 06 07 08 09 10 11
 do
-   cmd="$ymd/sst/$ymd$k*L2P*VIIRS_N20*.nc"
+   cmd="$ymd/sst/$ymd$k*L2P*MSG02*.nc"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/n20_$k.$cut_dtg
+      ls $cmd > $log_dir/msg02_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
-   cmd="$ymd/sst/$ymd$k*L2P*VIIRS_N21*.nc"
+   cmd="$ymd/sst/$ymd$k*L2P*MSG03*.nc"
    if [ -s $cmd ] ; then
-      ls $cmd > $log_dir/n21_$k.$cut_dtg
+      ls $cmd > $log_dir/msg03_$k.$cut_dtg
    else
       echo "WARNING $cmd does not exist"
    fi
@@ -97,9 +97,9 @@ done
 
 #   change to working directory
 cd $log_dir
-cat n20_*.$cut_dtg n21_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
+cat msg02_*.$cut_dtg msg03_*.$cut_dtg > acspo_sst_files.${cut_dtg}_prelim
 
-echo timecheck noaa start ncdump at $(date)
+echo timecheck msg start ncdump at $(date)
 while read line
 do
   ncdump -k $SST_DATA_DIR/$line > /dev/null
@@ -111,21 +111,21 @@ do
      echo "WARNING - file $SST_DATA_DIR/$line and will not be processed."
   fi
 done < acspo_sst_files.${cut_dtg}_prelim
-echo timecheck noaa finish ncdump at $(date)
+echo timecheck msg finish ncdump at $(date)
 
-if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
-   echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No VIIRS JPSS files to process."
-   echo "JPSS_VIIRS.obs_control file will not be updated"
+if [[ ! -f  acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
+   echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No MSG files to process."
+   echo "MSG.obs_control file will not be updated"
 fi
 
-#   execute ncoda pre_qc for JPSS netCDF files
-$EXECrtofs/rtofs_ncoda_acspo_sst_nc noaa $cut_dtg 24 > noaa_preqc.$cut_dtg.out
+#   execute ncoda pre_qc for MSG netCDF files
+$EXECrtofs/rtofs_ncoda_acspo_sst_nc msg $cut_dtg 24 > msg_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_acspo_sst_nc=",$err
 
 #--------------------------------------------------------------------------------------
 echo "  "
-echo "NCODA JPSS QC"
+echo "NCODA MSG QC"
 
 #   create prediction namelist file
 rm -f prednl
@@ -170,16 +170,16 @@ cat << eof1 > prednl
 eof1
 
 #   clear symbolic links
-rm -f $OCN_DATA_DIR/incoming/noaa.a
-rm -f $OCN_DATA_DIR/incoming/noaa.b
+rm -f $OCN_DATA_DIR/incoming/msg.a
+rm -f $OCN_DATA_DIR/incoming/msg.b
 
 #   execute ncoda qc
-ln -s $OCN_DATA_DIR/incoming/noaa.a.$cut_dtg $OCN_DATA_DIR/incoming/noaa.a
-ln -s $OCN_DATA_DIR/incoming/noaa.b.$cut_dtg $OCN_DATA_DIR/incoming/noaa.b
-$EXECrtofs/rtofs_ncoda_qc $cut_dtg noaa > noaa_qc.$cut_dtg.out
+ln -s $OCN_DATA_DIR/incoming/msg.a.$cut_dtg $OCN_DATA_DIR/incoming/msg.a
+ln -s $OCN_DATA_DIR/incoming/msg.b.$cut_dtg $OCN_DATA_DIR/incoming/msg.b
+$EXECrtofs/rtofs_ncoda_qc $cut_dtg msg > msg_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-[[ -f fort.44 ]] && mv fort.44 noaa_qc.$cut_dtg.rej
+[[ -f fort.44 ]] && mv fort.44 msg_qc.$cut_dtg.rej
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

@@ -56,13 +56,13 @@ dtgr0=$($EXECrtofs/rtofs_dtg $dtgm1 -f "%Y-%m-%d")
 dtgr1=$($EXECrtofs/rtofs_dtg $dtg -f "%Y-%m-%d")
 
 # cp in yesterday's restart file produced at n-$inc_hours
-if [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a ]] &&  \
-   [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b ]] &&  \
+if [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a ]] ||  \
+   [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b ]] ||  \
    [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart_cice ]]; then
-     echo "  $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a \ 
-             $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b \
-             $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart_cice missing, exiting now."
-     export err=1;err_chk
+     msg="One of $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a "
+     msg="$msg or $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b "
+     msg="$msg or $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart_cice is missing"
+     err_exit $msg
 else
    ln -sf $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a restart_in.a
    ln -sf $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b restart_in.b

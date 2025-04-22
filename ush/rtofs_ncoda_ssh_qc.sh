@@ -1,6 +1,24 @@
-#!/bin/ksh
-
-#   this script runs NCODA pre_QC and NCODA QC for ADT SSH
+#!/bin/sh
+#
+# Program Name: rtofs_ncoda_ssh_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for ADT SSH products
+#
+# Usage: rtofs_ncoda_ssh_qc.sh
+#
+# Executables called:
+# rtofs_ncoda_acspo_sst_nc
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# yyyymmdd/wgrdbul/adt/rads_adt_ncoda_*.nc
+#
+# Output Files:
+# logs/ssh_qc/ssh_preqc.yyyymmddhh.out
+# logs/ssh_qc/ssh_qc.yyyymmddhh.out
+# logs/ssh_qc/ssh_qc.yyyymmddhh.rej
+# ocnqc/ssh/yyyymmddhh.goes
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
@@ -46,17 +64,22 @@ for apdy in $PDYm7 $PDYm6 $PDYm5 $PDYm4 $PDYm3 $PDYm2 $PDYm1
 do
   verified_location=$DATA/$apdy/$SSH_DATA_DIR_2
   mkdir -p $verified_location
-  for file in $(ls $DCOMINSSH/$apdy/$SSH_DATA_DIR_2/rads_adt_ncoda_*.nc)
-  do
-    ncdump -k $file > /dev/null
-    ncrc=$?
-    if [ $ncrc -eq 0 ]
-    then
-       cp -p $file $verified_location
-    else
-       echo "WARNING - file $file and will not be processed."
-    fi
-  done
+  if compgen -G "$DCOMINSSH/$apdy/$SSH_DATA_DIR_2/rads_adt_ncoda_*.nc" > /dev/null
+  then
+    for file in $(ls $DCOMINSSH/$apdy/$SSH_DATA_DIR_2/rads_adt_ncoda_*.nc)
+    do
+      ncdump -k $file > /dev/null
+      ncrc=$?
+      if [ $ncrc -eq 0 ]
+      then
+         cp -p $file $verified_location
+      else
+         echo "WARNING - file $file and will not be processed."
+      fi
+    done
+  else
+    echo "WARNING - no netcdf files to process in $DCOMINSSH/$apdy/$SSH_DATA_DIR_2"
+  fi
 done
 echo timecheck ssh finish ncdump at $(date)
 

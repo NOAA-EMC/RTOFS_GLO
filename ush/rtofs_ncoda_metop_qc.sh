@@ -1,6 +1,27 @@
 #!/bin/ksh
-
-#   this script runs NCODA pre_QC and NCODA QC for METOP
+#
+# Program Name: rtofs_ncoda_metop_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for METOP SST products
+#
+# Usage: rtofs_ncoda_metop_qc.sh
+#
+# Executables called:
+# rtofs_dtg
+# rtofs_ncoda_acspo_sst_nc
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# yyyymmdd/sst/yyyymmdd*L2P*AVHRRF_MA*.nc (to 20211115)
+# yyyymmdd/sst/yyyymmdd*L2P*AVHRRF_MB*.nc
+# yyyymmdd/sst/yyyymmdd*L2P*AVHRRF_MC*.nc (from 20220602)
+#
+# Output Files:
+# logs/metop_qc/metop_preqc.yyyymmddhh.out
+# logs/metop_qc/metop_qc.yyyymmddhh.out
+# logs/metop_qc/metop_qc.yyyymmddhh.rej
+# ocnqc/metop/yyyymmddhh.metop
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
@@ -111,7 +132,7 @@ if [[ ! -f  acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
 fi
 
 #   execute ncoda pre_qc for METOP netCDF files
-$EXECrtofs/rtofs_ncoda_acspo_sst_nc metop $cut_dtg > metop_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_acspo_sst_nc metop $cut_dtg 24 > metop_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_acspo_sst_nc=",$err
 
@@ -172,8 +193,6 @@ $EXECrtofs/rtofs_ncoda_qc $cut_dtg metop > metop_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
 [[ -f fort.44 ]] && mv fort.44 metop_qc.$cut_dtg.rej
-
-#   cleanup
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

@@ -1,4 +1,25 @@
 #!/bin/ksh
+#
+# Program Name: rtofs_ncoda_sfcobs_qc.sh
+#   
+# Abstract: run NCODA pre_QC and NCODA QC for SFCOBS
+#
+# Usage: rtofs_ncoda_sfcobs_qc.sh
+#
+# Executables called:
+# rtofs_ncoda_bufr_decode
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# $DATA/dump/*.ibm
+#
+# Output Files:
+# logs/sfc_qc/sfc_preqc.yyyymmddhh.out
+# logs/sfc_qc/sfc_qc.yyyymmddhh.out
+# logs/sfc_qc/sfc_qc.yyyymmddhh.rej
+# ocnqc/sfc/yyyymmddhh.sfc
+#
+
 
 #   this script runs NCODA pre_QC and NCODA QC for SFCOBS
 
@@ -56,7 +77,7 @@ echo "NCODA SFCOBS pre_QC"
 cd $log_dir
 
 #   execute ncoda pre_qc for SFCOBS bufr files
-$EXECrtofs/rtofs_ncoda_bufr_decode sfc $cut_dtg > sfc_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_bufr_decode sfc $cut_dtg 24 > sfc_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_bufr_decode=",$err
 

@@ -134,6 +134,7 @@ echo " error from rtofs_ncoda=",$err
 
 #NCODA post
 echo timecheck RTOFS_GLO_GLBL start post at $(date)
+. prep_step
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err

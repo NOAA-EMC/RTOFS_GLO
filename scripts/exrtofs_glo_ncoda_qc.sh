@@ -120,6 +120,7 @@ echo "$USHrtofs/rtofs_ncoda_metop_qc.sh > metop.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_himawari_qc.sh > himawari.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_goes_qc.sh > goes.qc.out 2>&1" >> cmdfile.qc
 echo "$USHrtofs/rtofs_ncoda_amsr_qc.sh > amsr.qc.out 2>&1" >> cmdfile.qc
+echo "$USHrtofs/rtofs_ncoda_msg_qc.sh > msg.qc.out 2>&1" >> cmdfile.qc
 # sss and vel moved to runsurf
 #echo "$USHrtofs/rtofs_ncoda_sss_qc.sh > sss.qc.out 2>&1" >> cmdfile.qc
 #echo "$USHrtofs/rtofs_ncoda_vel_qc.sh > vel.qc.out 2>&1" >> cmdfile.qc
@@ -134,6 +135,7 @@ echo timecheck RTOFS_GLO_NCODA_QC start alarm at $(date)
 export OCN_DATA_DIR=$DATA/ocnqc
 echo "NCODA DATA ALARM"
 #NCODA alarm
+. prep_step
 $EXECrtofs/rtofs_ncoda_alarm ${PDYm1}00
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_alarm=",$err

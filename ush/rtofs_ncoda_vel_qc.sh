@@ -1,7 +1,27 @@
-#!/bin/ksh
-
-#   this script runs NCODA pre_QC and NCODA QC for HF Radar
-#   and drifting buoy velocity observations
+#!/bin/sh
+#
+# Program Name: rtofs_ncoda_vel_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for HF Radar and drifting buoy velocity observations
+#
+# Usage: rtofs_ncoda_vel_qc.sh
+#
+# Executables called:
+# rtofs_dtg
+# rtofs_ncoda_hf_radar_nc
+# rtofs_ncoda_drft_decode
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# $DATA/dump/*.ibm
+#
+# Output Files:
+# logs/vel_qc/vel_preqc.yyyymmddhh.out
+# logs/vel_qc/vel_qc.yyyymmddhh.out
+# logs/vel_qc/vel_qc.yyyymmddhh.rej
+# ocnqc/velocity/yyyymmddhh.velocity
+# ocnqc/sss/yyyymmddhh.sss
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
@@ -61,13 +81,23 @@ ymd=${prv_dtg:0:8}
 for k in 12 13 14 15 16 17 18 19 20 21 22 23
 do
    cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*.nc"
-   ls $cmd > $log_dir/hfr_$k.${cut_dtg}_prelim
+   if compgen -G "$cmd" > /dev/null
+   then
+     ls $cmd > $log_dir/hfr_$k.${cut_dtg}_prelim
+   else
+     echo "WARNING - no netcdf files to process in $ymd/wgrdbul/ndbc"
+   fi
 done
 ymd=${cut_dtg:0:8}
 for k in 00 01 02 03 04 05 06 07 08 09 10 11
 do
    cmd="$ymd/wgrdbul/ndbc/$ymd$k*hfr*.nc"
-   ls $cmd > $log_dir/hfr_$k.${cut_dtg}_prelim
+   if compgen -G "$cmd" > /dev/null
+   then
+     ls $cmd > $log_dir/hfr_$k.${cut_dtg}_prelim
+   else
+     echo "WARNING - no netcdf files to process in $ymd/wgrdbul/ndbc"
+   fi
 done
 
 #   change to working directory
@@ -90,7 +120,7 @@ done < hfr_files.${cut_dtg}_prelim
 echo timecheck hfr finish ncdump at $(date)
 
 #   execute ncoda pre_qc for HF Radar netCDF files
-$EXECrtofs/rtofs_ncoda_hf_radar_nc $cut_dtg > pout1
+$EXECrtofs/rtofs_ncoda_hf_radar_nc $cut_dtg 24 > pout1
 err=$?; export err ; err_chk
 echo " error from rtofs_hf_radar_nc=",$err
 
@@ -99,7 +129,7 @@ echo " "
 echo "NCODA Drifter pre_QC"
 
 #   execute ncoda pre_qc for BUFR drifter files
-$EXECrtofs/rtofs_ncoda_drft_decode $cut_dtg > pout2
+$EXECrtofs/rtofs_ncoda_drft_decode $cut_dtg 24 > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_drft_decode=",$err
 

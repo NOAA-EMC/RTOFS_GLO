@@ -1,6 +1,26 @@
 #!/bin/ksh
-
-#   this script runs NCODA pre_QC and NCODA QC for HIMAWARI
+#
+# Program Name: rtofs_ncoda_himawari_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for HIMAWARI SST products
+#
+# Usage: rtofs_ncoda_himawari_qc.sh
+#
+# Executables called:
+# rtofs_dtg
+# rtofs_ncoda_acspo_sst_nc
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name
+# yyyymmdd/sst/yyyymmdd*L2P*AHI_H08*.nc (to 20221213)
+# yyyymmdd/sst/yyyymmdd*L2P*AHI_H09*.nc (from 20240320)
+#
+# Output Files:
+# logs/himawari_qc/himawari_preqc.yyyymmddhh.out
+# logs/himawari_qc/himawari_qc.yyyymmddhh.out
+# logs/himawari_qc/himawari_qc.yyyymmddhh.rej
+# ocnqc/himawari/yyyymmddhh.himawari
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
@@ -98,7 +118,7 @@ if [[  ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
 fi
 
 #   execute ncoda pre_qc for HIMAWARI netCDF files
-$EXECrtofs/rtofs_ncoda_acspo_sst_nc himawari $cut_dtg > himawari_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_acspo_sst_nc himawari $cut_dtg 24 > himawari_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_acspo_sst_nc=",$err
 #--------------------------------------------------------------------------------------
@@ -157,9 +177,7 @@ ln -s $OCN_DATA_DIR/incoming/himawari.b.$cut_dtg $OCN_DATA_DIR/incoming/himawari
 $EXECrtofs/rtofs_ncoda_qc $cut_dtg himawari > himawari_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
-[[ -f fort.44. ]] && mv fort.44 himawari_qc.$cut_dtg.rej
-
-#   cleanup
+[[ -f fort.44 ]] && mv fort.44 himawari_qc.$cut_dtg.rej
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

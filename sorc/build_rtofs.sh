@@ -27,6 +27,25 @@ case $whattodo in
     cd ./rtofs_ncoda.fd;./build_ncoda.sh;cd ..
     ;;
 
+  debug)
+    echo
+    echo Building rtofs_code.fd
+    echo
+    cd ./rtofs_code.fd;./build_code.sh debug;cd ..
+
+    echo
+    echo Building rtofs_hycom.fd
+    echo
+#    cd ./rtofs_hycom.fd;./build_hycom.sh esmf ;cd ..
+    cd ./rtofs_hycom.fd;./build_hycom.sh debug;cd ..
+
+    echo
+    echo Building rtofs_ncoda.fd
+    echo
+    cd ./rtofs_ncoda.fd;./build_ncoda.sh debug;cd ..
+    ;;
+
+
   install)
     echo
     echo Running option install

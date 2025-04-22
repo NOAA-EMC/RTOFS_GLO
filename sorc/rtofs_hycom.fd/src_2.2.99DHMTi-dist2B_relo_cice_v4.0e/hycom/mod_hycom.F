@@ -2148,6 +2148,7 @@ c
       endif
       call xctmr0(80)
 c
+      rc=0
 #endif
 c --- letter 'm' refers to mid-time level (example: dp(i,j,k,m) )
 c --- letter 'n' refers to old and new time level

@@ -26,12 +26,13 @@ c
       amx=amax1(amx,array(i,j))
  1    amn=amin1(amn,array(i,j))
 c
-      if (amx.gt.amn) go to 2
-      write (lp,100) array(1,1)
- 100  format (//' field to be contoured is constant ...',1pe15.5/)
-      return
+      if (amx.le.amn) then
+        write (lp,100) array(1,1)
+ 100    format (//' field to be contoured is constant ...',1pe15.5/)
+        return
+      endif
 c
- 2    contur=(amx-amn)/6.
+      contur=(amx-amn)/6.
       q=10.**int(alog10(contur))
       if (contur.lt.1.) q=q/10.
       ratio=contur/q

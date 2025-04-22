@@ -78,6 +78,13 @@
 !     WRITE(6,*) 'IRET= ',IRET
       call ufbint(lubfi,ident,3,1,iret,'SAID ORBN SLNM')
 
+!
+! check for scan number greater than huge
+!
+      if (ident(3).gt.huge(islnm)) then
+        ident(3)=huge(islnm)
+      endif
+
       isaid = NINT(ident(1))
       iorbn = NINT(ident(2))
       islnm = NINT(ident(3))

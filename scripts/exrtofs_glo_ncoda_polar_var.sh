@@ -155,6 +155,7 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
+. prep_step
 mpiexec -n $NPROCS $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
@@ -241,6 +242,7 @@ err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
+. prep_step
 mpiexec -n $NPROCS $EXECrtofs/rtofs_ncoda_post 2D ncoda ogridnl $ddtg > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post",$err

@@ -148,7 +148,7 @@ echo "ARCH = ",$ARCH
 gmake VPFILE=Filepath   \
            NXGLOB=$NXGLOB NYGLOB=$NYGLOB \
            BLCKX=$BLCKX BLCKY=$BLCKY MXBLCKS=$MXBLCKS \
-      -f  $CBLD/Makefile MACFILE=$CBLD/Macros.$ARCH esmf  || exit 2
+      -f  $CBLD/Makefile MACFILE=$CBLD/Macros.$ARCH.debug esmf  || exit 2
 
 cd ..
 pwd                                         
@@ -208,6 +208,6 @@ echo "CICE_DIR = "  $CICE_DIR
 setenv ARCH Aintelsse-impi-relo
 setenv TYPE cice 
 echo $ARCH $TYPE
-make ARCH=$ARCH TYPE=$TYPE hycom_cice
+make ARCH=$ARCH TYPE=$TYPE.debug hycom_cice
 #
 ln -f hycom_cice ../hycom_cice

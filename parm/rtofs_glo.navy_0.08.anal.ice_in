@@ -169,8 +169,8 @@
   , f_strength  = .true.
   , f_divu      = .true.
   , f_shear     = .false.
-  , f_sig1      = .false. 
-  , f_sig2      = .false. 
+  , f_sig1      = .true.
+  , f_sig2      = .true.
   , f_dvidtt    = .false. 
   , f_dvidtd    = .false. 
   , f_daidtt    = .false.

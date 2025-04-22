@@ -1,6 +1,24 @@
 #!/bin/ksh
-
-#   this script runs NCODA pre_QC and NCODA QC for AMSR
+#
+# Program Name: rtofs_ncoda_amsr_qc.sh
+#
+# Abstract: run NCODA pre_QC and NCODA QC for AMSR SST products
+#
+# Usage: rtofs_ncoda_amsr_qc.sh
+#
+# Executables called:
+# rtofs_dtg
+# rtofs_ncoda_acspo_sst_nc
+# rtofs_ncoda_qc
+#
+# Input Files: files in dcom with name yyyymmdd/sst/yyyymmdd*L2P*AMSR2*.nc
+#
+# Output Files:
+# logs/amsr_qc/amsr_preqc.yyyymmddhh.out
+# logs/amsr_qc/amsr_qc.yyyymmddhh.out
+# logs/amsr_qc/amsr_qc.yyyymmddhh.rej
+# ocnqc/amsr/yyyymmddhh.amsr
+#
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 set -xa
@@ -87,7 +105,7 @@ if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
 fi
 
 #   execute ncoda pre_qc for AMSR netCDF files
-$EXECrtofs/rtofs_ncoda_acspo_sst_nc amsr $cut_dtg > amsr_preqc.$cut_dtg.out
+$EXECrtofs/rtofs_ncoda_acspo_sst_nc amsr $cut_dtg 24 > amsr_preqc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_acspo_sst_nc=",$err
 #--------------------------------------------------------------------------------------
@@ -147,8 +165,6 @@ $EXECrtofs/rtofs_ncoda_qc $cut_dtg amsr_sst > amsr_qc.$cut_dtg.out
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_qc=",$err
 [[ -f fort.44 ]] && mv fort.44 amsr_qc.$cut_dtg.rej
-
-#   cleanup
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
 

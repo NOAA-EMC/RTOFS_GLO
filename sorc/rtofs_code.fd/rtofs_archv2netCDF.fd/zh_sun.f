@@ -294,14 +294,13 @@ C
       INTEGER I
       INTEGER LEN
 C
+      LEN_TRIM = 0
       DO 110 I= LEN(CSTR), 1, -1
         IF     (CSTR(I:I).NE.' ') THEN
           LEN_TRIM = I
-          GOTO 1110
+          EXIT
         ENDIF
   110 CONTINUE
-      LEN_TRIM = 0
- 1110 CONTINUE
       RETURN
 C     END OF LEN_TRIM.
       END

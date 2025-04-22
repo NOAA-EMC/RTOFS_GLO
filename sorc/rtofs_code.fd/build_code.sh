@@ -1,5 +1,16 @@
 #!/bin/sh
 
+#
+# this script executes the makefiles for the rtofs_code
+#
+
+# can override makefile target (only debug is valid)
+target=none
+if [[ $# -eq 1 && $1 == debug ]]
+then
+  target=debug
+fi
+
 mkdir -p ../../exec
 
 BASE=`pwd`
@@ -30,5 +41,6 @@ module load hdf5/${hdf5_ver}
 
 module list
 
-make > rtofsglo.compile.code.log 2>&1
+if [ $target == none ]; then make > rtofsglo.compile.code.log 2>&1; fi
+if [ $target == debug ]; then make debug > rtofsglo.compile.code.debug.log 2>&1; fi
 
