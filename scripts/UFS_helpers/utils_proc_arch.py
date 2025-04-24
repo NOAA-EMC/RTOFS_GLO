@@ -2,7 +2,8 @@
 
 """
 Utilities to:
-- Read Hycom archive files.
+- Read Hycom archive (i.e., archs, arche) files.
+  Support for archv is not (yet) available.
   Following functions are based on those at 
   pyhycom: https://github.com/uwincm/pyhycom/blob/master/pyhycom.py
 - Write out/return xarray dataset.
