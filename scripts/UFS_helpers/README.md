@@ -15,8 +15,9 @@ to a _future_ version (**v3.0**) that would use:
 | `bin2nc_inc_fld.sh` | Main script to convert binary formatted increment file or full field to netcdf |
 | `convert_bin_inc_to_nc.py` | Script that is called by the bin2nc_inc_fld.sh |
 | `set_py_modules.sh` | Set up python modules (on wcoss-2, those maintained within [EVS](https://github.com/NOAA-EMC/EVS)) |
+| `get_data_from_hpss.sh` | Script to fetch (archive) files from HPSS |
 | `hycom_wind_ymdh.py` | To Convert time stamp in hycom archive [b-file] to yyyy/mm/dd:hh |
-| `utils.py` | Functions that do (all the) work |
+| `utils*.py` | Functions that do (all the) work |
 
 # Example usage:
 
@@ -33,3 +34,6 @@ to a _future_ version (**v3.0**) that would use:
 
 - Same as above, but from RTOFS v2.4:
   `./bin2nc_inc_fld.sh dwood /lfs/h1/ops/prod/com/rtofs/v2.4/ 20250401 icecov fld`
+
+- To get files from HPSS:
+  `./get_data_from_hpss.sh 2025-04-03 2 v2p4  /lfs/h2/emc/ptmp/santha.akella/data/rtofs rtofs_glo.t00z.n00.archs.`
