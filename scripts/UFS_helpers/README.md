@@ -13,15 +13,16 @@ to a _future_ version (**v3.0**) that would use:
 | File name | Brief description |
 | :--       | --: |
 | `bin2nc_inc_fld.sh` | Main script to convert binary formatted increment file or full field to netcdf |
-| `convert_bin_nc_format.py` | Script that is called by the bin2nc_inc_fld.sh |
+| `convert_bin_inc_to_nc.py` | Script that is called by the bin2nc_inc_fld.sh |
 | `set_py_modules.sh` | Set up python modules (on wcoss-2, those maintained within [EVS](https://github.com/NOAA-EMC/EVS)) |
+| `hycom_wind_ymdh.py` | To Convert time stamp in hycom archive [b-file] to yyyy/mm/dd:hh |
 | `utils.py` | Functions that do (all the) work |
 
 # Example usage:
 
 - `./bin2nc_inc_fld.sh`: Echoes example usage.
 
-- `./convert_bin_nc_format.py -h`: Echoes example usage; must have python modules loaded (use `set_py_modules.sh`)
+- `./convert_bin_inc_to_nc.py -h`: Echoes example usage; must have python modules loaded (use `set_py_modules.sh`)
   - Note that it has some defaults and required fields.
 
 - To convert `ice temperature` and `field`:

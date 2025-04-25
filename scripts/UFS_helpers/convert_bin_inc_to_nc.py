@@ -12,7 +12,7 @@ from utils import gather_fNames, bin_to_nc_2d_incr
 
 
 # user inputs
-get_inputs = argparse.ArgumentParser(prog='\nconvert_bin_nc_format.py',\
+get_inputs = argparse.ArgumentParser(prog='\nconvert_bin_inc_to_nc.py',\
           description='To convert RTOFS-DA output from binary to netcdf format.',\
           usage='%(prog)s [options]',\
           formatter_class=argparse.ArgumentDefaultsHelpFormatter)
