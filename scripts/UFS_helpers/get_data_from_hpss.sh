@@ -9,6 +9,7 @@ if [[ $# -lt 5 ]]; then
   echo "Example inputs: "
   echo "2025-03-31 10 v2p4 /lfs/h2/emc/ptmp/santha.akella/data/rtofs rtofs_glo.t00z.n00.archs."
   echo " "
+  echo "Note: Data is NOT fetched for start_date, begin a day before, if needed."
   echo " "
   exit 1
 fi
