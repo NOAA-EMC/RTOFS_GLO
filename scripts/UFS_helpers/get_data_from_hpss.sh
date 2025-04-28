@@ -19,7 +19,7 @@ set -u
 
 start_date="$1" #"2025-03-31"
 num_days="$2" #10
-system_name="$3" # v2p4 or v2p5
+system_name="$3" # v2p4 or v2p5 or v2p5_bad
 output_path_base="$4" #/lfs/h2/emc/ptmp/santha.akella/data/rtofs
 file_type="$5" #rtofs_glo.t00z.n00.archs.
 
@@ -29,7 +29,10 @@ file_type="$5" #rtofs_glo.t00z.n00.archs.
 v2p4_path_pref=/NCEPPROD/5year/hpssprod/runhistory/
 
 # v2.5
-v2p5_path_pref=/NCEPDEV/emc-ocean/5year/Dan.Iredell
+v2p5_path_pref=/NCEPDEV/emc-ocean/5year/Dan.Iredell/
+
+# v2.5_bad: was stopped on 2025/04/24
+v2p5_bad_path_pref=emc-ocean/5year/Dan.Iredell/
 # ----------------
 
 CMD1=/usr/local/bin/htar
@@ -51,6 +54,9 @@ for i in $(seq 1 ${num_days}); do
     file_to_get=./${file_type}*
   elif [[ "${system_name}" = "v2p5" ]];then
     hpss_file=${v2p5_path_pref}/EMC.rtofs.v2.5.a/rtofs.${data_date}/rtofs.ab.tar
+    file_to_get=${file_type}*
+  elif [[ "${system_name}" = "v2p5_bad" ]];then
+    hpss_file=${v2p5_bad_path_pref}/rtofs.v2.5.test01/rtofs.${data_date}/rtofs.ab.tar
     file_to_get=${file_type}*
   else
     echo "Exiting! Did not code for input RTOFS version: "${system_name} 
