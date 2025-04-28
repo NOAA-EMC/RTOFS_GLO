@@ -150,6 +150,10 @@ def get_model_day(fName, varName):
   return model_day
 
 def arch_bin_dataset(lat, lon, data_date, var, vName, write_to_nc=True):
+  """
+  - Converts archive file to a netcdf file (optinally saves on disk).
+  - Returns an xarray dataset.
+  """
 
   ds = xr.Dataset()
 

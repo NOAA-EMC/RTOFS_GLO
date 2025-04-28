@@ -49,19 +49,31 @@ for i in $(seq 1 ${num_days}); do
   echo "Fetching data from HPSS for..." ${data_date}
   echo " "
 
-  if [[ "${system_name}" = "v2p4" ]];then
+  case ${system_name} in
+    v2p4)
+    # version 2.4
     hpss_file=${v2p4_path_pref}/rh${year}/${year}${mon}/${data_date}/com_rtofs_v2.4_rtofs.${data_date}.ab.tar
     file_to_get=./${file_type}*
-  elif [[ "${system_name}" = "v2p5" ]];then
+    ;;
+
+    v2p5)
+    # version 2.5
     hpss_file=${v2p5_path_pref}/EMC.rtofs.v2.5.a/rtofs.${data_date}/rtofs.ab.tar
     file_to_get=${file_type}*
-  elif [[ "${system_name}" = "v2p5_bad" ]];then
+    ;;
+  
+    v2p5_bad)
+    # version 2.5 parallel discontinued on 04/24/2025
     hpss_file=${v2p5_bad_path_pref}/rtofs.v2.5.test01/rtofs.${data_date}/rtofs.ab.tar
     file_to_get=${file_type}*
-  else
-    echo "Exiting! Did not code for input RTOFS version: "${system_name} 
+    ;;
+  
+    *)
+    # There is no default case
+    echo -n "Exiting! Did not code for input RTOFS version: "${system_name}
     exit 1
-  fi
+    ;;
+  esac
   #echo ${hpss_file}
   #echo ${file_to_get}
 
