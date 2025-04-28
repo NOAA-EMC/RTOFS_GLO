@@ -25,14 +25,11 @@ file_type="$5" #rtofs_glo.t00z.n00.archs.
 
 # RTOFS HPSS paths
 # ----------------
-# v2.4
-v2p4_path_pref=/NCEPPROD/5year/hpssprod/runhistory/
+# source the file containing definition of HPSS path
+source rtofs_hpss_path.sh
 
-# v2.5
-v2p5_path_pref=/NCEPDEV/emc-ocean/5year/Dan.Iredell/
-
-# v2.5_bad: was stopped on 2025/04/24
-v2p5_bad_path_pref=emc-ocean/5year/Dan.Iredell/
+hpss_path=$(rtofs_hpss_path "${system_name}")
+echo ${hpss_path}
 # ----------------
 
 CMD1=/usr/local/bin/htar
@@ -52,19 +49,19 @@ for i in $(seq 1 ${num_days}); do
   case ${system_name} in
     v2p4)
     # version 2.4
-    hpss_file=${v2p4_path_pref}/rh${year}/${year}${mon}/${data_date}/com_rtofs_v2.4_rtofs.${data_date}.ab.tar
+    hpss_file=${hpss_path}/rh${year}/${year}${mon}/${data_date}/com_rtofs_v2.4_rtofs.${data_date}.ab.tar
     file_to_get=./${file_type}*
     ;;
 
     v2p5)
     # version 2.5
-    hpss_file=${v2p5_path_pref}/EMC.rtofs.v2.5.a/rtofs.${data_date}/rtofs.ab.tar
+    hpss_file=${hpss_path}/EMC.rtofs.v2.5.a/rtofs.${data_date}/rtofs.ab.tar
     file_to_get=${file_type}*
     ;;
   
     v2p5_bad)
     # version 2.5 parallel discontinued on 04/24/2025
-    hpss_file=${v2p5_bad_path_pref}/rtofs.v2.5.test01/rtofs.${data_date}/rtofs.ab.tar
+    hpss_file=${hpss_path}/rtofs.v2.5.test01/rtofs.${data_date}/rtofs.ab.tar
     file_to_get=${file_type}*
     ;;
   
