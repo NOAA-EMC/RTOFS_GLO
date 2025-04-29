@@ -15,7 +15,7 @@ end_date: 2025-04-02
 arch_type: rtofs_glo.t00z.n00.archs.
 
 # Names of variables, must match what is in the archive [b] file.
-arch_variables: ['temp', 'salin', 'srfght', 'u-vel', 'v-vel']
+arch_variables: ['temp', 'salin', 'srfhgt', 'u-vel', 'v-vel']
 
 # Output path where output: (nc) files, plots, etc, are to be saved.
-#output_path: /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/
+output_path: /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/
