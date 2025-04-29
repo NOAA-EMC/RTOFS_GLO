@@ -149,7 +149,7 @@ def get_model_day(fName, varName):
   #print(model_day)
   return model_day
 
-def arch_bin_dataset(lat, lon, data_date, var, vName, write_to_nc=True):
+def arch_bin_dataset(lat, lon, data_date, var, vName, output_fName, write_to_nc=True):
   """
   - Converts archive file to a netcdf file (optinally saves on disk).
   - Returns an xarray dataset.
@@ -181,8 +181,7 @@ def arch_bin_dataset(lat, lon, data_date, var, vName, write_to_nc=True):
   ds=ds.set_coords(["Latitude", "Longitude", "time"])
  
   if (write_to_nc):
-   fName = f"scratch/{vName}_{data_date}.nc"
-   ds.to_netcdf(fName)
-   print(f"Saved data to file name:\t{fName}\n")
+   ds.to_netcdf(output_fName)
+   print(f"Saved data to file name:\t{output_fName}\n")
 
   return ds
