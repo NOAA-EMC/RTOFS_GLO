@@ -8,11 +8,11 @@ from utils_proc_arch import *
 from hycom_wind_ymdh import hycom_wind_ymdh
 
 output_var_names = {
-  "ssh": "SSH",
-  "sss": "SSS",
+  "srfhgt": "SSH",
+  "salin": "SSS",
   "temp":"SST",
-  "ssu": "SSU",
-  "ssv": "SSV"}
+  "u-vel": "SSU",
+  "v-vel": "SSV"}
 
 # user inputs
 get_inputs = ArgumentParser(description="\
@@ -37,8 +37,8 @@ input_path = config['input_path']
 
 start_date, end_date = [pd.to_datetime(config['start_date']), pd.to_datetime(config['end_date'])]
 arch_type = config['arch_type']
-vars = config['arch_variables']
-#output_path = config['output_path']
+varNames = config['arch_variables']
+output_path = config['output_path']
 # --
 
 for dd in pd.date_range(start_date, end_date):
@@ -52,15 +52,18 @@ for dd in pd.date_range(start_date, end_date):
   input_archive = glob.glob(data_path+"/"+arch_type+"*a")[0]
   #print(input_archive)
 
-  # time stamp in the archive file
-  [year, month, day, hour]= hycom_wind_ymdh( float(get_model_day(input_archive, vars[0])))
-  MM = 0 # assumed to be at 0 minutes
-  var = getField(vars[0], input_archive)
+  for varName in varNames:
+    # time stamp in the archive file
+    [year, month, day, hour]= hycom_wind_ymdh( float(get_model_day(input_archive, varName)))
+    MM = 0 # assumed to be at 0 minutes
+    var = getField(varName, input_archive)
 
-  # convert
-  data_date = "{}-{}-{}T{}:{}".\
+    data_date = "{}-{}-{}T{}:{}".\
               format(year, str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2), str(MM).zfill(2))
-  print(f"\nConverting archive on.. {data_date}")
-  ds = arch_bin_dataset(plat, plon, data_date, var, output_var_names[vars[0]], True)
+    print(f"\nConverting {varName} on.. {data_date}")
+    output_fName = f"{output_path}/{rtofs_system}_"
+    output_fName = output_fName + "{}_{}.nc".format(output_var_names[varName], data_date)
+    #print(output_fName)
+    ds = arch_bin_dataset(plat, plon, data_date, var, output_var_names[varName], output_fName, True)
+
 print("\nAll Done!\n")
-#
