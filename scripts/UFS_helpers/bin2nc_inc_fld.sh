@@ -54,7 +54,7 @@ fi
 source ${cwd}/set_py_modules.sh ${machName}
 
 # convert format of file: bin to netcdf 
-${cwd}/./convert_bin_nc_format.py --proc_date ${dataDate} \
+${cwd}/./convert_bin_inc_to_nc.py --proc_date ${dataDate} \
                                   --data_path_pref ${inputPath} \
                                   --output_path ${cwd}/scratch_${dataDate} \
                                   --var_name ${vName} \

@@ -15,7 +15,7 @@ echo " "
 if [[ (${mach} == "dwood")  ||  (${mach} == "cac") ]]; then
   module reset
 
-  export py_mod="ve/evs/2.0"
+  export py_mod="ve/evs/2.0_py312"
   module use /apps/dev/modulefiles/
 else
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
