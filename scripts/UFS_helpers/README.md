@@ -13,6 +13,8 @@ to a _future_ version (**v3.0**) that would use:
 | File name | Brief description |
 | :--       | --: |
 | `bin2nc_inc_fld.sh` | Main script to convert binary formatted increment file or full field to netcdf |
+| `2d_archive_nc_plot.py` | Script to convert archive (2d fields: archs) to netcdf formatted file |
+| `config_archive_to_nc.yaml` | Example configuration for `2d_archive_nc_plot.py` |
 | `convert_bin_inc_to_nc.py` | Script that is called by the bin2nc_inc_fld.sh |
 | `set_py_modules.sh` | Set up python modules (on wcoss-2, those maintained within [EVS](https://github.com/NOAA-EMC/EVS)) |
 | `rtofs_hpss_path.sh` | Function that returns path to RTOFS output on HPSS (tape archive) | 
@@ -26,6 +28,9 @@ to a _future_ version (**v3.0**) that would use:
 
 - `./convert_bin_inc_to_nc.py -h`: Echoes example usage; must have python modules loaded (use `set_py_modules.sh`)
   - Note that it has some defaults and required fields.
+
+- `2d_archive_nc_plot.py -h`: Echoes example usage; must have python modules loaded (use `set_py_modules.sh`).
+  - Note that the configuration is set via yaml file, for e.g., `config_archive_to_nc.yaml`
 
 - To convert `ice temperature` and `field`:
   `./bin2nc_inc_fld.sh dwood /lfs/h2/emc/couple/noscrub/dan.iredell/COMDIR1/prod/com/rtofs/v2.5/ 20250331 icetmp fld`

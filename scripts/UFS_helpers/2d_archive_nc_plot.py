@@ -23,7 +23,7 @@ get_inputs = ArgumentParser(description="\
 get_inputs.add_argument('--config_file', type=str,\
            help='yaml file that sets configuration, see provided yaml file for an example',\
            default=\
-           '/lfs/h2/emc/couple/noscrub/santha.akella/src/rtofs_17Apr2025/scripts/UFS_helpers/config.yaml')
+           '/lfs/h2/emc/couple/noscrub/santha.akella/src/rtofs_17Apr2025/scripts/UFS_helpers/config_archive_to_nc.yaml')
 args = get_inputs.parse_args()
 # --
 
