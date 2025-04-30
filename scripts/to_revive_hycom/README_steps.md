@@ -47,7 +47,7 @@
      - Though not need to run on node: `qsub run_hycom_arctic.csh`.
        - Make sure that `arctic_type.txt` has been copied to the `workDir` (set in `run hycom_arctic.csh`).
        - Check error, output logfiles: `hycom_arctic.e` and `hycom_arctic.o` respectively.
-       - In the `workDir`, check if `*_arctic* files have been created.
+       - In the `workDir`, check if `*_arctic*` files have been created.
          - The mismatches in bathymetry will be _repaired_ by this utility!
   3. 
 
