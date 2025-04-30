@@ -30,6 +30,7 @@
   2. Use: `run_hycom_arctic.csh` to reconcile any issues with the bathymetry and/or coastline.
      - Need to build another hycom_tools utility: `hycom_arctic_g`:
        - In dir: `RTOFS_GLO/sorc/HYCOM_tools.fd/bin`, add following to `Make_ncdf.csh` and `csh ./Make_ncdf.csh`:
+       - **Note**: Before proceeding further, see following step 4.
        ```
        foreach f ( hycom_arctic hycom_arctic_ok)
          if ( ! -e ${f}_${OS} ) then
@@ -61,4 +62,20 @@
      - Build: `csh ./Make_all.csh`, make sure: `archv2restart` is built, check: `Make_archv2restart.log` for any errors.
      - Submit job: `qsub run_archv2restart.csh`, check output and output/error logs and output in specified output directory.
   4. Using `add_ice_to_restart.csh`, add ice fields to restart (because EPSC-D archive does not include sea ice).
-
+     - If not already built, in hycom_tools, build: `HYCOM_tools.fd/bin/hycom_extract.exe`
+     - In `HYCOM_tools.fd/bin/Make_ncdf.csh`
+     ```
+     foreach f ( hycom_arctic hycom_arctic_ok hycom_extract)
+       if ( ! -e ${f}_${OS} ) then
+         $FC $FFLAGS ${f}.F ${EXTRANCDF} -o ${f}_${OS}
+       else
+         echo "${f}_${OS} is already up to date"
+       endif
+       touch       ${f}.exe
+       /bin/rm -f  ${f}.exe
+       chmod a+rx  ${f}_${OS}
+       /bin/ln -s  ${f}_${OS} ${f}.exe
+     end
+     ```
+     - Build: `csh ./Make_ncdf.csh`, make sure: `hycom_extract.exe` is built.
+     - Run the script: `add_ice_to_restart.csh`, if all finished ok, find: `newrestart_withIce.*` in the specified output path.
