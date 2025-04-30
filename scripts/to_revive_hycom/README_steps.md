@@ -27,5 +27,29 @@
        - Check error, output logfiles: `convert_GLB_y_b_0.08.e` and `convert_GLB_y_b_0.08.o` respectively.
        - In the output dir (set in `run_isubaregion.csh`), check if `*_archm_*` files have been created.
 
+  2. Use: `run_hycom_arctic.csh` to reconcile any issues with the bathymetry and/or coastline.
+     - Need to build another hycom_tools utility: `hycom_arctic_g`:
+       - In dir: `RTOFS_GLO/sorc/HYCOM_tools.fd/bin`, add following to `Make_ncdf.csh` and `csh ./Make_ncdf.csh`:
+       ```
+       foreach f ( hycom_arctic hycom_arctic_ok)
+         if ( ! -e ${f}_${OS} ) then
+           $FC $FFLAGS ${f}.F ${EXTRANCDF} -o ${f}_${OS}
+         else
+           echo "${f}_${OS} is already up to date"
+         endif
+         touch       ${f}.exe
+         /bin/rm -f  ${f}.exe
+         chmod a+rx  ${f}_${OS}
+         /bin/ln -s  ${f}_${OS} ${f}.exe
+       end
+       ```
+     - Edit settings in `run_hycom_arctic.csh`, lines below `# -- Edit following --` 
+     - Though not need to run on node: `qsub run_hycom_arctic.csh`.
+       - Make sure that `arctic_type.txt` has been copied to the `workDir` (set in `run hycom_arctic.csh`).
+       - Check error, output logfiles: `hycom_arctic.e` and `hycom_arctic.o` respectively.
+       - In the `workDir`, check if `*_arctic* files have been created.
+         - The mismatches in bathymetry will be _repaired_ by this utility!
+  3. 
+
 
  
