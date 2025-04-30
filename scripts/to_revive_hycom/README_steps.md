@@ -49,7 +49,16 @@
        - Check error, output logfiles: `hycom_arctic.e` and `hycom_arctic.o` respectively.
        - In the `workDir`, check if `*_arctic*` files have been created.
          - The mismatches in bathymetry will be _repaired_ by this utility!
-  3. 
+  3. Using `run_archv2restart.csh`, convert into a restart for RTOFS (of the same format).
+     - If not already built, in hycom_tools, build: `archive/src/archv2restart`
+     - In `archive/src/Make_all.csh`
+     ```
+     module load envvar/1.0 intel/19.1.3.304 module load PrgEnv-intel/8.1.0 craype/2.7.10 netcdf/4.7.4
+     setenv NCDFC  /apps/prod/hpc-stack/intel-19.1.3.304/netcdf/4.7.4/
+     setenv NCDF   /apps/prod/hpc-stack/intel-19.1.3.304/netcdf/4.7.4/
+     setenv EXTRANCDF `nf-config --flibs`
+     ```
+     - Build: `csh ./Make_all.csh`, make sure: `archv2restart` is built, check: `Make_archv2restart.log` for any errors.
+     - Submit job: `qsub run_archv2restart.csh`, check output and output/error logs and output in specified output directory.
+  4. Using `add_ice_to_restart.csh`, add ice fields to restart (because EPSC-D archive does not include sea ice).
 
-
- 
