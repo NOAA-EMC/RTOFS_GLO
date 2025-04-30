@@ -24,8 +24,8 @@
        ```
      - Edit settings in `run_isubaregion.csh`, lines below `# -- Edit following --`
      - Run this script on a node: `qsub run_isubaregion.csh`.
-       :heavy_check_mark: Check error, output logfiles: `convert_GLB_y_b_0.08.e` and `convert_GLB_y_b_0.08.o` respectively.
-       :heavy_check_mark: In the output dir (set in `run_isubaregion.csh`), check if `*_archm_*` files have been created.
+       - Check error, output logfiles: `convert_GLB_y_b_0.08.e` and `convert_GLB_y_b_0.08.o` respectively.
+       - In the output dir (set in `run_isubaregion.csh`), check if `*_archm_*` files have been created.
 
 
  
