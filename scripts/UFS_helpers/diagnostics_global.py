@@ -99,18 +99,18 @@ if args.gen_plot:
   plot_width, plot_height, plot_dpi = [8, 6, 120]
   cbar_orientation = 'vertical'
 
-  fig = plt.figure(figsize=[plot_width, plot_height], dpi=plot_dpi)
+  fig = plt.figure(figsize=(plot_width, plot_height))
   ax = fig.add_subplot(1,1,1, projection=ccrs.PlateCarree(central_longitude=cLon))
 
-  ax.add_feature(cfeature.LAND, zorder=0, edgecolor='k', facecolor=("lightgray"), alpha=0.2)
-  ax.coastlines(color='k', alpha=0.4)
-  ax.set_title("{}".format(dStr))
-
-  im= ax.pcolormesh(ds[lonName].values, \
-                    ds[latName].values,\
+  im= ax.pcolormesh(ds[lonName].values, ds[latName].values,\
                     ds[args.varName].values.squeeze(),\
                     transform=ccrs.PlateCarree(),\
                     vmin=vMin, vmax=vMax, cmap=cMap)
+
+  ax.add_feature(cfeature.LAND, zorder=0, edgecolor='k', facecolor=("lightgray"), alpha=0.2)
+  ax.coastlines(color='k', alpha=0.4)
+  ax.set_global()
+  ax.set_title("{}".format(dStr))
 
   cbar=plt.colorbar(im, ax=ax, pad=0.01, orientation=cbar_orientation, shrink=0.5)
   cbar.set_label("{} [{}]".format(args.varName, var_units[args.varName]))
@@ -124,6 +124,6 @@ if args.gen_plot:
   gl.ylabel_style = {'size': 6}
 
   figName= args.output_path + '/' + args.varName + '_' + region + '_' + dStr + '.png'
-  plt.savefig(figName, bbox_inches='tight')
+  plt.savefig(figName, bbox_inches='tight', dpi=plot_dpi)
   print(f'Saved\n{figName}')
   plt.close()
