@@ -52,3 +52,7 @@ to a _future_ version (**v3.0**) that would use:
     - `./diagnostics_global.py --data_file /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4_SSS_2025-04-01T00\:00.nc --varName SSS`
   - To save plot (default is not to save plot): 
     - `./diagnostics_global.py --data_file /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4_SSS_2025-04-01T00\:00.nc --varName SSS --gen_plot`
+
+**Note**:
+  - On WCOSS-2, plotting with cartopy if failed once, will keep on failing. Unfortunately there is no way to install software!
+    - Work around: `scp` data elsewhere, the same script will work!
