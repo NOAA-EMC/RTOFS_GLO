@@ -3,6 +3,7 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import yaml
 import glob as glob
+import numpy as np
 import pandas as pd
 from utils_proc_arch import *
 from hycom_wind_ymdh import hycom_wind_ymdh
@@ -46,6 +47,9 @@ for dd in pd.date_range(start_date, end_date):
     print(f'Reading grid info from:\n[{grid_file}] on start date')
     plon = getField("plon", grid_file)
     plat = getField("plat", grid_file)
+
+    # sanitize any longitude (i.e. plon) > 360.:
+    plon = np.where(plon <= 360., plon, plon-360.)
 
   data_path=input_path+'{}'.format(dd.strftime('%Y%m%d'))
   #print(data_path)
