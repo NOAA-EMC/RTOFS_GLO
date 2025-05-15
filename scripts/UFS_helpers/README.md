@@ -23,6 +23,7 @@ to a _future_ version (**v3.0**) that would use:
 | `utils*.py` | Functions that do (all the) work |
 | | |
 | `diagnostics_global.py` | Calculate global mean and standard deviation of a 2-d field, optionally save plot. |
+| `diagnostics_arctic.py` | Calculate Arctic (55N start) mean and standard deviation of a 2-d field, optionally save plot. |
 
 # Example usage:
 
@@ -52,5 +53,7 @@ to a _future_ version (**v3.0**) that would use:
     - `./diagnostics_global.py --data_file /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4_SSS_2025-04-01T00\:00.nc --varName SSS`
   - To save plot (default is not to save plot): 
     - `./diagnostics_global.py --data_file /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4_SSS_2025-04-01T00\:00.nc --varName SSS --gen_plot`
+
+  - `diagnostics_arctic.py` works the same way as above `diagnostics_global.py`
 
 **Note**:
