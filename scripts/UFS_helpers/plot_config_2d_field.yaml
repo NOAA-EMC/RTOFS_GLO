@@ -6,17 +6,20 @@ SSH:
   Arctic:    [-1.0,  0.5, 'Spectral_r', -30]
   Antarctic: [-1.5,  1.0, 'Spectral_r', 0]
   Eq_Pac:    [-1.2,  1.2, 'gist_ncar', -180]
-  Eq_Atl:    [-1.0,  1.0, 'gist_ncar', 0]
-  Trop:      [-1.5,  1.5, 'gist_ncar', 0]
+  Eq_Atl:    [-1.0,  1.0, 'gist_ncar',  0]
+  Trop:      [-1.5,  1.5, 'gist_ncar',  0]
 
 SST:
-  Global: [ 2.0, 30.0, 'gist_ncar', 0]
+  Global: [ 2.0, 30.0, 'gist_ncar',   0]
+  Arctic: [-2.0, 15.0, 'Spectral_r', -30]
 
 SSS:
-  Global: [32.0, 40.0, 'gist_ncar', 0]
+  Global: [32.0, 40.0, 'gist_ncar',  0]
+  Arctic: [30.0, 36.0, 'gist_ncar', -30]
 
 #CURR: -- later --
-#  Global: [-1.0,  1.0, 'bwr',       0]
+# Global: [-1.0,  1.0, 'bwr',        0]
+# Arctic: [-2.0, 15.0, 'Spectral_r', -30]
 
 # RTOFS (with Hycom) specific settings
 # -- do not touch unless you are a MOM6 user --

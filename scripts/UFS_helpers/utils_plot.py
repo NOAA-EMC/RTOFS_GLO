@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 """
-To plot following regions (zoom-in).
+- To plot following regions (zoom-in).
 - N Pole (Arctic).
 - Globe.
 - S Pole (Antarctic).
+
+- To get array indices given coordinates (on hycom grid).
 """
 
 import xarray as xr
@@ -17,6 +19,20 @@ import matplotlib.pyplot as plt
 
 arc_ssh_ticks = np.asarray([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.])
 arc_sst_ticks = np.asarray([-3., -2., -1., -0.5, 0, 0.5, 1, 2, 3, 5])
+# --
+
+def get_index(lat_array, lon_array, lat0, lon0):
+  # First, find the index of the grid point nearest a specific lat/lon.
+  abslat = np.abs(lat_array-lat0)
+  abslon = np.abs(lon_array-lon0)
+  c = np.maximum(abslon, abslat)
+
+  ([xloc], [yloc]) = np.where(c == np.min(c))
+
+  #point_ds = ds.sel(X=xloc, Y=yloc)
+  #print(f'yIndex= {yloc}, xIndex= {xloc}')
+  return [yloc, xloc]
+
 # --
 
 def plot_arctic(input_ds, vName, data_date, cMin, cMax, cMap, cLon=-30, DPI=120):
