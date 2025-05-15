@@ -77,7 +77,7 @@ def getFieldIndex(field, fName):
         fieldIndex.append(f.index(line))
     return fieldIndex
 
-def getField(field, fName, undef=np.nan, x_range=None, y_range=None):
+def getField(fieldName, fName, undef=np.nan, x_range=None, y_range=None):
 
   dims = getDims(fName)
   if dims.__len__() == 2:
@@ -93,7 +93,7 @@ def getField(field, fName, undef=np.nan, x_range=None, y_range=None):
   # up to the next multiple. The "pad" value below is equal to the bytes that are needed to do this.
   wordlen = 4096*4
   pad = wordlen * np.ceil(reclen / wordlen) - reclen   # Pad size in bytes
-  fieldRecords = getFieldIndex(field,fName)         # Get field record indices
+  fieldRecords = getFieldIndex(fieldName,fName)         # Get field record indices
   fieldAddresses = np.array(fieldRecords)*(reclen+pad) # Address in bytes
 
   file = open_a_file(fName,mode='rb') # Open file
@@ -101,6 +101,7 @@ def getField(field, fName, undef=np.nan, x_range=None, y_range=None):
     field = np.zeros((jdm,idm))
     file.seek(int(fieldAddresses[0]),0) # Move to address of the field
     data = file.read(idm*jdm*4)
+
     field = np.reshape(np.frombuffer(data, dtype='float32', count=idm*jdm),(jdm,idm)).byteswap()
 
     if not x_range is None:
