@@ -27,8 +27,7 @@ var_units = {
 # user inputs
 get_inputs = ArgumentParser(description="\
            Calculate mean and std dev of a 2-d (globally defined) field \
-           and optionally save a plot of it.",\
-           usage='%(prog)s [options]',
+           and optionally save a plot of it.", usage='%(prog)s [options]',\
            formatter_class=ArgumentDefaultsHelpFormatter)
 
 get_inputs.add_argument('--config_file', type=str,\
@@ -88,8 +87,8 @@ if args.gen_plot:
   config = yaml.load( open( args.config_file, "r"), Loader=yaml.FullLoader)
 
   # Attributes in netcdf file
-  latName = config['lonName']
-  lonName = config['latName']
+  latName = config['latName']
+  lonName = config['lonName']
 
   vMin, vMax, cMap, cLon = config['%s'%(args.varName)]['%s'%(region)]
   #print(vMin, vMax, cMap, cLon)
@@ -102,14 +101,13 @@ if args.gen_plot:
   fig = plt.figure(figsize=(plot_width, plot_height))
   ax = fig.add_subplot(1,1,1, projection=ccrs.PlateCarree(central_longitude=cLon))
 
-  im= ax.pcolormesh(ds[lonName].values, ds[latName].values,\
-                    ds[args.varName].values.squeeze(),\
-                    transform=ccrs.PlateCarree(),\
-                    vmin=vMin, vmax=vMax, cmap=cMap)
+  im= ds[args.varName].plot(ax=ax, x=lonName, y=latName,\
+                            transform=ccrs.PlateCarree(),\
+                            vmin=vMin, vmax=vMax, cmap=cMap,\
+                            add_labels=False, add_colorbar=False)
 
   ax.add_feature(cfeature.LAND, zorder=0, edgecolor='k', facecolor=("lightgray"), alpha=0.2)
   ax.coastlines(color='k', alpha=0.4)
-  ax.set_global()
   ax.set_title("{}".format(dStr))
 
   cbar=plt.colorbar(im, ax=ax, pad=0.01, orientation=cbar_orientation, shrink=0.5)
