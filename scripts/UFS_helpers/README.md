@@ -21,7 +21,7 @@ to a _future_ version (**v3.0**) that would use:
 | `get_data_from_hpss.sh` | Script to fetch (archive) files from HPSS |
 | `hycom_wind_ymdh.py` | To Convert time stamp in hycom archive [b-file] to yyyy/mm/dd:hh |
 | `utils*.py` | Functions that do (all the) work |
-| :--: | :--: |
+| | |
 | `diagnostics_global.py` | Calculate global mean and standard deviation of a 2-d field, optionally save plot. |
 
 # Example usage:
