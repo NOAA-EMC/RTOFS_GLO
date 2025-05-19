@@ -15,7 +15,7 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
-from utils_plot import get_index
+#from utils_plot import get_index, get_cutOut
 # --
 
 var_units = {
@@ -29,7 +29,7 @@ var_units = {
 
 # user inputs
 get_inputs = ArgumentParser(description="\
-           Calculate Arctic (beyond 55N) mean and std dev of a 2-d (globally defined) field \
+           Calculate tropical (lat: [-40, 40], lon: [0, 360]) mean and std dev of a 2-d (globally defined) field \
            and optionally save a plot of it.", usage='%(prog)s [options]',\
            formatter_class=ArgumentDefaultsHelpFormatter)
 
@@ -57,8 +57,8 @@ get_inputs.add_argument('--modelName', type=str,\
 args = get_inputs.parse_args()
 # --
 
-region = 'Arctic'  # This script is meant for ARCTIC diagnostics and plots.
-map_lon_beg, map_lon_end, map_lat_beg, map_lat_end = [0, 360, 55, 90]
+region = 'Trop'  # This script is meant for Eq Pacific diagnostics and plots.
+map_lon_beg, map_lon_end, map_lat_beg, map_lat_end = [0, 359, -40, 40]
 
 #print(f'\nReading configurations for plotting from:\n{args.config_file}\n')
 config = yaml.load( open( args.config_file, "r"), Loader=yaml.FullLoader)
@@ -76,9 +76,10 @@ yyyymmdd = ds_glb.time.values.astype("str")
 dStr = yyyymmdd.split('T')[0]+'T'+yyyymmdd.split('T')[1].split(':')[0]
 
 # Subset for the (above) set region
-#[y1, x1] = get_index(ds_glb[latName].values, ds_glb[lonName].values, map_lat_beg, 180.) # 180 was found by trial and error- vis inspection
-#ds = ds_glb.sel(Y=slice(y1, ds_glb.Y.shape[0]))
-ds = ds_glb.sel(Y=slice(2050, ds_glb.Y.shape[0]))
+ds=ds_glb.sel(Y=slice(950, 2050))
+#[y1, y2, x1, x3] = get_cutOut(ds_glb[latName].values, ds_glb[lonName].values,\
+#                              map_lon_beg, map_lon_end, map_lat_beg, map_lat_end)
+#ds=ds_glb.sel(X=slice(y1, y2), Y=slice(x1, x3))
 
 # Statistics (mean and standard deviation)
 var_av= ds[args.varName].mean(skipna=True).values
@@ -102,10 +103,10 @@ if args.gen_plot:
 # print(f'\nPlotting {args.varName}...\n')
 
   plot_width, plot_height, plot_dpi = [8, 6, 120]
-  cbar_orientation = 'vertical'
+  cbar_orientation = 'horizontal'
 
   fig = plt.figure(figsize=(plot_width, plot_height))
-  ax = fig.add_subplot(1,1,1, projection=ccrs.NorthPolarStereo(central_longitude=cLon))
+  ax = fig.add_subplot(1,1,1, projection=ccrs.PlateCarree(central_longitude=cLon))
 
   im= ds[args.varName].plot(ax=ax, x=lonName, y=latName,\
                             transform=ccrs.PlateCarree(),\
@@ -118,7 +119,7 @@ if args.gen_plot:
 
   ax.set_title("{}".format(dStr))
 
-  cbar=plt.colorbar(im, ax=ax, pad=0.01, orientation=cbar_orientation, shrink=0.5)
+  cbar=plt.colorbar(im, ax=ax, pad=0.01, orientation=cbar_orientation, shrink=0.75)
   cbar.set_label("{} [{}]".format(args.varName, var_units[args.varName]))
 
   gl = ax.gridlines(draw_labels=True)

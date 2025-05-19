@@ -94,6 +94,8 @@ np.savetxt(stats_fName, var_stats.flatten(), newline=' ', fmt='%s')
 # --
 
 if args.gen_plot:
+  print(f" {region} lon and lat min/max: {ds[lonName].values.min()}, {ds[lonName].values.max()};\
+                                       {ds[latName].values.min()}, {ds[latName].values.max()}")
   vMin, vMax, cMap, cLon = config['%s'%(args.varName)]['%s'%(region)]
   #print(vMin, vMax, cMap, cLon)
 

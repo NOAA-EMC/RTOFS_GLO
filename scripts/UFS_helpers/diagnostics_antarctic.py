@@ -76,8 +76,9 @@ yyyymmdd = ds_glb.time.values.astype("str")
 dStr = yyyymmdd.split('T')[0]+'T'+yyyymmdd.split('T')[1].split(':')[0]
 
 # Subset for the (above) set region
-[y1, x1] = get_index(ds_glb[latName].values, ds_glb[lonName].values, map_lat_beg, 180.) # 180 was found by trial and error- vis inspection
-ds = ds_glb.sel(Y=slice(0, y1))
+#[y1, x1] = get_index(ds_glb[latName].values, ds_glb[lonName].values, map_lat_beg, 180.) # 180 was found by trial and error- vis inspection
+#ds = ds_glb.sel(Y=slice(0, y1))
+ds = ds_glb.sel(Y=slice(0, 950))
 
 # Statistics (mean and standard deviation)
 var_av= ds[args.varName].mean(skipna=True).values
@@ -93,6 +94,8 @@ np.savetxt(stats_fName, var_stats.flatten(), newline=' ', fmt='%s')
 # --
 
 if args.gen_plot:
+  print(f" {region} lon and lat min/max: {ds[lonName].values.min()}, {ds[lonName].values.max()};\
+                                       {ds[latName].values.min()}, {ds[latName].values.max()}")
   vMin, vMax, cMap, cLon = config['%s'%(args.varName)]['%s'%(region)]
   #print(vMin, vMax, cMap, cLon)
 

@@ -14,18 +14,21 @@ SST:
   Arctic:    [-2.0, 15.0, 'Spectral_r', -30]
   Antarctic: [-2.0, 25.0, 'gist_ncar',   0]
   Eq_Pac:    [10.0, 32.0, 'gist_ncar', -180]
+  Trop:      [15.0, 32.0, 'gist_ncar',  0]
 
 SSS:
   Global:    [32.0, 40.0, 'gist_ncar',  0]
   Arctic:    [30.0, 36.0, 'gist_ncar', -30]
   Antarctic: [32.0, 38.0, 'gist_ncar',  0]
   Eq_Pac:    [32.0, 38.0, 'gist_ncar', -180]
+  Trop:      [32.0, 39.0, 'gist_ncar',  0]
 
 CURR:
   Global:    [0.0, 1.0, 'Blues',   0]
   Arctic:    [0.0, 0.5, 'Blues',  -30]
   Antarctic: [0.0, 0.5, 'Blues',   0]
   Eq_Pac:    [0.0, 0.75,'Blues', -180]
+  Trop:      [0.0, 1.0, 'Blues',  0]
 
 # RTOFS (with Hycom) specific settings
 # -- do not touch unless you are a MOM6 user --
