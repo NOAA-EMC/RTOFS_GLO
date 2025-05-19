@@ -17,9 +17,9 @@ SSS:
   Global: [32.0, 40.0, 'gist_ncar',  0]
   Arctic: [30.0, 36.0, 'gist_ncar', -30]
 
-#CURR: -- later --
-# Global: [-1.0,  1.0, 'bwr',        0]
-# Arctic: [-2.0, 15.0, 'Spectral_r', -30]
+CURR:
+  Global: [0.0, 1.0, 'Blues',        0]
+  Arctic: [0.0, 0.5, 'Blues',      -30]
 
 # RTOFS (with Hycom) specific settings
 # -- do not touch unless you are a MOM6 user --

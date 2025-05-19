@@ -45,7 +45,7 @@ get_inputs.add_argument('--varName', type=str,\
            help='Name of the 2-d variable in the specified file name.', required=True)
 
 get_inputs.add_argument('--gen_plot', action="store_true",\
-           help='Whether to generate and save a plot.')
+           help='Whether to generate and save a plot, none if this argument is excluded.')
 
 get_inputs.add_argument('--output_path', type=str,\
           help='Path to where output files are to be saved',\
