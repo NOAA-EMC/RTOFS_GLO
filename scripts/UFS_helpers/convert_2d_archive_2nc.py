@@ -9,11 +9,12 @@ from utils_proc_arch import *
 from hycom_wind_ymdh import hycom_wind_ymdh
 
 output_var_names = {
-  "srfhgt": "SSH",
+  "srfhgt":"SSH",
   "salin": "SSS",
-  "temp":"SST",
+  "temp":  "SST",
   "u-vel": "SSU",
-  "v-vel": "SSV"}
+  "v-vel": "SSV",
+  "curr":  "CURR"}
 
 # user inputs
 get_inputs = ArgumentParser(description="\
@@ -39,6 +40,12 @@ input_path = config['input_path']
 start_date, end_date = [pd.to_datetime(config['start_date']), pd.to_datetime(config['end_date'])]
 arch_type = config['arch_type']
 varNames = config['arch_variables']
+
+do_extraVars = False # default is no extra variables to output.
+if config['do_extraVars']:
+  do_extraVars = True
+  extra_variables = config['extra_variables']
+
 output_path = config['output_path']
 # --
 
@@ -69,5 +76,22 @@ for dd in pd.date_range(start_date, end_date):
     output_fName = output_fName + "{}_{}.nc".format(output_var_names[varName], data_date)
     #print(output_fName)
     ds = arch_bin_dataset(plat, plon, data_date, var, output_var_names[varName], output_fName, True)
+
+  if do_extraVars:
+    for varName in extra_variables:
+      if varName == 'curr':
+        fName_pref = f"{output_path}/{rtofs_system}_"
+        fName_u = fName_pref + "SSU_{}.nc".format(data_date)
+        fName_v = fName_pref + "SSV_{}.nc".format(data_date)
+
+        print(f'\nWorking on {varName} using {fName_u} and {fName_v}\n')
+        ds_ssu = xr.open_dataset( fName_u)
+        ds_ssv = xr.open_dataset( fName_v)
+        ds = ds_ssv
+        ds['%s'%(output_var_names[varName])] = xr.DataArray(np.sqrt(ds_ssu['SSU']**2 + ds_ssv['SSV']**2),\
+          coords=ds_ssv['SSV'].coords, dims=ds_ssv['SSV'].dims, name=output_var_names[varName], attrs={'units':'m/s'})
+        output_fName = fName_pref + "{}_{}.nc".format(output_var_names[varName], data_date)
+        ds.to_netcdf(output_fName)
+        print(f"Saved data to file name:\t{output_fName}\n")
 
 print("\nAll Done!\n")
