@@ -78,7 +78,6 @@ dStr = yyyymmdd.split('T')[0]+'T'+yyyymmdd.split('T')[1].split(':')[0]
 # Subset for the (above) set region
 [y1, x1] = get_index(ds_glb[latName].values, ds_glb[lonName].values, map_lat_beg, 180.) # 180 was found by trial and error- vis inspection
 ds = ds_glb.sel(Y=slice(y1, ds_glb.Y.shape[0]))
-print(ds)
 
 # Statistics (mean and standard deviation)
 var_av= ds[args.varName].mean(skipna=True).values
