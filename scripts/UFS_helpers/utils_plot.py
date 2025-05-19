@@ -32,7 +32,23 @@ def get_index(lat_array, lon_array, lat0, lon0):
   #point_ds = ds.sel(X=xloc, Y=yloc)
   #print(f'yIndex= {yloc}, xIndex= {xloc}')
   return [yloc, xloc]
+# --
 
+def get_cutOut(lat_array, lon_array, lon_s, lon_e, lat_s, lat_e):
+  # Lower left
+  [y1, x1] = get_index(lat_array, lon_array, lat_s, lon_s)
+  # Lower right
+  [y2, x2] = get_index(lat_array, lon_array, lat_s, lon_e)
+  # x1 will be same as x2
+  # ----------------------
+  # Upper left
+  [y3, x3] = get_index(lat_array, lon_array, lat_e, lon_s)
+  # Upper right
+  [y4, x4] = get_index(lat_array, lon_array, lat_e, lon_e)
+  # x3 will be same as x4
+
+  #ds_cutOut=ds.sel(X=slice(y1, y2), Y=slice(x1, x3))
+  return [y1, y2, x1, x3]
 # --
 
 def plot_arctic(input_ds, vName, data_date, cMin, cMax, cMap, cLon=-30, DPI=120):
