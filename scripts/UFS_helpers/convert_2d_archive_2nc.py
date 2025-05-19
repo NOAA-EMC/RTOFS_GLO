@@ -87,9 +87,10 @@ for dd in pd.date_range(start_date, end_date):
         print(f'\nWorking on {varName} using {fName_u} and {fName_v}\n')
         ds_ssu = xr.open_dataset( fName_u)
         ds_ssv = xr.open_dataset( fName_v)
-        ds = ds_ssv
+        ds = ds_ssv # use SSV dataset as a container
         ds['%s'%(output_var_names[varName])] = xr.DataArray(np.sqrt(ds_ssu['SSU']**2 + ds_ssv['SSV']**2),\
           coords=ds_ssv['SSV'].coords, dims=ds_ssv['SSV'].dims, name=output_var_names[varName], attrs={'units':'m/s'})
+        ds = ds.drop_vars('SSV') # get rid of SSV (variable)
         output_fName = fName_pref + "{}_{}.nc".format(output_var_names[varName], data_date)
         ds.to_netcdf(output_fName)
         print(f"Saved data to file name:\t{output_fName}\n")
