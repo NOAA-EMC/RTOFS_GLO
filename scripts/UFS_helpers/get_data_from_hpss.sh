@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ux
+
 if [[ $# -lt 5 ]]; then
   echo " "
   echo "Usage: "

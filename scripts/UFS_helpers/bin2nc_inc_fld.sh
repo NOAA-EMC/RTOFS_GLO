@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ux
+
 if [[ $# -lt 3 ]]; then
   echo " "
   echo "Usage: "
