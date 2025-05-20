@@ -58,7 +58,6 @@ args = get_inputs.parse_args()
 # --
 
 region = 'Arctic'  # This script is meant for ARCTIC diagnostics and plots.
-map_lon_beg, map_lon_end, map_lat_beg, map_lat_end = [0, 360, 55, 90]
 
 #print(f'\nReading configurations for plotting from:\n{args.config_file}\n')
 config = yaml.load( open( args.config_file, "r"), Loader=yaml.FullLoader)
@@ -76,9 +75,7 @@ yyyymmdd = ds_glb.time.values.astype("str")
 dStr = yyyymmdd.split('T')[0]+'T'+yyyymmdd.split('T')[1].split(':')[0]
 
 # Subset for the (above) set region
-#[y1, x1] = get_index(ds_glb[latName].values, ds_glb[lonName].values, map_lat_beg, 180.) # 180 was found by trial and error- vis inspection
-#ds = ds_glb.sel(Y=slice(y1, ds_glb.Y.shape[0]))
-ds = ds_glb.sel(Y=slice(2050, ds_glb.Y.shape[0]))
+ds = ds_glb.sel(Y=slice(2400, ds_glb.Y.shape[0]))
 
 # Statistics (mean and standard deviation)
 var_av= ds[args.varName].mean(skipna=True).values
@@ -114,8 +111,6 @@ if args.gen_plot:
 
   ax.add_feature(cfeature.LAND, zorder=0, edgecolor='k', facecolor=("lightgray"), alpha=0.2)
   ax.coastlines(color='k', alpha=0.4)
-  ax.set_extent([map_lon_beg, map_lon_end, map_lat_beg, map_lat_end], ccrs.PlateCarree())
-
   ax.set_title("{}".format(dStr))
 
   cbar=plt.colorbar(im, ax=ax, pad=0.01, orientation=cbar_orientation, shrink=0.5)
