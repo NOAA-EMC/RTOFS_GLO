@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -ux
-
 if [[ $# -lt 3 ]]; then
   echo " "
   echo "Usage: "
@@ -21,6 +19,8 @@ if [[ $# -lt 3 ]]; then
   exit 1
 fi
 echo " "
+
+set -ux
 
 machName=$1
 inputPath=$2

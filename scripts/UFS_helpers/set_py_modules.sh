@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 if [[ $# -lt 1 ]]; then
   echo " "
   echo "Usage: "
@@ -10,6 +8,9 @@ if [[ $# -lt 1 ]]; then
   echo "Allowed machine names: dwood, cac"
   exit 1
 fi
+
+set -x
+
 mach=$1
 
 echo " "
