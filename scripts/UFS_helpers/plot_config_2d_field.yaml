@@ -6,7 +6,7 @@ SSH:
   Arctic:    [-1.0,  0.5, 'Spectral_r', -30]
   Antarctic: [-1.5,  1.0, 'Spectral_r', 0]
   Eq_Pac:    [-0.5,  1.5, 'gist_ncar', -180]
-  Trop:      [-1.5,  1.5, 'gist_ncar',  0]
+  Trop:      [-1.5,  1.5, 'gist_ncar',  -180]
   Atlantic:  [-1.0,  1.0, 'gist_ncar',  0]
 
 SST:
@@ -14,7 +14,7 @@ SST:
   Arctic:    [-2.0, 15.0, 'Spectral_r', -30]
   Antarctic: [-2.0, 25.0, 'gist_ncar',   0]
   Eq_Pac:    [10.0, 32.0, 'gist_ncar', -180]
-  Trop:      [15.0, 32.0, 'gist_ncar',  0]
+  Trop:      [15.0, 32.0, 'gist_ncar',  -180]
   Atlantic:  [ 5.0, 32.0, 'gist_ncar',  0]
 
 SSS:
@@ -22,7 +22,7 @@ SSS:
   Arctic:    [30.0, 36.0, 'gist_ncar', -30]
   Antarctic: [32.0, 38.0, 'gist_ncar',  0]
   Eq_Pac:    [32.0, 38.0, 'gist_ncar', -180]
-  Trop:      [32.0, 39.0, 'gist_ncar',  0]
+  Trop:      [32.0, 39.0, 'gist_ncar',  -180]
   Atlantic:  [32.0, 38.0, 'gist_ncar',  0]
 
 CURR:
@@ -30,7 +30,7 @@ CURR:
   Arctic:    [0.0, 0.5, 'Blues',  -30]
   Antarctic: [0.0, 0.5, 'Blues',   0]
   Eq_Pac:    [0.0, 0.75,'Blues', -180]
-  Trop:      [0.0, 1.0, 'Blues',  0]
+  Trop:      [0.0, 1.0, 'Blues',  -180]
   Atlantic:  [0.0, 1.0, 'Blues',  0]
 
 # RTOFS (with Hycom) specific settings

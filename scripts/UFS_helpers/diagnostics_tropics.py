@@ -29,7 +29,7 @@ var_units = {
 
 # user inputs
 get_inputs = ArgumentParser(description="\
-           Calculate tropical (lat: [-40, 40], lon: [0, 360]) mean and std dev of a 2-d (globally defined) field \
+           Calculate tropical (lat: [-40, 40] approximately) mean and std dev of a 2-d (globally defined) field \
            and optionally save a plot of it.", usage='%(prog)s [options]',\
            formatter_class=ArgumentDefaultsHelpFormatter)
 
@@ -57,8 +57,7 @@ get_inputs.add_argument('--modelName', type=str,\
 args = get_inputs.parse_args()
 # --
 
-region = 'Trop'  # This script is meant for Eq Pacific diagnostics and plots.
-map_lon_beg, map_lon_end, map_lat_beg, map_lat_end = [0, 359, -40, 40]
+region = 'Trop'  # This script is meant for tropics and extratropics diagnostics and plots.
 
 #print(f'\nReading configurations for plotting from:\n{args.config_file}\n')
 config = yaml.load( open( args.config_file, "r"), Loader=yaml.FullLoader)
@@ -75,11 +74,12 @@ if (args.modelName == 'hycom') and (args.varName == 'SSH'):
 yyyymmdd = ds_glb.time.values.astype("str")
 dStr = yyyymmdd.split('T')[0]+'T'+yyyymmdd.split('T')[1].split(':')[0]
 
-# Subset for the (above) set region
-ds=ds_glb.sel(Y=slice(950, 2050))
-#[y1, y2, x1, x3] = get_cutOut(ds_glb[latName].values, ds_glb[lonName].values,\
-#                              map_lon_beg, map_lon_end, map_lat_beg, map_lat_end)
-#ds=ds_glb.sel(X=slice(y1, y2), Y=slice(x1, x3))
+# Subset for the following region
+[x_id_tropics_s, x_id_tropics_e] = [1, ds_glb.X.shape[0]]
+[y_id_tropics_s, y_id_tropics_e] = [1000, 2000]
+
+ds = ds_glb.sel(X=slice(x_id_tropics_s, x_id_tropics_e),\
+                Y=slice(y_id_tropics_s, y_id_tropics_e))
 
 # Statistics (mean and standard deviation)
 var_av= ds[args.varName].mean(skipna=True).values
@@ -115,8 +115,6 @@ if args.gen_plot:
 
   ax.add_feature(cfeature.LAND, zorder=0, edgecolor='k', facecolor=("lightgray"), alpha=0.2)
   ax.coastlines(color='k', alpha=0.4)
-  ax.set_extent([map_lon_beg, map_lon_end, map_lat_beg, map_lat_end], ccrs.PlateCarree())
-
   ax.set_title("{}".format(dStr))
 
   cbar=plt.colorbar(im, ax=ax, pad=0.01, orientation=cbar_orientation, shrink=0.75)
