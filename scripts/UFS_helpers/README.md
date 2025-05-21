@@ -63,5 +63,5 @@ to a _future_ version (**v3.0**) that would use:
     1. Get the data (archive files) from hpss, for e.g., `./get_data_from_hpss.sh 2025-04-28 2 v2p5 /lfs/h2/emc/ptmp/santha.akella/data/rtofs rtofs_glo.t00z.n00.archs.`
     2. Convert archives to netcdf, for e.g., `./convert_2d_archive_2nc.py --config_file ./config_archive_to_nc.yaml`
     3. Gather statistics:
-       - Without saving spatial plots: `./get_dashboard_data.sh cac v2p4 /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4 SSH 2025-03-31 1 no`
-       - Saving spatial plots: `./get_dashboard_data.sh cac v2p4 /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4 SSH 2025-03-31 1 yes`. See [these example plots](https://github.com/NOAA-EMC/RTOFS_GLO/pull/60#issuecomment-2898902024) and [more use cases here.](https://github.com/NOAA-EMC/RTOFS_GLO/wiki/Dashboard-diagnostics#illustrationexample-usage-follows-showing-plots-of-ssh-for-the-above-mentioned-tropics-and-extratropics)
+       - Without saving spatial plots: `./get_dashboard_data.sh cac v2p4 /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4 SSH 2025-03-31 10 no`
+       - Saving spatial plots: `./get_dashboard_data.sh cac v2p4 /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4 SSH 2025-03-31 10 yes`. See [these example plots](https://github.com/NOAA-EMC/RTOFS_GLO/pull/60#issuecomment-2898902024) and [more use cases here.](https://github.com/NOAA-EMC/RTOFS_GLO/wiki/Dashboard-diagnostics#illustrationexample-usage-follows-showing-plots-of-ssh-for-the-above-mentioned-tropics-and-extratropics)
