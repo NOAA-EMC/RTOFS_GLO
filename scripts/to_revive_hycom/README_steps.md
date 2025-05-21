@@ -1,0 +1,81 @@
+# Two approaches to revive [HYCOM](https://github.com/HYCOM/HYCOM-src) ocean are provided here (in this directory).
+
+  A. A restart from [ESPC-D output.](https://data.hycom.org/datasets/ESPC-D-V02/data/archm/2025/)
+
+  B. An archive to apply an increment that has been created from the [ESPC-D output.](https://data.hycom.org/datasets/ESPC-D-V02/data/archm/2025/)
+
+## Both of the above rely on [hycom-tools](https://github.com/HYCOM/HYCOM-tools) 
+- Therefore, first step is to build it; if needed, 
+  see [these instructions.](https://github.com/NOAA-EMC/RTOFS_GLO/wiki/Build-instructions#to-build-hycom-tools)
+
+- Download ESPC-D daily mean archive for e.g., 2025/04/01: 
+  - [.a file](https://data.hycom.org/datasets/ESPC-D-V02/data/archm/2025/US058GCOM-OPSnce.espc-d-031-hycom_fcst_glby008_2025040112_M0000_archm.a). **Note**: it is about `15GB`. 
+  - [Corresponding .b file](https://data.hycom.org/datasets/ESPC-D-V02/data/archm/2025/US058GCOM-OPSnce.espc-d-031-hycom_fcst_glby008_2025040112_M0000_archm.b)
+
+# A. Create a restart
+  1. Use: `run_isubaregion.csh` to convert daily mean archive from ESPC-D to RTOFS (GLBb0.08) bathymetry (coastline), grid.
+     - If not already, build `HYCOM_tools.fd/subregion/src/isubaregion` by editing: `subregion/src/Make_ncdf.csh`, add `isubaregion` to what gets built.
+       ```
+       foreach m ( isubs_field isubs_count isubaregion)
+       ```
+     - Same as above, but for: `hycom_wind_date_LinuxAIF` and `hycom_ymdh_wind_LinuxAIF` by editing: `bin/Make_ncdf.csh`, e.g.:
+       ```
+       foreach f ( wind_stat_nc wind_stat_range_nc hycom_ymdh_wind hycom_wind_date)
+       ```
+     - Edit settings in `run_isubaregion.csh`, lines below `# -- Edit following --`
+     - Run this script on a node: `qsub run_isubaregion.csh`.
+       - Check error, output logfiles: `convert_GLB_y_b_0.08.e` and `convert_GLB_y_b_0.08.o` respectively.
+       - In the output dir (set in `run_isubaregion.csh`), check if `*_archm_*` files have been created.
+
+  2. Use: `run_hycom_arctic.csh` to reconcile any issues with the bathymetry and/or coastline.
+     - Need to build another hycom_tools utility: `hycom_arctic_g`:
+       - In dir: `RTOFS_GLO/sorc/HYCOM_tools.fd/bin`, add following to `Make_ncdf.csh` and `csh ./Make_ncdf.csh`:
+       - **Note**: Before proceeding further, see following step 4.
+       ```
+       foreach f ( hycom_arctic hycom_arctic_ok)
+         if ( ! -e ${f}_${OS} ) then
+           $FC $FFLAGS ${f}.F ${EXTRANCDF} -o ${f}_${OS}
+         else
+           echo "${f}_${OS} is already up to date"
+         endif
+         touch       ${f}.exe
+         /bin/rm -f  ${f}.exe
+         chmod a+rx  ${f}_${OS}
+         /bin/ln -s  ${f}_${OS} ${f}.exe
+       end
+       ```
+     - Edit settings in `run_hycom_arctic.csh`, lines below `# -- Edit following --` 
+     - Though not need to run on node: `qsub run_hycom_arctic.csh`.
+       - Make sure that `arctic_type.txt` has been copied to the `workDir` (set in `run hycom_arctic.csh`).
+       - Check error, output logfiles: `hycom_arctic.e` and `hycom_arctic.o` respectively.
+       - In the `workDir`, check if `*_arctic*` files have been created.
+         - The mismatches in bathymetry will be _repaired_ by this utility!
+  3. Using `run_archv2restart.csh`, convert into a restart for RTOFS (of the same format).
+     - If not already built, in hycom_tools, build: `archive/src/archv2restart`
+     - In `archive/src/Make_all.csh`
+     ```
+     module load envvar/1.0 intel/19.1.3.304 module load PrgEnv-intel/8.1.0 craype/2.7.10 netcdf/4.7.4
+     setenv NCDFC  /apps/prod/hpc-stack/intel-19.1.3.304/netcdf/4.7.4/
+     setenv NCDF   /apps/prod/hpc-stack/intel-19.1.3.304/netcdf/4.7.4/
+     setenv EXTRANCDF `nf-config --flibs`
+     ```
+     - Build: `csh ./Make_all.csh`, make sure: `archv2restart` is built, check: `Make_archv2restart.log` for any errors.
+     - Submit job: `qsub run_archv2restart.csh`, check output and output/error logs and output in specified output directory.
+  4. Using `add_ice_to_restart.csh`, add ice fields to restart (because EPSC-D archive does not include sea ice).
+     - If not already built, in hycom_tools, build: `HYCOM_tools.fd/bin/hycom_extract.exe`
+     - In `HYCOM_tools.fd/bin/Make_ncdf.csh`
+     ```
+     foreach f ( hycom_arctic hycom_arctic_ok hycom_extract)
+       if ( ! -e ${f}_${OS} ) then
+         $FC $FFLAGS ${f}.F ${EXTRANCDF} -o ${f}_${OS}
+       else
+         echo "${f}_${OS} is already up to date"
+       endif
+       touch       ${f}.exe
+       /bin/rm -f  ${f}.exe
+       chmod a+rx  ${f}_${OS}
+       /bin/ln -s  ${f}_${OS} ${f}.exe
+     end
+     ```
+     - Build: `csh ./Make_ncdf.csh`, make sure: `hycom_extract.exe` is built.
+     - Run the script: `add_ice_to_restart.csh`, if all finished ok, find: `newrestart_withIce.*` in the specified output path.
