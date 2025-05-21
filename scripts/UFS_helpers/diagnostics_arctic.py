@@ -81,7 +81,7 @@ ds = ds_glb.sel(Y=slice(2400, ds_glb.Y.shape[0]))
 var_av= ds[args.varName].mean(skipna=True).values
 var_std= ds[args.varName].std(skipna=True).values
 var_stats = np.asarray( [dStr, var_av, var_std])
-print(f"\n{region} Mean and standard deviation of {args.varName}: {var_av}, {var_std}")
+#print(f"\n{region} Mean and standard deviation of {args.varName}: {var_av}, {var_std}")
 
 stats_fName= args.output_path + '/' + args.varName + '_' + region + '_stats_' + dStr + '.txt'
 np.savetxt(stats_fName, var_stats.flatten(), newline=' ', fmt='%s')

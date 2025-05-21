@@ -24,6 +24,7 @@ to a _future_ version (**v3.0**) that would use:
 | | |
 | `diagnostics_global.py` | Calculate global mean and standard deviation of a 2-d field, optionally save plot. |
 | `diagnostics_arctic.py` | Calculate Arctic (55N start) mean and standard deviation of a 2-d field, optionally save plot. |
+| `get_dashboard_data.sh` | A script to drive diagnostics_*.py |
 
 # Example usage:
 
@@ -53,11 +54,14 @@ to a _future_ version (**v3.0**) that would use:
     - `./diagnostics_global.py --data_file /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4_SSS_2025-04-01T00\:00.nc --varName SSS`
   - To save plot (default is not to save plot): 
     - `./diagnostics_global.py --data_file /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4_SSS_2025-04-01T00\:00.nc --varName SSS --gen_plot`
+    - `diagnostics_arctic.py`, `diagnostics_antarctic.py`, `diagnostics_eq_pac.py`, `diagnostics_atlantic.py` and `diagnostics_tropics.py` work the same way as above `diagnostics_global.py`. An illustration of the regions considered in these scripts is shown [here.](https://github.com/NOAA-EMC/RTOFS_GLO/wiki/Dashboard-diagnostics#spatial-mean-and-standard-deviation-not-weighted-by-grid-for-following-regions)
 
-  - `diagnostics_arctic.py`, `diagnostics_antarctic.py`, `diagnostics_eq_pac.py`, `diagnostics_atlantic.py` and `diagnostics_tropics.py` work the same way as above `diagnostics_global.py`. An illustration of the regions considered in these scripts is shown [here.](https://github.com/NOAA-EMC/RTOFS_GLO/wiki/Dashboard-diagnostics#spatial-mean-and-standard-deviation-not-weighted-by-grid-for-following-regions)
+  - `./get_dashboard_data.sh`: Echoes example usage.
 
 ## Note:
   - Steps to make time series plots:
     1. Get the data (archive files) from hpss, for e.g., `./get_data_from_hpss.sh 2025-04-28 2 v2p5 /lfs/h2/emc/ptmp/santha.akella/data/rtofs rtofs_glo.t00z.n00.archs.`
     2. Convert archives to netcdf, for e.g., `./convert_2d_archive_2nc.py --config_file ./config_archive_to_nc.yaml`
-    3. Gather statistics
+    3. Gather statistics:
+       - Without saving spatial plots: `./get_dashboard_data.sh cac v2p4 /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4 SSH 2025-03-31 1 no`
+       - Saving spatial plots: `./get_dashboard_data.sh cac v2p4 /lfs/h2/emc/ptmp/santha.akella/data/arch2nc/v2p4 SSH 2025-03-31 1 yes`

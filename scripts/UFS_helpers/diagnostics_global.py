@@ -71,7 +71,7 @@ dStr = yyyymmdd.split('T')[0]+'T'+yyyymmdd.split('T')[1].split(':')[0]
 var_av= ds[args.varName].mean(skipna=True).values
 var_std= ds[args.varName].std(skipna=True).values
 var_stats = np.asarray( [dStr, var_av, var_std])
-print(f"\n{region} Mean and standard deviation of {args.varName}: {var_av}, {var_std}")
+#print(f"\n{region} Mean and standard deviation of {args.varName}: {var_av}, {var_std}")
 
 stats_fName= args.output_path + '/' + args.varName + '_' + region + '_stats_' + dStr + '.txt'
 np.savetxt(stats_fName, var_stats.flatten(), newline=' ', fmt='%s')
@@ -93,7 +93,7 @@ if args.gen_plot:
   vMin, vMax, cMap, cLon = config['%s'%(args.varName)]['%s'%(region)]
   #print(vMin, vMax, cMap, cLon)
 
-  print(f'\nPlotting {args.varName}...\n')
+  #print(f'\nPlotting {args.varName}...\n')
 
   plot_width, plot_height, plot_dpi = [8, 6, 120]
   cbar_orientation = 'vertical'
