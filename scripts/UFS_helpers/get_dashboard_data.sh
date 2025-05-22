@@ -105,5 +105,11 @@ for i in $(seq 1 ${num_days}); do
                            --varName ${varName} \
                            --output_path ${output_data_path} \
                            ${extra_args} 
+
+  # East Pacific (cut out region)
+  ./diagnostics_e_pac.py --data_file ${fName} \
+                         --varName ${varName} \
+                         --output_path ${output_data_path} \
+                           ${extra_args} 
 done
 echo " "
