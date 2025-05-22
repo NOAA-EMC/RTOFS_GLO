@@ -85,9 +85,6 @@ var_stats = np.asarray( [dStr, var_av, var_std])
 
 stats_fName= args.output_path + '/' + args.varName + '_' + region + '_stats_' + dStr + '.txt'
 np.savetxt(stats_fName, var_stats.flatten(), newline=' ', fmt='%s')
-# To read it back:
-# stats = np.loadtxt(stats_fName, dtype=str)
-# to handle the date: data_date = pd.to_datetime( str(stats[0]))
 # --
 
 if args.gen_plot:
