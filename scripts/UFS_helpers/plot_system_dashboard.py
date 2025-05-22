@@ -78,7 +78,8 @@ systems=["v2p4", "v2p5"]
 var_name="SSH"
 # --
 
-regions = ["Global", "Arctic", "Antarctic", "Eq_Pac", "Atlantic", "Trop"] # follows those set in "get_dashboard_data.sh"
+#regions = ["Global", "Arctic", "Antarctic", "Eq_Pac", "Atlantic", "Trop"] # follows those set in "get_dashboard_data.sh"
+regions = ["e_Pac"]
 
 for region in regions:
   for iS, sys_name in enumerate(systems):
