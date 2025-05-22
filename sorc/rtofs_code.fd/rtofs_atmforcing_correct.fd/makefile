@@ -4,7 +4,7 @@
 #####################################################################
 #
 AR=ar
-CPP=/usr/bin/cpp -P 
+CPP=cpp -P
 FC=ftn
 LD=ftn
 ARFLAGS=-rv

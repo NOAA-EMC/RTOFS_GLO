@@ -18,7 +18,6 @@ export NET=rtofs
 export RUN=rtofs
 export modID=glo
 export RUN_MODE=gempak
-#export HOMErtofs=${HOMErtofs:-${NWROOT:?}/rtofs_glo.${rtofs_glo_ver}}
 export GEMPAKrtofs=${HOMErtofs}/gempak
 
 ####################################

@@ -60,7 +60,7 @@ make install
 Copy fix files to their final respective locations by executing:
 ```bash
 cd /lfs/h2/emc/eib/noscrub/dan.iredell/RTOFSFIX/20241112
-tar cf - ./fix | (cd <topdir>/rtofs.v2.4.0; tar xf -)
+tar cf - ./fix | (cd <topdir>/rtofs.v2.5.0; tar xf -)
 ```
 
 RUN INSTRUCTIONS
@@ -84,33 +84,60 @@ SORC CHANGES
   * `libs/sorc/rtofs_mpi_mods/Makefile`
 
 * CODES
+  * `sorc/build_code.sh`
   * `sorc/rtofs_code.fd/build_code.sh`
+  * `sorc/rtofs_code.fd/rtofs_archv2netCDF.fd/makefile`
+  * `sorc/rtofs_code.fd/rtofs_archv2netCDF.fd/makefile.check`
   * `sorc/rtofs_code.fd/rtofs_archv2netCDF.fd/zebra.f`
   * `sorc/rtofs_code.fd/rtofs_archv2netCDF.fd/zh_sun.f`
+  * `sorc/rtofs_code.fd/rtofs_atmforcing_correct.fd/makefile`
+  * `sorc/rtofs_code.fd/rtofs_atmforcing_correct.fd/makefile.check`
+  * `sorc/rtofs_code.fd/rtofs_getkpds.fd/makefile.check`
   * `sorc/rtofs_code.fd/rtofs_hycom2raw8.fd/makefile`
+  * `sorc/rtofs_code.fd/rtofs_hycom2raw8.fd/makefile.check`
   * `sorc/rtofs_code.fd/rtofs_hycom_diff.fd/bigrid.f`
   * `sorc/rtofs_code.fd/rtofs_hycom_diff.fd/makefile`
+  * `sorc/rtofs_code.fd/rtofs_hycom_diff.fd/makefile.check`
   * `sorc/rtofs_code.fd/rtofs_hycom_expr.fd/makefile`
+  * `sorc/rtofs_code.fd/rtofs_hycom_expr.fd/makefile.check`
   * `sorc/rtofs_code.fd/rtofs_hycom_extract.fd/makefile`
+  * `sorc/rtofs_code.fd/rtofs_hycom_extract.fd/makefile.check`
+  * `sorc/rtofs_code.fd/rtofs_nc2grb2.fd/makefile.check`
+  * `sorc/rtofs_code.fd/rtofs_ncoda_archv_inc.fd/Make_all.csh`
+  * `sorc/rtofs_code.fd/rtofs_ncoda_archv_inc.fd/Make_ncoda_archv_inc.log`
   * `sorc/rtofs_code.fd/rtofs_ncoda_archv_inc.fd/Makefile`
   * `sorc/rtofs_code.fd/rtofs_ncoda_archv_inc.fd/makefile`
+  * `sorc/rtofs_code.fd/rtofs_ncoda_archv_inc.fd/makefile.check`
   * `sorc/rtofs_code.fd/rtofs_ncoda_archv_inc.fd/ncoda_archv_lyrinc.f`
   * `sorc/rtofs_code.fd/rtofs_ncoda_archv_inc.fd/zebra.f`
   * `sorc/rtofs_code.fd/rtofs_raw2hycom.fd/makefile`
+  * `sorc/rtofs_code.fd/rtofs_raw2hycom.fd/makefile.check`
+  * `sorc/rtofs_code.fd/rtofs_ssmis_tol2.cd/makefile.check`
+  * `sorc/rtofs_code.fd/rtofs_ssmis_tol2.cd/makefile_ssmisu`
   * `sorc/rtofs_code.fd/rtofs_ssmis_tol2.cd/ssmisu_decode.f`
+  * `sorc/rtofs_code.fd/rtofs_ssmis_tol2.cd/ush/`
 
 * HYCOM
   * `sorc/rtofs_hycom.fd/build_hycom.sh`
   * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/comp_ice.csh`
   * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/comp_ice.debug.csh`
+  * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/config/Aintelsse-impi-relo_cice`
+  * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/bld/Macros.Linux.NCEP.wcoss2SMSSE.debug`
+  * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/comp_ice.csh`
+  * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/comp_ice.debug.csh`
   * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/hycom/geopar.F`
   * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/hycom/mod_cb_arrays.F`
+  * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/hycom/mod_hycom.F`
   * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/hycom/mod_momtum.F`
   * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/hycom/mod_tsadvc.F`
   * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/hycom/prtmsk.f`
   * `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/source/ice_forcing.F90`
 
 * NCODA
+  * `sorc/rtofs_ncoda.fd/build_ncoda.sh`
+  * `sorc/rtofs_ncoda.fd/makefile.parallel`
+  * `sorc/rtofs_ncoda.fd/makefile.serial`
+  * `sorc/rtofs_ncoda.fd/dtg/makefile`
   * `sorc/rtofs_ncoda.fd/ncoda_decode/config.user`
   * `sorc/rtofs_ncoda.fd/ncoda_decode/include/coda_types.h`
   * `sorc/rtofs_ncoda.fd/ncoda_decode/libsrc/alarm/rd_ice_alrm.f`
@@ -298,8 +325,10 @@ SORC CHANGES
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/hycom_dp.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/hycom_fcst.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/hycom_ice_upd.f`
+  * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/hycom_inst.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/hycom_lyr_inc.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/hycom_lyr_prs.f`
+  * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/hycom_mean_inc.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/hycom_node_msk.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/hycom_upd.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/post/lvl_lyr.f`
@@ -380,7 +409,10 @@ SORC CHANGES
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/hycom_fcst.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/hycom_fgat.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/hycom_flds.f`
+  * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/hycom_ice.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/hycom_init.f`
+  * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/hycom_mean.f`
+  * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/hycom_mld.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/hycom_priors.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/hycom_prs.f`
   * `sorc/rtofs_ncoda.fd/ncoda_var/libsrc/setup/Makefile`
@@ -416,10 +448,29 @@ SORC CHANGES
   * `sorc/rtofs_ncoda.fd/ncoda_var/src/ncoda_setup/ncoda_setup.f`
 
 
-SCRIPTS/USH/PARM CHANGES
-------------------------
+GEMPAK/JOBS/SCRIPTS/USH/PARM CHANGES
+------------------------------------
 
   * `gempak/gempak.sh`
+  * `jobs/JRTOFS_GLO_ANALYSIS`
+  * `jobs/JRTOFS_GLO_ANALYSIS_GRIB2_POST`
+  * `jobs/JRTOFS_GLO_ANALYSIS_POST`
+  * `jobs/JRTOFS_GLO_ANALYSIS_PRE`
+  * `jobs/JRTOFS_GLO_FORECAST_GRIB2_POST`
+  * `jobs/JRTOFS_GLO_FORECAST_POST`
+  * `jobs/JRTOFS_GLO_FORECAST_POST_2`
+  * `jobs/JRTOFS_GLO_FORECAST_STEP1`
+  * `jobs/JRTOFS_GLO_FORECAST_STEP1_PRE`
+  * `jobs/JRTOFS_GLO_FORECAST_STEP2`
+  * `jobs/JRTOFS_GLO_FORECAST_STEP2_PRE`
+  * `jobs/JRTOFS_GLO_GEMPAK`
+  * `jobs/JRTOFS_GLO_GZIP`
+  * `jobs/JRTOFS_GLO_INCUP`
+  * `jobs/JRTOFS_GLO_NCODA_GLBL_VAR`
+  * `jobs/JRTOFS_GLO_NCODA_HYCOM_VAR`
+  * `jobs/JRTOFS_GLO_NCODA_INC`
+  * `jobs/JRTOFS_GLO_NCODA_POLAR_VAR`
+  * `jobs/JRTOFS_GLO_NCODA_QC`
   * `scripts/exrtofs_glo_gempak.sh`
   * `scripts/exrtofs_glo_incup.sh`
   * `scripts/exrtofs_glo_ncoda_glbl_var.sh`
@@ -427,6 +478,7 @@ SCRIPTS/USH/PARM CHANGES
   * `scripts/exrtofs_glo_ncoda_inc.sh`
   * `scripts/exrtofs_glo_ncoda_polar_var.sh`
   * `scripts/exrtofs_glo_ncoda_qc.sh`
+  * `ush/rtofs_atmforcing_extract.sh`
   * `ush/rtofs_ncoda_amsr_qc.sh`
   * `ush/rtofs_ncoda_goes_qc.sh`
   * `ush/rtofs_ncoda_himawari_qc.sh`
@@ -434,6 +486,8 @@ SCRIPTS/USH/PARM CHANGES
   * `ush/rtofs_ncoda_jpss_qc.sh`
   * `ush/rtofs_ncoda_metop_qc.sh`
   * `ush/rtofs_ncoda_msg_qc.sh`
+  * `ush/rtofs_ncoda_prep_ice.sh`
+  * `ush/rtofs_ncoda_prep_sfc_sfcr_prof.sh`
   * `ush/rtofs_ncoda_npp_qc.sh`
   * `ush/rtofs_ncoda_profile_qc.sh`
   * `ush/rtofs_ncoda_sfcobs_qc.sh`
@@ -450,6 +504,7 @@ SCRIPTS/USH/PARM CHANGES
   * `parm/rtofs_glo.navy_0.08.incup.ice_in`
   * `parm/rtofs_glo.ncoda_archv_lyr.input`
   * `parm/rtofs_glo.polar.oanl.in`
+  * `parm/transfer_rtofs_nwges.list`
 
 
 FIX CHANGES
@@ -460,11 +515,6 @@ FIX CHANGES
 
 CHANGES TO FILE NAMES
 ---------------------
-
-* None.
-
-CHANGES TO HPSS TARBALLS
-------------------------
 
 * None.
 
@@ -484,9 +534,40 @@ JOB DEPENDENCIES AND FLOW DIAGRAM
 * No changes
 
 
+PROPRIETY CODES
+---------------
+
+* All codes in the directory sorc/rtofs_ncoda.fd are propriety and cannot be shared.
+
+
+RESTRICTED DATA
+---------------
+
+* RTOFS v2.5 produces no data that is restricted.
+
+
+DATA RETENTION
+--------------
+
+* All data in the COM directory will be online for 7 days.
+
+
+LONG TERM ARCHIVE (HPSS)
+------------------------
+
+* No changes for this implementation. See runhistory for configuration.
+  * restart in permanent: ./rtofs_glo.t00z.{n00,n-06,n-24}.restart*{b,a.tgz,cice.tgz}
+  * ab in 5year: ./rtofs_glo.t00z.{{f06,f{12..192..6},n00,n-{06..24..6}}.archv.{a.tgz,b},{f0{1..9..1},f{10..192..1},n00,n-{01..24..1}}.archs.{a.tgz,b},{f0{0..9..1},f{10..192..1},n00,n-{01..24..1}}.arche.{a.tgz,b}}
+  * ncoda in 5year: ./{ncoda/ocnqc/*,./ncoda/logs/*}
+  * ncodavar in 5year: ./{ncoda/glbl_var/*,./ncoda/nhem_var/*,./ncoda/shem_var/*,./ncoda/hycom_var/restart/*${PDYm2}*,./ncoda/hycom_var/restart/*${PDYm3}*}
+  * grb2 in 1year: ./*grb2*
+  * netcdf in 1year: ./{*.nc,./*archv_1_inc*,./*incupd*,./*.nc.gz}
+
+
 DCOM DEPENDENCIES
 -----------------
-All dcom data is data of opportunity.
+* All dcom data is data of opportunity.
+
 
 DOCUMENTATION
 -------------

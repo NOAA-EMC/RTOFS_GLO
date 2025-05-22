@@ -27,8 +27,6 @@ if [ $# -eq 4 ] ; then
   pgrbout=$4
 fi 
 
-## export EXECutil=/nwprod/util/exec
-
 TYPEa='ave'
 TYPEi='fcst'
 if [ ${RUN_MODE} = "analysis" ]

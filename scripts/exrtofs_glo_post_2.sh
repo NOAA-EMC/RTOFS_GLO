@@ -269,18 +269,6 @@ fi
 
 done
 
-md5=/usr/bin/md5sum
-dochecksum=0
-if [ -x $md5 && $dochecksum -eq 1 ]]
-then
-  cd $COMOUT
-  # need definition of files
-  for gfile in $(ls *.grb2)
-  do
-    $md5 $gfile >> $DATA/csum.$PDY$mycyc
-  done
-fi      
-
 echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log
 
 #################################################

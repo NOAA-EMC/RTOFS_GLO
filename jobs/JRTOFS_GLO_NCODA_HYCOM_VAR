@@ -38,7 +38,6 @@ export pgmout="OUTPUT.$$"
 ####################################
 # Specify Execution Areas
 ####################################
-#export HOMErtofs=${HOMErtofs:-${NWROOT:?}/${RUN}_${modID}.${rtofs_glo_ver}}
 export EXECrtofs=${HOMErtofs}/exec
 export PARMrtofs=${HOMErtofs}/parm
 export FIXrtofs=${HOMErtofs}/fix

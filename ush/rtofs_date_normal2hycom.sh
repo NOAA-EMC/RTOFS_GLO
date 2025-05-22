@@ -1,4 +1,5 @@
 #!/bin/ksh
+set -x
 ############################################################
 # This script converts the date to the day since 1901010100
 # it is used by the HYCOM part of the Ocean Forecast Model
