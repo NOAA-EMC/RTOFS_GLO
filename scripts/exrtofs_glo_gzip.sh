@@ -16,7 +16,6 @@
 #                    DATA                                                     #
 #                    COMIN                                                    #
 #                    COMOUT                                                   #
-#                    CYC                                                      #
 #                                                                             #
 # Script history log:                                                         #
 # 2019-12-19  DCS - updated for Dell-p3 and added COMIN/COMOUT                #
@@ -40,7 +39,7 @@ filepre=${RUN}_${modID}.t00z
 
 > $DATA/poescript
 
-case $CYC in 
+case $cyc in 
     00)
 # sort files from largest to smallest for cfp efficiency (on wcoss2 tasks passed out in sequence at the start - so sorting does not help much)
 	for file in $(echo ${COMIN}/${filepre}.n*.restart_cice;  echo ${COMIN}/${filepre}.n*.restart.a;  echo ${COMIN}/${filepre}.n-{06..24..6}.archv.a;  echo ${COMIN}/${filepre}.n00.archv.a;  echo ${COMIN}/${filepre}.n00.arche.a;  echo ${COMIN}/${filepre}.n-{01..24}.arche.a;  echo ${COMIN}/${filepre}.n00.archs.a;  echo ${COMIN}/${filepre}.n-{01..24}.archs.a)
