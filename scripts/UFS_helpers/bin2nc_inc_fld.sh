@@ -20,6 +20,8 @@ if [[ $# -lt 3 ]]; then
 fi
 echo " "
 
+set -ux
+
 machName=$1
 inputPath=$2
 dataDate=$3

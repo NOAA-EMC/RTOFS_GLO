@@ -15,7 +15,7 @@ if [[ $# -lt 5 ]]; then
 fi
 echo " "
 
-set -u
+set -ux
 
 start_date="$1" #"2025-03-31"
 num_days="$2" #10
