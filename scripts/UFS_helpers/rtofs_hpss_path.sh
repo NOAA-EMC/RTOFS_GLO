@@ -8,6 +8,11 @@ function rtofs_hpss_path () {
 
   local hpss_path
   case ${system_name} in
+    v2p3)
+    # version 2.3
+    hpss_path=/NCEPPROD/5year/hpssprod/runhistory/
+    ;;
+
     v2p4)
     # version 2.4
     hpss_path=/NCEPPROD/5year/hpssprod/runhistory/
