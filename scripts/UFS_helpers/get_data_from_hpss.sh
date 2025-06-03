@@ -47,6 +47,12 @@ for i in $(seq 1 ${num_days}); do
   echo " "
 
   case ${system_name} in
+    v2p3)
+    # version 2.3
+    hpss_file=${hpss_path}/rh${year}/${year}${mon}/${data_date}/com_rtofs_v2.3_rtofs.${data_date}.ab.tar
+    file_to_get=./${file_type}*
+    ;;
+
     v2p4)
     # version 2.4
     hpss_file=${hpss_path}/rh${year}/${year}${mon}/${data_date}/com_rtofs_v2.4_rtofs.${data_date}.ab.tar
