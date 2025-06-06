@@ -74,42 +74,49 @@ for i in $(seq 1 ${num_days}); do
   ./diagnostics_global.py --data_file ${fName} \
                           --varName ${varName} \
                           --output_path ${output_data_path} \
+                          --config_file ./plot_config_2d_field.yaml \
                           ${extra_args} 
 
   # Arctic
   ./diagnostics_arctic.py --data_file ${fName} \
                           --varName ${varName} \
                           --output_path ${output_data_path} \
+                          --config_file ./plot_config_2d_field.yaml \
                           ${extra_args} 
 
   # Antarctic
   ./diagnostics_antarctic.py --data_file ${fName} \
                              --varName ${varName} \
                              --output_path ${output_data_path} \
+                             --config_file ./plot_config_2d_field.yaml \
                              ${extra_args} 
 
   # Eq Pacific
   ./diagnostics_eq_pac.py --data_file ${fName} \
                           --varName ${varName} \
                           --output_path ${output_data_path} \
+                          --config_file ./plot_config_2d_field.yaml \
                           ${extra_args} 
 
   # Atlantic
   ./diagnostics_atlantic.py --data_file ${fName} \
                             --varName ${varName} \
                             --output_path ${output_data_path} \
+                            --config_file ./plot_config_2d_field.yaml \
                             ${extra_args} 
 
   # Tropics and extratropics
   ./diagnostics_tropics.py --data_file ${fName} \
                            --varName ${varName} \
                            --output_path ${output_data_path} \
+                           --config_file ./plot_config_2d_field.yaml \
                            ${extra_args} 
 
   # East Pacific (cut out region)
   ./diagnostics_e_pac.py --data_file ${fName} \
                          --varName ${varName} \
                          --output_path ${output_data_path} \
+                         --config_file ./plot_config_2d_field.yaml \
                            ${extra_args} 
 done
 echo " "
