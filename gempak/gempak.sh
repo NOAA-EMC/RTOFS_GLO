@@ -46,6 +46,7 @@ stamp="${firstrec}:${lastrec}"
 step=f0${stepnum}
 echo "Splitting grib2 files into time-steps (5 records in each: WTMP, SALTY, UOGRD, VOGRD, SSHG) using WGRIB2"
 $WGRIB2 ../rtofs_glo.t00z.f0${last}_${instr}_std.grb2 -for ${stamp} -grib grtofs_${instr}_${PDY}00${step}.grb2
+export err=$?; err_chk
 echo "Converting grib2 files into GEMPAK grids for each time-step"
 gemfile=grtofs_${outstr}_${PDY}00${step}
 nagrib2 <<GEM_nagrib2

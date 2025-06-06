@@ -39,6 +39,8 @@ do
   mv $DATA/$dtyp.out $DATA/ice_nc/$dtyp.$rundate.out
 
 # create l2out files
+  pgm=rtofs_ssmis_tol2
+  . prep_step
   export FORT11="$dtyp.$rundate.ibm"
   ${EXECrtofs}/rtofs_ssmis_tol2 >>$pgmout 2>errfile
   err=$? ; export err ; err_chk
