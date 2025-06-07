@@ -16,7 +16,7 @@ units:
 systems:
   - v2p4
   - v2p5
-  - v2p5_bad
+  - v2p5_nco
 
 regions:
   - Global
@@ -37,13 +37,13 @@ plot_each: False
 compare_all: True
 
 v2p4:
- name: production
- data_path: /u/santha.akella/tmp/plot_converted_nc/scripts/UFS_helpers/scratch_v2p4
+ name: prod
+ data_path: /u/santha.akella/rtofs_02June2025/scripts/UFS_helpers/scratch_v2p4
 
 v2p5:
- name: parallel
- data_path: /u/santha.akella/tmp/plot_converted_nc/scripts/UFS_helpers/scratch_v2p5
+ name: para
+ data_path: /u/santha.akella/rtofs_02June2025/scripts/UFS_helpers/scratch_v2p5
 
-v2p5_bad:
- name: bad parallel
- data_path: /u/santha.akella/tmp/plot_converted_nc/scripts/UFS_helpers/scratch_v2p5_bad
+v2p5_nco:
+ name: NCO para
+ data_path: /u/santha.akella/rtofs_02June2025/scripts/UFS_helpers/scratch_v2p5_nco
