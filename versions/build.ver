@@ -1,5 +1,5 @@
 export model=rtofs_glo
-export rtofs_glo_ver=v2.5.0
+export rtofs_glo_ver=v2.5.2
 export model_ver=${rtofs_glo_ver}
 
 export envvar_ver=1.0
@@ -11,7 +11,7 @@ export cray_libsci_ver=22.08.1.1
 
 export bacio_ver=2.4.1
 export bufr_ver=12.2.0
-export g2_ver=3.5.1
+export g2_ver=3.4.5
 export sigio_ver=2.3.2
 export sp_ver=2.4.0
 export w3nco_ver=2.4.1
