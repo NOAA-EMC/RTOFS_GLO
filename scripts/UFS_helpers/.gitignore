@@ -1,0 +1,7 @@
+scratch*/*
+
+__pycache__/*
+
+MIFF*
+
+*.png
