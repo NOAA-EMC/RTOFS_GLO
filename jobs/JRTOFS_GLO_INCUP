@@ -32,9 +32,9 @@ export cycle=t${mycyc}z
  # obtain unique process id (pid) and make temp directories
 ##########################################################
 jobname=${PBS_JOBNAME}
-export DATA=${DATA:-${DATAROOT}/${jobname}_${model_ver}/${jobid}}
-export DATArestart=${DATAROOT}/${jobname}_${model_ver}/restart
-export DATAarchive=${DATAROOT}/${jobname}_${model_ver}/archive
+export DATA=${DATA:-${DATAROOT}/${jobname}_${model_ver}_${envir}/${jobid}}
+export DATArestart=${DATAROOT}/${jobname}_${model_ver}_${envir}/restart
+export DATAarchive=${DATAROOT}/${jobname}_${model_ver}_${envir}/archive
 mkdir -p $DATA
 mkdir -p $DATArestart $DATAarchive
 # remove archives since restart time
