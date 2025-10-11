@@ -2,3 +2,7 @@
 	path = sorc/HYCOM_tools.fd
 	url = https://github.com/HYCOM/HYCOM-tools.git
 	branch = master
+[submodule "sorc/ufs_code.fd"]
+	path = sorc/ufs_code.fd
+	url = https://github.com/sanAkel/ufs-weather-model.git
+	branch = dev_10oct2025_ssmi
