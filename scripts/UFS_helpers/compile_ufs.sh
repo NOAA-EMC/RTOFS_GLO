@@ -8,7 +8,7 @@ if [[ $# -lt 1 ]]; then
   echo "$0" "Full path to the location of the UFS Weather Model source code"
   echo " "
   echo "Example Inputs: "
-  echo " /lfs/h2/emc/ptmp/santha.akella/RTOFS_GLO/sorc"
+  echo " /lfs/h2/emc/ptmp/santha.akella/RTOFS_GLO/sorc/ufs_code.fd"
   echo " "
   echo " "
   exit 1

@@ -8,7 +8,7 @@ if [[ $# -lt 1 ]]; then
   echo "$0" "Full path to the location where you want source code to reside Name of branch"
   echo " "
   echo "Example Inputs: "
-  echo " /lfs/h2/emc/ptmp/santha.akella/RTOFS_GLO/sorc dev_10oct2025_ssmi"
+  echo " /lfs/h2/emc/ptmp/santha.akella/RTOFS_GLO/sorc/ufs_code.fd dev_10oct2025_ssmi"
   echo " "
   echo " "
   exit 1
