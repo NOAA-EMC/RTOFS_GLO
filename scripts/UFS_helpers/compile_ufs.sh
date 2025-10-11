@@ -53,9 +53,9 @@ if [[ ${PDLIB:-"OFF"} = "ON" ]]; then
     MAKE_OPT+=" -DPDLIB=ON"
 fi
 if [[ ${BUILD_TYPE:-"Release"} = "DEBUG" ]] ; then
-    MAKE_OPT+=" -DDEBUG=ON"
+    MAKE_OPT+=" -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug"
 elif [[ "${FASTER:-OFF}" == ON ]] ; then
-    MAKE_OPT+=" -DFASTER=ON"
+    MAKE_OPT+=" -DFASTER=ON -DCMAKE_BUILD_TYPE=Release"
 fi
 
 case "${EXEC_NAME}" in
@@ -73,12 +73,6 @@ if [[ "${MACHINE_ID}" == "wcoss2" && "${PARALLEL_RESTART:-}" == "NO" ]]; then
    module load "ufs_wcoss2.intel"
    module list
    set -x
-
-   if [[ ${MAKE_OPT} == *-DDEBUG=ON* ]]; then
-      MAKE_OPT+=" -DCMAKE_BUILD_TYPE=Debug"
-   else
-      MAKE_OPT+=" -DCMAKE_BUILD_TYPE=Release"
-   fi
 
    MAKE_OPT+=" -DMPI=ON"
 
