@@ -2,32 +2,20 @@
 
 # A compile script for the UFS weather model - for data atmosphere only.
 
-if [[ $# -lt 1 ]]; then
-  echo " "
-  echo "Usage: "
-  echo "$0" "Full path to the location of the UFS Weather Model source code"
-  echo " "
-  echo "Example Inputs: "
-  echo " /lfs/h2/emc/ptmp/santha.akella/RTOFS_GLO/sorc/ufs_code.fd"
-  echo " "
-  echo " "
-  exit 1
-fi
-echo " "
-
 set -eux
 
-UFSsrc=${1}
+cwd=$(pwd)
+UFSsrc=$cwd/../../sorc/ufs_model.fd/
 
 if [[ ! -d "${UFSsrc}" ]]; then
   echo "Error: Source code path: '${UFSsrc}' does not exist."
-  echo "You can use: clone_ufs.sh to get the code"
-  echo "Fix and try again."
+  echo "Fix your clone and try again."
   exit 2
 fi
 
 echo " "
 echo " Building the UFS Weather Model "
+echo " Path to the source code: " ${UFSsrc}
 echo " "
 
 APP="NG-GODAS"
