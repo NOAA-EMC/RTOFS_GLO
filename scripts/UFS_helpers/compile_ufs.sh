@@ -6,6 +6,7 @@ set -eux
 
 cwd=$(pwd)
 UFSsrc=$cwd/../../sorc/ufs_model.fd/
+APP="NG-GODAS"
 
 if [[ ! -d "${UFSsrc}" ]]; then
   echo "Error: Source code path: '${UFSsrc}' does not exist."
@@ -14,13 +15,10 @@ if [[ ! -d "${UFSsrc}" ]]; then
 fi
 
 echo " "
-echo " Building the UFS Weather Model "
+echo " Building the UFS Weather Model for (application): " ${APP}
 echo " Path to the source code: " ${UFSsrc}
 echo " "
 
-APP="NG-GODAS"
-CCPP_SUITES=""
-PDLIB="OFF"
 #
 # Valid only for WCOSS2; enable parallel restart I/O
 # TODO: Remove following option when parallel restart option _works_.
@@ -28,6 +26,8 @@ PDLIB="OFF"
 PARALLEL_RESTART="NO"
 
 EXEC_NAME="ufs_model.x"
+
+FASTER=ON
 #
 # D O  N O T  E D I T  B E L O W
 
@@ -36,14 +36,12 @@ cd ${UFSsrc} || false
 source "./tests/detect_machine.sh"
 source "./tests/module-setup.sh"
 
-MAKE_OPT="-DAPP=${APP} -D32BIT=ON -DCCPP_SUITES=${CCPP_SUITES}"
-if [[ ${PDLIB:-"OFF"} = "ON" ]]; then
-    MAKE_OPT+=" -DPDLIB=ON"
-fi
-if [[ ${BUILD_TYPE:-"Release"} = "DEBUG" ]] ; then
-    MAKE_OPT+=" -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug"
-elif [[ "${FASTER:-OFF}" == ON ]] ; then
+MAKE_OPT="-DAPP=${APP}"
+
+if [[ "${FASTER}" == ON ]] ; then
     MAKE_OPT+=" -DFASTER=ON -DCMAKE_BUILD_TYPE=Release"
+else
+    MAKE_OPT+=" -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug"
 fi
 
 case "${EXEC_NAME}" in
@@ -61,8 +59,6 @@ if [[ "${MACHINE_ID}" == "wcoss2" && "${PARALLEL_RESTART:-}" == "NO" ]]; then
    module load "ufs_wcoss2.intel"
    module list
    set -x
-
-   MAKE_OPT+=" -DMPI=ON"
 
    BUILD_NAME="fv3_${COMPILE_ID}"
    BUILD_DIR="$(pwd)/build_${BUILD_NAME}"
