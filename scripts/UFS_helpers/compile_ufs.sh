@@ -39,9 +39,15 @@ source "./tests/module-setup.sh"
 MAKE_OPT="-DAPP=${APP}"
 
 if [[ "${FASTER}" == ON ]] ; then
-    MAKE_OPT+=" -DFASTER=ON -DCMAKE_BUILD_TYPE=Release"
+    MAKE_OPT+=" -DFASTER=ON"
 else
-    MAKE_OPT+=" -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug"
+    MAKE_OPT+=" -DDEBUG=ON"
+fi
+
+if [[ ${BUILD_TYPE:-"Release"} == "Debug" ]] ; then
+    MAKE_OPT+=" -DCMAKE_BUILD_TYPE=Debug"
+else
+    MAKE_OPT+=" -DCMAKE_BUILD_TYPE=Release"
 fi
 
 case "${EXEC_NAME}" in
