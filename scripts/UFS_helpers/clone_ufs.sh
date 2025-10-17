@@ -4,7 +4,9 @@
 
 set -eux
 
+MACHINE=$(hostname | cut -c 1-6)
 cwd=$(pwd)
+
 UFSpath=$cwd/../../sorc/ufs_model.fd/
 
 if [[ ! -d "${UFSpath}" ]]; then
@@ -13,9 +15,19 @@ if [[ ! -d "${UFSpath}" ]]; then
   exit 2
 fi
 
-cd ${UFSpath}
+#echo ""
+#echo "On machine:" ${MACHINE}
+#echo ""
 
-git submodule update --init --recursive --jobs 8
+if [[ (${MACHINE} == "clogin") || (${MACHINE} == "dlogin") ]]; then
+  nJobs=1
+else
+  nJobs=8
+fi
+#echo ${nJobs}
+
+cd ${UFSpath}
+git submodule update --init --recursive --jobs ${nJobs}
 
 echo " "
 echo " "
