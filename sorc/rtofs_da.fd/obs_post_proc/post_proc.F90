@@ -1,6 +1,7 @@
-program post_processor
+    program post_processor
+      implicit none
+      integer :: i
 
-  print*,"Hello!"
+      print *,"Hello!"
 
-end program post_processor
-
+    end program post_processor
