@@ -1,2 +1,5 @@
 # all executables
 exec/*
+
+# all object files
+*/*.o
