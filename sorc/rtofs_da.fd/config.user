@@ -1,0 +1,118 @@
+#
+# CONFIGURATION IDENTIFICATION:
+#      $HeadURL$
+#      @(#)$Id$
+#
+# This config.user file is included in makefiles
+# It contains Fortran options and general commands used in the makefiles
+#
+#-------------------------------------------------------------------------
+# 
+#  OS specific compiler and loader options
+#
+# MACROS      DESCRIPTIONS:
+#
+# FC:	         Fortran compiler.
+# FFLAGS:        Fortran compilation flags
+#
+# LD:            Loader
+# LDFLAGS:       Loader flag
+#
+# MAKE:          make utility used by the bottom level Makefile
+#                to compile subroutines
+# OS:            os name
+
+#
+# ----------- CRAY XC30/40 with Intel  -------
+#
+
+CRAY_INTEL_CC          = cc
+CRAY_INTEL_FC          = ftn
+CRAY_INTEL_MPI_FC      = ftn
+#CRAY_INTEL_FFLAGS      = -O1 -fpp -pc80 -traceback -WB -mkl -DCRAY
+CRAY_INTEL_FFLAGS      = -O1 -fpp -pc80 -traceback -WB -DCRAY
+CRAY_INTEL_DEBUG_FFLAGS      = -O0 -fpp -pc80 -g -traceback -WB -DCRAY -check all,nooutput_conversion -ftrapuv
+CRAY_INTEL_CPPFLAGS    = -cpp -P
+CRAY_INTEL_FREE        = -free
+CRAY_INTEL_FIXED       = -fixed
+CRAY_INTEL_LD          = ftn
+CRAY_INTEL_OTHER       =
+CRAY_INTEL_INTSIZE_4   = -i4
+CRAY_INTEL_REALSIZE_4  = -real-size 32
+CRAY_INTEL_SWAPIO      = -convert big_endian -assume byterecl
+
+CRAY_INTEL         = $(CRAY_INTEL_FFLAGS) $(CRAY_INTEL_FIXED) $(CRAY_INTEL_SWAPIO) \
+	          $(CRAY_INTEL_REALSIZE_4) $(CRAY_INTEL_INTSIZE_4)
+CRAY_INTEL_DEBUG   = $(CRAY_INTEL_DEBUG_FFLAGS) $(CRAY_INTEL_FIXED) $(CRAY_INTEL_SWAPIO) \
+	          $(CRAY_INTEL_REALSIZE_4) $(CRAY_INTEL_INTSIZE_4)
+CRAY_INTEL_XLIB    = /usr/lib64
+
+cray_intel:
+	$(MAKE) target \
+	"MAKE=gmake" \
+	"OS=cray_intel" \
+	"FC               = $(CRAY_INTEL_FC) " \
+	"MPI_FC           = $(CRAY_INTEL_MPI_FC) " \
+	"FREE_FORM        = $(CRAY_INTEL_FREE) " \
+	"FIXED_FORM       = $(CRAY_INTEL_FIXED) " \
+	"FFLAGS           = $(CRAY_INTEL) " \
+	"LD               = $(CRAY_INTEL_LD) " \
+	"LDFLAGS          = $(CRAY_INTEL_FFLAGS) " \
+	"CPPFLAGS         = $(CRAY_INTEL_CPPFLAGS) " \
+	"EXTRALIBS        = $(CRAY_INTEL_OTHER) "
+
+cray_intel_debug:
+	$(MAKE) target \
+	"MAKE=gmake" \
+	"OS=cray_intel" \
+	"FC               = $(CRAY_INTEL_FC) " \
+	"MPI_FC           = $(CRAY_INTEL_MPI_FC) " \
+	"FREE_FORM        = $(CRAY_INTEL_FREE) " \
+	"FIXED_FORM       = $(CRAY_INTEL_FIXED) " \
+	"FFLAGS           = $(CRAY_INTEL_DEBUG) " \
+	"LD               = $(CRAY_INTEL_LD) " \
+	"LDFLAGS          = $(CRAY_INTEL_DEBUG_FFLAGS) " \
+	"CPPFLAGS         = $(CRAY_INTEL_CPPFLAGS) " \
+	"EXTRALIBS        = $(CRAY_INTEL_OTHER) "
+
+# END WCOSS2
+
+# ----------------- END CRAY XC30/40 with Intel --------------------------------
+
+#
+# ---------------- INTEL Fortran f90  ------------
+#
+
+LX_INTEL_FC         = mpiifort
+LX_INTEL_MPI_FC     = mpiifort
+LX_INTEL            = -O1 -fpp -pc80 -w -traceback -WB -mkl -DLINUX
+#LX_INTEL            = -g -check bounds -fpp -pc80 -w -traceback -WB -mkl -DLINUX
+LX_INTEL_FREE       = -free
+LX_INTEL_FIXED      = -fixed
+LX_INTEL_INTSIZE_4  = -i4
+LX_INTEL_REALSIZE_4 = -real_size 32
+LX_INTEL_LD         = ifort
+LX_INTEL_CPPFLAGS   = /usr/lib/cpp
+LX_INTEL_FPOPT      =
+LX_INTEL_OTHER      =
+LX_INTEL_SWAPIO     = -convert big_endian -assume byterecl
+
+LX_INTEL          = $(LX_INTEL) $(LX_INTEL_FIXED) $(LX_INTEL_SWAPIO) \
+	            $(LX_INTEL_REALSIZE_4) $(LX_INTEL_INTSIZE_4)
+LX_INTEL_XLIB     = /usr/lib64
+
+linux_intel:
+	$(MAKE) target \
+	"MAKE=gmake " \
+	"OS=linux_intel " \
+	"FC           = $(LX_INTEL_FC) " \
+	"MPI_FC       = $(LX_INTEL_MPI_FC) " \
+	"FREE_FORM    = $(LX_INTEL_FREE) " \
+	"FIXED_FORM   = $(LX_INTEL_FIXED) " \
+	"FFLAGS       = $(LX_INTEL) " \
+	"LD           = $(LX_INTEL_LD) " \
+	"LDFLAGS      = $(LX_INTEL) " \
+	"CPPFLAGS     = $(LX_INTEL_CPPFLAGS) " \
+	"EXTRALIBS    = $(LX_INTEL_OTHER)"
+
+# ----------------- END LINUX INTEL ----------------------------------------
