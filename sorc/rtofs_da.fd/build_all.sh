@@ -9,7 +9,7 @@ echo "Load modules listed at: "
 echo ${dir_mod0}"/versions/build.ver"
 source ${BASE}/load_modules.sh ${dir_mod0}
 
-SUBDIRS=${BASE}/obs_post_proc
+SUBDIRS=${BASE}/proc_obs
 
 for dir in ${SUBDIRS}; do \
   cd ${dir}; make all
