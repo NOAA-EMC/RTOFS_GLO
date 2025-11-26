@@ -16,9 +16,9 @@ FFLAGS   = $(CRAY_INTEL_FFLAGS) $(CRAY_INTEL_FIXED) $(CRAY_INTEL_SWAPIO) \
 LDFLAGS = 
 
 # Source files
-SOURCES = post_proc.F90
+SOURCES = read_bin_qc_obs.F90
 OBJECTS = $(SOURCES:.F90=.o)
-EXECUTABLE = post_proc.x
+EXECUTABLE = read_bin_qc_obs.x
 
 # Default target
 all: $(EXECUTABLE)
