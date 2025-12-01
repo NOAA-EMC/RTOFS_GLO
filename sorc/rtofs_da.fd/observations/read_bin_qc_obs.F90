@@ -6,17 +6,25 @@ program read_bin_qc_obs
 ! - Write to a netcdf formatted file.  
 !
 ! Input:
-! - File: `yyyymmddhh.<STR>`
-! - Where `STR`: relates to observation type/observation platform.
+! - File: `yyyymmddhh.<STR>`, oType, oPlat
+!   - `STR` relates to the following:
+! - `oType`: observation type (e.g., ssh, sst, sss, etc).
+! - `oPlat`: observation platform.
 !
 ! Output:
-! - NetCDF file: `<STR>_yyyymmddhh.nc`
+! - NetCDF file: `<oType>_<oPlat>_yyyymmddhh.nc`
+!
+! - Remarks:
+!   1. In a few cases, it is possible that STR == oType.
 !
 
   implicit none
 
-  character(len=100) :: prog_name, in_fName      ! Name of program (exec) and input file
-  integer, parameter :: num_inputs = 1           ! Number of input arguments
+  integer, parameter :: num_inputs = 3 ! Number of input arguments
+  character(len=100) :: prog_name      ! Name of program (exec)
+  character(len=100) :: in_fName       ! Name of the input file
+  character(len=100) :: oType, oPlat   ! Observation type and platform
+
   real, parameter :: missing_value = -999.0      ! Missing value
   integer :: iargc_count
   logical :: exists, input_read_ok
@@ -43,12 +51,15 @@ program read_bin_qc_obs
     print *, " "
     print *, trim(prog_name)
     print *, "Expected number of inputs:", num_inputs
-    print *, "None were input. Fix and try again."
+    print *, "But ", iargc_count, "were found. Fix and try again."
     print *, " "
     stop
   endif
 
   call getarg(1, in_fName)
+  call getarg(2, oType)
+  call getarg(3, oPlat)
+
   inquire(file=trim(in_fName), exist=exists)
   print *, " "
   if ( exists) then
@@ -100,7 +111,6 @@ program read_bin_qc_obs
   close(10)
 
   print *, n_read, n_lvl, vrsn
-
 
 
 end program read_bin_qc_obs
