@@ -21,12 +21,10 @@ program read_bin_qc_obs
   implicit none
 
   integer, parameter :: num_inputs = 3 ! Number of input arguments
-  character(len=100) :: prog_name      ! Name of program (exec)
   character(len=100) :: in_fName       ! Name of the input file
   character(len=100) :: oType, oPlat   ! Observation type and platform
 
   real, parameter :: missing_value = -999.0      ! Missing value
-  integer :: iargc_count
   logical :: exists, input_read_ok
 
   integer :: n_read, n_lvl, vrsn
@@ -43,22 +41,7 @@ program read_bin_qc_obs
 ! set default
   input_read_ok = .false.  ! Unless file is found, assume no file is found.
   
-  ! Get command-line (input) arguments
-  iargc_count = IARGC()
-
-  if (iargc_count < num_inputs) then
-    call getarg(0, prog_name)
-    print *, " "
-    print *, trim(prog_name)
-    print *, "Expected number of inputs:", num_inputs
-    print *, "But ", iargc_count, "were found. Fix and try again."
-    print *, " "
-    stop
-  endif
-
-  call getarg(1, in_fName)
-  call getarg(2, oType)
-  call getarg(3, oPlat)
+  call getInputs(num_inputs, in_fName, oType, oPlat)
 
   inquire(file=trim(in_fName), exist=exists)
   print *, " "
@@ -99,18 +82,41 @@ program read_bin_qc_obs
        ob_sla(:) = missing_value
     endif
 
-!    print *, ob_age(1), ob_cyc(1), ob_lat(1), ob_lon(1), &
-!      ob_qc(1), ob_sat(1), ob_smpl(1), ob_ssh(1), &
-!      ob_trck(1), ob_ltc(1), ob_dtg(1), ob_rcpt(1), ob_sla(1)
-     print *, ob_sat
-
     deallocate( ob_age, ob_cyc, ob_lat, ob_lon, &
                 ob_qc, ob_sat, ob_smpl, ob_ssh, &
                 ob_trck, ob_ltc, ob_dtg, ob_rcpt, ob_sla)
   endif
   close(10)
 
-  print *, n_read, n_lvl, vrsn
+contains
 
+  subroutine getInputs(num_inputs, &
+    input_file, obsType, obsPlat)
+    integer, intent(in) :: num_inputs 
+
+    character(len=*), intent(out) :: input_file         ! Name of the input file
+    character(len=*), intent(out) :: obsType, obsPlat   ! Observation type and platform
+ 
+    ! local variables
+    character(len=100) :: prog_name      ! Name of program (exec)
+    integer :: iargc_count
+
+    ! Get command-line (input) arguments
+    iargc_count = IARGC()
+
+    if (iargc_count < num_inputs) then
+      call getarg(0, prog_name)
+      print *, " "
+      print *, trim(prog_name)
+      print *, "Expected number of inputs:", num_inputs
+      print *, "But ", iargc_count, "were found. Fix and try again."
+      print *, " "
+      stop
+    endif
+
+    call getarg(1, input_file)
+    call getarg(2, obsType)
+    call getarg(3, obsPlat)
+  end subroutine getInputs
 
 end program read_bin_qc_obs
