@@ -1,5 +1,8 @@
 # all executables
 exec/*
 
+# all data files
+observations/*.nc
+
 # all object files
 */*.o

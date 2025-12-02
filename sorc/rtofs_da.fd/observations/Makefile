@@ -16,7 +16,7 @@ FFLAGS   = $(CRAY_INTEL_FFLAGS) $(CRAY_INTEL_FIXED) $(CRAY_INTEL_SWAPIO) \
 LDFLAGS = 
 
 # Source files
-SOURCES = read_bin_qc_obs.F90
+SOURCES = read_bin.F90 read_bin_qc_obs.F90
 OBJECTS = $(SOURCES:.F90=.o)
 EXECUTABLE = read_bin_qc_obs.x
 
