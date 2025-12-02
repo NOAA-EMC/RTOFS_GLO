@@ -6,3 +6,5 @@ observations/*.nc
 
 # all object files
 */*.o
+# all module files
+*/*.mod
