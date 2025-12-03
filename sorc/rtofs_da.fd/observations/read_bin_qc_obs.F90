@@ -6,64 +6,58 @@ program read_bin_qc_obs
 ! - Write to a netcdf formatted file.  
 !
 ! Input:
-! - File: `yyyymmddhh.<STR>`, oType, oPlat
-!   - `STR` relates to the following:
-! - `oType`: observation type (e.g., ssh, sst, sss, etc).
-! - `oPlat`: observation platform.
+! - File: `yyyymmddhh.<STR>`, oType, oPath
+!   - `STR` Relates to the following:
+! - `oType`: Observation type (e.g., ssh, sst, sss, etc) and/or platform.
+! - `oPath`: Path to where output should be written out.
 !
 ! Output:
-! - NetCDF file: `<oType>_<oPlat>_yyyymmddhh.nc`
+! - NetCDF file: `<oPath>/yyyymmddhh.<STR>.nc`
 !
 ! - Remarks:
-!   1. In a few cases, it is possible that STR == oType.
+!   None.
 !
 
-  use read_bin, only : getInputs
+  use read_bin, only : getInputs, ssh_converter
 
   implicit none
 
-  integer, parameter :: num_inputs = 3 ! Number of input arguments
+  integer, parameter :: num_inputs = 4 ! Number of input arguments
   character(len=100) :: in_fName       ! Name of the input file
-  character(len=100) :: oType, oPlat   ! Observation type and platform
+  character(len=100) :: oType          ! Observation type and/or platform
 
-  character(len=200) :: output_path    ! Path to output
+  character(len=200) :: oPath          ! Path to output
   character(len=100) :: out_fName      ! Name of the output file
 
-  logical :: exists, input_read_ok
+  logical :: exists, input_read_file_ok
 
 ! Read inputs
 ! -----------
-  input_read_ok = .false.  ! Unless input file is found, assume failure.
+  input_read_file_ok = .false.  ! Unless input file is found, assume failure.
   
-  call getInputs(num_inputs, in_fName, oType, oPlat)
+  call getInputs(num_inputs, in_fName, oType, oPath, out_fName)
 
   inquire(file=trim(in_fName), exist=exists)
   print *, " "
   if ( exists) then
-    input_read_ok = .true. ! Input file exists: success!
+    input_read_file_ok = .true. ! Input file exists: success!
   else
     print *, "Error reading input file name: " , trim(in_fName)
     stop 'EXIT.'
   end if
 
-! Do the work
-! -----------
+! Convert binary to netcdf
+! -------------------------
 
-! Read input file
   if (oType == "ssh") then
-!   call ssh_reader(in_fName)
+    call ssh_converter(in_fName, oType, oPath, out_fName)
   end if
-! call reader
-
-! Write output file
-  out_fName = trim(in_fName) // ".nc" 
-! call writer
-
 
 ! Finish
 ! ------
-  print *, "NetCDF formatted file with contents read from: ", in_fName
-  print *, "Has been written out to: ", out_fName
+  print *, "NetCDF formatted file with contents read from: ", trim(in_fName)
+  print *, "Has been written out. Check: ", trim(oPath) // '/' // trim(out_fName)
+  print *, " "
   print *, "All done."
   print *, " "
 
