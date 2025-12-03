@@ -11,6 +11,7 @@ public :: getInputs, ssh_converter
 
 real, parameter :: missing_value = -999.0  !< Missing value
 integer, parameter :: unit = 10            !< File unit number
+integer, parameter :: len_date_str = 14    !< Length of dtg character, it is a DATE!
 
 integer :: n_read !< Number of "observations"
 integer :: n_lvl  !< Number of "levels", =1, unless profile observations
@@ -68,8 +69,8 @@ subroutine ssh_converter(input_file, observation_type, output_path, output_file)
   real, dimension(:), allocatable :: &
     age, lat, lon, qc, ssh, sla
 
-  character, allocatable :: dtg(:)  *14 
-  character, allocatable :: rcpt(:) *14 
+  character, allocatable :: dtg(:)  * len_date_str
+  character, allocatable :: rcpt(:) * len_date_str
 
 ! print *, "Reading input file name:" , trim(input_file)
   open(unit, file=trim(input_file), status='old', &
@@ -110,43 +111,35 @@ subroutine ssh_converter(input_file, observation_type, output_path, output_file)
                 trck, ltc, dtg, rcpt, sla)
   endif
   close(unit)
-
-
 end subroutine ssh_converter
 
 
 !> Writes ssh obsertations to a netCDF file
  subroutine ssh_write_to_netcdf(output_path, output_file, n_read, &
-      sat, cyc, trck, dtg, lat, lon, ssh, sla, qc)
+      sat, cyc, trck, date_str, lat, lon, ssh, sla, qc)
 
   character(len=*), intent(in) :: output_path, output_file
   integer, intent(in) :: n_read
   integer, dimension(n_read), intent(in) :: sat, cyc, trck
   real, dimension(n_read), intent(in) :: lat, lon, ssh, sla, qc
-  character(len=14), dimension(n_read), intent(in) :: dtg
+  character(len=len_date_str), dimension(n_read), intent(in) :: date_str
 
   ! Local variables
-  integer :: ncid, dimid_n, varid_sat, varid_cyc, varid_trck, varid_date
-  integer :: varid_lat, varid_lon, varid_ssh, varid_sla, varid_qc
+  integer :: ncid, dimid_n, dimid_len_str
+  integer :: varid_sat, varid_cyc, varid_trck, varid_date, &
+             varid_lat, varid_lon, varid_ssh, varid_sla, varid_qc
   character(len=512) :: file_path
   character(len=*), parameter :: title = "Quality controlled sea surface height from NCEP RTOFS"
-
-  integer :: index
-  integer, dimension(n_read) :: date
-
-  ! convert dtg (character) to integer
-  do index = 1, n_read
-    print *, dtg(index)
-    read( dtg(index), '(I14)') date(index)
-    print *, date(index)
-  end do
 
   !  Construct full file path
   file_path = trim(output_path) // '/' // trim(output_file)
   print *, "Saving file: ", file_path
 
   call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
-  call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) ! Define dimension
+
+  ! Define dimensions
+  call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) 
+  call check( nf90_def_dim(ncid, "string_length", len_date_str, dimid_len_str))
 
   ! Define global attribute
   call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
@@ -155,12 +148,14 @@ end subroutine ssh_converter
   call check( nf90_def_var(ncid, "sat",   NF90_INT,   dimid_n, varid_sat))
   call check( nf90_def_var(ncid, "cyc",   NF90_INT,   dimid_n, varid_cyc))
   call check( nf90_def_var(ncid, "track", NF90_INT,   dimid_n, varid_trck))
-  call check( nf90_def_var(ncid, "date",  NF90_INT,   dimid_n, varid_date))
   call check( nf90_def_var(ncid, "lat",   NF90_FLOAT, dimid_n, varid_lat))
   call check( nf90_def_var(ncid, "lon",   NF90_FLOAT, dimid_n, varid_lon))
   call check( nf90_def_var(ncid, "ssh",   NF90_FLOAT, dimid_n, varid_ssh))
   call check( nf90_def_var(ncid, "sla",   NF90_FLOAT, dimid_n, varid_sla))
   call check( nf90_def_var(ncid, "qc",    NF90_FLOAT, dimid_n, varid_qc))
+
+  ! Note order of dimensions (strings need to be handled with care!):
+  call check( nf90_def_var(ncid, "date",  NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
 
   call check( nf90_enddef(ncid)) ! End define mode
 
@@ -168,7 +163,7 @@ end subroutine ssh_converter
   call check( nf90_put_var(ncid, varid_sat, sat))
   call check( nf90_put_var(ncid, varid_cyc, cyc))
   call check( nf90_put_var(ncid, varid_trck, trck))
-  call check( nf90_put_var(ncid, varid_date, date))
+  call check( nf90_put_var(ncid, varid_date, date_str))
   call check( nf90_put_var(ncid, varid_lat, lat))
   call check( nf90_put_var(ncid, varid_lon, lon))
   call check( nf90_put_var(ncid, varid_ssh, ssh))
@@ -176,7 +171,6 @@ end subroutine ssh_converter
   call check( nf90_put_var(ncid, varid_qc, qc))
 
   call check( nf90_close(ncid)) ! Close the netCDF file
-
 end subroutine ssh_write_to_netcdf
 
 
