@@ -2,9 +2,11 @@
 !! quality controlled observations information
 module read_bin
 
+use netcdf
+
 implicit none
 
-private :: ssh_write_to_netcdf
+private :: ssh_write_to_netcdf, check
 public :: getInputs, ssh_converter
 
 real, parameter :: missing_value = -999.0  !< Missing value
@@ -60,7 +62,6 @@ subroutine ssh_converter(input_file, observation_type, output_path, output_file)
   character(len=*), intent(in) :: output_file        ! Output file name
 
   ! local variables
-
   integer, dimension(:), allocatable :: &
     cyc, ltc, sat, smpl, trck
 
@@ -71,7 +72,6 @@ subroutine ssh_converter(input_file, observation_type, output_path, output_file)
   character, allocatable :: rcpt(:) *14 
 
 ! print *, "Reading input file name:" , trim(input_file)
-
   open(unit, file=trim(input_file), status='old', &
     access='sequential', form='unformatted')
 
@@ -119,9 +119,74 @@ end subroutine ssh_converter
  subroutine ssh_write_to_netcdf(output_path, output_file, n_read, &
       sat, cyc, trck, dtg, lat, lon, ssh, sla, qc)
 
-  ! print *, "Saving file: ", trim(output_path) // '/' // trim(output_file)
+  character(len=*), intent(in) :: output_path, output_file
+  integer, intent(in) :: n_read
+  integer, dimension(n_read), intent(in) :: sat, cyc, trck
+  real, dimension(n_read), intent(in) :: lat, lon, ssh, sla, qc
+  character(len=14), dimension(n_read), intent(in) :: dtg
+
+  ! Local variables
+  integer :: ncid, dimid_n, varid_sat, varid_cyc, varid_trck, varid_date
+  integer :: varid_lat, varid_lon, varid_ssh, varid_sla, varid_qc
+  character(len=512) :: file_path
+  character(len=*), parameter :: title = "Quality controlled sea surface height from NCEP RTOFS"
+
+  integer :: index
+  integer, dimension(n_read) :: date
+
+  ! convert dtg (character) to integer
+  do index = 1, n_read
+    print *, dtg(index)
+    read( dtg(index), '(I14)') date(index)
+    print *, date(index)
+  end do
+
+  !  Construct full file path
+  file_path = trim(output_path) // '/' // trim(output_file)
+  print *, "Saving file: ", file_path
+
+  call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
+  call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) ! Define dimension
+
+  ! Define global attribute
+  call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
+
+  ! Define variables
+  call check( nf90_def_var(ncid, "sat",   NF90_INT,   dimid_n, varid_sat))
+  call check( nf90_def_var(ncid, "cyc",   NF90_INT,   dimid_n, varid_cyc))
+  call check( nf90_def_var(ncid, "track", NF90_INT,   dimid_n, varid_trck))
+  call check( nf90_def_var(ncid, "date",  NF90_INT,   dimid_n, varid_date))
+  call check( nf90_def_var(ncid, "lat",   NF90_FLOAT, dimid_n, varid_lat))
+  call check( nf90_def_var(ncid, "lon",   NF90_FLOAT, dimid_n, varid_lon))
+  call check( nf90_def_var(ncid, "ssh",   NF90_FLOAT, dimid_n, varid_ssh))
+  call check( nf90_def_var(ncid, "sla",   NF90_FLOAT, dimid_n, varid_sla))
+  call check( nf90_def_var(ncid, "qc",    NF90_FLOAT, dimid_n, varid_qc))
+
+  call check( nf90_enddef(ncid)) ! End define mode
+
+  ! Write data to variables
+  call check( nf90_put_var(ncid, varid_sat, sat))
+  call check( nf90_put_var(ncid, varid_cyc, cyc))
+  call check( nf90_put_var(ncid, varid_trck, trck))
+  call check( nf90_put_var(ncid, varid_date, date))
+  call check( nf90_put_var(ncid, varid_lat, lat))
+  call check( nf90_put_var(ncid, varid_lon, lon))
+  call check( nf90_put_var(ncid, varid_ssh, ssh))
+  call check( nf90_put_var(ncid, varid_sla, sla))
+  call check( nf90_put_var(ncid, varid_qc, qc))
+
+  call check( nf90_close(ncid)) ! Close the netCDF file
 
 end subroutine ssh_write_to_netcdf
+
+
+! From https://home.chpc.utah.edu/~thorne/computing/Examples_netCDF.pdf
+subroutine check(istatus)
+  integer, intent (in) :: istatus
+  if (istatus /= nf90_noerr) then
+    print*, trim(adjustl(nf90_strerror(istatus)))
+  end iF
+end subroutine check
 
 
 end module read_bin

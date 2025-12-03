@@ -1,5 +1,10 @@
 # Makefile for compiling *.F90
 
+# Add netCDF library paths and flags
+NETCDF_PATH := $(NETCDF)
+NETCDF_INC := $(NETCDF_PATH)/include
+NETCDF_LIB := $(NETCDF_PATH)/lib
+
 # Compiler and flags
 FC = ftn
 
@@ -11,9 +16,10 @@ CRAY_INTEL_SWAPIO      = -convert big_endian -assume byterecl
 
 #FFLAGS = -O2 -fPIC
 FFLAGS   = $(CRAY_INTEL_FFLAGS) $(CRAY_INTEL_FIXED) $(CRAY_INTEL_SWAPIO) \
-           $(CRAY_INTEL_REALSIZE_4) $(CRAY_INTEL_INTSIZE_4)
+           $(CRAY_INTEL_REALSIZE_4) $(CRAY_INTEL_INTSIZE_4) -I$(NETCDF_INC)
 
-LDFLAGS = 
+# Linker flags - include netCDF libraries
+LDFLAGS := -L$(NETCDF_LIB) -lnetcdf -lnetcdff
 
 # Source files
 SOURCES = read_bin.F90 read_bin_qc_obs.F90
@@ -25,11 +31,14 @@ all: $(EXECUTABLE)
 
 # Link object files to create executable
 $(EXECUTABLE): $(OBJECTS)
-	$(FC) $(LDFLAGS) -o $@ $^
+	$(FC) $(FFLAGS) -o $@ $^ $(LDFLAGS)
 
 # Compile Fortran source files
 %.o: %.F90
-	$(FC) $(FFLAGS) -c $< -o $@
+	$(FC) $(FFLAGS) -c $<
+
+%.o: %.f90
+	$(FC) $(FFLAGS) -c $<
 
 # Clean up object files and executable
 clean:
