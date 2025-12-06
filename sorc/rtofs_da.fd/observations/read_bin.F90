@@ -7,13 +7,20 @@ use netcdf
 implicit none
 
 private :: ssh_write_to_netcdf, check
-public :: getInputs, ssh_converter
+
+public :: getInputs, &
+          sst_converter, &
+          ssh_converter
+
+logical, parameter :: verbose = .true.     !< Write (true) diagnostic info to STDOUT
 
 real, parameter :: missing_value = -999.0  !< Missing value
 integer, parameter :: unit = 10            !< File unit number
-integer, parameter :: len_date_str = 14    !< Length of dtg character, it is a DATE!
+integer, parameter :: len_sst_date_str = 12    !< Length of dtg character, it is a DATE!
+integer, parameter :: len_ssh_date_str = 14    !< Length of dtg character, it is a DATE!
 
 integer :: n_read !< Number of "observations"
+integer :: n_chn  !< Number of satellite channels; in binary file, but not used.
 integer :: n_lvl  !< Number of "levels", =1, unless profile observations
 integer :: vrsn   !< Version number of writer/reader
 
@@ -55,6 +62,58 @@ subroutine getInputs(num_inputs, &
 end subroutine getInputs
 
 
+!> Reads (binary) sst obsertations
+subroutine sst_converter(input_file, observation_type, output_path, output_file)
+  character(len=*), intent(in) :: input_file         ! Name of the input file
+  character(len=*), intent(in) :: observation_type   ! Observation type and platform
+  character(len=*), intent(in) :: output_path        ! Path to output
+  character(len=*), intent(in) :: output_file        ! Output file name
+
+  ! local variables
+  integer, dimension(:), allocatable :: &
+    flg, sat, water_mass_class_ind
+
+  real, dimension(:), allocatable :: &
+    age, bias, err, lat, lon, qc, sst
+
+  character, allocatable :: dtg(:)  * len_sst_date_str
+
+! print *, "Reading input file name:" , trim(input_file)
+  open(unit, file=trim(input_file), status='old', &
+    access='sequential', form='unformatted')
+
+  read (unit) n_read, n_chn, vrsn
+  if (n_read > 0) then
+    allocate( age(n_read), bias(n_read), dtg(n_read), &
+              err(n_read), flg(n_read), &
+              lat(n_read), lon(n_read), &
+              qc(n_read),  sst(n_read), sat(n_read), &
+              water_mass_class_ind(n_read))
+
+    read (unit) age
+    read (unit) bias
+    read (unit) dtg
+    read (unit) err
+    read (unit) flg
+    read (unit) lat
+    read (unit) lon
+    read (unit) qc
+    read (unit) sst
+    read (unit) sat ! Named "typ", set via include/coda_types.h 
+    read (unit) water_mass_class_ind
+
+    ! write to netcdf file
+!   call sst_write_to_netcdf(output_path, output_file, n_read, &
+!    bias, dtg, err, flg, lat, lon, qc, sst, sat, water_mass_class_ind)
+
+    deallocate( age, bias, dtg, err, flg, lat, lon, &
+              qc,  sst, sat, water_mass_class_ind)
+
+  endif
+  close(unit)
+end subroutine sst_converter
+
+
 !> Reads (binary) ssh obsertations
 subroutine ssh_converter(input_file, observation_type, output_path, output_file)
   character(len=*), intent(in) :: input_file         ! Name of the input file
@@ -69,8 +128,8 @@ subroutine ssh_converter(input_file, observation_type, output_path, output_file)
   real, dimension(:), allocatable :: &
     age, lat, lon, qc, ssh, sla
 
-  character, allocatable :: dtg(:)  * len_date_str
-  character, allocatable :: rcpt(:) * len_date_str
+  character, allocatable :: dtg(:)  * len_ssh_date_str
+  character, allocatable :: rcpt(:) * len_ssh_date_str
 
 ! print *, "Reading input file name:" , trim(input_file)
   open(unit, file=trim(input_file), status='old', &
@@ -122,7 +181,7 @@ end subroutine ssh_converter
   integer, intent(in) :: n_read
   integer, dimension(n_read), intent(in) :: sat, cyc, trck
   real, dimension(n_read), intent(in) :: lat, lon, ssh, sla, qc
-  character(len=len_date_str), dimension(n_read), intent(in) :: date_str
+  character(len=len_ssh_date_str), dimension(n_read), intent(in) :: date_str
 
   ! Local variables
   integer :: ncid, dimid_n, dimid_len_str
@@ -133,13 +192,13 @@ end subroutine ssh_converter
 
   !  Construct full file path
   file_path = trim(output_path) // '/' // trim(output_file)
-  print *, "Saving file: ", file_path
+  if (verbose) print *, "Saving file: ", file_path
 
   call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
 
   ! Define dimensions
   call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) 
-  call check( nf90_def_dim(ncid, "string_length", len_date_str, dimid_len_str))
+  call check( nf90_def_dim(ncid, "string_length", len_ssh_date_str, dimid_len_str))
 
   ! Define global attribute
   call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
@@ -154,7 +213,7 @@ end subroutine ssh_converter
   call check( nf90_def_var(ncid, "sla",   NF90_FLOAT, dimid_n, varid_sla))
   call check( nf90_def_var(ncid, "qc",    NF90_FLOAT, dimid_n, varid_qc))
 
-  ! Note order of dimensions (strings need to be handled with care!):
+  ! Note: Order of dimensions (strings need to be handled with care!)
   call check( nf90_def_var(ncid, "date",  NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
 
   call check( nf90_enddef(ncid)) ! End define mode
@@ -174,7 +233,7 @@ end subroutine ssh_converter
 end subroutine ssh_write_to_netcdf
 
 
-! From https://home.chpc.utah.edu/~thorne/computing/Examples_netCDF.pdf
+!> From https://home.chpc.utah.edu/~thorne/computing/Examples_netCDF.pdf
 subroutine check(istatus)
   integer, intent (in) :: istatus
   if (istatus /= nf90_noerr) then

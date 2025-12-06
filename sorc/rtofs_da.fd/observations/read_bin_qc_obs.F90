@@ -18,9 +18,12 @@ program read_bin_qc_obs
 !   None.
 !
 
-  use read_bin, only : getInputs, ssh_converter
+  use read_bin, only : getInputs, &
+   sst_converter, ssh_converter
 
   implicit none
+
+  logical, parameter :: verbose = .true. ! Write (true) diagnostic information to STDOUT
 
   integer, parameter :: num_inputs = 4 ! Number of input arguments
   character(len=100) :: in_fName       ! Name of the input file
@@ -49,16 +52,20 @@ program read_bin_qc_obs
 ! Convert binary to netcdf
 ! -------------------------
 
-  if (oType == "ssh") then
+  if (oType == "sst") &
+    call sst_converter(in_fName, oType, oPath, out_fName)
+
+  if (oType == "ssh") &
     call ssh_converter(in_fName, oType, oPath, out_fName)
-  end if
 
 ! Finish
 ! ------
-  print *, "NetCDF formatted file with contents read from: ", trim(in_fName)
-  print *, "Has been written out. Check: ", trim(oPath) // '/' // trim(out_fName)
-  print *, " "
-  print *, "All done."
-  print *, " "
+  if (verbose) then
+    print *, "NetCDF formatted file with contents read from: ", trim(in_fName)
+    print *, "Has been written out. Check: ", trim(oPath) // '/' // trim(out_fName)
+    print *, " "
+    print *, "All done."
+    print *, " "
+  end if
 
 end program read_bin_qc_obs
