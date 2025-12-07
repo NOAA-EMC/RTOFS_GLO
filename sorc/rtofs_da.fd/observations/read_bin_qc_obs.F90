@@ -1,21 +1,9 @@
 program read_bin_qc_obs
 
 !
-! Read quality controlled observations:
-! - From a binary formatted file.
+! File format conversion of quality controlled observations:
+! - Read from a binary formatted file.
 ! - Write to a netcdf formatted file.  
-!
-! Input:
-! - File: `yyyymmddhh.<STR>`, oType, oPath
-!   - `STR` Relates to the following:
-! - `oType`: Observation type (e.g., ssh, sst, sss, etc) and/or platform.
-! - `oPath`: Path to where output should be written out.
-!
-! Output:
-! - NetCDF file: `<oPath>/yyyymmddhh.<STR>.nc`
-!
-! - Remarks:
-!   None.
 !
 
   use read_bin, only : getInputs, &
