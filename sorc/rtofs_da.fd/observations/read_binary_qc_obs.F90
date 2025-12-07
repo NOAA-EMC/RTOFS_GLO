@@ -8,6 +8,7 @@ program read_bin_qc_obs
 
   use read_binary_write_nc_mod, only : getInputs, &
                                        sst_converter, &
+                                       ice_converter, &
                                        ssh_converter
 
   implicit none
@@ -41,11 +42,16 @@ program read_bin_qc_obs
 ! Convert binary to netcdf
 ! -------------------------
 
-  if (oType == "sst") &
+  if (oType == "sst") then
     call sst_converter(in_fName, oType, oPath, out_fName)
-
-  if (oType == "ssh") &
+  elseif (oType == "ice") then
+    call ice_converter(in_fName, oType, oPath, out_fName)
+  elseif (oType == "ssh") then
     call ssh_converter(in_fName, oType, oPath, out_fName)
+  else
+    print *, "Input observation type: ", trim(oType), " is not supported."
+    stop     'Fix and try again.'
+  endif
 
 ! Finish
 ! ------

@@ -7,11 +7,13 @@ use netcdf
 implicit none
 
 private :: sst_write_to_netcdf, &
+           ice_write_to_netcdf, &
            ssh_write_to_netcdf, &
            check
 
 public :: getInputs, &
           sst_converter, &
+          ice_converter, &
           ssh_converter
 
 logical, parameter :: verbose = .true.     !< Write (true) diagnostic info to STDOUT
@@ -116,6 +118,54 @@ subroutine sst_converter(input_file, observation_type, output_path, output_file)
 end subroutine sst_converter
 
 
+!> Reads (binary) ice obsertations
+subroutine ice_converter(input_file, observation_type, output_path, output_file)
+  character(len=*), intent(in) :: input_file         ! Name of the input file
+  character(len=*), intent(in) :: observation_type   ! Observation type and platform
+  character(len=*), intent(in) :: output_path        ! Path to output
+  character(len=*), intent(in) :: output_file        ! Output file name
+
+  ! local variables
+  integer, dimension(:), allocatable :: &
+    flg, sat
+
+  real, dimension(:), allocatable :: &
+    age, ice, lat, lon, qc
+
+  character, allocatable :: dtg(:)  * len_sst_date_str
+
+! print *, "Reading input file name:" , trim(input_file)
+  open(unit, file=trim(input_file), status='old', &
+    access='sequential', form='unformatted')
+
+  read (unit) n_read, n_lvl, vrsn
+  if (n_read > 0) then
+    allocate( age(n_read), dtg(n_read), &
+              flg(n_read), ice(n_read), &
+              lat(n_read), lon(n_read), &
+              qc(n_read),  sat(n_read))
+
+    read (unit) age
+    read (unit) dtg
+    read (unit) flg
+    read (unit) ice
+    read (unit) lat
+    read (unit) lon
+    read (unit) qc
+    read (unit) sat ! Named "typ", set via include/coda_types.h 
+
+    ! write to netcdf file
+    call ice_write_to_netcdf(output_path, output_file, n_read, &
+     dtg, flg, lat, lon, qc, ice, sat)
+
+    deallocate( age, dtg, flg, ice, lat, lon, &
+              qc,  sat)
+
+  endif
+  close(unit)
+end subroutine ice_converter
+
+
 !> Reads (binary) ssh obsertations
 subroutine ssh_converter(input_file, observation_type, output_path, output_file)
   character(len=*), intent(in) :: input_file         ! Name of the input file
@@ -176,7 +226,7 @@ end subroutine ssh_converter
 
 
 !> Writes ssh obsertations to a netCDF file
- subroutine ssh_write_to_netcdf(path, output_file, n_read, &
+subroutine ssh_write_to_netcdf(path, output_file, n_read, &
       sat, cyc, trck, date_str, lat, lon, ssh, sla, qc)
 
   character(len=*), intent(in) :: path, output_file
@@ -295,6 +345,65 @@ subroutine sst_write_to_netcdf(path, fname, n_read, &
 
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine sst_write_to_netcdf
+
+
+!> Writes ice obsertations to a netCDF file
+subroutine ice_write_to_netcdf(path, output_file, n_read, &
+     date_str, flg, lat, lon, qc, ice, sat)
+
+  character(len=*), intent(in) :: path, output_file
+  integer, intent(in) :: n_read
+  integer, dimension(n_read), intent(in) :: flg, sat
+  real, dimension(n_read), intent(in) :: lat, lon, qc, ice
+  character(len=len_sst_date_str), dimension(n_read), intent(in) :: date_str
+
+  ! Local variables
+  integer :: ncid, dimid_n, dimid_len_str
+  integer :: varid_date, varid_flg, varid_lat, varid_lon, &
+             varid_qc, varid_ice, varid_sat
+  character(len=512) :: file_path
+  character(len=*), parameter :: title = &
+    "Quality controlled ice concentration from NCEP RTOFS"
+
+  !  Construct full file path
+  file_path = trim(path) // '/' // trim(output_file)
+  if (verbose) print *, "Saving file: ", file_path
+
+  call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
+
+  ! Define dimensions
+  call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) 
+  call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
+
+  ! Define global attribute
+  call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
+
+  ! Define variables
+  call check( nf90_def_var(ncid, "date",  NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
+  call check( nf90_def_var(ncid, "flag",  NF90_INT,   dimid_n, varid_flg))
+  call check( nf90_def_var(ncid, "lat",   NF90_FLOAT, dimid_n, varid_lat))
+  call check( nf90_def_var(ncid, "lon",   NF90_FLOAT, dimid_n, varid_lon))
+  call check( nf90_def_var(ncid, "qc",    NF90_FLOAT, dimid_n, varid_qc))
+  call check( nf90_def_var(ncid, "aice",  NF90_FLOAT, dimid_n, varid_ice))
+  call check( nf90_def_var(ncid, "sat",   NF90_INT,   dimid_n, varid_sat))
+
+  ! Attributes for ice concentration (aice)
+  call check( nf90_put_att(ncid, varid_ice, "units", "percent"))
+
+  call check( nf90_enddef(ncid)) ! End define mode
+
+  ! Write data to variables
+  call check( nf90_put_var(ncid, varid_date, date_str))
+  call check( nf90_put_var(ncid, varid_flg,  flg))
+  call check( nf90_put_var(ncid, varid_lat,  lat))
+  call check( nf90_put_var(ncid, varid_lon,  lon))
+  call check( nf90_put_var(ncid, varid_qc,   qc))
+  call check( nf90_put_var(ncid, varid_ice,  ice))
+  call check( nf90_put_var(ncid, varid_sat,  sat))
+
+  call check( nf90_close(ncid)) ! Close the netCDF file
+end subroutine ice_write_to_netcdf
+
 
 !> From https://home.chpc.utah.edu/~thorne/computing/Examples_netCDF.pdf
 subroutine check(istatus)
