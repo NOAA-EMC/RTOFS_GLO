@@ -1,6 +1,6 @@
 !> To read in binary formatted file(s) that contains 
 !! quality controlled observations information
-module read_bin
+module read_binary_write_nc_mod
 
 use netcdf
 
@@ -305,4 +305,4 @@ subroutine check(istatus)
 end subroutine check
 
 
-end module read_bin
+end module read_binary_write_nc_mod

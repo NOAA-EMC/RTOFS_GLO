@@ -2,12 +2,13 @@ program read_bin_qc_obs
 
 !
 ! File format conversion of quality controlled observations:
-! - Read from a binary formatted file.
-! - Write to a netcdf formatted file.  
+! - Read from a binary file.
+! - Write to a netcdf file.
 !
 
-  use read_bin, only : getInputs, &
-   sst_converter, ssh_converter
+  use read_binary_write_nc_mod, only : getInputs, &
+                                       sst_converter, &
+                                       ssh_converter
 
   implicit none
 
