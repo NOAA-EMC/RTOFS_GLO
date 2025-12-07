@@ -22,9 +22,9 @@ FFLAGS   = $(CRAY_INTEL_FFLAGS) $(CRAY_INTEL_FIXED) $(CRAY_INTEL_SWAPIO) \
 LDFLAGS := -L$(NETCDF_LIB) -lnetcdf -lnetcdff
 
 # Source files
-SOURCES = read_bin.F90 read_bin_qc_obs.F90
+SOURCES = read_binary_write_nc_mod.F90 read_binary_qc_obs.F90
 OBJECTS = $(SOURCES:.F90=.o)
-EXECUTABLE = read_bin_qc_obs.x
+EXECUTABLE = read_binary_qc_obs.x
 
 # Default target
 all: $(EXECUTABLE)
