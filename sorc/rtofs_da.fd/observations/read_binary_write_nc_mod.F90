@@ -9,12 +9,14 @@ implicit none
 private :: sst_write_to_netcdf, &
            ice_write_to_netcdf, &
            ssh_write_to_netcdf, &
+           sss_write_to_netcdf, &
            check
 
 public :: getInputs, &
           sst_converter, &
           ice_converter, &
-          ssh_converter
+          ssh_converter, &
+          sss_converter
 
 logical, parameter :: verbose = .true.     !< Write (true) diagnostic info to STDOUT
 
@@ -164,6 +166,62 @@ subroutine ice_converter(input_file, observation_type, output_path, output_file)
   endif
   close(unit)
 end subroutine ice_converter
+
+
+!> Reads (binary) sss obsertations
+subroutine sss_converter(input_file, observation_type, output_path, output_file)
+  character(len=*), intent(in) :: input_file         ! Name of the input file
+  character(len=*), intent(in) :: observation_type   ! Observation type and platform
+  character(len=*), intent(in) :: output_path        ! Path to output
+  character(len=*), intent(in) :: output_file        ! Output file name
+
+  ! local variables
+  integer, dimension(:), allocatable :: &
+    flg, sat
+
+  real, dimension(:), allocatable :: &
+    age, err, lat, lon, qc, sss, sst
+
+  character, allocatable :: dtg(:)  * len_sst_date_str
+  character, allocatable :: rcpt(:) * len_sst_date_str
+
+! print *, "Reading input file name:" , trim(input_file)
+  open(unit, file=trim(input_file), status='old', &
+    access='sequential', form='unformatted')
+
+  read (unit) n_read, n_lvl, vrsn
+  if (n_read > 0) then
+    allocate( age(n_read), err(n_read), flg(n_read), &
+              lat(n_read), lon(n_read), qc(n_read),  &
+              sat(n_read), sss(n_read), sst(n_read), &
+              dtg(n_read), rcpt(n_read))
+
+    read (unit) age
+    read (unit) err
+    read (unit) flg
+    read (unit) lat
+    read (unit) lon
+    read (unit) qc
+    read (unit) sat ! Named "typ", set via include/coda_types.h 
+    read (unit) sss
+    read (unit) sst
+    read (unit) dtg
+    
+    if (vrsn == 2 ) then
+      read (unit) rcpt   ! Receipt time
+    else
+      rcpt = dtg
+    endif
+
+    ! write to netcdf file
+    call sss_write_to_netcdf(output_path, output_file, n_read, &
+     dtg, lat, lon, sat, sss, sst, err, flg, qc)
+
+    deallocate( age, err, flg, lat, lon, qc, sat, sss, sst, dtg, rcpt)
+
+  endif
+  close(unit)
+end subroutine sss_converter
 
 
 !> Reads (binary) ssh obsertations
@@ -403,6 +461,66 @@ subroutine ice_write_to_netcdf(path, output_file, n_read, &
 
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine ice_write_to_netcdf
+
+
+!> Writes sss obsertations to a netCDF file
+subroutine sss_write_to_netcdf(path, output_file, n_read, &
+     date_str, lat, lon, sat, sss, sst, err, flg, qc)
+
+  character(len=*), intent(in) :: path, output_file
+  integer, intent(in) :: n_read
+  integer, dimension(n_read), intent(in) :: flg, sat
+  real, dimension(n_read), intent(in) :: lat, lon, sss, sst, err, qc
+  character(len=len_sst_date_str), dimension(n_read), intent(in) :: date_str
+
+  ! Local variables
+  integer :: ncid, dimid_n, dimid_len_str
+  integer :: varid_date, varid_lat, varid_lon, &
+             varid_sat, varid_sss, varid_sst, &
+             varid_err, varid_flg, varid_qc
+  character(len=512) :: file_path
+  character(len=*), parameter :: title = &
+    "Quality controlled sea surface salinity from NCEP RTOFS"
+
+  !  Construct full file path
+  file_path = trim(path) // '/' // trim(output_file)
+  if (verbose) print *, "Saving file: ", file_path
+
+  call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
+
+  ! Define dimensions
+  call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) 
+  call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
+
+  ! Define global attribute
+  call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
+
+  ! Define variables
+  call check( nf90_def_var(ncid, "date", NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
+  call check( nf90_def_var(ncid, "lat",  NF90_FLOAT, dimid_n, varid_lat))
+  call check( nf90_def_var(ncid, "lon",  NF90_FLOAT, dimid_n, varid_lon))
+  call check( nf90_def_var(ncid, "sat",  NF90_INT,   dimid_n, varid_sat))
+  call check( nf90_def_var(ncid, "sss",  NF90_FLOAT, dimid_n, varid_sss))
+  call check( nf90_def_var(ncid, "sst",  NF90_FLOAT, dimid_n, varid_sst))
+  call check( nf90_def_var(ncid, "err",  NF90_FLOAT, dimid_n, varid_err))
+  call check( nf90_def_var(ncid, "flag", NF90_INT,   dimid_n, varid_flg))
+  call check( nf90_def_var(ncid, "qc",   NF90_FLOAT, dimid_n, varid_qc))
+
+  call check( nf90_enddef(ncid)) ! End define mode
+
+  ! Write data to variables
+  call check( nf90_put_var(ncid, varid_date, date_str))
+  call check( nf90_put_var(ncid, varid_lat,  lat))
+  call check( nf90_put_var(ncid, varid_lon,  lon))
+  call check( nf90_put_var(ncid, varid_sat,  sat))
+  call check( nf90_put_var(ncid, varid_sss,  sss))
+  call check( nf90_put_var(ncid, varid_sst,  sst))
+  call check( nf90_put_var(ncid, varid_err,  err))
+  call check( nf90_put_var(ncid, varid_flg,  flg))
+  call check( nf90_put_var(ncid, varid_qc,   qc))
+
+  call check( nf90_close(ncid)) ! Close the netCDF file
+end subroutine sss_write_to_netcdf
 
 
 !> From https://home.chpc.utah.edu/~thorne/computing/Examples_netCDF.pdf
