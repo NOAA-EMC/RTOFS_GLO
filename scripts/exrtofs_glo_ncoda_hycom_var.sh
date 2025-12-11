@@ -98,10 +98,9 @@ cat << eof2 > ogridnl
   kkm     = 41,
   kko     = 41,
   m       = 4500,
-  n       = 3298,
+  n       = 3297,
   nnest   = 1,
   nproj   = -1,
-  rlat    = 70.2,
  &end
 eof2
 
@@ -121,26 +120,26 @@ mkdir -p $log_dir
 
 echo timecheck RTOFS_GLO_HYCOM start setup at $(date)
 #NCODA setup
-$EXECrtofs/rtofs_ncoda_setup 3D hycom ogridnl $ddtg > pout1
+$EXECrtofs/rtofs_ncoda_setup 3D mom ogridnl $ddtg > pout1
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
 echo timecheck RTOFS_GLO_HYCOM start prep at $(date)
-mpiexec -n 72 --cpu-bind core $EXECrtofs/rtofs_ncoda_prep 3D hycom ogridnl $ddtg > pout2
+mpiexec -n 72 --cpu-bind core $EXECrtofs/rtofs_ncoda_prep 3D mom ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
 echo timecheck RTOFS_GLO_HYCOM start ncoda3d at $(date)
-mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 3D hycom ogridnl $ddtg > pout3
+mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 3D mom ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
 echo timecheck RTOFS_GLO_HYCOM start post at $(date)
 . prep_step
-mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda_post 3D hycom ogridnl $ddtg relax > pout4
+mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda_post 3D mom ogridnl $ddtg relax > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
@@ -148,18 +147,13 @@ echo " error from rtofs_ncoda_post=",$err
 [[ -f fort.32 ]] && mv fort.32 $log_dir/hycom_var.$ddtg.rej
 [[ -f fort.33 ]] && mv fort.33 $log_dir/hycom_var.$ddtg.prf
 [[ -f fort.34 ]] && mv fort.34 $log_dir/hycom_var.$ddtg.gpt
-[[ -f fort.36 ]] && mv fort.36 $log_dir/hycom_var.$ddtg.mvo
 [[ -f fort.37 ]] && mv fort.37 $log_dir/hycom_var.$ddtg.drc
-[[ -f fort.38 ]] && mv fort.38 $log_dir/hycom_var.$ddtg.lyp
 [[ -f fort.39 ]] && mv fort.39 $log_dir/hycom_var.$ddtg.fix
-[[ -f fort.40 ]] && mv fort.40 $log_dir/hycom_var.$ddtg.sus
 [[ -f fort.41 ]] && mv fort.41 $log_dir/hycom_var.$ddtg.dup
 [[ -f fort.42 ]] && mv fort.42 $log_dir/hycom_var.$ddtg.ssh
 [[ -f fort.52 ]] && mv fort.52 $log_dir/hycom_var.$ddtg.sal
 [[ -f fort.67 ]] && mv fort.67 $log_dir/hycom_var.$ddtg.obs
 [[ -f fort.68 ]] && mv fort.68 $log_dir/hycom_var.$ddtg.grd
-[[ -f fort.69 ]] && mv fort.69 $log_dir/hycom_var.$ddtg.via
-[[ -f fort.88 ]] && mv fort.88 $log_dir/hycom_var.$ddtg.dbg
 
 #   create data coverage graphics
 DoGraphics=NO
