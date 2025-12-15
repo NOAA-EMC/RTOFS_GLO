@@ -11,8 +11,8 @@ program read_bin_qc_obs
                                        ice_converter, &
                                        ssh_converter, &
                                        sss_converter, &
-                                       mdb_converter
-!                                      velocity_converter, &
+                                       mdb_converter, &
+                                       velocity_converter
 !                                      sfc_converter, &
 !                                      profile_converter
 
@@ -58,7 +58,7 @@ program read_bin_qc_obs
   elseif (oType == "mdb") then
     call mdb_converter(in_fName, oType, oPath, out_fName)
   elseif (oType == "velocity") then
-!   call velocity_converter(in_fName, oType, oPath, out_fName)
+    call velocity_converter(in_fName, oType, oPath, out_fName)
   elseif (oType == "sfc") then
 !   call sfc_converter(in_fName, oType, oPath, out_fName)
   elseif (oType == "profile") then

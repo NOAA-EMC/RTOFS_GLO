@@ -11,7 +11,7 @@ private :: sst_write_to_netcdf, &
            ssh_write_to_netcdf, &
            sss_write_to_netcdf, &
            mdb_write_to_netcdf, &
-!          velocity_write_to_netcdf, &
+           velocity_write_to_netcdf, &
 !          sfc_write_to_netcdf, &
 !          profile_write_to_netcdf, &
            check
@@ -21,8 +21,8 @@ public :: getInputs, &
           ice_converter, &
           ssh_converter, &
           sss_converter, &
-          mdb_converter
-!         velocity_converter, &
+          mdb_converter, &
+          velocity_converter
 !         sfc_converter, &
 !         profile_converter
 
@@ -32,6 +32,7 @@ real, parameter :: missing_value = -999.0  !< Missing value
 integer, parameter :: unit = 10            !< File unit number
 integer, parameter :: len_sst_date_str = 12    !< Length of dtg character, it is a DATE!
 integer, parameter :: len_ssh_date_str = 14    !< Length of dtg character, it is a DATE!
+integer, parameter :: len_sgn = 7              !< Length of sgn character.
 
 integer :: n_read !< Number of "observations"
 integer :: n_chn  !< Number of satellite channels; in binary file, but not used.
@@ -290,6 +291,7 @@ subroutine ssh_converter(input_file, observation_type, output_path, output_file)
   close(unit)
 end subroutine ssh_converter
 
+
 !> Reads (binary) Argo-SSS Matchup Data Base (MDB). 3 days delayed by construction
 subroutine mdb_converter(input_file, observation_type, output_path, output_file)
   character(len=*), intent(in) :: input_file         ! Name of the input file
@@ -346,6 +348,68 @@ read (unit) n_read, n_lvl, vrsn
   endif
   close(unit)
 end subroutine mdb_converter
+
+
+!> Read (binary) velocity obsertations
+subroutine velocity_converter(input_file, observation_type, output_path, output_file)
+  character(len=*), intent(in) :: input_file         ! Name of the input file
+  character(len=*), intent(in) :: observation_type   ! Observation type and platform
+  character(len=*), intent(in) :: output_path        ! Path to output
+  character(len=*), intent(in) :: output_file        ! Output file name
+
+  !local variables
+  integer, dimension(:), allocatable :: &
+    ndx, u_type, v_type
+
+  real, dimension(:), allocatable :: &
+    age, btm, lat, lon, lvl, &
+    u, u_err, u_qc, v, v_err, v_qc
+
+  character, allocatable :: dtg(:)  * len_sst_date_str
+  character, allocatable :: rcpt(:) * len_sst_date_str
+  character, allocatable :: sgn(:)  * len_sgn
+
+! print *, "Reading input file name:" , trim(input_file)
+  open(unit, file=trim(input_file), status='old', &
+    access='sequential', form='unformatted')
+
+  read (unit) n_read, n_lvl, vrsn
+  if (n_read > 0) then
+    allocate( age(n_read), btm(n_read), lat(n_read), lon(n_read), &
+              lvl(n_read), ndx(n_read), u(n_read), u_err(n_read), &
+              u_qc(n_read), u_type(n_read), v(n_read), v_err(n_read), &
+              v_qc(n_read), v_type(n_read), dtg(n_read), rcpt(n_read), &
+              sgn(n_read))
+
+    read (unit) age
+    read (unit) btm
+    read (unit) lat
+    read (unit) lon
+    read (unit) lvl
+    read (unit) ndx
+    read (unit) u
+    read (unit) u_err
+    read (unit) u_qc
+    read (unit) u_type
+    read (unit) v
+    read (unit) v_err
+    read (unit) v_qc
+    read (unit) v_type
+    read (unit) dtg
+    read (unit) rcpt
+    read (unit) sgn
+
+    ! write to netcdf file
+    call velocity_write_to_netcdf(output_path, output_file, n_read, &
+     dtg, lat, lon, u, v, u_qc, v_qc, u_type, v_type)
+
+    deallocate( age, btm, lat, lon, lvl, ndx, u, u_err, u_qc, u_type, &
+                v, v_err, v_qc, v_type, dtg, rcpt, sgn)
+
+  endif
+  close(unit)
+end subroutine velocity_converter
+
 
 !> Writes ssh obsertations to a netCDF file
 subroutine ssh_write_to_netcdf(path, output_file, n_read, &
@@ -586,6 +650,7 @@ subroutine sss_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine sss_write_to_netcdf
 
+
 !> Writes MDB to a netCDF file
 subroutine mdb_write_to_netcdf(path, output_file, n_read, &
      argo_lat, argo_lon, argo_depth, argo_sss, argo_sst, &
@@ -657,6 +722,67 @@ subroutine mdb_write_to_netcdf(path, output_file, n_read, &
 
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine mdb_write_to_netcdf
+
+
+!> Writes velocity obsertations to a netCDF file
+subroutine velocity_write_to_netcdf(path, output_file, n_read, &
+     date_str, lat, lon, u, v, u_qc, v_qc, u_type, v_type)
+
+  character(len=*), intent(in) :: path, output_file
+  integer, intent(in) :: n_read
+  integer, dimension(n_read), intent(in) :: u_type, v_type
+  real, dimension(n_read), intent(in) :: lat, lon, u, v, u_qc, v_qc
+  character(len=len_sst_date_str), dimension(n_read), intent(in) :: date_str
+
+  ! Local variables
+  integer :: ncid, dimid_n, dimid_len_str
+  integer :: varid_date, varid_lat, varid_lon, &
+             varid_u, varid_v, varid_u_qc, varid_v_qc, &
+             varid_u_type, varid_v_type
+  character(len=512) :: file_path
+  character(len=*), parameter :: title = &
+    "Quality controlled velocity from NCEP RTOFS"
+
+  ! Construct full file path
+  file_path = trim(path) // '/' // trim(output_file)
+  if (verbose) print *, "Saving file: ", file_path
+
+  call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
+
+  ! Define dimensions
+  call check( nf90_def_dim(ncid, "nobs", n_read, dimid_n))
+  call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
+
+  ! Define global attribute
+  call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
+
+  ! Define variables
+  call check( nf90_def_var(ncid, "date",   NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
+  call check( nf90_def_var(ncid, "lat",    NF90_FLOAT, dimid_n, varid_lat))
+  call check( nf90_def_var(ncid, "lon",    NF90_FLOAT, dimid_n, varid_lon))
+  call check( nf90_def_var(ncid, "u",      NF90_FLOAT, dimid_n, varid_u))
+  call check( nf90_def_var(ncid, "v",      NF90_FLOAT, dimid_n, varid_v))
+  call check( nf90_def_var(ncid, "u_qc",   NF90_FLOAT, dimid_n, varid_u_qc))
+  call check( nf90_def_var(ncid, "v_qc",   NF90_FLOAT, dimid_n, varid_v_qc))
+  call check( nf90_def_var(ncid, "u_type", NF90_INT,   dimid_n, varid_u_type))
+  call check( nf90_def_var(ncid, "v_type", NF90_INT,   dimid_n, varid_v_type))
+
+  call check( nf90_enddef(ncid)) ! End define mode
+
+  ! Write data to variables
+  call check( nf90_put_var(ncid, varid_date,  date_str))
+  call check( nf90_put_var(ncid, varid_lat,   lat))
+  call check( nf90_put_var(ncid, varid_lon,   lon))
+  call check( nf90_put_var(ncid, varid_u,     u))
+  call check( nf90_put_var(ncid, varid_v,     v))
+  call check( nf90_put_var(ncid, varid_u_qc,  u_qc))
+  call check( nf90_put_var(ncid, varid_v_qc,  v_qc))
+  call check( nf90_put_var(ncid, varid_u_type,u_type))
+  call check( nf90_put_var(ncid, varid_v_type,v_type))
+
+  call check( nf90_close(ncid)) ! Close the netCDF file
+end subroutine velocity_write_to_netcdf
+
 
 !> From https://home.chpc.utah.edu/~thorne/computing/Examples_netCDF.pdf
 subroutine check(istatus)
