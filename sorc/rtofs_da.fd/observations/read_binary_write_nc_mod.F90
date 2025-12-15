@@ -10,13 +10,21 @@ private :: sst_write_to_netcdf, &
            ice_write_to_netcdf, &
            ssh_write_to_netcdf, &
            sss_write_to_netcdf, &
+           mdb_write_to_netcdf, &
+!          velocity_write_to_netcdf, &
+!          sfc_write_to_netcdf, &
+!          profile_write_to_netcdf, &
            check
 
 public :: getInputs, &
           sst_converter, &
           ice_converter, &
           ssh_converter, &
-          sss_converter
+          sss_converter, &
+          mdb_converter
+!         velocity_converter, &
+!         sfc_converter, &
+!         profile_converter
 
 logical, parameter :: verbose = .true.     !< Write (true) diagnostic info to STDOUT
 
@@ -282,6 +290,62 @@ subroutine ssh_converter(input_file, observation_type, output_path, output_file)
   close(unit)
 end subroutine ssh_converter
 
+!> Reads (binary) Argo-SSS Matchup Data Base (MDB). 3 days delayed by construction
+subroutine mdb_converter(input_file, observation_type, output_path, output_file)
+  character(len=*), intent(in) :: input_file         ! Name of the input file
+  character(len=*), intent(in) :: observation_type   ! Observation type and platform
+  character(len=*), intent(in) :: output_path        ! Path to output
+  character(len=*), intent(in) :: output_file        ! Output file name
+
+  !local variables
+  integer, dimension(:), allocatable :: &
+    mdb_type
+
+  real, dimension(:), allocatable :: &
+    argo_clm, argo_lat, argo_lon, argo_lvl, argo_sss, argo_sst, &
+    mdb_dist, mdb_err, mdb_lat, mdb_lon, mdb_sss, mdb_sst, &
+    mdb_time
+
+! print *, "Reading input file name:" , trim(input_file)
+  open(unit, file=trim(input_file), status='old', &
+    access='sequential', form='unformatted')
+
+read (unit) n_read, n_lvl, vrsn
+  if (n_read > 0) then
+    allocate( argo_clm(n_read), argo_lat(n_read), argo_lon(n_read), argo_lvl(n_read), &
+              argo_sss(n_read), argo_sst(n_read), mdb_dist(n_read), mdb_err(n_read), &
+              mdb_lat(n_read), mdb_lon(n_read), mdb_sss(n_read), mdb_sst(n_read), &
+              mdb_time(n_read), mdb_type(n_read))
+
+    read (unit) argo_clm
+    read (unit) argo_lat
+    read (unit) argo_lon
+    read (unit) argo_lvl
+    read (unit) argo_sss
+    read (unit) argo_sst
+    read (unit) mdb_dist
+    read (unit) mdb_err
+    read (unit) mdb_lat
+    read (unit) mdb_lon
+    read (unit) mdb_sss
+    read (unit) mdb_sst
+    read (unit) mdb_time
+    read (unit) mdb_type ! Set via include/coda_types.h
+
+    ! write to netcdf file
+    call mdb_write_to_netcdf(output_path, output_file, n_read, &
+     argo_lat, argo_lon, argo_lvl, argo_sss, argo_sst, &
+     mdb_dist, mdb_err, mdb_lat, mdb_lon, mdb_sss, mdb_sst, &
+     mdb_time, mdb_type)
+
+    deallocate( argo_clm, argo_lat, argo_lon, argo_lvl, &
+                argo_sss, argo_sst, mdb_dist, mdb_err, &
+                mdb_lat, mdb_lon, mdb_sss, mdb_sst, &
+                mdb_time, mdb_type)
+
+  endif
+  close(unit)
+end subroutine mdb_converter
 
 !> Writes ssh obsertations to a netCDF file
 subroutine ssh_write_to_netcdf(path, output_file, n_read, &
@@ -308,7 +372,7 @@ subroutine ssh_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
 
   ! Define dimensions
-  call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) 
+  call check( nf90_def_dim(ncid, "nobs", n_read, dimid_n)) 
   call check( nf90_def_dim(ncid, "string_length", len_ssh_date_str, dimid_len_str))
 
   ! Define global attribute
@@ -369,7 +433,7 @@ subroutine sst_write_to_netcdf(path, fname, n_read, &
   call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
 
   ! Define Dimensions
-  call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) 
+  call check( nf90_def_dim(ncid, "nobs", n_read, dimid_n)) 
   call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
 
   ! Define global attribute
@@ -430,7 +494,7 @@ subroutine ice_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
 
   ! Define dimensions
-  call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) 
+  call check( nf90_def_dim(ncid, "nobs", n_read, dimid_n)) 
   call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
 
   ! Define global attribute
@@ -489,7 +553,7 @@ subroutine sss_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
 
   ! Define dimensions
-  call check( nf90_def_dim(ncid, "n_read", n_read, dimid_n)) 
+  call check( nf90_def_dim(ncid, "nobs", n_read, dimid_n)) 
   call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
 
   ! Define global attribute
@@ -522,6 +586,77 @@ subroutine sss_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine sss_write_to_netcdf
 
+!> Writes MDB to a netCDF file
+subroutine mdb_write_to_netcdf(path, output_file, n_read, &
+     argo_lat, argo_lon, argo_depth, argo_sss, argo_sst, &
+     dist, err, mdb_lat, mdb_lon, mdb_sss, mdb_sst, &
+     time, type)
+
+  character(len=*), intent(in) :: path, output_file
+  integer, intent(in) :: n_read
+  integer, dimension(n_read), intent(in) :: type
+  real, dimension(n_read), intent(in) :: argo_lat, argo_lon, argo_depth, &
+                                         argo_sss, argo_sst, dist, err, &
+                                         mdb_lat, mdb_lon, mdb_sss, mdb_sst, time
+  ! Local variables
+  integer :: ncid, dimid_n
+  integer :: varid_argo_lat, varid_argo_lon, varid_argo_depth, &
+             varid_argo_sss, varid_argo_sst, varid_dist, varid_err, &
+             varid_mdb_lat, varid_mdb_lon, varid_mdb_sss, varid_mdb_sst, &
+             varid_time, varid_type
+  character(len=512) :: file_path
+  character(len=*), parameter :: title = &
+    "Argo-satellite sea surface salinity match database from NCEP RTOFS"
+
+  !  Construct full file path
+  file_path = trim(path) // '/' // trim(output_file)
+  if (verbose) print *, "Saving file: ", file_path
+
+  call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
+
+  ! Define dimensions
+  call check( nf90_def_dim(ncid, "nobs", n_read, dimid_n))
+
+  ! Define global attribute
+  call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
+
+  ! Define variables
+  call check( nf90_def_var(ncid, "date",       NF90_FLOAT, dimid_n, varid_time))
+  call check( nf90_def_var(ncid, "argo_lat",   NF90_FLOAT, dimid_n, varid_argo_lat))
+  call check( nf90_def_var(ncid, "argo_lon",   NF90_FLOAT, dimid_n, varid_argo_lon))
+  call check( nf90_def_var(ncid, "argo_depth", NF90_FLOAT, dimid_n, varid_argo_depth))
+  call check( nf90_def_var(ncid, "argo_sss",   NF90_FLOAT, dimid_n, varid_argo_sss))
+  call check( nf90_def_var(ncid, "argo_sst",   NF90_FLOAT, dimid_n, varid_argo_sst))
+  call check( nf90_def_var(ncid, "dist",       NF90_FLOAT, dimid_n, varid_dist))
+  call check( nf90_def_var(ncid, "error",      NF90_FLOAT, dimid_n, varid_err))
+  call check( nf90_def_var(ncid, "mdb_lat",    NF90_FLOAT, dimid_n, varid_mdb_lat))
+  call check( nf90_def_var(ncid, "mdb_lon",    NF90_FLOAT, dimid_n, varid_mdb_lon))
+  call check( nf90_def_var(ncid, "mdb_sss",    NF90_FLOAT, dimid_n, varid_mdb_sss))
+  call check( nf90_def_var(ncid, "mdb_sst",    NF90_FLOAT, dimid_n, varid_mdb_sst))
+  call check( nf90_def_var(ncid, "obs_type",   NF90_INT,   dimid_n, varid_type))
+
+  ! Attributes for dist
+  call check( nf90_put_att(ncid, varid_dist, "units", "km"))
+
+  call check( nf90_enddef(ncid)) ! End define mode
+
+  ! write data to variables
+  call check( nf90_put_var(ncid, varid_time,       time))
+  call check( nf90_put_var(ncid, varid_argo_lat,   argo_lat))
+  call check( nf90_put_var(ncid, varid_argo_lon,   argo_lon))
+  call check( nf90_put_var(ncid, varid_argo_depth, argo_depth))
+  call check( nf90_put_var(ncid, varid_argo_sss,   argo_sss))
+  call check( nf90_put_var(ncid, varid_argo_sst,   argo_sst))
+  call check( nf90_put_var(ncid, varid_dist,       dist))
+  call check( nf90_put_var(ncid, varid_err,        err))
+  call check( nf90_put_var(ncid, varid_mdb_lat,    mdb_lat))
+  call check( nf90_put_var(ncid, varid_mdb_lon,    mdb_lon))
+  call check( nf90_put_var(ncid, varid_mdb_sss,    mdb_sss))
+  call check( nf90_put_var(ncid, varid_mdb_sst,    mdb_sst))
+  call check( nf90_put_var(ncid, varid_type,       type))
+
+  call check( nf90_close(ncid)) ! Close the netCDF file
+end subroutine mdb_write_to_netcdf
 
 !> From https://home.chpc.utah.edu/~thorne/computing/Examples_netCDF.pdf
 subroutine check(istatus)

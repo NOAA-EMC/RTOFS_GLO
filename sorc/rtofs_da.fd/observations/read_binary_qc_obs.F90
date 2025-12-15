@@ -10,7 +10,11 @@ program read_bin_qc_obs
                                        sst_converter, &
                                        ice_converter, &
                                        ssh_converter, &
-                                       sss_converter
+                                       sss_converter, &
+                                       mdb_converter
+!                                      velocity_converter, &
+!                                      sfc_converter, &
+!                                      profile_converter
 
   implicit none
 
@@ -51,6 +55,14 @@ program read_bin_qc_obs
     call ssh_converter(in_fName, oType, oPath, out_fName)
   elseif (oType == "sss") then
     call sss_converter(in_fName, oType, oPath, out_fName)
+  elseif (oType == "mdb") then
+    call mdb_converter(in_fName, oType, oPath, out_fName)
+  elseif (oType == "velocity") then
+!   call velocity_converter(in_fName, oType, oPath, out_fName)
+  elseif (oType == "sfc") then
+!   call sfc_converter(in_fName, oType, oPath, out_fName)
+  elseif (oType == "profile") then
+!   call profile_converter(in_fName, oType, oPath, out_fName)
   else
     print *, "Input observation type: ", trim(oType), " is not supported."
     stop     'Fix and try again.'
