@@ -22,8 +22,8 @@ public :: getInputs, &
           ssh_converter, &
           sss_converter, &
           mdb_converter, &
-          velocity_converter
-!         sfc_converter, &
+          velocity_converter, &
+          sfc_converter
 !         profile_converter
 
 logical, parameter :: verbose = .true.     !< Write (true) diagnostic info to STDOUT
@@ -409,6 +409,66 @@ subroutine velocity_converter(input_file, observation_type, output_path, output_
   endif
   close(unit)
 end subroutine velocity_converter
+
+
+!> Reads (binary) surface (sfc) obsertations
+subroutine sfc_converter(input_file, observation_type, output_path, output_file)
+  character(len=*), intent(in) :: input_file         ! Name of the input file
+  character(len=*), intent(in) :: observation_type   ! Observation type and platform
+  character(len=*), intent(in) :: output_path        ! Path to output
+  character(len=*), intent(in) :: output_file        ! Output file name
+
+  ! local variables
+  integer, dimension(:), allocatable :: &
+    drg, flg, sss_type, sst_type, wm
+
+  real, dimension(:), allocatable :: &
+    age, lat, lon, lvl, sss, sst, sss_qc, sst_qc
+
+  character, allocatable :: dtg(:)  * len_sst_date_str
+  character, allocatable :: rcpt(:) * len_sst_date_str
+  character, allocatable :: sgn(:)  * len_sgn
+
+! print *, "Reading input file name:" , trim(input_file)
+  open(unit, file=trim(input_file), status='old', &
+    access='sequential', form='unformatted')
+
+  read (unit) n_read, n_lvl, vrsn
+  if (n_read > 0) then
+    allocate( age(n_read), drg(n_read), flg(n_read), lat(n_read), &
+              lon(n_read), lvl(n_read), &
+              sss(n_read), sss_qc(n_read), sss_type(n_read), &
+              sst(n_read), sst_qc(n_read), sst_type(n_read), &
+              wm(n_read),  dtg(n_read), rcpt(n_read), sgn(n_read))
+
+    read (unit) age
+    read (unit) drg
+    read (unit) flg
+    read (unit) lat
+    read (unit) lon
+    read (unit) lvl
+    read (unit) sss
+    read (unit) sss_qc
+    read (unit) sss_type
+    read (unit) sst
+    read (unit) sst_qc
+    read (unit) sst_type
+    read (unit) wm        ! water-mass-classification index
+    read (unit) dtg
+    read (unit) rcpt
+    read (unit) sgn
+
+    ! write to netcdf file
+!   call sfc_write_to_netcdf(output_path, output_file, n_read, &
+!    flg, dtg, lat, lon, lvl, sss, sst, sss_qc, sst_qc, sss_type, sss_type)
+
+    deallocate( age, drg, flg, lat, lon, lvl, &
+                sss, sss_qc, sss_type, sst, sst_qc, sst_type, &
+                wm,  dtg, rcpt, sgn)
+
+  endif
+  close(unit)
+end subroutine sfc_converter
 
 
 !> Writes ssh obsertations to a netCDF file

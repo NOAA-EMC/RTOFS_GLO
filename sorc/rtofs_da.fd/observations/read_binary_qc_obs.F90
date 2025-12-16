@@ -12,8 +12,8 @@ program read_bin_qc_obs
                                        ssh_converter, &
                                        sss_converter, &
                                        mdb_converter, &
-                                       velocity_converter
-!                                      sfc_converter, &
+                                       velocity_converter, &
+                                       sfc_converter
 !                                      profile_converter
 
   implicit none
@@ -60,7 +60,7 @@ program read_bin_qc_obs
   elseif (oType == "velocity") then
     call velocity_converter(in_fName, oType, oPath, out_fName)
   elseif (oType == "sfc") then
-!   call sfc_converter(in_fName, oType, oPath, out_fName)
+    call sfc_converter(in_fName, oType, oPath, out_fName)
   elseif (oType == "profile") then
 !   call profile_converter(in_fName, oType, oPath, out_fName)
   else
