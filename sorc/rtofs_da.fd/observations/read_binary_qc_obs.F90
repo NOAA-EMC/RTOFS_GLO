@@ -13,8 +13,8 @@ program read_bin_qc_obs
                                        sss_converter, &
                                        mdb_converter, &
                                        velocity_converter, &
-                                       sfc_converter
-!                                      profile_converter
+                                       sfc_converter, &
+                                       profile_converter
 
   implicit none
 
@@ -62,7 +62,7 @@ program read_bin_qc_obs
   elseif (oType == "sfc") then
     call sfc_converter(in_fName, oType, oPath, out_fName)
   elseif (oType == "profile") then
-!   call profile_converter(in_fName, oType, oPath, out_fName)
+    call profile_converter(in_fName, oType, oPath, out_fName)
   else
     print *, "Input observation type: ", trim(oType), " is not supported."
     stop     'Fix and try again.'

@@ -12,7 +12,7 @@ private :: sst_write_to_netcdf, &
            sss_write_to_netcdf, &
            mdb_write_to_netcdf, &
            velocity_write_to_netcdf, &
-!          sfc_write_to_netcdf, &
+           sfc_write_to_netcdf, &
 !          profile_write_to_netcdf, &
            check
 
@@ -23,8 +23,8 @@ public :: getInputs, &
           sss_converter, &
           mdb_converter, &
           velocity_converter, &
-          sfc_converter
-!         profile_converter
+          sfc_converter, &
+          profile_converter
 
 logical, parameter :: verbose = .true.     !< Write (true) diagnostic info to STDOUT
 
@@ -470,6 +470,90 @@ subroutine sfc_converter(input_file, observation_type, output_path, output_file)
   endif
   close(unit)
 end subroutine sfc_converter
+
+
+!> Reads (binary) profile obsertations
+subroutine profile_converter(input_file, observation_type, output_path, output_file)
+  character(len=*), intent(in) :: input_file         ! Name of the input file
+  character(len=*), intent(in) :: observation_type   ! Observation type and platform
+  character(len=*), intent(in) :: output_path        ! Path to output
+  character(len=*), intent(in) :: output_file        ! Output file name
+
+  ! local variables
+  integer  :: i
+  integer, dimension(:), allocatable :: &
+    n_sal_lev, n_temp_lev, sal_type, temp_type
+  integer, dimension(:,:), allocatable :: flg
+
+  real, dimension(:), allocatable :: &
+    btm, lat, lon, sal_qc, temp_qc
+  real, dimension(:,:), allocatable :: &
+    lvl, sal, sal_err, sal_prb, temp, temp_err, temp_prb, &
+    clim_sal, clim_sal_std, clim_temp, clim_temp_std
+
+  character, allocatable :: dtg(:)  * len_sst_date_str
+  character, allocatable :: rcpt(:) * len_sst_date_str
+  character, allocatable :: sgn(:)  * len_sgn
+
+! print *, "Reading input file name:" , trim(input_file)
+  open(unit, file=trim(input_file), status='old', &
+    access='sequential', form='unformatted')
+
+  read (unit) n_read, n_lvl, vrsn
+  if (n_read > 0) then
+    allocate( btm(n_read), lat(n_read), lon(n_read), &
+              n_sal_lev(n_read), n_temp_lev(n_read), &
+              sal_type(n_read), sal_qc(n_read), &
+              temp_type(n_read), temp_qc(n_read), &
+              lvl(n_lvl, n_read), sal(n_lvl, n_read), &
+              sal_err(n_lvl, n_read), sal_prb(n_lvl, n_read), &
+              temp(n_lvl, n_read), temp_err(n_lvl, n_read), &
+              temp_prb(n_lvl, n_read), clim_sal(n_lvl, n_read), &
+              clim_sal_std(n_lvl, n_read), clim_temp(n_lvl, n_read), &
+              clim_temp_std(n_lvl, n_read), flg(n_lvl, n_read), &
+              dtg(n_read), rcpt(n_read), sgn(n_read))
+
+    read (unit) btm ! bottom depth
+    read (unit) lat
+    read (unit) lon
+    read (unit) n_sal_lev  ! number of salinity levels
+    read (unit) n_temp_lev ! number of temperature levels
+    read (unit) sal_type   ! Named "typ", set via include/coda_types.h
+    read (unit) sal_qc
+    read (unit) temp_type  ! Named "typ", set via include/coda_types.h
+    read (unit) temp_qc
+
+    do i = 1, n_read
+      read (unit) lvl          (1:n_temp_lev(i), i)
+      read (unit) sal          (1:n_temp_lev(i), i)
+      read (unit) sal_err      (1:n_temp_lev(i), i)
+      read (unit) sal_prb      (1:n_temp_lev(i), i)   ! profile-error-probability
+      read (unit) temp         (1:n_temp_lev(i), i)
+      read (unit) temp_err     (1:n_temp_lev(i), i)   ! profile-error-probability
+      read (unit) temp_prb     (1:n_temp_lev(i), i)
+      read (unit) clim_sal     (1:n_temp_lev(i), i)
+      read (unit) clim_sal_std (1:n_temp_lev(i), i)
+      read (unit) clim_temp    (1:n_temp_lev(i), i)
+      read (unit) clim_temp_std(1:n_temp_lev(i), i)
+      read (unit) flg          (1:n_temp_lev(i), i)
+    enddo
+
+    read (unit) dtg
+    read (unit) rcpt
+    read (unit) sgn
+
+    ! write to netcdf file
+!   call profile_write_to_netcdf(output_path, output_file, n_read, &
+!                               )
+    deallocate( btm, lat, lon, n_sal_lev, n_temp_lev, &
+              sal_type, sal_qc, temp_type, temp_qc, &
+              lvl, sal, sal_err, sal_prb, &
+              temp, temp_err, temp_prb, clim_sal, &
+              clim_sal_std, clim_temp, &
+              clim_temp_std, flg, dtg, rcpt, sgn)
+  endif
+  close(unit)
+end subroutine profile_converter
 
 
 !> Writes ssh obsertations to a netCDF file
