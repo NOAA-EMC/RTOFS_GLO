@@ -459,8 +459,9 @@ subroutine sfc_converter(input_file, observation_type, output_path, output_file)
     read (unit) sgn
 
     ! write to netcdf file
-!   call sfc_write_to_netcdf(output_path, output_file, n_read, &
-!    flg, dtg, lat, lon, lvl, sss, sst, sss_qc, sst_qc, sss_type, sss_type)
+    call sfc_write_to_netcdf(output_path, output_file, n_read, &
+     flg, dtg, lat, lon, lvl, sss, sst, sss_qc, sst_qc, &
+     sss_type, sst_type, wm)
 
     deallocate( age, drg, flg, lat, lon, lvl, &
                 sss, sss_qc, sss_type, sst, sst_qc, sst_type, &
@@ -842,6 +843,75 @@ subroutine velocity_write_to_netcdf(path, output_file, n_read, &
 
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine velocity_write_to_netcdf
+
+
+!> Writes surface obsertations to a netCDF file
+subroutine sfc_write_to_netcdf(path, output_file, n_read, &
+     flg, date_str, lat, lon, depth, sss, sst, &
+     sss_qc, sst_qc, sss_type, sst_type, wmid)
+
+  character(len=*), intent(in) :: path, output_file
+  integer, intent(in) :: n_read
+  integer, dimension(n_read), intent(in) :: flg, sss_type, sst_type, wmid
+  real, dimension(n_read), intent(in) :: lat, lon, depth, sss, sst, &
+                                         sss_qc, sst_qc
+  character(len=len_sst_date_str), dimension(n_read), intent(in) :: date_str
+
+  ! Local variables
+  integer :: ncid, dimid_n, dimid_len_str
+  integer :: varid_date, varid_lat, varid_lon, varid_depth, &
+             varid_sss, varid_sst, varid_sss_qc, varid_sst_qc, &
+             varid_sss_type, varid_sst_type, &
+             varid_flg, varid_wmid
+  character(len=512) :: file_path
+  character(len=*), parameter :: title = &
+    "Quality controlled surface observations from NCEP RTOFS"
+
+  ! Construct full file path
+  file_path = trim(path) // '/' // trim(output_file)
+  if (verbose) print *, "Saving file: ", file_path
+
+  call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
+
+  ! Define dimensions
+  call check( nf90_def_dim(ncid, "nobs", n_read, dimid_n))
+  call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
+
+  ! Define global attribute
+  call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
+
+  ! Define variables
+  call check( nf90_def_var(ncid, "date",     NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
+  call check( nf90_def_var(ncid, "lat",      NF90_FLOAT, dimid_n, varid_lat))
+  call check( nf90_def_var(ncid, "lon",      NF90_FLOAT, dimid_n, varid_lon))
+  call check( nf90_def_var(ncid, "depth",    NF90_FLOAT, dimid_n, varid_depth))
+  call check( nf90_def_var(ncid, "sss",      NF90_FLOAT, dimid_n, varid_sss))
+  call check( nf90_def_var(ncid, "sst",      NF90_FLOAT, dimid_n, varid_sst))
+  call check( nf90_def_var(ncid, "sss_qc",   NF90_FLOAT, dimid_n, varid_sss_qc))
+  call check( nf90_def_var(ncid, "sst_qc",   NF90_FLOAT, dimid_n, varid_sst_qc))
+  call check( nf90_def_var(ncid, "sss_type", NF90_INT,   dimid_n, varid_sss_type))
+  call check( nf90_def_var(ncid, "sst_type", NF90_INT,   dimid_n, varid_sst_type))
+  call check( nf90_def_var(ncid, "flag",     NF90_INT,   dimid_n, varid_flg))
+  call check( nf90_def_var(ncid, "water_mass_id", NF90_INT,   dimid_n, varid_wmid)) !Water Mass Index
+
+  call check( nf90_enddef(ncid)) ! End define mode
+
+  ! Write data to variables
+  call check( nf90_put_var(ncid, varid_date,    date_str))
+  call check( nf90_put_var(ncid, varid_lat,     lat))
+  call check( nf90_put_var(ncid, varid_lon,     lon))
+  call check( nf90_put_var(ncid, varid_depth,   depth))
+  call check( nf90_put_var(ncid, varid_sss,     sss))
+  call check( nf90_put_var(ncid, varid_sst,     sst))
+  call check( nf90_put_var(ncid, varid_sss_qc,  sss_qc))
+  call check( nf90_put_var(ncid, varid_sst_qc,  sst_qc))
+  call check( nf90_put_var(ncid, varid_sss_type,sss_type))
+  call check( nf90_put_var(ncid, varid_sst_type,sst_type))
+  call check( nf90_put_var(ncid, varid_flg,     flg))
+  call check( nf90_put_var(ncid, varid_wmid,    wmid))
+
+  call check( nf90_close(ncid)) ! Close the netCDF file
+end subroutine sfc_write_to_netcdf
 
 
 !> From https://home.chpc.utah.edu/~thorne/computing/Examples_netCDF.pdf
