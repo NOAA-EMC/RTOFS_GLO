@@ -13,7 +13,7 @@ private :: sst_write_to_netcdf, &
            mdb_write_to_netcdf, &
            velocity_write_to_netcdf, &
            sfc_write_to_netcdf, &
-!          profile_write_to_netcdf, &
+           profile_write_to_netcdf, &
            check
 
 public :: getInputs, &
@@ -543,8 +543,11 @@ subroutine profile_converter(input_file, observation_type, output_path, output_f
     read (unit) sgn
 
     ! write to netcdf file
-!   call profile_write_to_netcdf(output_path, output_file, n_read, &
-!                               )
+    call profile_write_to_netcdf(output_path, output_file, n_read, n_lvl, &
+     dtg, lat, lon, btm, sal_type, temp_type, sal_qc, temp_qc, &
+     flg, lvl, sal, temp, sal_err, temp_err, sal_prb, temp_prb, &
+     clim_sal, clim_temp, clim_sal_std, clim_temp_std)
+
     deallocate( btm, lat, lon, n_sal_lev, n_temp_lev, &
               sal_type, sal_qc, temp_type, temp_qc, &
               lvl, sal, sal_err, sal_prb, &
@@ -996,6 +999,100 @@ subroutine sfc_write_to_netcdf(path, output_file, n_read, &
 
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine sfc_write_to_netcdf
+
+
+!> Writes profile obsertations to a netCDF file
+subroutine profile_write_to_netcdf(path, output_file, n_read, n_depth, &
+     date_str, lat, lon, bot_depth, sal_type, temp_type, &
+     sal_qc, temp_qc, flg, depth, sal, temp, sal_err, temp_err, &
+     sal_prob, temp_prob, clim_sal, clim_temp, clim_sal_std, clim_temp_std)
+
+  character(len=*), intent(in) :: path, output_file
+  integer, intent(in) :: n_read, n_depth
+  integer, dimension(n_read), intent(in) :: sal_type, temp_type
+  integer, dimension(n_depth, n_read), intent(in) :: flg
+  real, dimension(n_read), intent(in) :: lat, lon, bot_depth, sal_qc, temp_qc
+  real, dimension(n_depth, n_read), intent(in) :: depth, sal, temp, &
+    sal_err, temp_err, sal_prob, temp_prob, clim_sal, clim_temp, &
+    clim_sal_std, clim_temp_std
+
+  character(len=len_sst_date_str), dimension(n_read), intent(in) :: date_str
+
+  ! Local variables
+  integer :: ncid, dimid_n, dimid_n_depth, dimid_len_str
+  integer :: varid_date, varid_lat, varid_lon, varid_bot_depth, &
+             varid_sal_type, varid_temp_type, varid_sal_qc, varid_temp_qc, &
+             varid_depth, varid_sal, varid_temp, &
+             varid_sal_err, varid_temp_err, varid_sal_prob, varid_temp_prob, &
+             varid_clim_sal, varid_clim_temp, varid_clim_sal_std, varid_clim_temp_std, &
+             varid_flg
+  character(len=512) :: file_path
+  character(len=*), parameter :: title = &
+    "Quality controlled profile observations from NCEP RTOFS"
+
+  ! Construct full file path
+  file_path = trim(path) // '/' // trim(output_file)
+  if (verbose) print *, "Saving file: ", file_path
+
+  call check( nf90_create(trim(file_path), NF90_CLOBBER, ncid)) ! Create netCDF file
+
+  ! Define dimensions
+  call check( nf90_def_dim(ncid, "nobs",  n_read,  dimid_n))
+  call check( nf90_def_dim(ncid, "num_z", n_depth, dimid_n_depth))
+  call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
+
+  ! Define global attribute
+  call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
+
+  ! Define variables
+  call check( nf90_def_var(ncid, "date",     NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
+  call check( nf90_def_var(ncid, "lat",      NF90_FLOAT, dimid_n, varid_lat))
+  call check( nf90_def_var(ncid, "lon",      NF90_FLOAT, dimid_n, varid_lon))
+  call check( nf90_def_var(ncid, "bot_depth",NF90_FLOAT, dimid_n, varid_bot_depth))
+  call check( nf90_def_var(ncid, "sal_type", NF90_INT,   dimid_n, varid_sal_type))
+  call check( nf90_def_var(ncid, "temp_type",NF90_INT,   dimid_n, varid_temp_type))
+  call check( nf90_def_var(ncid, "sal_qc",   NF90_FLOAT, dimid_n, varid_sal_qc))
+  call check( nf90_def_var(ncid, "temp_qc",  NF90_FLOAT, dimid_n, varid_temp_qc))
+
+  call check( nf90_def_var(ncid, "flag",        NF90_INT,   (/dimid_n_depth, dimid_n/), varid_flg))
+  call check( nf90_def_var(ncid, "depth",       NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_depth))
+  call check( nf90_def_var(ncid, "salinity",    NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_sal))
+  call check( nf90_def_var(ncid, "temperature", NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_temp))
+  call check( nf90_def_var(ncid, "s_err",       NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_sal_err))
+  call check( nf90_def_var(ncid, "t_err",       NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_temp_err))
+  call check( nf90_def_var(ncid, "s_prob",      NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_sal_prob))
+  call check( nf90_def_var(ncid, "t_prob",      NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_temp_prob))
+  call check( nf90_def_var(ncid, "clim_s",      NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_clim_sal))
+  call check( nf90_def_var(ncid, "clim_t",      NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_clim_temp))
+  call check( nf90_def_var(ncid, "clim_s_std",  NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_clim_sal_std))
+  call check( nf90_def_var(ncid, "clim_t_std",  NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_clim_temp_std))
+
+  call check( nf90_enddef(ncid)) ! End define mode
+
+  ! Write data to variables
+  call check( nf90_put_var(ncid, varid_date,         date_str))
+  call check( nf90_put_var(ncid, varid_lat,          lat))
+  call check( nf90_put_var(ncid, varid_lon,          lon))
+  call check( nf90_put_var(ncid, varid_bot_depth,    bot_depth))
+  call check( nf90_put_var(ncid, varid_sal_type,     sal_type))
+  call check( nf90_put_var(ncid, varid_temp_type,    temp_type))
+  call check( nf90_put_var(ncid, varid_sal_qc,       sal_qc))
+  call check( nf90_put_var(ncid, varid_temp_qc,      temp_qc))
+  call check( nf90_put_var(ncid, varid_flg,          flg))
+  call check( nf90_put_var(ncid, varid_depth,        depth))
+  call check( nf90_put_var(ncid, varid_sal,          sal))
+  call check( nf90_put_var(ncid, varid_temp,         temp))
+  call check( nf90_put_var(ncid, varid_sal_err,      sal_err))
+  call check( nf90_put_var(ncid, varid_temp_err,     temp_err))
+  call check( nf90_put_var(ncid, varid_sal_prob,     sal_prob))
+  call check( nf90_put_var(ncid, varid_temp_prob,    temp_prob))
+  call check( nf90_put_var(ncid, varid_clim_sal,     clim_sal))
+  call check( nf90_put_var(ncid, varid_clim_temp,    clim_temp))
+  call check( nf90_put_var(ncid, varid_clim_sal_std, clim_sal_std))
+  call check( nf90_put_var(ncid, varid_clim_temp_std,clim_temp_std))
+
+  call check( nf90_close(ncid)) ! Close the netCDF file
+end subroutine profile_write_to_netcdf
 
 
 !> From https://home.chpc.utah.edu/~thorne/computing/Examples_netCDF.pdf
