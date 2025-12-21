@@ -34,7 +34,7 @@ postmsg "$msg"
   startice=$($NDATE -$(expr $fcstdays \* 24) ${enddate})
   export iday=$($USHrtofs/rtofs_date_normal2hycom.sh $startice)
   export startdate=$($NDATE -$(expr $fcstdays \* 48) ${enddate})
-  export inputgrid=${inputgrid:-navy_0.08}
+#-- del export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #
 # 1  Set up the start time and end time for the analysis

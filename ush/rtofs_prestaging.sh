@@ -42,63 +42,63 @@ fi
 # 2. Copy the necessary input files for the model forecast
 
 # 2.a Get topography (depth, grid, mask, cice) and offluxxg
-  for fil in depth grid
-  do
-    for type in a b
-    do
-      if [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.${fil}.${type} ]
-      then
-        ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.${fil}.${type} regional.${fil}.${type}
-        echo "regional.${fil}.${type} copied" 
-      else
-        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
-          "NO FILE for regional.${fil}.${type}" 2
-      fi
-    done
-  done
+# -- del for fil in depth grid
+# -- del  do
+# -- del    for type in a b
+# -- del    do
+# -- del      if [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.${fil}.${type} ]
+# -- del      then
+# -- del        ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.${fil}.${type} regional.${fil}.${type}
+# -- del        echo "regional.${fil}.${type} copied" 
+# -- del      else
+# -- del        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
+# -- del          "NO FILE for regional.${fil}.${type}" 2
+# -- del      fi
+# -- del    done
+# -- del  done
 #
 # Relax files for SSH are needed for restart2archive only
-  for type in a b
-  do
-      if [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.relax_ssh.${type} ]
-      then
-        ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.relax_ssh.${type} relax.ssh.${type}
-        echo "relax.ssh.${type} copied" 
-      else
-        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing SSH Relaxation files" \
-          "NO FILE for relax.ssh.${type}" 2
-      fi
-   done
+# -- del  for type in a b
+# -- del  do
+# -- del      if [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.relax_ssh.${type} ]
+# -- del      then
+# -- del        ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.relax_ssh.${type} relax.ssh.${type}
+# -- del        echo "relax.ssh.${type} copied" 
+# -- del      else
+# -- del        $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing SSH Relaxation files" \
+# -- del          "NO FILE for relax.ssh.${type}" 2
+# -- del      fi
+# -- del   done
 
-if [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.cice.r ]
-then
-  ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.cice.r regional.cice.r
-  echo "regional.cice.r copied" 
-else
-  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
-    "NO FILE for regional.cice.r" 2
-fi
-if [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.a ] \
-  && [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.b ] 
-then
-  ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.a  forcing.offlux.a 
-  ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.b  forcing.offlux.b 
-  echo "forcing.offlux.[ab] copied" 
-else
-  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
-    "NO FILE for forcing.offlux.[ab]" 2
-fi
+# -- del if [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.cice.r ]
+# -- del then
+# -- del   ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.regional.cice.r regional.cice.r
+# -- del   echo "regional.cice.r copied" 
+# -- del else
+# -- del   $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
+# -- del     "NO FILE for regional.cice.r" 2
+# -- del fi
+# -- del if [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.a ] \
+# -- del   && [ -s $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.b ] 
+# -- del then
+# -- del   ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.a  forcing.offlux.a 
+# -- del   ln -s -f $FIXrtofs/${RUN}_${modID}.${inputgrid}.forcing.offlux.b  forcing.offlux.b 
+# -- del   echo "forcing.offlux.[ab] copied" 
+# -- del else
+# -- del   $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Topography files" \
+# -- del     "NO FILE for forcing.offlux.[ab]" 2
+# -- del fi
 
 # 2.h copy interpolator data
-  cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.${runmode}.intp_pars.dat intp_pars.dat
+# -- del   cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.${runmode}.intp_pars.dat intp_pars.dat
 
-  if [[ -s intp_pars.dat ]]
-  then
-      echo "interpolator data copied"
-  else
-      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Interpolator Data" \
-        "NO FILE for intp_pars.dat" 2
-  fi
+# -- del   if [[ -s intp_pars.dat ]]
+# -- del   then
+# -- del       echo "interpolator data copied"
+# -- del   else
+# -- del       $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Interpolator Data" \
+# -- del         "NO FILE for intp_pars.dat" 2
+# -- del   fi
 
 # 3. Create Forcing files
 
