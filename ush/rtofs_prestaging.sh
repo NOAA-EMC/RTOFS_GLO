@@ -106,6 +106,9 @@ fi
 
   $USHrtofs/${RUN}_atmforcing.sh $startdate $enddate $intvl
 
+  echo '-- INTENTIONAL EXIT -- '
+  exit 998
+
 # 3.b correct air temperature over ice.
    
   # Ilya dbgz: the correction is done now in intp.f. 
