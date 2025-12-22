@@ -122,14 +122,30 @@ test -f ${DATA}/${idate}/dump.grb && rm -f ${DATA}/${idate}/dump.grb
 
 $GRB2INDEX $flxfile $flxfile.idx
 
+echo ${RUN_MODE}
+if [[ ${RUN_MODE} == "analysis" ]]; then
+  echo ${RUN_MODE}
+  fName=${RUN_MODE}".t.dat"
+  #echo "new file name: " ${RUN_MODE}".t.dat"
+  echo "new file name: " ${fName}
+else
+  echo ${RUN_STEP}
+  fName=${RUN_MODE}.${RUN_STEP}".t.dat"
+  #echo "new file name: " ${RUN_MODE}.${RUN_STEP}".t.dat"
+  echo "new file name: " ${fName}
+fi
+
 if [ $useslp = YES ] 
 then
-  echo $idate $flxfile '<' $forcefile $pgrbfile >>t.dat 
+# echo $idate $flxfile '<' $forcefile $pgrbfile >>t.dat 
+  echo $idate $flxfile '<' $forcefile $pgrbfile >>${fName}
 else
 if [ $fn1 == 'sfcflx' ]; then
-  echo $idate $flxfile '<' $flxfile >>t.dat
+# echo $idate $flxfile '<' $flxfile >>t.dat
+  echo $idate $flxfile '<' $flxfile >>${fName}
 else
-  echo $idate $flxfile '<' $forcefile >>t.dat
+# echo $idate $flxfile '<' $forcefile >>t.dat
+  echo $idate $flxfile '<' $forcefile >>${fName}
 fi # fn1 loop
 fi #useslp loop
 
