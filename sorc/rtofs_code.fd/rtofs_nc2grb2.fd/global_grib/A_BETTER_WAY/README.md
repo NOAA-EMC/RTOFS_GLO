@@ -46,7 +46,6 @@ The legacy `rtofs_nc2grb2` process relied on a fragmented, multi-step pipeline (
 | `rtofs_nc_to_grib2.f90` | The core Fortran 90 source code. |
 | `compile.sh` | Shell script to build the binary with correct library links. |
 | `run_rtofs_grib.sh` | Execution script that handles environment modules and input. |
-| `run_all_rtofs.sh` | Batch script to loop through a full forecast directory. |
 
 ---
 
