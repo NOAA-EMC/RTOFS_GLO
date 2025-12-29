@@ -57,16 +57,18 @@ fi
 ln -sf $COMIN/ncoda/ocnqc $DATA
 
 # 1.b link in topo files
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a ${DATA}/regional.grid.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b ${DATA}/regional.grid.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.a      iso.sigma.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.b      iso.sigma.b
+ln -f -s ${FIXrtofs}/regional.mom6.nc ${DATA}/regional.mom6.nc
+ln -f -s ${FIXrtofs}/depth_GLBb0.08_09m11ob2_mom6.nc depth_GLBb0.08_09m11ob2_mom6.nc
 
-# 1.c check if hycom restart file available
-if [[ ! -s $COMINm1/${RUN}_${modID}.t00z.n00.restart.a ||
-      ! -s $COMINm1/${RUN}_${modID}.t00z.n00.restart.b ]]
+# 1.c check if restart files are available
+if [[ ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res.nc  ||
+      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_1.nc  ||
+      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_2.nc  ||
+      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_3.nc  ||
+      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_4.nc  ||
+      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_5.nc  ||
+      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_16.nc  ]] 
+
 then
   $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job No restart file found" \
     "in $COMINm1" 15
