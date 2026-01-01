@@ -82,9 +82,19 @@ fi
 # Load module(s) that provide python packages (such as xarray)
 source ${HOMErtofs}/scripts/load_py_modules.sh
 
-$USHrtofs/convert_bin_inc_to_nc.py ${topog_file} ${ncoda_file} ${var_name} ${output_path} > output.log 2>&1
-err=$?; export err ; err_chk
-echo " error from convert_bin_inc_to_nc.py =",$err
+echo "Converting format for ${var_name}..."
+
+set +x  # Turn off tracing to keep the log clean
+$USHrtofs/convert_bin_inc_to_nc.py "${topog_file}" "${ncoda_file}" "${var_name}" "${output_path}" 2>&1 | tee output.log
+
+# Get the exit code of the Python script, NOT the tee command
+err=${PIPESTATUS[0]}
+export err
+set -x  # Turn tracing back on
+
+# Run error check
+err_chk
+echo " error from convert_bin_inc_to_nc.py = $err"
 
 msg="THE $(basename -- "$0") JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
