@@ -1,43 +1,76 @@
 #!/usr/bin/env python3
 
 """
-
 Convert analysis increments or (2d) fields from NCODA analysis
 from binary to netcdf format.
-
 """
 
+import os
+import sys
 import argparse
+import numpy as np
+import xarray as xr
 
-# user inputs
-get_inputs = argparse.ArgumentParser(prog='\nconvert_bin_inc_to_nc.py',\
-          description='To convert RTOFS-DA output from binary to netcdf format.',\
-          usage='%(prog)s [options]',\
-          formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+from utils import bin_to_nc_2d
 
-get_inputs.add_argument('--topography_file', type=str,\
-          help='Path to topography file',\
-          default="/lfs/h2/emc/couple/noscrub/santha.akella/data_files/v2.5/topog/depth_GLBb0.08_09m11.nc")
+# --------------------------------------------------------------------------- #
+# 1. User Inputs
+# --------------------------------------------------------------------------- #
+get_inputs = argparse.ArgumentParser(
+    prog='convert_bin_inc_to_nc.py',
+    description='To convert RTOFS-DA output from binary to netcdf format.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
 
-get_inputs.add_argument('--input_file', type=str,\
-          help='Name of NCODA binary output, including path',\
-          required=True)
+get_inputs.add_argument('--topog_file', type=str,
+    help='Path to topography file (NetCDF)',
+    required=True)
 
-get_inputs.add_argument('--var_name', type=str,\
-          help='2-d variable name: icecov or icethk or icetmp or mixlyr',\
-          default="icecov")
+get_inputs.add_argument('--input_file', type=str,
+    help='Name of NCODA binary output, including path',
+    required=True)
 
-get_inputs.add_argument('--output_path', type=str,\
-          help='Path to where output file is to be saved',\
-          required=True)
+get_inputs.add_argument('--var_name', type=str,
+    help='2-d variable name: icecov, icethk, icetmp, or mixlyr',
+    default="icecov")
+
+get_inputs.add_argument('--output_path', type=str,
+    help='Path to where output file is to be saved',
+    required=True)
 
 args = get_inputs.parse_args()
-# --
 
-topo_file = args.topography_file
-input_file = args.input_file
-var_name = args.var_name
+# Assign variables
+topo_file   = args.topog_file
+input_file  = args.input_file
+var_name    = args.var_name
 output_path = args.output_path
 
-# convert file format: binary to netcdf
-#bin_to_nc_2d(input_file, var_name, output_path, topo_file)
+# --------------------------------------------------------------------------- #
+# 2. Safety Checks
+# --------------------------------------------------------------------------- #
+
+if not os.path.isfile(topo_file):
+    sys.exit(f"ERROR: Topography file not found at: {topo_file}")
+
+if not os.path.isfile(input_file):
+    sys.exit(f"ERROR: NCODA binary file not found at: {input_file}")
+
+allowed_vars = ["icecov", "icethk", "icetmp", "mixlyr"]
+if var_name not in allowed_vars:
+    # Exit code 2 to distinguish from path errors
+    print(f"ERROR: Variable '{var_name}' is not in allowed list: {allowed_vars}")
+    sys.exit(2)
+
+if not os.path.isdir(output_path):
+    sys.exit(f"ERROR: Output path does not exist: {output_path}")
+
+if not os.access(output_path, os.W_OK):
+    sys.exit(f"ERROR: Output path is not writable: {output_path}")
+
+print(f"STATUS: All inputs validated. Beginning conversion for {var_name}...")
+
+# --------------------------------------------------------------------------- #
+# 3. Execution
+# --------------------------------------------------------------------------- #
+bin_to_nc_2d(input_file, var_name, output_path, topo_file)

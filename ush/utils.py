@@ -9,7 +9,7 @@ import glob as glob
 import xarray as xr
 import numpy as np
 
-def read_ncoda_increment_2d(data_path, fName_full):
+def read_ncoda_2d(fName):
 
   fName = fName_full.replace(data_path, "") # get rid of path from _full_ file name
 
@@ -26,14 +26,12 @@ def read_ncoda_increment_2d(data_path, fName_full):
   vals = []
   f.seek(0)
   dummy = np.fromfile(f, dtype='>f',count=jm*im) # read 2d file (1 layer)
-  #dummy = dummy.reshape((jm,im))
-  #vals = np.copy(dummy)
   vals = dummy.reshape((jm,im))
   f.close()
 
   return vName, fName, vName_full, fTime, vals
 
-def land_sea_mask(topo_fName, save_forLater=False):
+def land_sea_mask(topo_fName):
 
   """
   Create a land-sea mask from bathymetry:
@@ -46,43 +44,39 @@ def land_sea_mask(topo_fName, save_forLater=False):
   ls_mask['depth'] = xr.where(np.isnan(ls_mask.depth), 0, 1)
   ls_mask = ls_mask.rename({'depth':'mask'}) # rename 
 
-  if (save_forLater):
-    fName = 'ls_mask_' + topo_fName
-    ls_mask.to_netcdf(topo_fName) # This will work only for @sanAkel!
-
   return ls_mask
 
-def bin_to_nc_2d_incr(data_path, fName, outPath, topo_fName):
+def bin_to_nc_2d(inFile, vName, outPath, topo_fName):
 
-  # Read binary increment file
-  vName, fName_bin, vName_full, incDate, vals = read_ncoda_increment_2d(data_path, fName)
+  # Read binary file
+  val_date, vals = read_ncoda_2d(inFile)
 
   # Create a dataset using topography file as a template
-  ds_inc= xr.open_dataset(topo_fName, decode_times=False)
-  ds_inc[vName] = (('Y', 'X'), vals)
+  ds_out= xr.open_dataset(topo_fName, decode_times=False)
+  ds_out[vName] = (('Y', 'X'), vals)
 
   ls_mask = land_sea_mask(topo_fName)
   # Make sure concentration over land = 0.
-  # Land values will be made to nan anyway, so this is done only for sanity sake!
-  ds_inc[vName] = ds_inc[vName] * ls_mask.mask.squeeze()
+  # Land values will be made to nan, so this is done only for sanity sake!
+  ds_out[vName] = ds_out[vName] * ls_mask.mask.squeeze()
 
   # Apply the land sea mask created above
-  ds_inc[vName] = ds_inc[vName].where(ls_mask.mask == 1, np.nan)
+  ds_out[vName] = ds_out[vName].where(ls_mask.mask == 1, np.nan)
 
   # Delete depth, fix attributes
-  ds_inc = ds_inc.drop_vars(['depth', 'Date']) # drop bathymetry
+  ds_out = ds_out.drop_vars(['depth', 'Date']) # drop bathymetry
 
-  ds_inc=ds_inc.rename({'MT': 'time'}) # rename MT to time
-  ds_inc['time'] = incDate # add time value
+  ds_out =ds_out.rename({'MT': 'time'}) # rename MT to time
+  ds_out['time'] = val_date # add time value
 
   # fix attributes
   #ds_inc = ds_inc.drop_attrs() # Won't work unless additional packages are install- can't on wcoss!
-  ds_inc[vName].attrs['units'] = '1'
-  ds_inc[vName].attrs['standard_name'] = vName
-  ds_inc[vName].attrs['description'] = vName_full
-  ds_inc.attrs['source'] = 'NCEP RTOFS v2.5'
+  ds_out[vName].attrs['units'] = '1'
+  ds_out[vName].attrs['standard_name'] = vName
+  ds_out[vName].attrs['description'] = XX
+  ds_out.attrs['source'] = 'NCEP RTOFS'
 
-  #print(ds_inc[vName].attrs)
+  #print(ds_out[vName].attrs)
 
-  ds_inc.to_netcdf(outPath+'/'+fName_bin+'.nc')
-  return ds_inc
+  ds_out.to_netcdf(outPath+'/'+inFile+'.nc')
+  return ds_out
