@@ -18,7 +18,7 @@ echo " "
 set -ux
 
 msg="$(basename -- "$0") JOB has begun on $(hostname) at $(date)"
-#postmsg "$msg"
+postmsg "$msg"
 
 # Allowed variable names
 allowed_variables=("icecov" "icethk" "icetmp" "mixlyr")
