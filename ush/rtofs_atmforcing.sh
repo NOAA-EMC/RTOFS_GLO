@@ -21,6 +21,12 @@ export sea_lev_pres=PRMSL
 export atmgds=
 # --
 
+if [[ "${RUN_MODE}" == "analysis" ]]; then
+    export netwk="gdas"  # Nowcast mode
+else
+    export netwk="gfs"   # Forecast mode
+fi
+
 cd "${DATA}" || exit 1
 
 # Default NPROCS to 1 if not set
