@@ -32,15 +32,7 @@ fi
 # --------------------------------------------------------------------------- #
 # 3. Create Forcing files
 
-# 3.a Call atmforcing to get the forcing files 
-
   $USHrtofs/${RUN}_atmforcing.sh $startdate $enddate $intvl
-
-# 3.b Correct air temperature over ice.
-   
-  # Ilya dbgz: the correction is done now in intp.f. 
-  # Anyhow, atmforcing_correct.f90 should be debugged!!!
-# $USHrtofs/${RUN}_atmforcing_correct.sh
 
 # --------------------------------------------------------------------------- #
 # 4. Copy output in archive -- ?? Dan: Do we need the following ??
