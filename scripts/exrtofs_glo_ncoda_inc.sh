@@ -1,22 +1,5 @@
 #!/bin/sh
 set -xa
-###############################################################################
-####  UNIX Script Documentation Block                                         #
-#                                                                             #
-# Script name:         exrtofs_glo_ncoda_inc.sh                               #
-# Script description:                                                         #
-#                                                                             #
-# Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
-#                                                                             #
-# Abstract: Remap an archive file to an NCODA analysis, new layer depths.     #
-#                                                                             #
-# Sub-scripts called:                                                         #
-#                                                                             #
-# Script history log:                                                         #
-# 2020-07-30  Dan Iredell                                                     #
-# 2023-02-08  Dmitry Dukhovskoy modified for updated ncoda_archv_lyrinc       #
-#                                                                             #
-###############################################################################
 
 export PS4='$SECONDS + '
 
@@ -70,7 +53,6 @@ types=salint_lyr_1o${SIZN}
 typeu=uucurr_lyr_1o${SIZN}
 typev=vvcurr_lyr_1o${SIZN}
 typep=lyrprs_lyr_1o${SIZN}
-typec=icecov_sfc_1o${SIZN}
 
 ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.a    archv.${archday}.a
 ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.b    archv.${archday}.b
@@ -118,25 +100,9 @@ else
    msg="$COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc is missing"
    err_exit $msg
 fi
-# Ice Coverage
-if [ -e $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ./icecov_${dtg}_analfld
-else
-   msg="$COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld is missing"
-   err_exit $msg
-fi
 
-#create ssmi.r file
-rm -f ssmi1.a ssmi2.a ssmi.$dtg.r
-$EXECrtofs/rtofs_raw2hycom icecov_${dtg}_analfld $IDM $JDM 999.00 ssmi1.a > ssmi1.b
-err=$?; export err ; err_chk
-echo " error from rtofs_raw2hycom=",$err
-$EXECrtofs/rtofs_hycom_expr ssmi1.a "ONE" $IDM $JDM  0.01 0 ssmi2.a > ssmi2.b
-err=$?; export err ; err_chk
-echo " error from rtofs_hycom_expr=",$err
-$EXECrtofs/rtofs_hycom2raw8 ssmi2.a $IDM $JDM 1 1 $IDM $JDMA ssmi.$dtg.r
-err=$?; export err ; err_chk
-echo " error from rtofs_hycom2raw8=",$err
+# Create sea ice concentration file: sic.nc
+sh ${HOMErtofs}/scripts/exrtofs_glo_ice_update.sh
 
 ar=archv_1_inc.${archday}
 rm -f $ar.[a,b]
