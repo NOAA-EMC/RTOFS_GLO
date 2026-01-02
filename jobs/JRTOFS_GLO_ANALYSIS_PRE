@@ -27,6 +27,7 @@ export RUN_MODE=analysis
 #####################
 export forcing_only=TRUE
 
+# In future: use $cyc to grab latest flux files (not always 00z cycle)
 export mycyc='00'
 export cycle=t${mycyc}z
 
