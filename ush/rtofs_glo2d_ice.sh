@@ -85,7 +85,10 @@ source ${HOMErtofs}/scripts/load_py_modules.sh
 echo "Converting format for ${var_name}..."
 
 set +x  # Turn off tracing to keep the log clean
-$USHrtofs/convert_bin_inc_to_nc.py "${topog_file}" "${ncoda_file}" "${var_name}" "${output_path}" 2>&1 | tee output.log
+$USHrtofs/convert_bin_inc_to_nc.py --topog_file "${topog_file}" \
+                                   --input_file "${ncoda_file}" \
+                                   --var_name   "${var_name}" \
+                                   --output_path "${output_path}" 2>&1 | tee output.log
 
 # Get the exit code of the Python script, NOT the tee command
 err=${PIPESTATUS[0]}
