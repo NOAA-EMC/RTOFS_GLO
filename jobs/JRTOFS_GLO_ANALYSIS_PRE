@@ -77,7 +77,6 @@ test -d $COMOUT || mkdir -p $COMOUT
 # Define model grid
 ###################
 export inputgrid=res_0p08
-export useslp=NO # YES or NO, use sea level pressure
 
 ##################################################################
 # Run the config file to set up specific model variables if needed
