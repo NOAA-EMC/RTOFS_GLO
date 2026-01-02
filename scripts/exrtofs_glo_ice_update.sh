@@ -38,7 +38,13 @@ ln -f -s ${FIXrtofs}/depth_GLBb0.08_09m11ob2_mom6.nc depth_GLBb0.08_09m11ob2_mom
 
 $EXECrtofs/rtofs_glo2d_ice.sh depth_GLBb0.08_09m11ob2_mom6.nc icecov_${dtg}_analfld
 err=$?; export err ; err_chk
-echo " error from xx=",$err
+echo " error from rtofs_glo2d_ice.sh=",$err
+
+if [ -f "icecov_${dtg}_analfld.nc" ]; then
+    mv "icecov_${dtg}_analfld.nc" sic.nc
+else
+    echo "WARNING: icecov_${dtg}_analfld.nc not found. Skipping rename."
+fi
 
 msg="THE $(basename -- "$0") JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
