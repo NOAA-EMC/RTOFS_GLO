@@ -21,7 +21,6 @@ export NET=rtofs
 export RUN=rtofs
 export modID=glo
 export RUN_MODE=analysis
-export HYCOM_EXPT=930
 
 #####################
 # SETUP RUN VARIABLES
@@ -77,7 +76,7 @@ test -d $COMOUT || mkdir -p $COMOUT
 ###################
 # Define model grid
 ###################
-export inputgrid=navy_0.08
+export inputgrid=res_0p08
 export useslp=NO # YES or NO, use sea level pressure
 
 ##################################################################
