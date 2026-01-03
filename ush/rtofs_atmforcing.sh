@@ -1,91 +1,80 @@
-#!/bin/sh
+#!/bin/bash
+#==============================================================================
+# Driver for RTOFS Atmospheric Forcing
+# Handles time-window expansion, sequential staging, and record verification.
+#==============================================================================
 set -x
 
 msg="${RUN}_atmforcing.sh has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
-if [ $# -lt 3 ] ; then 
-  echo USAGE:  ${RUN}_atmforcing.sh start_date end_date interval
+if [ $# -lt 3 ]; then
+  echo "USAGE: ${RUN}_atmforcing.sh start_date end_date interval"
   exit 2
 fi
 
+# Inputs
 sdate=$1
 edate=$2
 intvl=$3
+
+# Expand window by 3 hours for temporal buffer
 sdate=$($NDATE -3 $sdate)
-edate=$($NDATE 3 $edate)
+edate=$($NDATE 3  $edate)
 
-# -- needed or not ?? --
-# Incorporate sea level pressure
-export sea_lev_pres=PRMSL
-export atmgds=
-# --
-
+# Set Network and Filename based on Mode
 if [[ "${RUN_MODE}" == "analysis" ]]; then
-    export netwk="gdas"  # Nowcast mode
+    export netwk="gdas"
+    fName="${RUN_MODE}.t.dat"
 else
-    export netwk="gfs"   # Forecast mode
+    export netwk="gfs"
+    fName="${RUN_MODE}.${RUN_STEP}.t.dat"
 fi
 
 cd "${DATA}" || exit 1
 
-# Default NPROCS to 1 if not set
-NPROCS=${NPROCS:-1}
+# --- PRE-LOOP CLEANUP ---
+[[ -f "${fName}" ]] && rm -f "${fName}"
+touch "${fName}"
 
-# Clean up existing command files if running in parallel
-if [[ ${NPROCS} -gt 1 ]]; then
-    rm -f cmdfile_tmp cmdfile.*
-fi
-
+# --- Staging Loop ---
 idate=$sdate
-NTIME=0
+n_expected=0
 while [[ "${idate}" -le "${edate}" ]]; do
-    cmd="${USHrtofs}/${RUN}_atmforcing_stage.sh ${idate}"
     
-    if [[ ${NPROCS} -eq 1 ]]; then
-        # Run sequentially
-        ${cmd}
-    else
-        # Append to command file for parallel processing
-        echo "${cmd}" >> cmdfile_tmp
+    echo "Processing date: ${idate}"
+
+    # Call the staging script (Sequential execution)
+    "${USHrtofs}/${RUN}_atmforcing_stage.sh" "${idate}"
+
+    err=$?
+    if [ $err -ne 0 ]; then
+        echo "FATAL ERROR: Staging failed for ${idate}"
+        exit $err
     fi
-    
-    ((NTIME++))
+
+    ((n_expected++))
     idate=$("${NDATE}" "${intvl}" "${idate}")
 done
 
-# Parallel execution
-if [[ ${NPROCS} -gt 1 && -f cmdfile_tmp ]]; then
-    # Split the command file into chunks based on NPROCS
-    split -l "${NPROCS}" cmdfile_tmp cmdfile.
-    
-    for cfile in cmdfile.*; do
-        [[ -e "${cfile}" ]] || continue  # Handle case where no files exist
-        
-        # Pad the command file with sleeps so it matches NPROCS if necessary
-        cmdlen=$(wc -l < "${cfile}")
-        while [[ ${cmdlen} -lt ${NPROCS} ]]; do
-            echo 'sleep 1' >> "${cfile}"
-            ((cmdlen++))
-        done
-        
-        # Execute via mpirun
-        chmod +x "${cfile}"
-        mpirun ./"${cfile}" >> "${pgmout}" 2>errfile
-        export err=$?; if [ $err -ne 0 ]; then exit $err; fi
-    done
-    
-    # Cleanup (Optional: uncomment if needed)
-    # rm -f cmdfile_tmp cmdfile.*
+# --- FINAL VERIFICATION ---
+# Count actual lines in the record file
+n_actual=$(wc -l < "${fName}")
+
+echo "Verification: Expected ${n_expected} lines, found ${n_actual} lines in ${fName}."
+
+if [[ "${n_actual}" -ne "${n_expected}" ]]; then
+    echo "FATAL ERROR: Line count mismatch in ${fName}!"
+    echo "This indicates one or more time steps failed to log correctly."
+    exit 3
 fi
 
-# -------------------------------
-# Add following in this sequence:
-# -------------------------------
+# -------------------------------------------------------------------
+# FUTURE STEPS (Phase 2): WGRIB -> nc -> CDEPS
 # WGRIB -> nc
 # nc prep for CDEPS, incl any checks
 # concatenate and done.
-# -------------------------------
+# -------------------------------------------------------------------
 
 msg="${RUN}_atmforcing.sh HAS ENDED NORMALLY ON $(hostname) at $(date)"
 postmsg "$msg"
