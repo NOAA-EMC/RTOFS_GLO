@@ -36,7 +36,7 @@ ln -f -s ${FIXrtofs}/depth_GLBb0.08_09m11ob2_mom6.nc depth_GLBb0.08_09m11ob2_mom
 
 # 4. Create sic.nc file
 
-$EXECrtofs/rtofs_glo2d_ice.sh depth_GLBb0.08_09m11ob2_mom6.nc icecov_${dtg}_analfld
+$EXECrtofs/rtofs_glo2d_ice.sh depth_GLBb0.08_09m11ob2_mom6.nc icecov_${dtg}_analfld icecov ${DATA}
 err=$?; export err ; err_chk
 echo " error from rtofs_glo2d_ice.sh=",$err
 
