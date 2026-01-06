@@ -1,4 +1,10 @@
 #!/bin/sh
+
+#
+# Abstract:
+# - Input:  NCODA (data assimilation) output sea ice coverage (binary format).
+# - Output: Converts to netcdf format (used by the sea ice model).
+#
 set -xa
 
 export PS4='$SECONDS + '
