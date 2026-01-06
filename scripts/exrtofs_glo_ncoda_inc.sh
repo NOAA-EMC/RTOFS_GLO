@@ -102,7 +102,7 @@ else
 fi
 
 # Create sea ice concentration file: sic.nc
-sh ${HOMErtofs}/scripts/exrtofs_glo_ice_update.sh
+$USHrtofs/rtofs_glo_ice_update.sh
 
 ar=archv_1_inc.${archday}
 rm -f $ar.[a,b]
