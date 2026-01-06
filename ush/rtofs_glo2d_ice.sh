@@ -80,7 +80,7 @@ fi
 # --------------------------------------------------------------------------- #
 
 # Load module(s) that provide python packages (such as xarray)
-source ${HOMErtofs}/scripts/load_py_modules.sh
+#source ${HOMErtofs}/scripts/load_py_modules.sh
 
 echo "Converting format for ${var_name}..."
 
