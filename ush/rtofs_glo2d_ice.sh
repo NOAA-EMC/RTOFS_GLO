@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [[ $# -lt 4 ]]; then
+if [[ $# -ne 4 ]]; then
   echo " "
   echo "Usage: "
   echo "$0" "topog_file ncoda_file variable_name output_path"
