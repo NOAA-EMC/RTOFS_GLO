@@ -83,6 +83,7 @@ done
 cd $log_dir
 cat smos_*.${cut_dtg}_prelim > smos_sss_files.${cut_dtg}_prelim
 cat smap_*.${cut_dtg}_prelim > smap_sss_files.${cut_dtg}_prelim
+rm -f smos_dtgs
 
 # check on readability of smos files
 echo timecheck smos start ncdump at $(date)
@@ -92,12 +93,31 @@ do
   ncrc=$?
   if [ $ncrc -eq 0 ]
   then
-     echo $line >> smos_sss_files.$cut_dtg
+     smosdtg=$($USHrtofs/read_smos_dtg.py $SSS_DATA_DIR/$line)
+     readsmosrc=$?
+     if [ $readsmosrc -eq 0 ]
+     then
+        echo $line >> smos_sss_files.$cut_dtg
+        echo $smosdtg >> smos_dtgs
+     else
+        echo "WARNING - cannot find date attribute in $SSS_DATA_DIR/$line and it will not be processed."
+     fi
   else
      echo "WARNING - file $SSS_DATA_DIR/$line and will not be processed."
   fi
 done < smos_sss_files.${cut_dtg}_prelim
 echo timecheck smos finish ncdump at $(date)
+
+# check that smos_files and smos_dtgs are the same size
+smosfilecount=$(wc -l smos_sss_files.$cut_dtg | cut -d" " -f1)
+smosdtgcount=$(wc -l smos_dtgs | cut -d" " -f1)
+if [ $smosfilecount -ne $smosdtgcount ]
+then
+   echo "WARNING - files smos_sss_files.$cut_dtg and smos_dtgs differ in count"
+   # move to side to prevent code from processing bad files
+   mv smos_dtgs smos_dtgs.wrong
+   mv smos_sss_files.$cut_dtg smos_sss_files.$cut_dtg.wrong
+fi
 
 # check on readability of smap files
 echo timecheck smap start h5dump at $(date)
