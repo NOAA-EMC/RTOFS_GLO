@@ -1,0 +1,57 @@
+MOM.res.nc
+MOM.res_1.nc
+MOM.res_3.nc
+MOM.res_4.nc
+&TShincname
+&UVincname
+&IDM     'idm   ' = longitudinal array size
+&JDM     'jdm   ' = latitudinal  array size
+&KDM     'kk    ' = number of layers restart
+&KDM     'kncoda' = number of NCODA levels equal to kk for layer increments
+   0.50  'zl    ' = nominal depth of layer 1 from MOM archive
+   1.90  'zl    ' = nominal depth of layer 2
+   4.42  'zl    ' = nominal depth of layer 3
+   8.38  'zl    ' = nominal depth of layer 4
+  13.185 'zl    ' = nominal depth of layer 5
+  18.555 'zl    ' = nominal depth of layer 6
+  24.895 'zl    ' = nominal depth of layer 7
+  32.33  'zl    ' = nominal depth of layer 8
+  40.33  'zl    ' = nominal depth of layer 9
+  48.33  'zl    ' = nominal depth of layer 10
+  56.33  'zl    ' = nominal depth of layer 11
+  64.33  'zl    ' = nominal depth of layer 12
+  72.33  'zl    ' = nominal depth of layer 13
+  80.33  'zl    ' = nominal depth of layer 14
+  88.33  'zl    ' = nominal depth of layer 15
+  96.33  'zl    ' = nominal depth of layer 16
+ 104.33  'zl    ' = nominal depth of layer 17
+ 112.33  'zl    ' = nominal depth of layer 18
+ 120.33  'zl    ' = nominal depth of layer 19
+ 128.33  'zl    ' = nominal depth of layer 20
+ 136.33  'zl    ' = nominal depth of layer 21
+ 144.33  'zl    ' = nominal depth of layer 22
+ 152.33  'zl    ' = nominal depth of layer 23
+ 161.33  'zl    ' = nominal depth of layer 24
+ 174.53  'zl    ' = nominal depth of layer 25
+ 200.69  'zl    ' = nominal depth of layer 26
+ 239.84  'zl    ' = nominal depth of layer 27
+ 286.04  'zl    ' = nominal depth of layer 28
+ 340.56  'zl    ' = nominal depth of layer 29
+ 404.89  'zl    ' = nominal depth of layer 30
+ 480.8   'zl    ' = nominal depth of layer 31
+ 570.375 'zl    ' = nominal depth of layer 32
+ 676.075 'zl    ' = nominal depth of layer 33
+ 800.8   'zl    ' = nominal depth of layer 34
+ 947.975 'zl    ' = nominal depth of layer 35
+1121.645 'zl    ' = nominal depth of layer 36
+1326.57  'zl    ' = nominal depth of layer 37
+1568.38  'zl    ' = nominal depth of layer 38
+1899.27  'zl    ' = nominal depth of layer 39
+2399.27  'zl    ' = nominal depth of layer 40
+5449.635 'zl    ' = nominal depth of layer 41
+&seatmpinc
+&salintinc
+&uvelinc
+&vvelinc
+NONE
+&lyrthkname

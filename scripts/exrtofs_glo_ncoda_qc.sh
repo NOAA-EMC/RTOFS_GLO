@@ -83,11 +83,11 @@ for v in glbl_var hycom_var nhem_var shem_var;do
    fi
 done
 
-# 1.c link in topo files
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a  ${DATA}/regional.grid.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b  ${DATA}/regional.grid.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
+# 1.c 1st try, don't link in MOM topo files
+#ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a  ${DATA}/regional.grid.a
+#ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b  ${DATA}/regional.grid.b
+#ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a ${DATA}/regional.depth.a
+#ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b ${DATA}/regional.depth.b
 
 # 2. Combine pre-qc and qc into one stream for ice and surface_obs/profile
 echo timecheck RTOFS_GLO_NCODA_QC start qc at $(date)
