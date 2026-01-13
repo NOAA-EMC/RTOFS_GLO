@@ -218,6 +218,8 @@ c ----read from an ncoda restart file
       write (lp,'(2a)') 'Pncoda file: ',trim(flnm_p)
       read (*,'(a)') flnm_h
       write (lp,'(2a)') 'h background file: ',trim(flnm_p)
+      read (*,'(a)') flnm_h
+      write (lp,'(2a)') 'h background file: ',trim(flnm_h)rite (lp,'(2a)') 'h background file: ',trim(flnm_h)
 
 C
 
