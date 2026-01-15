@@ -42,13 +42,13 @@ echo dtg12 $dtg $dtgm1 $dtgm2
 mode=incup
 #inputgrid=0.08, change to 0p08
 reg=GLB
-DEPTH_FILE=${FIXrtofs}/depth_${reg}${inputgrid}_09m11ob2_mom6.nc 
+DEPTH_FILE=${FIXrtofs}/depth_${reg}.${inputgrid}_09m11ob2_mom6.nc 
 IDM=$(ncdump -h ${DEPTH_FILE} | grep 'nx =' | cut -d' ' -f3)
 JDM=$(ncdump -h ${DEPTH_FILE} | grep 'ny =' | cut -d' ' -f3)
 KDM=41 # or get from restart file?
 SIZN="${IDM}x${JDM}"
 
-ln -f -s ${FIXrtofs}/depth_${reg}.${inputgrid}_09m11ob2_mom6.nc .
+ln -f -s ${FIXrtofs}/depth_${reg}.${inputgrid}_09m11ob2_mom6.nc depth_GLBb0.08_09m11ob2_mom6.nc
 ln -f -s ${FIXrtofs}/regional.mom6.nc .
 
 # 2. link to ncoda hycom var restart files
@@ -66,8 +66,8 @@ export vvelinc=vvel_${dtg}_analinc
 export lyrthbg=lyrthk_${dtgm1}_fcstfld
 
 #names can be changed. Names in INPUT will be MOM.inc.TSzh.nc, MOM.inc.UV.nc 
-export TShar=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.TSzh.nc
-export UVar=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.TSzh.nc
+export TShinc=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.TSzh.nc
+export UVinc=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.UV.nc
 
 # Check for the existence of analysis increment files
 # These are needed to create the HYCOM incremental update file
@@ -108,36 +108,35 @@ else
 fi
 
 # Link the MOM6 template restart files 
-if [ -e $COMINm1/RESTART/${dtg:0:8}_000000.MOM.res.nc]; then
-   ln -sf  $COMINm1/RESTART/${dtg:0:8}_000000.MOM.res.nc MOM.res.nc
+if [ -e $COMINm1/RESTART/${dtg:0:8}.000000.MOM.res.nc ]; then
+   ln -sf  $COMINm1/RESTART/${dtg:0:8}.000000.MOM.res.nc MOM.res.nc
 else
-   msg="$COMINm1/${dtg:0:8}_000000.MOM.res.nc is missing"
+   msg="$COMINm1/RESTART/${dtg:0:8}.000000.MOM.res.nc is missing"
    err_exit $msg
 fi
-if [ -e $COMINm1/RESTART/${dtg:0:8}_000000.MOM.res_1.nc]; then
-   ln -sf  $COMINm1/RESTART/${dtg:0:8}_000000.MOM_1.res.nc MOM.res.nc
+if [ -e $COMINm1/RESTART/${dtg:0:8}.000000.MOM.res_1.nc ]; then
+   ln -sf  $COMINm1/RESTART/${dtg:0:8}.000000.MOM.res_1.nc MOM.res_1.nc
 else
-   msg="$COMINm1/${dtg:0:8}_000000.MOM_1.res.nc is missing"
+   msg="$COMINm1/RESTART/${dtg:0:8}.000000.MOM.res_1.nc is missing"
    err_exit $msg
 fi
-if [ -e $COMINm1/RESTART/${dtg:0:8}_000000.MOM_3.res.nc]; then
-   ln -sf  $COMINm1/RESTART/${dtg:0:8}_000000.MOM_3.res.nc MOM.res.nc
+if [ -e $COMINm1/RESTART/${dtg:0:8}.000000.MOM.res_3.nc ]; then
+   ln -sf  $COMINm1/RESTART/${dtg:0:8}.000000.MOM.res_3.nc MOM.res_3.nc
 else
-   msg="$COMINm1/${dtg:0:8}_000000.MOM_3.res.nc is missing"
+   msg="$COMINm1/RESTART/${dtg:0:8}.000000.MOM.res_3.nc is missing"
    err_exit $msg
 fi
-if [ -e $COMINm1/RESTART/${dtg:0:8}_000000.MOM_4.res.nc]; then
-   ln -sf  $COMINm1/RESTART/${dtg:0:8}_000000.MOM_4.res.nc MOM.res.nc
+if [ -e $COMINm1/RESTART/${dtg:0:8}.000000.MOM.res_4.nc ]; then
+   ln -sf  $COMINm1/RESTART/${dtg:0:8}.000000.MOM.res_4.nc MOM.res_4.nc
 else
-   msg="$COMINm1/${dtg:0:8}_000000.MOM_4.res.nc is missing"
+   msg="$COMINm1/RESTART/${dtg:0:8}.000000.MOM.res_4.nc is missing"
    err_exit $msg
 fi
-
 
 # copy modify input file with local vars
-cp ${PARMrtofs}/${RUN}_${modID}.ncoda_inc2mom6nc.input ./ncoda_inc2mom6nc.input
-sed -i -e "s/&TShincname/$TShar/" \
-       -e "s/&UVincname/$UVar/" \
+cp ${PARMrtofs}/${RUN}_${modID}_ncoda_inc2mom6nc_lyr.input ./ncoda_inc2mom6nc_lyr.input
+sed -i -e "s/&TShincname/$TShinc/g" \
+       -e "s/&UVincname/$UVinc/g" \
        -e "s/&IDM/$IDM/g" \
        -e "s/&JDM/$JDM/g" \
        -e "s/&KDM/$KDM/g" \
@@ -145,11 +144,14 @@ sed -i -e "s/&TShincname/$TShar/" \
        -e "s/&salintinc/${salininc}/g" \
        -e "s/&uvelinc/${uvelinc}/g" \
        -e "s/&vvelinc/${vvelinc}/g" \
-       -e "s/&lyrthknam/${lyrthbg}" \
+       -e "s/&lyrthkname/${lyrthbg}/g" ./ncoda_inc2mom6nc_lyr.input 
 
 $EXECrtofs/rtofs_ncodaz_inc2mom6nc_glb_lyr.x < ncoda_inc2mom6nc_lyr.input >> $pgmout
 err=$?; export err ; err_chk
 echo " error from rtofs_ncodaz_inc2mom6nc_glb_lyr=",$err
+cp $TShinc $COMOUT/rtofs_glo.$TShinc
+cp $UVinc $COMOUT/rtofs_glo.$UVinc
+
 
 msg="THE RTOFS_GLO_NCODA_INC JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"

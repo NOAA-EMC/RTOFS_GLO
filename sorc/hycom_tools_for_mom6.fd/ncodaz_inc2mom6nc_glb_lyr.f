@@ -174,10 +174,17 @@ c --- 'flnm_v' = name of ncoda v-velocity  increment file, or "NONE"
 c --- 'flnm_p' = name of ncoda density displacement  file, or "NONE"
 c --- 'flnm_h' = name of the background field layer thick. as ncoda binary
 
-c itest,jtest show be read with blkini2, now hard coded
-      itest=1324
-      jtest=1898
-      call blkini(kncoda,'kncoda') 
+      call blkini2(i,j,'itest ','kncoda')
+      if (j.eq.1) then 
+        itest  = i     
+        call blkini(jtest, 'jtest ')
+        call blkini(kncoda,  'kncoda')
+      else
+        itest  = 0     
+        jtest  = 0     
+        kncoda   = i     
+      endif
+      
       if (kncoda.ne.kk) then
         write(6,*)'error, kncoda has to be kk for lyr option'
         stop
@@ -217,7 +224,7 @@ c ----read from an ncoda restart file
       read (*,'(a)') flnm_p
       write (lp,'(2a)') 'Pncoda file: ',trim(flnm_p)
       read (*,'(a)') flnm_h
-      write (lp,'(2a)') 'h background file: ',trim(flnm_p)
+      write (lp,'(2a)') 'h background file: ',trim(flnm_h)
 
 C
 
