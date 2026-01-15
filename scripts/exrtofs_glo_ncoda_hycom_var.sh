@@ -92,8 +92,6 @@ cat << eof1 > odsetnl
  &end
 eof1
 
-# for hycom kkm, kko, m, and n can be pulled from parm blkdat.input
-#for MOM, IDM,JDM can be pulled from the depth*nc file. 
 cat << eof2 > ogridnl
  &gridnl
   delx(1) = 8896.78809,
