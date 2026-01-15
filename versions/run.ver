@@ -24,3 +24,7 @@ export netcdf3_ver=3.6.3
 export netcdf4_ver=4.7.4
 export wgrib2_ver=2.0.8
 
+export evs_ver=2.0_py312
+
+module use /apps/dev/modulefiles/
+
