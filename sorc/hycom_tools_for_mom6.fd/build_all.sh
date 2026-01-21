@@ -11,12 +11,12 @@ source ${BASE}/load_modules.sh ${dir_mod0}
 
 make all
 
-# move executables
-for f in `ls -1 *.x`; do
-cp $f ../../exec/rtofs_$f
-done
-mkdir -p ${BASE}/exec
-mv *.x ${BASE}/exec
+# move executables to exec/
+if [ ! -d "${dir_mod0}/exec"  ]; then
+  mkdir -p "${dir_mod0}/exec"
+fi
+
+mv rtofs*.x "${dir_mod0}/exec"
 
 #clean: $(SUBDIRS)
 #	for dir in $(SUBDIRS); do \

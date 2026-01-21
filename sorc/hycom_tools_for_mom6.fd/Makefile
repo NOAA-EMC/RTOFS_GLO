@@ -29,7 +29,7 @@ SOURCES = ncodaz_inc2mom6nc_glb_lyr.f mod_mom6.F mod_za.F mod_ncio.f90 \
 #          mod_xc.o blkin.o zh.o getdat.o wtime.o
 OBJECTS = mod_xc.o mod_za.o mod_mom6.o mod_ncio.o blkin.o zh.o getdat.o wtime.o ncodaz_inc2mom6nc_glb_lyr.o
 
-EXECUTABLE = ncodaz_inc2mom6nc_glb_lyr.x
+EXECUTABLE = rtofs_ncodaz_inc2mom6nc_glb_lyr.x
 
 # Default target
 all: $(EXECUTABLE)
