@@ -31,6 +31,7 @@ BLKDATA_FILE=${PARMrtofs}/${RUN}_${modID}.res_${inputgrid}.${mode}.blkdat.input
 IDM=$(cat ${BLKDATA_FILE} | grep idm | cut -d' ' -f1 | tr -d '[:space:]')
 JDM=$(cat ${BLKDATA_FILE} | grep jdm | cut -d' ' -f1 | tr -d '[:space:]')
 KDM=$(cat ${BLKDATA_FILE} | grep kdm | cut -d' ' -f1 | tr -d '[:space:]')
+KDM=$(awk '/kdm/ {print $1}' ${BLKDATA_FILE})
 SIZN="${IDM}x${JDM}"
 
 reg=GLB
@@ -108,7 +109,7 @@ mom6_restart_files="MOM.res.nc MOM.res_1.nc MOM.res_3.nc MOM.res_4.nc"
 # Loop through each file
 for f in ${mom6_restart_files}; do
     # Construct the full source path
-    src="$COMINm1/RESTART/${dtg:0:8}.000000.$f"
+    src="$COMIN/RESTART/${dtg:0:8}.000000.$f"
 
     if [ -e "$src" ]; then
         ln -sf "$src" "$f"
