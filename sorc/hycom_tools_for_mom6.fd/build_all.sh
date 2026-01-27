@@ -9,11 +9,21 @@ echo "Load modules listed at: "
 echo ${dir_mod0}"/versions/build.ver"
 source ${BASE}/load_modules.sh ${dir_mod0}
 
+echo " "
+echo "Building " $(basename "${BASE}")
+echo " "
+
 make all
 
-# move executables
-mkdir -p ${BASE}/exec
-mv *.x ${BASE}/exec
+# move executables to exec/
+if [ ! -d "${dir_mod0}/exec"  ]; then
+  mkdir -p "${dir_mod0}/exec"
+fi
+
+mv rtofs*.x "${dir_mod0}/exec"
+
+echo "Done."
+echo " "
 
 #clean: $(SUBDIRS)
 #	for dir in $(SUBDIRS); do \

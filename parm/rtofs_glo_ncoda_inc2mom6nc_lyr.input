@@ -4,9 +4,11 @@ MOM.res_3.nc
 MOM.res_4.nc
 &TShincname
 &UVincname
-&IDM     'idm   ' = longitudinal array size
-&JDM     'jdm   ' = latitudinal  array size
+&IDM     'ii    ' = longitudinal array size
+&JDM     'jj    ' = latitudinal  array size
 &KDM     'kk    ' = number of layers restart
+1324     'itest ' = longitudinal test point (optional, default 0)
+1898     'jtest ' = latitudinal  test point (optional, default 0) 
 &KDM     'kncoda' = number of NCODA levels equal to kk for layer increments
    0.50  'zl    ' = nominal depth of layer 1 from MOM archive
    1.90  'zl    ' = nominal depth of layer 2

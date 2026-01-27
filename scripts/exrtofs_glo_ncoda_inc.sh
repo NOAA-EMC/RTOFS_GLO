@@ -1,23 +1,9 @@
 #!/bin/sh
 set -xa
-###############################################################################
-####  UNIX Script Documentation Block                                         #
-#                                                                             #
-# Script name:         exrtofs_glo_ncoda_inc.sh                               #
-# Script description:                                                         #
-#                                                                             #
-# Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
-#                                                                             #
-# Abstract: Remap an archive file to an NCODA analysis, new layer depths.     #
-#                                                                             #
-# Sub-scripts called:                                                         #
-#                                                                             #
-# Script history log:                                                         #
-# 2020-07-30  Dan Iredell                                                     #
-# 2023-02-08  Dmitry Dukhovskoy modified for updated ncoda_archv_lyrinc       #
-# 2026-01-12  Zulema Garraffo modified for MOM
-#                                                                             #
-###############################################################################
+
+# Script name:        exrtofs_glo_ncoda_inc.sh
+# Script description: Creates ocean (sea ice) increment
+#                     (restart modification) files used in UFS integration.
 
 export PS4='$SECONDS + '
 
@@ -40,37 +26,39 @@ fcst='0024'
 echo dtg12 $dtg $dtgm1 $dtgm2
 
 mode=incup
-#inputgrid=0.08, change to 0p08
-reg=GLB
-DEPTH_FILE=${FIXrtofs}/depth_${reg}${inputgrid}_09m11ob2_mom6.nc 
-IDM=$(ncdump -h ${DEPTH_FILE} | grep 'nx =' | cut -d' ' -f3)
-JDM=$(ncdump -h ${DEPTH_FILE} | grep 'ny =' | cut -d' ' -f3)
-KDM=41 # or get from restart file?
+inputgrid=0p08
+BLKDATA_FILE=${PARMrtofs}/${RUN}_${modID}.res_${inputgrid}.${mode}.blkdat.input
+IDM=$(cat ${BLKDATA_FILE} | grep idm | cut -d' ' -f1 | tr -d '[:space:]')
+JDM=$(cat ${BLKDATA_FILE} | grep jdm | cut -d' ' -f1 | tr -d '[:space:]')
+KDM=$(cat ${BLKDATA_FILE} | grep kdm | cut -d' ' -f1 | tr -d '[:space:]')
+KDM=$(awk '/kdm/ {print $1}' ${BLKDATA_FILE})
 SIZN="${IDM}x${JDM}"
 
-ln -f -s ${FIXrtofs}/depth_${reg}.${inputgrid}_09m11ob2_mom6.nc .
-ln -f -s ${FIXrtofs}/regional.mom6.nc .
+reg=GLB
+DEPTH_FILE=${FIXrtofs}/depth_${reg}.${inputgrid}_09m11ob2_mom6.nc
+#ln -f -s ${DEPTH_FILE} depth_GLBb0.08_09m11ob2_mom6.nc
+#ln -f -s ${FIXrtofs}/regional.mom6.nc .
 
-# 2. link to ncoda hycom var restart files
+# 2. Link to NCODA output files
  
 typet=seatmp_lyr_1o${SIZN}
 types=salint_lyr_1o${SIZN}
 typeu=uucurr_lyr_1o${SIZN}
 typev=vvcurr_lyr_1o${SIZN}
+typec=icecov_sfc_1o${SIZN}
 typethbg=lyrthk_lyr_1o${SIZN}
 
 export salininc=salint_${dtg}_analinc
 export tempinc=seatmp_${dtg}_analinc
 export uvelinc=uvel_${dtg}_analinc  # u vel increm on p-grid
 export vvelinc=vvel_${dtg}_analinc
+export icefld=icecov_${dtg}_analfld
 export lyrthbg=lyrthk_${dtgm1}_fcstfld
 
-#names can be changed. Names in INPUT will be MOM.inc.TSzh.nc, MOM.inc.UV.nc 
-export TShar=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.TSzh.nc
-export UVar=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.TSzh.nc
+export TShinc=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.TSzh.nc
+export UVinc=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.UV.nc
 
-# Check for the existence of analysis increment files
-# These are needed to create the HYCOM incremental update file
+# Check for the existence of NCODA output files
 # Temperature
 if [ -e $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ]; then
    ln -sf  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ./${tempinc}
@@ -99,6 +87,13 @@ else
    msg="$COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc is missing"
    err_exit $msg
 fi
+# Ice Coverage
+if [ -e $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ]; then
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ./${icefld}
+else
+   msg="$COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld is missing"
+   err_exit $msg
+fi
 # Background state layer thickness
 if [ -e $COMIN/ncoda/hycom_var/restart/${typethbg}_${dtgm1}_0024_fcstfld ]; then
    ln -sf  $COMIN/ncoda/hycom_var/restart/${typethbg}_${dtgm1}_0024_fcstfld ./${lyrthbg}
@@ -108,36 +103,26 @@ else
 fi
 
 # Link the MOM6 template restart files 
-if [ -e $COMINm1/RESTART/${dtg:0:8}_000000.MOM.res.nc]; then
-   ln -sf  $COMINm1/RESTART/${dtg:0:8}_000000.MOM.res.nc MOM.res.nc
-else
-   msg="$COMINm1/${dtg:0:8}_000000.MOM.res.nc is missing"
-   err_exit $msg
-fi
-if [ -e $COMINm1/RESTART/${dtg:0:8}_000000.MOM.res_1.nc]; then
-   ln -sf  $COMINm1/RESTART/${dtg:0:8}_000000.MOM_1.res.nc MOM.res.nc
-else
-   msg="$COMINm1/${dtg:0:8}_000000.MOM_1.res.nc is missing"
-   err_exit $msg
-fi
-if [ -e $COMINm1/RESTART/${dtg:0:8}_000000.MOM_3.res.nc]; then
-   ln -sf  $COMINm1/RESTART/${dtg:0:8}_000000.MOM_3.res.nc MOM.res.nc
-else
-   msg="$COMINm1/${dtg:0:8}_000000.MOM_3.res.nc is missing"
-   err_exit $msg
-fi
-if [ -e $COMINm1/RESTART/${dtg:0:8}_000000.MOM_4.res.nc]; then
-   ln -sf  $COMINm1/RESTART/${dtg:0:8}_000000.MOM_4.res.nc MOM.res.nc
-else
-   msg="$COMINm1/${dtg:0:8}_000000.MOM_4.res.nc is missing"
-   err_exit $msg
-fi
+# Define the list of MOM6 template restart files you need to link
+mom6_restart_files="MOM.res.nc MOM.res_1.nc MOM.res_3.nc MOM.res_4.nc"
 
+# Loop through each file
+for f in ${mom6_restart_files}; do
+    # Construct the full source path
+    src="$COMIN/RESTART/${dtg:0:8}.000000.$f"
 
-# copy modify input file with local vars
-cp ${PARMrtofs}/${RUN}_${modID}.ncoda_inc2mom6nc.input ./ncoda_inc2mom6nc.input
-sed -i -e "s/&TShincname/$TShar/" \
-       -e "s/&UVincname/$UVar/" \
+    if [ -e "$src" ]; then
+        ln -sf "$src" "$f"
+    else
+        msg="$src is missing"
+        err_exit "$msg"
+    fi
+done
+
+# Copy and modify input file with local vars
+cp ${PARMrtofs}/${RUN}_${modID}_ncoda_inc2mom6nc_lyr.input ./ncoda_inc2mom6nc_lyr.input
+sed -i -e "s/&TShincname/$TShinc/g" \
+       -e "s/&UVincname/$UVinc/g" \
        -e "s/&IDM/$IDM/g" \
        -e "s/&JDM/$JDM/g" \
        -e "s/&KDM/$KDM/g" \
@@ -145,16 +130,25 @@ sed -i -e "s/&TShincname/$TShar/" \
        -e "s/&salintinc/${salininc}/g" \
        -e "s/&uvelinc/${uvelinc}/g" \
        -e "s/&vvelinc/${vvelinc}/g" \
-       -e "s/&lyrthknam/${lyrthbg}" \
+       -e "s/&lyrthkname/${lyrthbg}/g" ./ncoda_inc2mom6nc_lyr.input 
 
+# 3. Create ocean increment files
 $EXECrtofs/rtofs_ncodaz_inc2mom6nc_glb_lyr.x < ncoda_inc2mom6nc_lyr.input >> $pgmout
 err=$?; export err ; err_chk
 echo " error from rtofs_ncodaz_inc2mom6nc_glb_lyr=",$err
+cp $TShinc $COMOUT/rtofs_glo.$TShinc
+cp $UVinc $COMOUT/rtofs_glo.$UVinc
+
+# 4. Create sea ice restart modification file
+$USHrtofs/rtofs_glo2d_ice.sh ${DEPTH_FILE} ${icefld} icecov ${DATA}
+err=$?; export err ; err_chk
+echo " error from rtofs_glo2d_ice.sh=",$err
+
+if [ -f "icecov_${dtg}_analfld.nc" ]; then
+    mv "icecov_${dtg}_analfld.nc" $COMOUT/sic.nc
+else
+    echo "WARNING: icecov_${dtg}_analfld.nc not found. Skipping rename."
+fi
 
 msg="THE RTOFS_GLO_NCODA_INC JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
-
-#
-# calculate increment file for assimilation
-#
-

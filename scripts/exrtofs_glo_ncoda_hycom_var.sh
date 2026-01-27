@@ -92,7 +92,6 @@ cat << eof1 > odsetnl
  &end
 eof1
 
-# kkm, kko, m, and n can be pulled from parm blkdat.input
 cat << eof2 > ogridnl
  &gridnl
   delx(1) = 8896.78809,
