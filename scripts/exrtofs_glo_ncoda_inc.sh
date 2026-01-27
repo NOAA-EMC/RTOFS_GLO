@@ -1,22 +1,9 @@
 #!/bin/sh
 set -xa
-###############################################################################
-####  UNIX Script Documentation Block                                         #
-#                                                                             #
-# Script name:         exrtofs_glo_ncoda_inc.sh                               #
-# Script description:                                                         #
-#                                                                             #
-# Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
-#                                                                             #
-# Abstract: Remap an archive file to an NCODA analysis, new layer depths.     #
-#                                                                             #
-# Sub-scripts called:                                                         #
-#                                                                             #
-# Script history log:                                                         #
-# 2020-07-30  Dan Iredell                                                     #
-# 2023-02-08  Dmitry Dukhovskoy modified for updated ncoda_archv_lyrinc       #
-#                                                                             #
-###############################################################################
+
+# Script name:        exrtofs_glo_ncoda_inc.sh
+# Script description: Creates ocean (sea ice) increment
+#                     (restart modification) files used in UFS integration.
 
 export PS4='$SECONDS + '
 
@@ -34,58 +21,47 @@ incup_hours=6
 dtg=${PDYm1}00
 dtgm1=$($EXECrtofs/rtofs_dtg $dtg -d -1)
 dtgm2=$($EXECrtofs/rtofs_dtg $dtg -h -$incup_hours)
-hday=$($USHrtofs/rtofs_date_normal2hycom.sh $dtg)
-hday2=$(echo $hday $incup_hours 24 | awk '{printf("%9.3f", $1-($2/$3))}')
-jday=$($USHutil/date2jday.sh ${dtg:0:8})
-jday2=$($USHutil/date2jday.sh ${dtgm2:0:8})
-archday=${jday:0:4}_${jday:4:3}_${dtg:8:2}
-archday2=${jday2:0:4}_${jday2:4:3}_${dtgm2:8:2}
-
+jday=$($EXECrtofs/rtofs_dtg -f %Y%j $dtg)
+fcst='0024'
 echo dtg12 $dtg $dtgm1 $dtgm2
-echo hday $hday $hday2 jday $jday $jday2
-echo archday $archday $archday2
 
 mode=incup
-BLKDATA_FILE=${PARMrtofs}/${RUN}_${modID}.${inputgrid}.${mode}.blkdat.input
+inputgrid=0p08
+BLKDATA_FILE=${PARMrtofs}/${RUN}_${modID}.res_${inputgrid}.${mode}.blkdat.input
 IDM=$(cat ${BLKDATA_FILE} | grep idm | cut -d' ' -f1 | tr -d '[:space:]')
 JDM=$(cat ${BLKDATA_FILE} | grep jdm | cut -d' ' -f1 | tr -d '[:space:]')
-JDMA=$(expr ${JDM} \- 1)
+KDM=$(cat ${BLKDATA_FILE} | grep kdm | cut -d' ' -f1 | tr -d '[:space:]')
+KDM=$(awk '/kdm/ {print $1}' ${BLKDATA_FILE})
 SIZN="${IDM}x${JDM}"
 
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a  regional.grid.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b  regional.grid.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a regional.depth.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b regional.depth.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.a      iso.sigma.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.b      iso.sigma.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.tbaric.a         tbaric.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.tbaric.b         tbaric.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_ssh.a      relax.ssh.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_ssh.b      relax.ssh.b
+reg=GLB
+DEPTH_FILE=${FIXrtofs}/depth_${reg}.${inputgrid}_09m11ob2_mom6.nc
+#ln -f -s ${DEPTH_FILE} depth_GLBb0.08_09m11ob2_mom6.nc
+#ln -f -s ${FIXrtofs}/regional.mom6.nc .
 
-# 2. link to ncoda hycom var restart files
+# 2. Link to NCODA output files
  
 typet=seatmp_lyr_1o${SIZN}
 types=salint_lyr_1o${SIZN}
 typeu=uucurr_lyr_1o${SIZN}
 typev=vvcurr_lyr_1o${SIZN}
-typep=lyrprs_lyr_1o${SIZN}
 typec=icecov_sfc_1o${SIZN}
+typethbg=lyrthk_lyr_1o${SIZN}
 
-ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.a    archv.${archday}.a
-ln -sf  $COMINm1/rtofs_glo.t00z.n00.archv.b    archv.${archday}.b
-
-export lyrprinc=lyrprs_${dtg}_analinc
 export salininc=salint_${dtg}_analinc
-export stempinc=seatmp_${dtg}_analinc
-export upvelinc=upvel_${dtg}_analinc  # u vel increm on p-grid
-export vpvelinc=vpvel_${dtg}_analinc
+export tempinc=seatmp_${dtg}_analinc
+export uvelinc=uvel_${dtg}_analinc  # u vel increm on p-grid
+export vvelinc=vvel_${dtg}_analinc
+export icefld=icecov_${dtg}_analfld
+export lyrthbg=lyrthk_${dtgm1}_fcstfld
 
-# Check for the existence of analysis increment files
-# These are needed to create the HYCOM incremental update file
+export TShinc=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.TSzh.nc
+export UVinc=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.UV.nc
+
+# Check for the existence of NCODA output files
 # Temperature
 if [ -e $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ./${stempinc}
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ./${tempinc}
 else
    msg="$COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc is missing"
    err_exit $msg
@@ -99,99 +75,80 @@ else
 fi
 # Current - U-component
 if [ -e $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ./${upvelinc}
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ./${uvelinc}
 else
    msg="$COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc is missing"
    err_exit $msg
 fi
 # Current - V-component
 if [ -e $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ./${vpvelinc}
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ./${vvelinc}
 else
    msg="$COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc is missing"
    err_exit $msg
 fi
-# Layer Pressure
-if [ -e $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc ./${lyrprinc}
-else
-   msg="$COMIN/ncoda/hycom_var/restart/${typep}_${dtg}_0000_analinc is missing"
-   err_exit $msg
-fi
 # Ice Coverage
 if [ -e $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ./icecov_${dtg}_analfld
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ./${icefld}
 else
    msg="$COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld is missing"
    err_exit $msg
 fi
+# Background state layer thickness
+if [ -e $COMIN/ncoda/hycom_var/restart/${typethbg}_${dtgm1}_0024_fcstfld ]; then
+   ln -sf  $COMIN/ncoda/hycom_var/restart/${typethbg}_${dtgm1}_0024_fcstfld ./${lyrthbg}
+else
+   msg="$COMIN/ncoda/hycom_var/restart/${typethbg}_${dtgm1}_0024_fcstfld is missing"
+   err_exit $msg
+fi
 
-#create ssmi.r file
-rm -f ssmi1.a ssmi2.a ssmi.$dtg.r
-$EXECrtofs/rtofs_raw2hycom icecov_${dtg}_analfld $IDM $JDM 999.00 ssmi1.a > ssmi1.b
-err=$?; export err ; err_chk
-echo " error from rtofs_raw2hycom=",$err
-$EXECrtofs/rtofs_hycom_expr ssmi1.a "ONE" $IDM $JDM  0.01 0 ssmi2.a > ssmi2.b
-err=$?; export err ; err_chk
-echo " error from rtofs_hycom_expr=",$err
-$EXECrtofs/rtofs_hycom2raw8 ssmi2.a $IDM $JDM 1 1 $IDM $JDMA ssmi.$dtg.r
-err=$?; export err ; err_chk
-echo " error from rtofs_hycom2raw8=",$err
+# Link the MOM6 template restart files 
+# Define the list of MOM6 template restart files you need to link
+mom6_restart_files="MOM.res.nc MOM.res_1.nc MOM.res_3.nc MOM.res_4.nc"
 
-ar=archv_1_inc.${archday}
-rm -f $ar.[a,b]
+# Loop through each file
+for f in ${mom6_restart_files}; do
+    # Construct the full source path
+    src="$COMIN/RESTART/${dtg:0:8}.000000.$f"
 
-# copy modify input file with local vars
-cp ${PARMrtofs}/${RUN}_${modID}.ncoda_archv_lyr.input ./ncoda_archv.input
-sed -i -e "s/&archday/$archday/" \
-       -e "s/&archname/$ar/" \
+    if [ -e "$src" ]; then
+        ln -sf "$src" "$f"
+    else
+        msg="$src is missing"
+        err_exit "$msg"
+    fi
+done
+
+# Copy and modify input file with local vars
+cp ${PARMrtofs}/${RUN}_${modID}_ncoda_inc2mom6nc_lyr.input ./ncoda_inc2mom6nc_lyr.input
+sed -i -e "s/&TShincname/$TShinc/g" \
+       -e "s/&UVincname/$UVinc/g" \
        -e "s/&IDM/$IDM/g" \
        -e "s/&JDM/$JDM/g" \
-       -e "s/&dtg/$dtg/g" \
-       -e "s/&lyrprsinc/${lyrprinc}/g" \
+       -e "s/&KDM/$KDM/g" \
+       -e "s/&seatmpinc/${tempinc}/g" \
        -e "s/&salintinc/${salininc}/g" \
-       -e "s/&seatmpinc/${stempinc}/g" \
-       -e "s/&upvelinc/${upvelinc}/g" \
-       -e "s/&vpvelinc/${vpvelinc}/g" ./ncoda_archv.input
-#ln -s ${PARMrtofs}/${RUN}_${modID}.zlevels zi.txt
+       -e "s/&uvelinc/${uvelinc}/g" \
+       -e "s/&vvelinc/${vvelinc}/g" \
+       -e "s/&lyrthkname/${lyrthbg}/g" ./ncoda_inc2mom6nc_lyr.input 
 
-$EXECrtofs/rtofs_ncoda_archv_lyrinc < ncoda_archv.input >> $pgmout
+# 3. Create ocean increment files
+$EXECrtofs/rtofs_ncodaz_inc2mom6nc_glb_lyr.x < ncoda_inc2mom6nc_lyr.input >> $pgmout
 err=$?; export err ; err_chk
-echo " error from rtofs_ncoda_archv_lyrinc=",$err
+echo " error from rtofs_ncodaz_inc2mom6nc_glb_lyr=",$err
+cp $TShinc $COMOUT/rtofs_glo.$TShinc
+cp $UVinc $COMOUT/rtofs_glo.$UVinc
 
-#
-# calculate increment file for assimilation
-#
-/bin/rm -f archd_1.${dtg}.a archd_1.${dtg}.b
-cat << E-o-D > hycom_diff.input
-41    'kk    ' = number of layers involved
-1.0    'nscale' = scale  difference by 1.0/nscale
-0    'nbox  ' = smooth difference over a 2*nbox+1 square
-archv_1_inc.${archday}.a
-archv.${archday}.a
-archd_1.${dtg}
-Analysis - Background
-17T Sigma2*; GDEM4.2; KPP; SeaWiFS chl; HYCOM+CICE; A=20;Smag=.05;
-Z(7):1-7,Z(16):8,Z(2):10-16,Z(13):dp00/f/x=36/1.18/262;Z(3):400-600m; GPCPsnow
-sigma:84-14m; depth_GLBb0.08_11; apply offlux to CICE; 2.2.99DHi-900
-E-o-D
-date
-$EXECrtofs/rtofs_hycom_diff < hycom_diff.input
+# 4. Create sea ice restart modification file
+$USHrtofs/rtofs_glo2d_ice.sh ${DEPTH_FILE} ${icefld} icecov ${DATA}
 err=$?; export err ; err_chk
-echo " error from rtofs_hycom_diff=",$err
+echo " error from rtofs_glo2d_ice.sh=",$err
 
-#
-# change time on archd*.b file
-#
-
-sed -e "s/${hday}/${hday2}/g" archd_1.${dtg}.b > archd_1.${dtg}.b2
-
-cp archd_1.$dtg.a  $COMOUT/rtofs_glo.incupd.$archday2.a
-cp archd_1.$dtg.b2 $COMOUT/rtofs_glo.incupd.$archday2.b
-cp archv_1_inc.$archday.a $COMOUT/rtofs_glo.archv_1_inc.$archday.a
-cp archv_1_inc.$archday.b $COMOUT/rtofs_glo.archv_1_inc.$archday.b
-cp ssmi.$dtg.r     $COMOUT/rtofs_glo.ssmi.$dtg.r
+if [ -f "icecov_${dtg}_analfld.nc" ]; then
+    mv "icecov_${dtg}_analfld.nc" $COMOUT/sic.nc
+else
+    echo "WARNING: icecov_${dtg}_analfld.nc not found. Skipping rename."
+fi
 
 msg="THE RTOFS_GLO_NCODA_INC JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
-
