@@ -1,0 +1,119 @@
+"GLBb0.08 41-layer OM4.1 GEFS"
+1900 12	31  0  0  0
+#1st two lines (above) are "title" and "base date" (y m d h m s)
+#days since 1900-12-31 00:00:0 is HYCOM convention for gregorian
+
+#File Section: File lines contain 6 required and 5 optional fields
+#"file_name", output_freq, "output_freq_units", file_format, "time_axis_units", "time_axis_name"
+#[, new_file_freq, "new_file_freq_units"[, "start_time"[, file_duration, "file_duration_units"]]]
+######################
+
+# Ocean diagnostics files
+"ocnp%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+"ocns%4yr_%3dy_%2hr", 1,"hours", 1, "days","Time", 1,"hours"
+
+#Field Section: Field lines contain 8 fields.
+#"module_name", "field_name", "output_name", "file_name", "time_sampling", "reduction_method", "regional_section", packing
+#"time_sampling" is always "all"
+#"reduction_method" is mean (.TRUE.,average,avg); none (.FALSE.); min; max; diurnal;
+#"regional_section" is none; lat_min,lat_max,lon_min,lon_max,vert_min,vert_max;
+#"packing" is 1 (for r*8), 2 (for r*4), 3 (for i*2), 4 (for i*1)
+
+
+# Prognostic Ocean fields:
+#=========================
+
+"ocean_model","u",   "u",   "ocnp%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","v",   "v",   "ocnp%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","h",   "h",   "ocnp%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","temp","potT","ocnp%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","salt","salt","ocnp%4yr_%3dy_%2hr","all","none","none",2
+#####"ocean_model","SSH", "SSH" ,"ocnp%4yr_%3dy_%2hr","all","none","none",2
+#####"ocean_model","hfds","Qnet","ocnp%4yr_%3dy_%2hr","all","none","none",2
+#####"ocean_model","wfo", "PmE" ,"ocnp%4yr_%3dy_%2hr","all","none","none",2
+#####"ocean_model","KE"      ,  "KE"      ,"ocnp%4yr_%3dy_%2hr","all","none","none",2
+#####"ocean_model","rhoinsitu",   "rho", "ocnp%4yr_%3dy_%2hr","all","none","none",2
+#####"ocean_model","pbo",         "pbt", "ocnp%4yr_%3dy_%2hr","all","none","none",2
+#####"ocean_model","col_height",  "hbt", "ocnp%4yr_%3dy_%2hr","all","none","none",2
+#"ocean_model","KPP_OBLdepth","oml", "ocnp%4yr_%3dy_%2hr","all","none","none",2
+#ocean_model","MLD_003" , "MLD_003"  ,"ocnm%4yr_%3dy_%2hr","all","none","none",2
+#ocean_model","MLD_0125", "MLD_0125" ,"ocnm%4yr_%3dy_%2hr","all","none","none",2
+
+
+
+
+# static fields
+# "ocean_model", "geolon",      "geolon",      "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "geolat",      "geolat",      "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "geolon_c",    "geolon_c",    "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "geolat_c",    "geolat_c",    "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "geolon_u",    "geolon_u",    "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "geolat_u",    "geolat_u",    "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "geolon_v",    "geolon_v",    "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "geolat_v",    "geolat_v",    "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+## "ocean_model", "depth_ocean", "depth_ocean", "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+## "ocean_model", "wet",         "wet",         "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "wet_c",       "wet_c",       "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "wet_u",       "wet_u",       "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "wet_v",       "wet_v",       "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "sin_rot",     "sin_rot",     "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+# "ocean_model", "cos_rot",     "cos_rot",     "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
+
+# Z-Space Fields Provided for CMIP6 (CMOR Names):
+#===============================================
+# "ocean_model_z","uo","uo"      ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_z","vo","vo"      ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_z","so","so"      ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_z","temp","temp"  ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+
+# "ocean_model_z","umo","umo"    ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_z","vmo","vmo"    ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_z","uhml","uhml"  ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_z","vhml","vhml"  ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_z","T_adx","T_adx","ocn%4yr%2mo%2dy%2hr","all",.true., "none",2
+# "ocean_model_z","T_ady","T_ady","ocn%4yr%2mo%2dy%2hr","all",.true., "none",2
+
+
+# Mean Prognostic Ocean fields:
+#==============================
+
+#"ocean_model","u"       ,   "u"      ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","v"       ,   "v"      ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","KE"      ,  "KE"      ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","h"       ,   "h"      ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","temp"    ,"potT"      ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","salt"    ,"salt"      ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","SSH"     , "SSH"      ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+##"ocean_model","hfds"    ,"Qnet"      ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+##"ocean_model","wfo"     , "PmE"      ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","MLD_003" , "MLD_003"  ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","MLD_0125", "MLD_0125" ,"ocnm%4yr_%3dy_%2hr","all","mean","none",2
+##"ocean_model","ubtav",         "ubtav",   "ocnm%4yr_%3dy_%2hr","all","mean","none",2
+##"ocean_model","vbtav",         "vbtav",   "ocnm%4yr_%3dy_%2hr","all","mean","none",2
+##"ocean_model","e",         "e",   "ocnm%4yr_%3dy_%2hr","all","mean","none",2
+##"ocean_model","rhoinsitu",   "rho", "ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","ubt",         "ubt", "ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","vbt",         "vbt", "ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","pbo",         "pbt", "ocnm%4yr_%3dy_%2hr","all","mean","none",2
+##"ocean_model","col_height",  "hbt", "ocnm%4yr_%3dy_%2hr","all","mean","none",2
+#"ocean_model","KPP_OBLdepth","oml", "ocnm%4yr_%3dy_%2hr","all","mean","none",2
+
+
+
+## Surface Ocean fields:
+##======================
+#
+"ocean_model","u"       ,   "u"      ,"ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","v"       ,   "v"      ,"ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","SSH",     "ssh", "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","SST",     "sst", "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","SSS",     "sss", "ocns%4yr_%3dy_%2hr","all","none","none",2
+#"ocean_model","taux",    "taux","ocns%4yr_%3dy_%2hr","all","none","none",2
+#"ocean_model","tauy",    "tauy","ocns%4yr_%3dy_%2hr","all","none","none",2
+##"ocean_model","SW",      "Qsw", "ocns%4yr_%3dy_%2hr","all","none","none",2
+##"ocean_model","LW",      "Qlw", "ocns%4yr_%3dy_%2hr","all","none","none",2
+##"ocean_model","latent",  "Qlat","ocns%4yr_%3dy_%2hr","all","none","none",2
+##"ocean_model","sensible","Qsen","ocns%4yr_%3dy_%2hr","all","none","none",2
+#"ocean_model","hfds",    "Qnet","ocns%4yr_%3dy_%2hr","all","none","none",2
+#"ocean_model","PRCmE",   "PmE", "ocns%4yr_%3dy_%2hr","all","none","none",2
+
