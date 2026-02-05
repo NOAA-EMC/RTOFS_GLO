@@ -169,7 +169,7 @@ do
       sleep 10
       icnt=$((icnt + 1))
       if [ $icnt -ge $icnt_max ]; then
-       echo Post timed out arfile_tplate unavailable after $icnt_max iterations
+       echo FATAL: Post timed out arfile_tplate unavailable after $icnt_max iterations
         echo "NOTdone" >${RUN}_${modID}.t${mycyc}z.nav.log
         export err=2; err_chk
       fi
@@ -197,7 +197,7 @@ do
      ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n-24.archs.a archv.a
      ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n-24.archs.b archv.b
    else
-    echo "Missing archs file $COMIN/${arfile_tplate}." >>${RUN}_${modID}.t${mycyc}z.nav.log
+    echo "FATAL - Missing archs file $COMIN/${arfile_tplate}." >>${RUN}_${modID}.t${mycyc}z.nav.log
     echo "NOTdone due to missing archs file" >>${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk
   fi
@@ -206,7 +206,7 @@ do
      ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n-24.arche.a arche.a
      ln -s -f $COMIN/${RUN}_${modID}.t${mycyc}z.n-24.arche.b arche.b
    else
-    echo "Missing archs file $COMIN/${arefile_tplate}." >>${RUN}_${modID}.t${mycyc}z.nav.log
+    echo "FATAL - Missing arche file $COMIN/${arefile_tplate}." >>${RUN}_${modID}.t${mycyc}z.nav.log
     echo "NOTdone due to missing arche file" >>${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk
   fi
@@ -219,12 +219,12 @@ fi
     if [ ! -f $fn ]
     then
       missing=yes
-      echo "Missing file $fn, will not be able to run" >> ${RUN}_${modID}.t${mycyc}z.nav.log
+      echo "FATAL - Missing file $fn, will not be able to run" >> ${RUN}_${modID}.t${mycyc}z.nav.log
     fi
   done
   if [ $missing = 'yes' ]
   then
-    echo Cannot run due to missing files.
+    echo FATAL - Cannot run due to missing files.
     echo "NOTdone" >>${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk
     exit

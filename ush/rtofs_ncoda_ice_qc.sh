@@ -105,7 +105,7 @@ cd $log_dir
 cat ssmi_*.$cut_dtg > ssmi_files.$cut_dtg
 if [[ ! -f ssmi_files.$cut_dtg || ! -s ssmi_files.$cut_dtg ]]; then
    echo "WARNING - ssmi_files.$cut_dtg does not exist/is empty. No SSMI files to process."
-   echo "SSMI.obs_control file will not be updated"
+   echo "WARNING - SSMI.obs_control file will not be updated"
 fi
 
 cat amsr_*.${cut_dtg}_prelim > amsr_ice_files.${cut_dtg}_prelim
@@ -126,7 +126,7 @@ echo timecheck amsr_ice finish ncdump at $(date)
 
 if [[ ! -f amsr_ice_files.$cut_dtg || ! -s amsr_ice_files.$cut_dtg ]]; then
    echo "WARNING - amsr_ice_files.$cut_dtg does not exist/is empty. No AMSR_ICE files to process."
-   echo "AMSR_ICE.obs_control file will not be updated"
+   echo "WARNING - AMSR_ICE.obs_control file will not be updated"
 fi
 
 #   execute ncoda pre_qc for ICE netCDF files
