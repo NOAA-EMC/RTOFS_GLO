@@ -141,7 +141,7 @@ if [[ ! -f smap_sss_files.$cut_dtg || ! -s smap_sss_files.$cut_dtg ]]; then
    echo "WARNING - smap_sss_files.$cut_dtg does not exist/is empty. No SMAP files to process."
 fi
 if [[ ! -f smos_sss_files.$cut_dtg || ! -s smos_sss_files.$cut_dtg ]] && [[ ! -f smap_sss_files.$cut_dtg || ! -s smap_sss_files.$cut_dtg ]]; then
-   echo "SSS.obs_control file will not be updated"
+   echo "WARNING - SSS.obs_control file will not be updated"
 fi
 #   execute ncoda pre_qc for SSS netCDF files
 $EXECrtofs/rtofs_ncoda_sat_sss_nc $cut_dtg 24 > sss_preqc.$cut_dtg.out

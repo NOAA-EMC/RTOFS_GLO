@@ -102,7 +102,7 @@ echo timecheck npp finish ncdump at $(date)
 
 if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
    echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No VIIRS NPP files to process."
-   echo "NPP_VIIRS.obs_control file will not be updated"
+   echo "WARNING - NPP_VIIRS.obs_control file will not be updated"
 fi
 
 #   execute ncoda pre_qc for NPP netCDF files

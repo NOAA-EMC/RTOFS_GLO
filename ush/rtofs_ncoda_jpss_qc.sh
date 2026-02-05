@@ -115,7 +115,7 @@ echo timecheck noaa finish ncdump at $(date)
 
 if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
    echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No VIIRS JPSS files to process."
-   echo "JPSS_VIIRS.obs_control file will not be updated"
+   echo "WARNING - NOAA_VIIRS.obs_control file will not be updated"
 fi
 
 #   execute ncoda pre_qc for JPSS netCDF files

@@ -114,7 +114,7 @@ echo timecheck himawari finish ncdump at $(date)
 
 if [[  ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
    echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No HIMAWARI files to process."
-   echo "HIMAWARI.obs_control file will not be updated"
+   echo "WARNING - HIMAWARI.obs_control file will not be updated"
 fi
 
 #   execute ncoda pre_qc for HIMAWARI netCDF files

@@ -2552,7 +2552,7 @@ if [[ $($ndate 0 $valid 2>/dev/null) != $valid ]];then
  exit 2
 fi
 if [[ -z $geslist ]];then
- echo getges.sh: filetype $typef or resolution $resol not recognized >&2
+ echo getges.sh: WARNING - filetype $typef or resolution $resol not recognized >&2
  exit 2
 fi
 

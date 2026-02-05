@@ -128,7 +128,7 @@ echo timecheck metop finish ncdump at $(date)
 
 if [[ ! -f  acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
    echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No METOP files to process."
-   echo "METOP.obs_control file will not be updated"
+   echo "WARNING - METOP.obs_control file will not be updated"
 fi
 
 #   execute ncoda pre_qc for METOP netCDF files
