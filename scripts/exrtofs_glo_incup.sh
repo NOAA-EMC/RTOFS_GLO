@@ -141,9 +141,11 @@ do
    echo "cp -p -f $ofile $COMOUT" >> cmdfile.cpout
 done
 # ice history
+mkdir -p $COMOUT/history
 for ifile in $(ls history/iceh*.nc*)
 do
-   echo "cp -p -f $ifile $COMOUT" >> cmdfile.cpout
+#   echo "cp -p -f $ifile $COMOUT" >> cmdfile.cpout
+   echo "cp -p -f $ifile $COMOUT/history" >> cmdfile.cpout
 done
 # restart
 mkdir -p $COMOUT/RESTART
