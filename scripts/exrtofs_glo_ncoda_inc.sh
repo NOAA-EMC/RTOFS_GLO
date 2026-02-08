@@ -109,7 +109,7 @@ mom6_restart_files="MOM.res.nc MOM.res_1.nc MOM.res_3.nc MOM.res_4.nc"
 # Loop through each file
 for f in ${mom6_restart_files}; do
     # Construct the full source path
-    src="$COMIN/RESTART/${dtg:0:8}.000000.$f"
+    src="$COMINm1/RESTART/${dtg:0:8}.000000.$f"
 
     if [ -e "$src" ]; then
         ln -sf "$src" "$f"
