@@ -42,8 +42,9 @@ for pfile in data_table datm_in datm.streams diag_table fd_ufs.yaml input.nml no
 do
   cp $PARMrtofs/$pfile .
 done
+  sed -i -e "s/&startup_continue/startup/" ./ufs.configure
 
-# model_configure will not be in parm but created on the fly
+# model_configure modified on the flight
 for pfile in model_configure
 do
 #  cp $PARMrtofs/mom/incup/$pfile .
@@ -92,7 +93,8 @@ do
 done
 
 # forcing (for this time period)  (change datm.streams when changing)
-ln -s $COMINm1/gfs.2025121400-2025122218_positive.nc INPUT/.
+#ln -s $COMINm1/gfs.2025121400-2025122218_positive.nc INPUT/.
+ln -s $FIXrtofs/gfs.2025121400-2025122218_positive.nc INPUT/.
 
 # incremental update files
 
@@ -155,7 +157,10 @@ do
 done
 adate=$(echo $PDYm1 | cut -c1-4)-$(echo $PDYm1 | cut -c5-6)-$(echo $PDYm1 | cut -c7-8)-00000
 echo "cp -p -f RESTART/iced.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
-echo "cp -f -f RESTART/datm.gfs.cpl.r.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
+echo "cp -p -f RESTART/datm.gfs.cpl.r.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
+
+# datm file
+echo "cp -p -f datm.gfs.datm.r.${adate}.nc $COMOUT" >> cmdfile.cpout
 
 # diagnostics and log files
 mkdir $COMOUT/MOM6_OUTPUT

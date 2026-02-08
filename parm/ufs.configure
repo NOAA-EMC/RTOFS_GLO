@@ -123,7 +123,7 @@ ALLCOMP_attributes::
       ScalarFieldIdxGridNY = 2
       ScalarFieldIdxNextSwCday = 3
       ScalarFieldName = cpl_scalars
-      start_type = startup
+      start_type = &startup_continue
       restart_dir = ./RESTART/
       case_name = datm.gfs
       restart_n = 6
