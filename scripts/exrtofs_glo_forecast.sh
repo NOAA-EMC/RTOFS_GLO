@@ -5,9 +5,7 @@
 # Script name:         exrtofs_glo_forecast.sh                                #
 # Script description:                                                         #
 #                                                                             #
-# Author:        Ilya Rivin      Org: NP23         Date: 2010-07-30           #
-#                                                                             #
-# Abstract: This script generates the forecast fields                         #
+# Abstract: This script generates the analysis fields                         #
 #           for the RTOFS_GLO Ocean model                                     #
 #                                                                             #
 # Sub-scripts called:                                                         #
@@ -15,16 +13,13 @@
 #   rtofs_submit.sh - submits the RTOFS HYCOM simulation                      #
 #   rtofs_tmp2com.sh - copies the products to COMOUT                          #
 #                                                                             #
-# Script history log:                                                         #
-# 2010-07-30  Ilya Rivin                                                      #
-#                                                                             #
 ###############################################################################
 set -xa
 
 export PS4='$SECONDS + '
 
 cd $DATA
-  
+
 msg="RTOFS_GLO_FORECAST JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
@@ -32,188 +27,167 @@ postmsg "$msg"
 # 0. set some defaults
 
 typeset -Z5 SSSSS
-export fcstdays=${fcstdays:-4}
-export inputgrid=${inputgrid:-navy_0.08}
 
 # --------------------------------------------------------------------------- #
-# 1. Get initial conditions (restart files)
-#     if this is a restart, then find latest restart files in DATArestart
-#     if this is not a restart, then find restart files in COMin
- 
-  test -f restart_in.a && rm -f restart_in.a
-  test -f restart_in.b && rm -f restart_in.b
+# 1. copy in files from parm to top level
 
-  restart_found=no
-  if [ $RESTART = YES ]
-  then
-    for rtype in out out1   # rename restarts with out string to use timestamp
-    do
-      if [ -s ${DATArestart}/restart_${rtype}.b ]
-      then
-        date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_${rtype}.b)
-        mv ${DATArestart}/restart_${rtype}.a ${DATArestart}/restart_${date_out}.a
-        mv ${DATArestart}/restart_${rtype}.b ${DATArestart}/restart_${date_out}.b
-      fi
-    done
+#get number of days to run, 
+#source $PARMrtofs/rtofs_glo.navy_0.08.config
+fcst=fcst1
+  fcstdays=1
+  PD1=$PDY
+  NH=24
+  PD2=$PDYp1
+  
 
-    latestdate=0
-    for rfileb in $(ls ${DATArestart}/restart_*.b)  # find and link to latest restart file
-    do
-      date_out=$(${USHrtofs}/rtofs_date4restart.sh ${rfileb})
-      if [ $date_out -gt $latestdate ]
-      then
-        latestdate=$date_out
-        rfile=$rfileb
-      fi
-    done
 
-    # find cice restart file for this restart time and link them
-    if [ $latestdate -ne 0 ]
-    then
-      YYYY=$(echo $latestdate | cut -c1-4)
-      MM=$(echo $latestdate | cut -c5-6)
-      DD=$(echo $latestdate | cut -c7-8)
-      HH=$(echo $latestdate | cut -c9-10)
-      SSSSS=$(expr $HH \* 3600)
-      ln -sf $rfile $DATA/restart_in.b
-      ln -sf ${rfile%.b}.a $DATA/restart_in.a
-      ln -sf $DATArestart/cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} $DATA/cice.restart_in
-      echo INFO - restarting simulation from $latestdate using $rfile
-      restart_found=yes
-    fi
+adate=${PD1:0:4}-${PD1:4:2}-${PD1:6:2}-00000
+for pfile in ice_in; do
+cp $PARMrtofs/$pfile ./ice_in
+  sed -i -e "s/&YMDS.nc/$adate.nc/" -e "s/&adjust_aice/none/" ./ice_in
+done
 
-    if [ $restart_found = no ]
-    then
-       $USHrtofs/${RUN}_abort.sh  "FATAL ERROR: $job Missing Restart File" \
-         "No restart_in.[ab] or cice.restart_in in $DATArestart" 2
-    fi
+for pfile in data_table datm_in datm.streams diag_table fd_ufs.yaml input.nml noahmptable.tbl ufs.configure
+do
+  cp $PARMrtofs/$pfile .
+done
+  sed -i -e "s/&startup_continue/continue/" ./ufs.configure
 
-# remove archives created after most recent restart; hycom will fail if these files exist
-    rdate=$(${USHrtofs}/rtofs_date4restart.sh $DATA/restart_in.b)
-    for afile in $(ls $DATAarchive/*.b)
-    do
-      archivedate=$(basename $afile | cut -d. -f2 | cut -c1-4,6-8,10-11)
-      ayjul=$(echo $archivedate | cut -c1-7)
-      ahour=$(echo $archivedate | cut -c8-9)
-      adate=$($UTILROOT/ush/date2jday.sh $ayjul)$ahour
-      if [ $adate -gt $rdate ]
-      then
-        echo removing ${afile%.b} files
-        rm -f ${afile} ${afile%.b}.a ${afile%.b}.txt
-      fi
-    done
-
-  else # RESTART=NO
-    if [ ${CONTINUE_FORECAST} = NO ]
-    then
-      # Restart from the nowcast restart
-      HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.n${mycyc}.restart
-      CICErestTplate=${RUN}_${modID}.t${mycyc}z.n${mycyc}.restart_cice
-    else
-      # Restart from previous forecast step restart
-      LEAD=$($NHOUR ${startdate} ${PDY}${mycyc})
-      HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart
-      CICErestTplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart_cice
-    fi
-
-    if [ -s ${COMIN}/${HYCOMrestTplate}.a ] && \
-       [ -s ${COMIN}/${HYCOMrestTplate}.b ] && \
-       [ -s ${COMIN}/${CICErestTplate} ]
-    then
-      ln -s -f ${COMIN}/${HYCOMrestTplate}.a restart_in.a
-      ln -s -f ${COMIN}/${HYCOMrestTplate}.b restart_in.b
-      ln -s -f ${COMIN}/${CICErestTplate} cice.restart_in
-      echo "Forecast $RUN_STEP is started from restart: ${COMIN}/${HYCOMrestTplate}.[ab] and ${CICErestTplate}"
-    else
-      $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Restart File" \
-        "No restart_in.[ab] or cice.restart_in in $COMIN" 3
-    fi
-    # remove any possible archives created
-    rm -f $DATAarchive/*
-  fi
-
-  echo './cice.restart_in' > cice.restart_file
-
-  if [ -s restart_in.a -a -s restart_in.b -a -s cice.restart_in ]
-  then
-    echo "Initial restart files copied"
-    export enddate=$($NDATE $(expr $fcstdays \* 24 ) ${startdate})
-    export startdate=$(${USHrtofs}/rtofs_date4restart.sh restart_in.b)
-  else
-    $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Missing Restart File" \
-        "No restart_in.[ab] or cice.restart_in in $DATA" 911
-  fi
+# model_configure created on the fly
+for pfile in model_configure
+do
+  cp $PARMrtofs/$pfile .
+  sed -i -e  "s/&YYYY/${PD1:0:4}/g" -e "s/&MM/${PD1:4:2}/g" -e "s/&DD/${PD1:6:2}/g" -e "s/&HH/00/g" -e "s/&NH/$NH/g" ./model_configure
+done
 
 # --------------------------------------------------------------------------- #
-# 2. get input files
+# 2a. link in fix files to top-level
 
-  ksh ${USHrtofs}/${RUN}_runstaging.sh
-  if [ $RESTART = YES ]
-  then # create new cice files to this start time
-    rm -f cice.??????.?
-    export iday=$($USHrtofs/rtofs_date_normal2hycom.sh $startdate)
-    $USHrtofs/${RUN}_iceforcing.sh
-  fi
+#for ffile in cice_model.res.nc grid_cice_NEMS_mx008.nc kmtu_cice_NEMS_mx008.nc mesh.mx008.nc
+for ffile in grid_cice_NEMS_mx008.nc kmtu_cice_NEMS_mx008.nc mesh.mx008.nc
+do
+  ln -sf $FIXrtofs/$ffile .
+done
 
 # --------------------------------------------------------------------------- #
-# 3. Run forecast
+# 2b. link or copy fix and parm files to INPUT
+# fix depth 0p08 
 
-  ${USHrtofs}/${RUN}_submit.sh
+mkdir INPUT
+#for ffile in chl_mom6.nc depth_GLBb0.08_09m11ob2_mom6.nc grid_spec.nc mesh.datm.3072x1536.nc mom6_vgrid.nc ocean_hgrid.nc ocean_mosaic.nc runoff.daitren.clim.0.08deg.nc sss_mom6.nc tidal_amplitude.nc
+for ffile in chl_mom6.nc grid_spec.nc mesh.datm.3072x1536.nc mom6_vgrid.nc regional.mom6.nc ocean_mosaic.nc runoff.daitren.clim.0.08deg.nc sss_mom6.nc tidal_amplitude.nc
+do
+  ln -sf $FIXrtofs/$ffile INPUT/.
+done
+  ln -s $FIXrtofs/depth_GLB.0p08_09m11ob2_mom6.nc INPUT/depth_GLBb0.08_09m11ob2_mom6.nc
 
-  ok="unknown"
-  test -s ${DATA}/summary_out && ok=$(tail -1 ${DATA}/summary_out)
-  if [ "$ok" = "normal stop" ]
-  then
-    modelstatus=0
-  else
-    modelstatus=1
-  fi 
+for pfile in MOM_input
+do
+  cp $PARMrtofs/${pfile} .
+  sed -i -e "s/ODA_INCUPD = &Value /ODA_INCUPD = False/" ./MOM_input
+  mv MOM_input INPUT/
+done
+for pfile in MOM_layout MOM_override
+do
+  cp $PARMrtofs/$pfile INPUT
+done
 
-#
 # --------------------------------------------------------------------------- #
-# 4. If run ran to completion and copy restart and archive files to COMOUT
-# if model ran, then copy last restart files to comout
+# 3. Populate INPUT directory with pdym1 restart and forcing
 
-  if [ $modelstatus = 0 ]
-  then
-      if [ $SENDCOM = 'YES' ]
-      then
-        ${USHrtofs}/${RUN}_tmp2com.sh
-      fi
-      if [ ${SAVE_RESTART} = YES ]
-      then
-        date_out=0 ; date_out1=0 
-        test -s ${DATArestart}/restart_out.b && date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_out.b)
-        test -s ${DATArestart}/restart_out1.b &&  date_out1=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_out1.b)
-        if [ ${date_out} -gt ${date_out1} ]
-        then
-          rfile=${DATArestart}/restart_out.b
-          cdate=${date_out}
-        else
-          rfile=${DATArestart}/restart_out1.b
-          cdate=${date_out1}
-        fi
-        YYYY=$(echo $cdate | cut -c1-4)
-        MM=$(echo $cdate | cut -c5-6)
-        DD=$(echo $cdate | cut -c7-8)
-        HH=$(echo $cdate | cut -c9-10)
-        SSSSS=$(expr $HH \* 3600)
-        LEAD=$($NHOUR ${cdate} ${PDY}${mycyc})
-        HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart
-        CICErestTplate=${RUN}_${modID}.t${mycyc}z.f${LEAD}.restart_cice
-        cp -p $rfile ${COMOUT}/${HYCOMrestTplate}.b
-        cp -p ${rfile%.b}.a ${COMOUT}/${HYCOMrestTplate}.a
-        cp -p ${DATArestart}/cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} ${COMOUT}/${CICErestTplate}
-       fi
-    echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.fcst$RUN_STEP.log
-  else
-    $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit" \
-       "problem with forecast model run - return code $modelstatus" $modelstatus
-  fi
+# check that MOM.res files exist
+for momres in $(ls $COMIN/RESTART/${PD1}.000000.MOM.res*nc*)
+do
+   fn=$(basename $momres | cut -d. -f3-)
+   ln -s $momres INPUT/$fn
+done
 
-#################################################
-msg="THE RTOFS_GLO_FORECAST JOB HAS ENDED NORMALLY on $(hostname) at $(date)."
-postmsg "$msg"
+# forcing (for this time period)  (change datm.streams when changing)
+#temporarily from fix
+#ln -s $COMINm1/gfs.2025121400-2025122218_positive.nc INPUT/.
+ln -s $FIXrtofs/gfs.2025121400-2025122218_positive.nc INPUT/.
 
-################## END OF SCRIPT #######################
+# iced with right date
+icedate=$(echo $PD1 | cut -c1-4)-$(echo $PD1 | cut -c5-6)-$(echo $PD1 | cut -c7-8)-00000
+ln -s $COMIN/RESTART/iced.${icedate}.nc INPUT/iced.${icedate}.nc
+echo INPUT/iced.${icedate}.nc > ice.restart_file
+
+#datm files 
+ln -s $COMIN/datm.gfs.datm.r.${icedate}.nc .
+echo datm.gfs.datm.r.${icedate}.nc > rpointer.atm
+
+ln -s $COMIN/RESTART/datm.gfs.cpl.r.${icedate}.nc INPUT/.
+echo  INPUT/datm.gfs.cpl.r.${icedate}.nc > rpointer.cpl
+
+
+# --------------------------------------------------------------------------- #
+# 4. Create other directories
+
+mkdir history RESTART MOM6_OUTPUT
+
+# --------------------------------------------------------------------------- #
+# 5. get executable
+
+cp $EXECrtofs/ufs_model.x fv3.exe
+
+mpiexec -np $NMPI --cpu-bind core  ./fv3.exe >> $pgmout 2>errfile
+rc=$?
+
+echo fv3.exe completed with exit code $rc
+
+if [ $rc -ne 0 ]
+then
+   echo we are saying goodbye
+   $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit" \
+      "problem with analysis model run - return code $modelstatus" $rc
+   exit
+fi
+
+# copy archive and history files to COMOUT
+rm -f cmdfile.cpout
+
+# ocean archives
+for ofile in $(ls ocn*.nc*)
+do
+   echo "cp -p -f $ofile $COMOUT" >> cmdfile.cpout
+done
+# ice history
+mkdir -p $COMOUT/history
+for ifile in $(ls history/iceh*.nc*)
+do
+   echo "cp -p -f $ifile $COMOUT/history" >> cmdfile.cpout
+done
+# restart
+mkdir -p $COMOUT/RESTART
+#for rfile in $(ls RESTART/${PDY}.180000.MOM.res*.nc* RESTART/${PDYp1}.000000.MOM.res*.nc*)
+for rfile in $(ls RESTART/${PD2}.000000.MOM.res*.nc*)
+do
+  echo "cp -p -f $rfile $COMOUT/RESTART" >> cmdfile.cpout
+done
+idate=$(echo $PD1 | cut -c1-4)-$(echo $PD1 | cut -c5-6)-$(echo $PD1 | cut -c7-8)-00000
+fdate=$(echo $PD2 | cut -c1-4)-$(echo $PD2 | cut -c5-6)-$(echo $PD2 | cut -c7-8)-00000
+#echo "cp -p -f RESTART/iced.${idate}.nc RESTART/iced.${fdate}.nc $COMOUT/RESTART" >> cmdfile.cpout
+#echo "cp -p -f RESTART/datm.gfs.cpl.r.${idate}.nc RESTART/datm.gfs.cpl.r.${fdate}.nc $COMOUT/RESTART" >> cmdfile.cpout 
+echo "cp -p -f RESTART/iced.${fdate}.nc $COMOUT/RESTART" >> cmdfile.cpout
+echo "cp -p -f RESTART/datm.gfs.cpl.r.${fdate}.nc $COMOUT/RESTART" >> cmdfile.cpout 
+
+#echo "cp -p -f datm.gfs.datm.r.${idate}.nc datm.gfs.datm.r.${fdate}.nc $COMOUT" >> cmdfile.cpout
+echo "cp -p -f datm.gfs.datm.r.${fdate}.nc $COMOUT" >> cmdfile.cpout
+
+# diagnostics and log files
+mkdir -p $COMOUT/MOM6_OUTPUT
+for logfile in ice_diag.d mediator.log atm.log
+do
+  echo "cp -p -f $logfile $COMOUT/analysis.$logfile" >> cmdfile.cpout
+done
+for momoutputfile in $(ls MOM6_OUTPUT)
+do
+   echo "cp -p -f MOM6_OUTPUT/$momoutputfile $COMOUT/MOM6_OUTPUT/analysis.$momoutputfile" >> cmdfile.cpout
+done
+
+chmod +x cmdfile.cpout
+#mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout
+./cmdfile.cpout
+err=$? ; export err ; err_chk
+date
 
