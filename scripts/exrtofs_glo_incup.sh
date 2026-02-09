@@ -93,6 +93,7 @@ do
 done
 
 # forcing (for this time period)  (change datm.streams when changing)
+#temporarily from fix
 #ln -s $COMINm1/gfs.2025121400-2025122218_positive.nc INPUT/.
 ln -s $FIXrtofs/gfs.2025121400-2025122218_positive.nc INPUT/.
 
@@ -174,6 +175,7 @@ do
 done
 
 chmod +x cmdfile.cpout
+#temporarily copy using one-processor, to be changed to multi-processors
 #mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout
 ./cmdfile.cpout
 err=$? ; export err ; err_chk
