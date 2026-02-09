@@ -16,15 +16,18 @@ case $whattodo in
     cd ./rtofs_code.fd;./build_code.sh;cd ..
 
     echo
-    echo Building rtofs_hycom.fd
+    echo Building hycom_tools_for_mom6.fd
     echo
-    cd ./rtofs_hycom.fd;./build_hycom.sh esmf ;cd ..
-    cd ./rtofs_hycom.fd;./build_hycom.sh;cd ..
+    cd ./hycom_tools_for_mom6.fd;./build_all.sh;cd ..
 
-    echo
     echo Building rtofs_ncoda.fd
     echo
     cd ./rtofs_ncoda.fd;./build_ncoda.sh;cd ..
+
+    echo
+    echo Building ufs_model.fd
+    echo
+    cd ../scripts/UFS_helpers;./compile_ufs.sh; cd ../../
     ;;
 
   debug)
@@ -33,16 +36,26 @@ case $whattodo in
     echo
     cd ./rtofs_code.fd;./build_code.sh debug;cd ..
 
-    echo
-    echo Building rtofs_hycom.fd
-    echo
+#    echo
+#    echo Building rtofs_hycom.fd
+#    echo
 #    cd ./rtofs_hycom.fd;./build_hycom.sh esmf ;cd ..
-    cd ./rtofs_hycom.fd;./build_hycom.sh debug;cd ..
+#    cd ./rtofs_hycom.fd;./build_hycom.sh debug;cd ..
+
+    echo
+    echo Building hycom_tools_for_mom6.fd
+    echo
+    cd ./hycom_tools_for_mom6.fd;./build_all.sh;cd ..
 
     echo
     echo Building rtofs_ncoda.fd
     echo
     cd ./rtofs_ncoda.fd;./build_ncoda.sh debug;cd ..
+
+    echo
+    echo Building ufs_model.fd
+    echo
+    cd ../scripts/UFS_helpers;./compile_ufs.sh; cd ../../
     ;;
 
 
@@ -51,8 +64,9 @@ case $whattodo in
     echo Running option install
     echo
     cd rtofs_code.fd;make install;cd ..
-    cd rtofs_hycom.fd;./build_hycom.sh install;cd ..
+#   cd rtofs_hycom.fd;./build_hycom.sh install;cd ..
     cd rtofs_ncoda.fd;make install;cd ..
+    cp ufs_model.fd/tests/ufs_model.x ../exec/
     ;;
 
   clean)
