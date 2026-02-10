@@ -101,7 +101,7 @@ echo timecheck amsr finish ncdump at $(date)
 
 if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
    echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No AMSR files to process."
-   echo "AMSR.obs_control file will not be updated"
+   echo "WARNING - AMSR.obs_control file will not be updated"
 fi
 
 #   execute ncoda pre_qc for AMSR netCDF files

@@ -156,7 +156,7 @@ do
       icnt=$((icnt + 1))
       if [ $icnt -ge $icnt_max ]
       then
-        echo Post timed out, arfile_tplate not available after $icnt_max iterations.
+        echo FATAL: Post timed out, arfile_tplate not available after $icnt_max iterations.
         echo "NOTdone" >${RUN}_${modID}.t${mycyc}z.nav.log
         export err=2; err_chk
       fi
@@ -171,7 +171,7 @@ do
     ln -s -f $COMIN/${arfile_tplate}.a archv.a
     ln -s -f $COMIN/${arfile_tplate}.b archv.b
   else
-    echo Missing archv file $COMIN/${arfile_tplate}.
+    echo FATAL - Missing archv file $COMIN/${arfile_tplate}.
     echo "NOTdone due to missing archv file" >${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk  
   fi
@@ -181,12 +181,12 @@ do
     if [ ! -f $fn ]
     then
       missing=yes
-      echo Missing file $fn, will not be able to run
+      echo FATAL - Missing file $fn, will not be able to run
     fi
   done
   if [ $missing = 'yes' ]
   then
-    echo Cannot run due to missing files.
+    echo FATAL - Cannot run due to missing files.
     echo "NOTdone" >${RUN}_${modID}.t${mycyc}z.nav.log
     export err=1; err_chk
     exit

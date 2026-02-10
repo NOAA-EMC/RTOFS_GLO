@@ -124,7 +124,7 @@ echo timecheck goes finish ncdump at $(date)
 
 if [[ ! -f acspo_sst_files.$cut_dtg || ! -s acspo_sst_files.$cut_dtg ]]; then
    echo "WARNING - acspo_sst_files.$cut_dtg does not exist/is empty. No GOES files to process."
-   echo "GOES.obs_control file will not be updated"
+   echo "WARNING - GOES.obs_control file will not be updated"
 fi
 
 #   execute ncoda pre_qc for GOES netCDF files
