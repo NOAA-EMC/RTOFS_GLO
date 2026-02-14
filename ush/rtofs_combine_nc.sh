@@ -1,59 +1,108 @@
 #!/bin/sh
 
-set -xa
-
+#=======================================================================
 # Script name: rtofs_combine_nc.sh
-# Script description: Combines NetCDF output files written out by
-#                     different processors using an IO_LAYOUT > 1.
+# Purpose: Combines NetCDF output files written out by
+#          different processors using an IO_LAYOUT > 1.
+#=======================================================================
 
+# Input argument check (3 or 4 arguments only)
+if [[ $# -lt 3 || $# -gt 4 ]]; then
+  echo " "
+  echo "Usage: "
+  echo "$0 [is_output] path_to_input_files input_file_prefix output_file_name"
+  echo " "
+  echo "  is_output (optional): True (default) or False"
+  echo " "
+  echo "Example inputs: "
+  echo "  is_output:           False"
+  echo "  path_to_input_files: /lfs/h2/emc/.../comin"
+  echo "  input_file_prefix:   20250502.000000.MOM.res.nc"
+  echo "  output_file_name:    20250502.000000.MOM.res.nc"
+  echo " "
+  exit 1
+fi
+echo " "
+
+# Parse arguments based on count
+if [[ $# -eq 3 ]]; then
+  is_output="True"  # Default value
+  path_to_input_files=$1
+  input_file_prefix=$2
+  output_file_name=$3
+elif [[ $# -eq 4 ]]; then
+  is_output=$1
+  path_to_input_files=$2
+  input_file_prefix=$3
+  output_file_name=$4
+fi
+
+set -ux
 export PS4='$SECONDS + '
 
-cd $DATA
-
-msg="RTOFS_GLO_COMBINE_NC JOB has begun on $(hostname) at $(date)"
+msg="RTOFS_COMBINE_NC JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 # --------------------------------------------------------------------------- #
 
-# -- Load modules
-module purge
-module load PrgEnv-intel/8.1.0
-module load intel/19.1.3.304
-module load craype/2.7.17
-module load python/3.12.0
-module load hdf5/1.10.6
-module load netcdf/4.7.4
-module load nco/5.2.4
-module load cmake/3.20.2
+echo "---------------------------------------------------"
+echo "  IS_OUTPUT: $is_output"
+echo "  COMIN:     $path_to_input_files"
+echo "  INPUT:     $input_file_prefix"
+echo "  OUTPUT:    $output_file_name"
+echo "---------------------------------------------------"
 
-module list
-# --
-# Once [FRE-NCtools](https://github.com/NOAA-EMC/FRE-NCtools) is available as a module
-# following will not be needed. Just add "module load ..."
-path_to_fre="/lfs/h2/emc/couple/noscrub/santha.akella/fre-nctools_15Jan2026/bin/"
-
-
-# -- Inputs
-input_path="/lfs/h2/emc/couple/noscrub/dan.iredell/COMDIR/prod/com/rtofs/v2.5/rtofs.20250503.3200.8x8/"
-is_restart=True
-# --
-
-input_file_type="ocnp_2025_122_00.nc"
-output_file="ocnp.nc"
-
-args="-r -n4" # arguments to mppnccombine
-
-# -- Combine files
-$path_to_fre/mppnccombine ${args} ${output_file} ${input_path}/${input_file_type}*
-err=$?; export err ; err_chk
-echo " error from mppnccombine=",$err
-
-# -- Check for success
-if [ -f "${output_file}" ]; then
-  mv "${output_file}" $COMOUT/
+# Determine combine_args based on is_output
+# Using ,, to convert string to lowercase for safe comparison
+if [[ "${is_output,,}" == "true" || "${is_output}" == ".true." ]]; then
+  combine_args="-r -n4"
 else
-  echo "WARNING: ${output_file} not found."
+  combine_args="-h 16384 -m"
 fi
 
-msg="RTOFS_GLO_COMBINE_NC JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
+echo "  FLAGS:     ${combine_args}"
+echo "---------------------------------------------------"
+
+# Safety checks
+if [ ! -d "${path_to_input_files}" ]; then
+  echo "FATAL ERROR: Input directory ${path_to_input_files} does not exist!"
+  exit 2
+fi
+
+if [ ! -f "${EXECrtofs}/mppnccombine" ]; then
+  echo "FATAL ERROR: mppnccombine executable not found in ${EXECrtofs}!"
+  exit 3
+fi
+
+# Check if input files exist
+shopt -s nullglob
+input_files=("${path_to_input_files}/${input_file_prefix}".*)
+shopt -u nullglob # Disable it immediately so it doesn't affect other commands
+
+if [ ${#input_files[@]} -eq 0 ]; then
+  echo "FATAL ERROR: No input files found matching ${path_to_input_files}/${input_file_prefix}.*"
+  exit 4
+fi
+
+# Combine files
+echo "Combining ${#input_files[@]} files..."
+${EXECrtofs}/mppnccombine ${combine_args} ${output_file_name} ${path_to_input_files}/${input_file_prefix}.*
+
+# Check Status
+EXIT_STATUS=$?
+if [ $EXIT_STATUS -ne 0 ]; then
+  echo "FATAL ERROR: mppnccombine failed with exit code $EXIT_STATUS"
+  exit 5
+elif [ ! -s "${output_file_name}" ]; then
+  echo "FATAL ERROR: mppnccombine succeeded, but ${output_file_name} is missing or has 0 bytes!"
+  exit 6
+else
+  echo "SUCCESS: Created ${output_file_name}"
+  ls -lh "${output_file_name}"
+  exit 0
+fi
+
+# --------------------------------------------------------------------------- #
+
+msg="RTOFS_COMBINE_NC JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
