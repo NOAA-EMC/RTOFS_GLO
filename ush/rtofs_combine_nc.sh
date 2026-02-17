@@ -46,16 +46,16 @@ postmsg "$msg"
 # --------------------------------------------------------------------------- #
 
 echo "---------------------------------------------------"
-echo "  IS_OUTPUT: $is_output"
-echo "  COMIN:     $path_to_input_files"
-echo "  INPUT:     $input_file_prefix"
-echo "  OUTPUT:    $output_file_name"
+echo "  IS_OUTPUT:  $is_output"
+echo "  INPUT_PATH: $path_to_input_files"
+echo "  INPUT:      $input_file_prefix"
+echo "  OUTPUT:     $output_file_name"
 echo "---------------------------------------------------"
 
 # Determine combine_args based on is_output
 # Using ,, to convert string to lowercase for safe comparison
 if [[ "${is_output,,}" == "true" || "${is_output}" == ".true." ]]; then
-  combine_args="-r -n4"
+  combine_args="-n4"
 else
   combine_args="-h 16384 -m"
 fi
@@ -69,7 +69,7 @@ if [ ! -d "${path_to_input_files}" ]; then
   exit 2
 fi
 
-if [ ! -f "${EXECrtofs}/mppnccombine" ]; then
+if [ ! -x "${EXECrtofs}/mppnccombine" ]; then
   echo "FATAL ERROR: mppnccombine executable not found in ${EXECrtofs}!"
   exit 3
 fi
