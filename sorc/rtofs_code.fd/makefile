@@ -1,6 +1,7 @@
 SHELL=/bin/sh
 #RTOFS_GLO init makefile
 
+# RTOFS V2.5
 SUBDIRS = \
 	rtofs_archv2netCDF.fd \
 	rtofs_atmforcing_correct.fd \
@@ -15,7 +16,11 @@ SUBDIRS = \
 	rtofs_getkpds.fd \
 	rtofs_ssmis_tol2.cd
 
-# old rtofs_cice_stat.fd , , , rtofs_hycom_range.fd , rtofs_restart2archv.fd 
+# RTOFS V3.0
+SUBDIRS = \
+	rtofs_nc2grb2.fd \
+	rtofs_ncodaz_inc2mom6nc_glb_lyr.fd \
+	rtofs_ssmis_tol2.cd
 
 all: $(SUBDIRS)
 	for dir in $(SUBDIRS); do \

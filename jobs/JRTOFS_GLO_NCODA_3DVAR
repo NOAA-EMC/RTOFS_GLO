@@ -19,7 +19,6 @@ set -xa
 export NET=rtofs
 export RUN=rtofs
 export modID=glo
-export HYCOM_EXPT=930
 
 export cycle=t${cyc}z
 
@@ -87,12 +86,12 @@ postmsg "$msg"
 ####################
 # execute the script
 ####################
-sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_ncoda_hycom_var.sh
+sh ${HOMErtofs}/scripts/ex${RUN}_${modID}_ncoda_3dvar_var.sh
 
 #===================================================================
 
 cat $pgmout
-cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.ncoda_hycom_var.$(basename $pgmout)
+cp -p $pgmout $COMOUT/${RUN}_${modID}.t${cyc}z.ncoda_3dvar_var.$(basename $pgmout)
 
 msg="JOB $job HAS COMPLETED NORMALLY."
 postmsg "$msg"

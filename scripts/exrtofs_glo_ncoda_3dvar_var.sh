@@ -3,15 +3,15 @@ set -xa
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_ncoda_hycom_var.sh                         #
+# Script name:         exrtofs_glo_ncoda_3dvar_var.sh                         #
 # Script description:                                                         #
 #                                                                             #
 # Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
 #                                                                             #
 # Abstract: 
 #   this script runs a global 3DVAR multivariate analysis
-#   the analysis is performed on the global HYCOM tri-polar grid
-#   grid resoltuion is 8 km at the equator
+#   the analysis is performed on the global tri-polar grid
+#   grid resolution is 8 km at the equator
 #                                                                             #
 # Sub-scripts called:                                                         #
 #                                                                             #
@@ -22,23 +22,23 @@ set -xa
 
 export PS4='$SECONDS + '
 
-msg="RTOFS_GLO_NCODA_HYCOM_VAR JOB has begun on $(hostname) at $(date)"
+msg="RTOFS_GLO_NCODA_3DVAR_VAR JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 cd $DATA
 
 # --------------------------------------------------------------------------- #
 
-# 1.a Populate DATA/hycom_var with hycom_var files from COMINm1/ncoda
-echo timecheck RTOFS_GLO_HYCOM start get at $(date)
+# 1.a Populate DATA/3dvar_var with 3dvar_var files from COMINm1/ncoda
+echo timecheck RTOFS_GLO_3DVAR start get at $(date)
 
 mkdir -p $DATA/restart
 mkdir -p $DATA/work
 rm -f cmdfile.cpin
-if compgen -G "$COMINm1/ncoda/hycom_var/restart/*" > /dev/null
+if compgen -G "$COMINm1/ncoda/3dvar_var/restart/*" > /dev/null
 then
-  for hv in $(ls -S $COMINm1/ncoda/hycom_var/restart/); do
-    echo "cp -p -f $COMINm1/ncoda/hycom_var/restart/$hv $DATA/restart" >> cmdfile.cpin
+  for hv in $(ls -S $COMINm1/ncoda/3dvar_var/restart/); do
+    echo "cp -p -f $COMINm1/ncoda/3dvar_var/restart/$hv $DATA/restart" >> cmdfile.cpin
   done
   chmod +x cmdfile.cpin
   mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpin
@@ -46,19 +46,19 @@ then
   date
 else
   echo "WARNING - Cold starting $jobid"
-  echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/hycom.coldstart.email
-  echo "This is an abnormal event."                                            >> $DATA/hycom.coldstart.email
-  echo "The following directory is empty:"                                     >> $DATA/hycom.coldstart.email
-  echo "$COMINm1/ncoda/hycom_var/restart"                                      >> $DATA/hycom.coldstart.email
-  echo "This job will continue to run as a cold-start."                        >> $DATA/hycom.coldstart.email
-  cat $DATA/hycom.coldstart.email | mail.py -s "WARNING - Job $job cold started"
+  echo "WARNING - Job $jobid is cold-starting"                                  > $DATA/3dvar.coldstart.email
+  echo "This is an abnormal event."                                            >> $DATA/3dvar.coldstart.email
+  echo "The following directory is empty:"                                     >> $DATA/3dvar.coldstart.email
+  echo "$COMINm1/ncoda/3dvar_var/restart"                                      >> $DATA/3dvar.coldstart.email
+  echo "This job will continue to run as a cold-start."                        >> $DATA/3dvar.coldstart.email
+  cat $DATA/3dvar.coldstart.email | mail.py -s "WARNING - Job $job cold started"
 fi
 
 ln -sf $COMIN/ncoda/ocnqc $DATA
 
 # 1.b link in topo files
 ln -f -s ${FIXrtofs}/regional.mom6.nc ${DATA}/regional.mom6.nc
-ln -f -s ${FIXrtofs}/depth_GLBb0.08_09m11ob2_mom6.nc depth_GLBb0.08_09m11ob2_mom6.nc
+ln -f -s ${FIXrtofs}/depth_GLB.0p08_09m11ob2_mom6.nc depth_GLBb0.08_09m11ob2_mom6.nc
 
 # 1.c check if restart files are available
 if [[ ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res.nc  ||
@@ -105,7 +105,7 @@ cat << eof2 > ogridnl
  &end
 eof2
 
-cp $PARMrtofs/${RUN}_${modID}.hycom.oanl.in   ./oanl
+cp $PARMrtofs/${RUN}_${modID}.3dvar.oanl.in   ./oanl
 
 cat << eof4 > omapnl
  &omapnl
@@ -113,77 +113,77 @@ cat << eof4 > omapnl
  &end
 eof4
 
-# 3. Run Hycom var (NCODA 3D)
+# 3. Run 3dvar var (NCODA 3D)
 
 ddtg=${PDYm1}00
 log_dir=$DATA/logs
 mkdir -p $log_dir
 
-echo timecheck RTOFS_GLO_HYCOM start setup at $(date)
+echo timecheck RTOFS_GLO_3DVAR start setup at $(date)
 #NCODA setup
 $EXECrtofs/rtofs_ncoda_setup 3D mom ogridnl $ddtg > pout1
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_setup=",$err
 
 #NCODA prep
-echo timecheck RTOFS_GLO_HYCOM start prep at $(date)
+echo timecheck RTOFS_GLO_3DVAR start prep at $(date)
 mpiexec -n 72 --cpu-bind core $EXECrtofs/rtofs_ncoda_prep 3D mom ogridnl $ddtg > pout2
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_prep=",$err
 
 #NCODA var
-echo timecheck RTOFS_GLO_HYCOM start ncoda3d at $(date)
+echo timecheck RTOFS_GLO_3DVAR start ncoda3d at $(date)
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda 3D mom ogridnl $ddtg > pout3
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda=",$err
 
 #NCODA post
-echo timecheck RTOFS_GLO_HYCOM start post at $(date)
+echo timecheck RTOFS_GLO_3DVAR start post at $(date)
 . prep_step
 mpiexec -n $NPROCS --cpu-bind core $EXECrtofs/rtofs_ncoda_post 3D mom ogridnl $ddtg relax > pout4
 err=$?; export err ; err_chk
 echo " error from rtofs_ncoda_post=",$err
 
 #   rename local files
-[[ -f fort.32 ]] && mv fort.32 $log_dir/hycom_var.$ddtg.rej
-[[ -f fort.33 ]] && mv fort.33 $log_dir/hycom_var.$ddtg.prf
-[[ -f fort.34 ]] && mv fort.34 $log_dir/hycom_var.$ddtg.gpt
-[[ -f fort.37 ]] && mv fort.37 $log_dir/hycom_var.$ddtg.drc
-[[ -f fort.39 ]] && mv fort.39 $log_dir/hycom_var.$ddtg.fix
-[[ -f fort.41 ]] && mv fort.41 $log_dir/hycom_var.$ddtg.dup
-[[ -f fort.42 ]] && mv fort.42 $log_dir/hycom_var.$ddtg.ssh
-[[ -f fort.52 ]] && mv fort.52 $log_dir/hycom_var.$ddtg.sal
-[[ -f fort.67 ]] && mv fort.67 $log_dir/hycom_var.$ddtg.obs
-[[ -f fort.68 ]] && mv fort.68 $log_dir/hycom_var.$ddtg.grd
+[[ -f fort.32 ]] && mv fort.32 $log_dir/3dvar_var.$ddtg.rej
+[[ -f fort.33 ]] && mv fort.33 $log_dir/3dvar_var.$ddtg.prf
+[[ -f fort.34 ]] && mv fort.34 $log_dir/3dvar_var.$ddtg.gpt
+[[ -f fort.37 ]] && mv fort.37 $log_dir/3dvar_var.$ddtg.drc
+[[ -f fort.39 ]] && mv fort.39 $log_dir/3dvar_var.$ddtg.fix
+[[ -f fort.41 ]] && mv fort.41 $log_dir/3dvar_var.$ddtg.dup
+[[ -f fort.42 ]] && mv fort.42 $log_dir/3dvar_var.$ddtg.ssh
+[[ -f fort.52 ]] && mv fort.52 $log_dir/3dvar_var.$ddtg.sal
+[[ -f fort.67 ]] && mv fort.67 $log_dir/3dvar_var.$ddtg.obs
+[[ -f fort.68 ]] && mv fort.68 $log_dir/3dvar_var.$ddtg.grd
 
 #   create data coverage graphics
 DoGraphics=NO
 if [ $DoGraphics = YES ] ; then
-  echo timecheck RTOFS_GLO_HYCOM start ncoda_map at $(date)
+  echo timecheck RTOFS_GLO_3DVAR start ncoda_map at $(date)
   export OCN_OUTPUT_DIR=$DATA/restart
   export OCN_CLIM_DIR=$FIXrtofs/codaclim
   # NCODA map
   $EXECrtofs/rtofs_ncoda_map $ddtg > pout5
   err=$?; export err ; err_chk
   echo " error from rtofs_ncoda_map=",$err
-  mv gmeta $log_dir/hycom_var.$ddtg.gmeta
+  mv gmeta $log_dir/3dvar_var.$ddtg.gmeta
 fi
 
 #   combine and remove work files
-cat pout* > $log_dir/hycom_var.$ddtg.out
-cat $log_dir/hycom_var.$ddtg.out > $pgmout
+cat pout* > $log_dir/3dvar_var.$ddtg.out
+cat $log_dir/3dvar_var.$ddtg.out > $pgmout
 
 # 4. Copy last 15 days of data back to COMOUT/ncoda
-echo timecheck RTOFS_GLO_HYCOM start put at $(date)
+echo timecheck RTOFS_GLO_3DVAR start put at $(date)
 
-mkdir -p $COMOUT/ncoda/hycom_var/restart
+mkdir -p $COMOUT/ncoda/3dvar_var/restart
 rm -f cmdfile.cpout
 
 for d in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
   backymdh=$( $EXECrtofs/rtofs_dtg -d -$d ${PDY}00 )
   backymd=${backymdh:0:8}
   for f in $(ls $DATA/restart/*${backymd}*); do
-    echo "cp -p -f $f $COMOUT/ncoda/hycom_var/restart" >> cmdfile.cpout
+    echo "cp -p -f $f $COMOUT/ncoda/3dvar_var/restart" >> cmdfile.cpout
   done
 done
 
@@ -192,13 +192,13 @@ mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout
 err=$? ; export err ; err_chk
 date
 
-mkdir -p $COMOUT/ncoda/logs/hycom_var
-cp -p -f $DATA/logs/*.$ddtg.* $COMOUT/ncoda/logs/hycom_var
+mkdir -p $COMOUT/ncoda/logs/3dvar_var
+cp -p -f $DATA/logs/*.$ddtg.* $COMOUT/ncoda/logs/3dvar_var
 
-echo timecheck RTOFS_GLO_HYCOM finish put at $(date)
+echo timecheck RTOFS_GLO_3DVAR finish put at $(date)
 
 #################################################
-msg="THE RTOFS_GLO_NCODA_HYCOM_VAR JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
+msg="THE RTOFS_GLO_NCODA_3DVAR_VAR JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
 
 ################## END OF SCRIPT #######################

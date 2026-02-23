@@ -145,12 +145,12 @@ rm -f prednl
 cat << eof1 > prednl
  &prednl
    ocn_modl(0)   = 'CODA',
-   ocn2_path(0)  = '${COMINm1}/ncoda/hycom_var/restart'
+   ocn2_path(0)  = '${COMINm1}/ncoda/3dvar_var/restart'
    ocn2_fcst(0)  = .false.,
    ocn2_nest(0)  = 1,
    ocn2_upd(0)   = 24,
    prd2_use(0)   = 'updt'
-   ocn3_path(0)  = '${COMINm1}/ncoda/hycom_var/restart'
+   ocn3_path(0)  = '${COMINm1}/ncoda/3dvar_var/restart'
    ocn3_fcst(0)  = .true.,
    ocn3_nest(0)  = 1,
    ocn3_upd(0)   = 24,

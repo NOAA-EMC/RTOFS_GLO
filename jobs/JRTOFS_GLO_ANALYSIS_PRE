@@ -21,7 +21,6 @@ export NET=rtofs
 export RUN=rtofs
 export modID=glo
 export RUN_MODE=analysis
-export HYCOM_EXPT=930
 
 #####################
 # SETUP RUN VARIABLES

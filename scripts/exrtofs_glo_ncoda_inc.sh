@@ -60,45 +60,45 @@ export UVinc=MOM.res_Y${jday:0:4}_D${jday:4:3}_S00000_inc.UV.nc
 
 # Check for the existence of NCODA output files
 # Temperature
-if [ -e $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc ./${tempinc}
+if [ -e $COMIN/ncoda/3dvar_var/restart/${typet}_${dtg}_0000_analinc ]; then
+   ln -sf  $COMIN/ncoda/3dvar_var/restart/${typet}_${dtg}_0000_analinc ./${tempinc}
 else
-   msg="$COMIN/ncoda/hycom_var/restart/${typet}_${dtg}_0000_analinc is missing"
+   msg="$COMIN/ncoda/3dvar_var/restart/${typet}_${dtg}_0000_analinc is missing"
    err_exit $msg
 fi
 # Salinity
-if [ -e $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc ./${salininc}
+if [ -e $COMIN/ncoda/3dvar_var/restart/${types}_${dtg}_0000_analinc ]; then
+   ln -sf  $COMIN/ncoda/3dvar_var/restart/${types}_${dtg}_0000_analinc ./${salininc}
 else
-   msg="$COMIN/ncoda/hycom_var/restart/${types}_${dtg}_0000_analinc is missing"
+   msg="$COMIN/ncoda/3dvar_var/restart/${types}_${dtg}_0000_analinc is missing"
    err_exit $msg
 fi
 # Current - U-component
-if [ -e $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc ./${uvelinc}
+if [ -e $COMIN/ncoda/3dvar_var/restart/${typeu}_${dtg}_0000_analinc ]; then
+   ln -sf  $COMIN/ncoda/3dvar_var/restart/${typeu}_${dtg}_0000_analinc ./${uvelinc}
 else
-   msg="$COMIN/ncoda/hycom_var/restart/${typeu}_${dtg}_0000_analinc is missing"
+   msg="$COMIN/ncoda/3dvar_var/restart/${typeu}_${dtg}_0000_analinc is missing"
    err_exit $msg
 fi
 # Current - V-component
-if [ -e $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc ./${vvelinc}
+if [ -e $COMIN/ncoda/3dvar_var/restart/${typev}_${dtg}_0000_analinc ]; then
+   ln -sf  $COMIN/ncoda/3dvar_var/restart/${typev}_${dtg}_0000_analinc ./${vvelinc}
 else
-   msg="$COMIN/ncoda/hycom_var/restart/${typev}_${dtg}_0000_analinc is missing"
+   msg="$COMIN/ncoda/3dvar_var/restart/${typev}_${dtg}_0000_analinc is missing"
    err_exit $msg
 fi
 # Ice Coverage
-if [ -e $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld ./${icefld}
+if [ -e $COMIN/ncoda/3dvar_var/restart/${typec}_${dtg}_0000_analfld ]; then
+   ln -sf  $COMIN/ncoda/3dvar_var/restart/${typec}_${dtg}_0000_analfld ./${icefld}
 else
-   msg="$COMIN/ncoda/hycom_var/restart/${typec}_${dtg}_0000_analfld is missing"
+   msg="$COMIN/ncoda/3dvar_var/restart/${typec}_${dtg}_0000_analfld is missing"
    err_exit $msg
 fi
 # Background state layer thickness
-if [ -e $COMIN/ncoda/hycom_var/restart/${typethbg}_${dtgm1}_0024_fcstfld ]; then
-   ln -sf  $COMIN/ncoda/hycom_var/restart/${typethbg}_${dtgm1}_0024_fcstfld ./${lyrthbg}
+if [ -e $COMIN/ncoda/3dvar_var/restart/${typethbg}_${dtgm1}_0024_fcstfld ]; then
+   ln -sf  $COMIN/ncoda/3dvar_var/restart/${typethbg}_${dtgm1}_0024_fcstfld ./${lyrthbg}
 else
-   msg="$COMIN/ncoda/hycom_var/restart/${typethbg}_${dtgm1}_0024_fcstfld is missing"
+   msg="$COMIN/ncoda/3dvar_var/restart/${typethbg}_${dtgm1}_0024_fcstfld is missing"
    err_exit $msg
 fi
 
@@ -109,7 +109,7 @@ mom6_restart_files="MOM.res.nc MOM.res_1.nc MOM.res_3.nc MOM.res_4.nc"
 # Loop through each file
 for f in ${mom6_restart_files}; do
     # Construct the full source path
-    src="$COMIN/RESTART/${dtg:0:8}.000000.$f"
+    src="$COMINm1/RESTART/${dtg:0:8}.000000.$f"
 
     if [ -e "$src" ]; then
         ln -sf "$src" "$f"
@@ -133,7 +133,7 @@ sed -i -e "s/&TShincname/$TShinc/g" \
        -e "s/&lyrthkname/${lyrthbg}/g" ./ncoda_inc2mom6nc_lyr.input 
 
 # 3. Create ocean increment files
-$EXECrtofs/rtofs_ncodaz_inc2mom6nc_glb_lyr.x < ncoda_inc2mom6nc_lyr.input >> $pgmout
+$EXECrtofs/rtofs_ncodaz_inc2mom6nc_glb_lyr < ncoda_inc2mom6nc_lyr.input >> $pgmout
 err=$?; export err ; err_chk
 echo " error from rtofs_ncodaz_inc2mom6nc_glb_lyr=",$err
 cp $TShinc $COMOUT/rtofs_glo.$TShinc
