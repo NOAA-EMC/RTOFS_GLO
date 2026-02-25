@@ -19,7 +19,6 @@ set -xa
 export NET=rtofs
 export RUN=rtofs
 export modID=glo
-export HYCOM_EXPT=930
 
 export cycle=t${cyc}z
 

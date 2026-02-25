@@ -16,12 +16,6 @@ case $whattodo in
     cd ./rtofs_code.fd;./build_code.sh;cd ..
 
     echo
-    echo Building rtofs_hycom.fd
-    echo
-    cd ./rtofs_hycom.fd;./build_hycom.sh esmf ;cd ..
-    cd ./rtofs_hycom.fd;./build_hycom.sh;cd ..
-
-    echo
     echo Building rtofs_ncoda.fd
     echo
     cd ./rtofs_ncoda.fd;./build_ncoda.sh;cd ..
@@ -32,12 +26,6 @@ case $whattodo in
     echo Building rtofs_code.fd
     echo
     cd ./rtofs_code.fd;./build_code.sh debug;cd ..
-
-    echo
-    echo Building rtofs_hycom.fd
-    echo
-#    cd ./rtofs_hycom.fd;./build_hycom.sh esmf ;cd ..
-    cd ./rtofs_hycom.fd;./build_hycom.sh debug;cd ..
 
     echo
     echo Building rtofs_ncoda.fd
@@ -51,7 +39,6 @@ case $whattodo in
     echo Running option install
     echo
     cd rtofs_code.fd;make install;cd ..
-    cd rtofs_hycom.fd;./build_hycom.sh install;cd ..
     cd rtofs_ncoda.fd;make install;cd ..
     ;;
 
@@ -60,7 +47,6 @@ case $whattodo in
     echo Running option clean
     echo
     cd rtofs_code.fd;make clean;cd ..
-    cd rtofs_hycom.fd;./build_hycom.sh clean;cd ..
     cd rtofs_ncoda.fd;make clean;cd ..
     ;;
 
