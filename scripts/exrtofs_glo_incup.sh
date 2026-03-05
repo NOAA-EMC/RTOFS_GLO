@@ -2,19 +2,18 @@
 ###############################################################################
 ####  UNIX Script Documentation Block                                         #
 #                                                                             #
-# Script name:         exrtofs_glo_incup.sh                                   #
+# Script name:         exrtofs_glo_incup.sh                                #
 # Script description:                                                         #
 #                                                                             #
-# Author:        Dan Iredell     Org: NP23         Date: 2020-07-30           #
-#                                                                             #
-# Abstract: Runs 6hour HYCOM with incremental update                          #
+# Abstract: This script generates the incremental update fields               #
+#           for the RTOFS_GLO Ocean model                                     #
 #                                                                             #
 # Sub-scripts called:                                                         #
-#                                                                             #
-# Script history log:                                                         #
-# 2020-07-30  Dan Iredell                                                     #
+#   rtofs_abort.sh - Error handling for model crashes                         #
+#   rtofs_combine_nc.sh - (via cfp) combine restarts and product files        #
 #                                                                             #
 ###############################################################################
+
 set -xa
 
 export PS4='$SECONDS + '
@@ -25,197 +24,206 @@ msg="RTOFS_GLO_INCUP JOB has begun on $(hostname) at $(date)"
 postmsg "$msg"
 
 # --------------------------------------------------------------------------- #
+# 1. copy in files from parm
 
-# 1. Set up inputs for run
-
-typeset -Z5 SSSSS
 inc_hours=06
-# NOTE - if inc_hours changes then it probably requires changes to
-# exrtofs_glo_analysis.sh when it copies the restart file to COMOUT
+# future - calculate adate=PDYm1-inc_hours
+adate=${PDYm2:0:4}-${PDYm2:4:2}-${PDYm2:6:2}-64800
+for pfile in ice_in
+do
+  cp $PARMrtofs/${pfile} ./ice_in 
+  sed -i -e "s/&YMDS.nc/$adate.nc/" -e "s/&adjust_aice/adjust_aice/g" ./ice_in
+done
 
-dtg=${PDYm1}00
-dtginc=$($EXECrtofs/rtofs_dtg $dtg -h -$inc_hours)
-dtgm1=$($EXECrtofs/rtofs_dtg $dtg -d -1)
-dtgm2=$($EXECrtofs/rtofs_dtg $dtg -h -$inc_hours)
-dtgp1=$($EXECrtofs/rtofs_dtg $dtg -d 1)
-dtgp1inc=$($EXECrtofs/rtofs_dtg $dtgp1 -h -$inc_hours) 
-cisec=$(echo ${dtginc:8:2} 86400 24 | awk '{printf ( "%5.5d", ($1 * $2 / $3))}')
-jday2=$($USHutil/date2jday.sh ${dtgm2:0:8})
-archday2=${jday2:0:4}_${jday2:4:3}_${dtgm2:8:2}
+for pfile in data_table datm_in datm.streams diag_table fd_ufs.yaml input.nml noahmptable.tbl ufs.configure
+do
+  cp $PARMrtofs/$pfile . 
+done
+sed -i -e "s/&startup_continue/startup/" ./ufs.configure
 
-# inc_hours with incremental update
-hday12=$($USHrtofs/rtofs_date_normal2hycom.sh $dtg)
-hday11=$(echo $hday12 $inc_hours 24 | awk '{printf ("%12.3f", ($1 - ($2 / $3)))}')
-export iday=$hday11
+# model_configure modified on the fly
+for pfile in model_configure
+do 
+#  cp $PARMrtofs/mom/incup/$pfile .
+  cp $PARMrtofs/$pfile model_configure
+  sed -i -e "s/&YYYY/${PDYm2:0:4}/g" -e "s/&MM/${PDYm2:4:2}/g" -e "s/&DD/${PDYm2:6:2}/g" -e "s/&HH/18/g" -e "s/&NH/6/g" ./model_configure
+done
+# --------------------------------------------------------------------------- #
+# 2a. link in fix files to top-level
 
-echo $hday11 $hday12 > limits
+#for ffile in cice_model.res.nc grid_cice_NEMS_mx008.nc kmtu_cice_NEMS_mx008.nc mesh.mx008.nc
+for ffile in grid_cice_NEMS_mx008.nc kmtu_cice_NEMS_mx008.nc mesh.mx008.nc
+do
+  ln -sf $FIXrtofs/$ffile .
+done
 
-ln -sf $COMIN/rtofs_glo.ssmi.$dtg.r ssmi.r
-ln -sf $COMIN/rtofs_glo.ssmi.$dtg.r ../restart/ssmi.r
-dtgr0=$($EXECrtofs/rtofs_dtg $dtgm1 -f "%Y-%m-%d")
-dtgr1=$($EXECrtofs/rtofs_dtg $dtg -f "%Y-%m-%d")
+# --------------------------------------------------------------------------- #
+# 2b. link in fix files to INPUT
+# depth is 0p08
 
-# cp in yesterday's restart file produced at n-$inc_hours
-if [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a ]] ||  \
-   [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b ]] ||  \
-   [[ ! -e $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart_cice ]]; then
-     msg="One of $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a "
-     msg="$msg or $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b "
-     msg="$msg or $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart_cice is missing"
-     err_exit $msg
-else
-   ln -sf $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.a restart_in.a
-   ln -sf $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart.b restart_in.b
-   ln -sf $COMINm1/rtofs_glo.t00z.n-${inc_hours}.restart_cice  cice.restart.${dtgr0}-$cisec
-   echo cice.restart.${dtgr0}-$cisec > cice.restart_file
+mkdir INPUT
+for ffile in chl_mom6.nc grid_spec.nc mesh.datm.3072x1536.nc mom6_vgrid.nc regional.mom6.nc ocean_mosaic.nc runoff.daitren.clim.0.08deg.nc sss_mom6.nc tidal_amplitude.nc
+do
+  ln -sf $FIXrtofs/$ffile INPUT/.
+done
+  ln -s $FIXrtofs/depth_GLB.0p08_09m11ob2_mom6.nc INPUT/depth_GLBb0.08_09m11ob2_mom6.nc
+
+for pfile in MOM_input
+do
+  cp $PARMrtofs/${pfile} .
+  sed -i -e "s/ODA_INCUPD = &Value /ODA_INCUPD = True/" ./MOM_input
+  mv MOM_input INPUT/
+done
+for pfile in MOM_layout MOM_override
+do
+  cp $PARMrtofs/$pfile INPUT
+done
+
+# --------------------------------------------------------------------------- #
+# 3. Populate INPUT directory with pdym1 restart forcing incup files
+
+# check that MOM.res files exist
+for momres in $(ls $COMINm1/RESTART/${PDYm2}.180000.MOM.res*nc*)
+do
+   fn=$(basename $momres | cut -d. -f3-)
+   ln -s $momres INPUT/$fn
+done
+
+# forcing (for this time period)  (change datm.streams when changing)
+ln -s $COMIN/../forcing/$PDY/gfs.2025121400-2025122218_positive.nc INPUT/gfs.forcing.files.nc
+
+# incremental update files
+
+dayinc=`$EXECrtofs/rtofs_dtg -f Y%Y_D%j_S00000 ${PDYm1}00`
+ln -s $COMIN/rtofs_glo.MOM.res_${dayinc}_inc.TSzh.nc INPUT/MOM.inc.TSzh.nc
+ln -s $COMIN/rtofs_glo.MOM.res_${dayinc}_inc.UV.nc INPUT/MOM.inc.UV.nc
+
+# iced with right date
+icedate=$(echo $PDYm2 | cut -c1-4)-$(echo $PDYm2 | cut -c5-6)-$(echo $PDYm2 | cut -c7-8)-64800
+ln -s $COMINm1/RESTART/iced.${icedate}.nc INPUT/iced.${icedate}.nc
+echo INPUT/iced.${icedate}.nc > ice.restart_file
+
+# --------------------------------------------------------------------------- #
+# 4. Create other directories, get the ice concentration analysis nc file.
+
+mkdir history RESTART MOM6_OUTPUT
+
+#sic.nc file
+ln -s  $COMIN/sic.nc RESTART/
+
+# --------------------------------------------------------------------------- #
+# 5. get executable
+
+cp $EXECrtofs/ufs_model.x fv3.exe
+
+mpiexec -np $NMPI --cpu-bind core  ./fv3.exe >> $pgmout 2>errfile
+rc=$?
+
+if [ $rc -ne 0 ]
+then
+   echo we are saying goodbye
+   $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit" \
+      "problem with incup model run - return code " $rc
+   exit
 fi
 
-#link forcing
-case=anal
-pref=rtofs_glo.$case.t00z
+# combine files (one restart and two archives) and copy to COMOUT
+rm -f cmdfile.cpout
+mkdir -p $COMOUT/RESTART $COMOUT/history $COMOUT/MOM6_OUTPUT
+insertedsleepcommands=15
 
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.cb_11_10mm.a       cb.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.cb_11_10mm.b       cb.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.cice.prec_lanl_12.r   cice.prec_lanl_12.r
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.cice.rhoa_ncar85-88_12.r cice.rhoa_ncar85-88_12.r
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.forcing.chl.a      forcing.chl.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.forcing.chl.b      forcing.chl.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.forcing.offlux.a   forcing.offlux.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.forcing.offlux.b   forcing.offlux.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.forcing.rivers.a   forcing.rivers.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.forcing.rivers.b   forcing.rivers.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.cice.r    regional.cice.r
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a    regional.grid.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b    regional.grid.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a   regional.depth.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b   regional.depth.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.a        iso.sigma.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.iso.sigma.b        iso.sigma.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.tbaric.a           tbaric.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.tbaric.b           tbaric.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_int.a        relax.intf.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_int.b        relax.intf.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_rmu.a        relax.rmu.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_rmu.b        relax.rmu.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_sal.a        relax.saln.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_sal.b        relax.saln.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_ssh.a        relax.ssh.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_ssh.b        relax.ssh.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_sss.a        relax.sssrmx.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_sss.b        relax.sssrmx.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_tem.a        relax.temp.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.relax_tem.b        relax.temp.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.thkdf4.a           thkdf4.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.thkdf4.b           thkdf4.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.thkdf4_double.a    thkdf4_double.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.thkdf4_double.b    thkdf4_double.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf2.a           veldf2.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf2.b           veldf2.b
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf4.a           veldf4.a
-ln -f -s ${FIXrtofs}/${RUN}_${modID}.${inputgrid}.veldf4.b           veldf4.b
+#Restarts
+echo "${USHrtofs}/rtofs_combine_nc.sh False $DATA/RESTART ${PDYm1}.000000.MOM.res.nc ${COMOUT}/RESTART/${PDYm1}.000000.MOM.res.nc > cmb.restart.${PDYm1}.000000.res.out" >> cmdfile.cpout
+for i in $(seq $insertedsleepcommands};do echo "sleep 10" >> cmdfile.cpout;done
+for res in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+do
+   echo "${USHrtofs}/rtofs_combine_nc.sh False $DATA/RESTART ${PDYm1}.000000.MOM.res_${res}.nc ${COMOUT}/RESTART/${PDYm1}.000000.MOM.res_${res}.nc > cmb.restart.${PDYm1}.000000.res_${res}.out" >> cmdfile.cpout
+   for i in $(seq $insertedsleepcommands};do echo "sleep 10" >> cmdfile.cpout;done
+done
 
-   for f in airtmp glbrad lwdflx precip presur radflx shwflx surtmp vapmix wndewd wndnwd wndspd; do
-      ln -sf $COMINm1/${pref}.forcing.$f.a  forcing.$f.a
-      ln -sf $COMINm1/${pref}.forcing.$f.b  forcing.$f.b
-   done
+#Diagnostics (can do better than this)
+for dfile in $(ls ocnp*0000)
+do
+   dfil=$(echo $dfile | cut -d. -f1-2)
+   echo "${USHrtofs}/rtofs_combine_nc.sh $DATA $dfil ${COMOUT}/$dfil > cmb.$dfil.out" >> cmdfile.cpout
+   for i in $(seq $insertedsleepcommands};do echo "sleep 10" >> cmdfile.cpout;done
+done
 
-   # Prepare sea ice forcing with the start time of the run
-   export RUN_MODE=incup
-   $USHrtofs/${RUN}_iceforcing.sh
+# copy singular files
+for ifile in $(ls history/iceh*.nc*)
+do
+   echo "cp -p -f $ifile $COMOUT/history" >> cmdfile.cpout
+done
+adate=$(echo $PDYm1 | cut -c1-4)-$(echo $PDYm1 | cut -c5-6)-$(echo $PDYm1 | cut -c7-8)-00000
+echo "cp -p -f RESTART/iced.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
+echo "cp -p -f RESTART/datm.gfs.cpl.r.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
+echo "cp -p -f datm.gfs.datm.r.${adate}.nc $COMOUT" >> cmdfile.cpout
 
-mkdir incup
-ln -sf $COMIN/rtofs_glo.incupd.$archday2.a incup/incupd.$archday2.a
-ln -sf $COMIN/rtofs_glo.incupd.$archday2.b incup/incupd.$archday2.b
+# diagnostics and log files
+mkdir $COMOUT/MOM6_OUTPUT
+for logfile in ice_diag.d mediator.log atm.log
+do
+  echo "cp -p -f $logfile $COMOUT/incup.$logfile" >> cmdfile.cpout
+done
+for momoutputfile in $(ls MOM6_OUTPUT)
+do
+   echo "cp -p -f MOM6_OUTPUT/$momoutputfile $COMOUT/MOM6_OUTPUT/incup.$momoutputfile" >> cmdfile.cpout
+done
 
-cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.archs.input        ./archs.input
-cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.incup.blkdat.input ./blkdat.input 
-cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.incup.ice_in       ./ice_in
-cp $PARMrtofs/${RUN}_${modID}.${inputgrid}.patch.input        ./patch.input
-
-touch ok
-rm -f ok
-date >> TRACK
-
+chmod +x cmdfile.cpout
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout > cpout.out
+err=$? ; export err ; err_chk
 date
-mpiexec -np $NPROCS --cpu-bind core $EXECrtofs/rtofs_hycom >> $pgmout 2>errfile
-err=$?
-echo " error from rtofs_hycom=",$err
 
-date >> TRACK
+msg="THE RTOFS_GLO_INCUP JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
+postmsg "$msg"
 
-ok="unknown"
-test -s ${DATA}/summary_out && ok=$(tail -1 ${DATA}/summary_out)
-if [ "$ok" = "normal stop" ]
-then
-  modelstatus=0
-else
-  modelstatus=1
-fi
+exit
 
-# cp restart and arch to COMOUT
-if [ $modelstatus = 0 ]
-then
-  #restart
-  date_out=0 ; date_out1=0
-  test -s ${DATArestart}/restart_out.b && date_out=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_out.b)
-  test -s ${DATArestart}/restart_out1.b && date_out1=$(${USHrtofs}/rtofs_date4restart.sh ${DATArestart}/restart_out1.b)
-  if [[ ${date_out} -eq 0 && ${date_out1} -eq 0 ]]
-  then
-    $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit" \
-     "problem with incup  model run - no restart files created" -99
-  fi
-  if [ ${date_out} -gt ${date_out1} ]
-  then
-    rfile=${DATArestart}/restart_out.b
-    cdate=${date_out}
-  else
-    rfile=${DATArestart}/restart_out1.b
-    cdate=${date_out1}
-  fi
-  mode=n
-  YYYY=$(echo $cdate | cut -c1-4)
-  MM=$(echo $cdate | cut -c5-6)
-  DD=$(echo $cdate | cut -c7-8)
-  HH=$(echo $cdate | cut -c9-10)
-  SSSSS=$(expr $HH \* 3600)
-  LEAD=$($NHOUR ${cdate} ${PDY}${mycyc})
-  HYCOMrestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart
-  CICErestTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.restart_cice
-  cp -p $rfile ${COMOUT}/${HYCOMrestTplate}.b
-  cp -p ${rfile%.b}.a ${COMOUT}/${HYCOMrestTplate}.a
-  cp -p ${DATArestart}/cice.restart.${YYYY}-${MM}-${DD}-${SSSSS} ${COMOUT}/${CICErestTplate}
-  #archv, archs, arche
-  for afile in $(ls ${DATAarchive}/archv.????_???_00.a ${DATAarchive}/archs.????_???_00.a ${DATAarchive}/arche.????_???_00.a)
-  do
-    cfile=$(basename $afile)
-    YYYY=$(echo $cfile | cut -c7-10)
-    DDD=$(echo $cfile | cut -c12-14)
-    HH=$(echo $cfile | cut -c16-17)
-    YYYYMMDD=$(${USHutil}/date2jday.sh ${YYYY}${DDD})
-    MM=$(echo $YYYYMMDD | cut -c5-6)
-    DD=$(echo $YYYYMMDD | cut -c7-8)
-    LEAD=$($NHOUR ${YYYY}${MM}${DD}${HH} ${PDY}${mycyc})
-    arch=$(echo $cfile | cut -d. -f1)
-    HYCOMarchTplate=${RUN}_${modID}.t${mycyc}z.${mode}${LEAD}.${arch}
-    if [ $arch = "archv" ] ; then
-      cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
-      cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
-      cp -p -f ${afile%.a}.txt ${COMOUT}/${HYCOMarchTplate}.txt
-    fi
-    if [ $arch = "archs" ] ; then
-      cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
-      cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
-      cp -p -f ${afile%.a}.txt ${COMOUT}/${HYCOMarchTplate}.txt
-    fi
-    if [ $arch = "arche" ] ; then
-      cp -p -f ${afile%.a}.a ${COMOUT}/${HYCOMarchTplate}.a
-      cp -p -f ${afile%.a}.b ${COMOUT}/${HYCOMarchTplate}.b
-    fi
-  done
-else
-  $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job Abnormal model exit" \
-   "problem with incup  model run - return code $modelstatus" $modelstatus
-fi
+#### below is copying each file to COMOUT
+
+# copy archive and history files to COMOUT
+rm -f cmdfile.cpout
+
+# ocean archives
+for ofile in $(ls ocn*.nc*)
+do
+   echo "cp -p -f $ofile $COMOUT" >> cmdfile.cpout
+done
+# ice history
+mkdir -p $COMOUT/history
+for ifile in $(ls history/iceh*.nc*)
+do
+   echo "cp -p -f $ifile $COMOUT/history" >> cmdfile.cpout
+done
+# restart
+mkdir -p $COMOUT/RESTART
+for rfile in $(ls RESTART/${PDYm1}.000000.MOM*)
+do
+  echo "cp -p -f $rfile $COMOUT/RESTART" >> cmdfile.cpout
+done
+adate=$(echo $PDYm1 | cut -c1-4)-$(echo $PDYm1 | cut -c5-6)-$(echo $PDYm1 | cut -c7-8)-00000
+echo "cp -p -f RESTART/iced.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
+echo "cp -p -f RESTART/datm.gfs.cpl.r.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
+
+# datm file
+echo "cp -p -f datm.gfs.datm.r.${adate}.nc $COMOUT" >> cmdfile.cpout
+
+# diagnostics and log files
+mkdir $COMOUT/MOM6_OUTPUT
+for logfile in ice_diag.d mediator.log atm.log
+do
+  echo "cp -p -f $logfile $COMOUT/incup.$logfile" >> cmdfile.cpout
+done
+for momoutputfile in $(ls MOM6_OUTPUT)
+do
+   echo "cp -p -f MOM6_OUTPUT/$momoutputfile $COMOUT/MOM6_OUTPUT/incup.$momoutputfile" >> cmdfile.cpout
+done
+
+chmod +x cmdfile.cpout
+mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout
+err=$? ; export err ; err_chk
+date
 
 msg="THE RTOFS_GLO_INCUP JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"

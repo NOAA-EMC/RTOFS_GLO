@@ -61,13 +61,13 @@ ln -f -s ${FIXrtofs}/regional.mom6.nc ${DATA}/regional.mom6.nc
 ln -f -s ${FIXrtofs}/depth_GLB.0p08_09m11ob2_mom6.nc depth_GLBb0.08_09m11ob2_mom6.nc
 
 # 1.c check if restart files are available
-if [[ ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res.nc  ||
-      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_1.nc  ||
-      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_2.nc  ||
-      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_3.nc  ||
-      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_4.nc  ||
-      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_5.nc  ||
-      ! -s $COMINm1/RESTART/${PDY}.000000.MOM.res_16.nc  ]] 
+if [[ ! -s $COMINm1/RESTART/${PDYm1}.000000.MOM.res.nc  ||
+      ! -s $COMINm1/RESTART/${PDYm1}.000000.MOM.res_1.nc  ||
+      ! -s $COMINm1/RESTART/${PDYm1}.000000.MOM.res_2.nc  ||
+      ! -s $COMINm1/RESTART/${PDYm1}.000000.MOM.res_3.nc  ||
+      ! -s $COMINm1/RESTART/${PDYm1}.000000.MOM.res_4.nc  ||
+      ! -s $COMINm1/RESTART/${PDYm1}.000000.MOM.res_5.nc  ||
+      ! -s $COMINm1/RESTART/${PDYm1}.000000.MOM.res_16.nc  ]] 
 
 then
   $USHrtofs/${RUN}_abort.sh "FATAL ERROR: $job No restart file found" \

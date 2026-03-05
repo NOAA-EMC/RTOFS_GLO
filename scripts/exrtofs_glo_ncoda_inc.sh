@@ -1,9 +1,18 @@
 #!/bin/sh
 set -xa
-
+###############################################################################
+####  UNIX Script Documentation Block                                         #
+#
 # Script name:        exrtofs_glo_ncoda_inc.sh
 # Script description: Creates ocean (sea ice) increment
 #                     (restart modification) files used in UFS integration.
+#
+# Abstract: Remap an archive file to an NCODA analysis, new layer depths.     #
+#                                                                             #
+# Sub-scripts called:                                                         #
+#   rtofs_glo2d_ice.sh - creates sea ice restart modification file
+#                                                                             #
+###############################################################################
 
 export PS4='$SECONDS + '
 

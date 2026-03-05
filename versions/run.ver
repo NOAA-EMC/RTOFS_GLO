@@ -19,12 +19,12 @@ export cdo_ver=1.9.8
 export gempak_ver=7.15.1
 export libjpeg_ver=9c
 export grib_util_ver=1.2.4
-export hdf5_ver=1.10.6
+export hdf5z_ver=1.10.6
 export netcdf3_ver=3.6.3
 export netcdf4_ver=4.7.4
 export wgrib2_ver=2.0.8
 
-export evs_ver=2.0_py312
+export ve_hafs_ver=2.1
 
 module use /apps/dev/modulefiles/
 
