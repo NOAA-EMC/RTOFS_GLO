@@ -27,12 +27,13 @@ postmsg "$msg"
 # 1. copy in files from parm
 
 inc_hours=06
-# future - calculate adate=PDYm1-inc_hours
-adate=${PDYm2:0:4}-${PDYm2:4:2}-${PDYm2:6:2}-64800
+# future - calculate startdate=PDYm1-inc_hours
+startdate=${PDYm2:0:4}-${PDYm2:4:2}-${PDYm2:6:2}-64800
+sdate=${PDYm2}18
 for pfile in ice_in
 do
   cp $PARMrtofs/${pfile} ./ice_in 
-  sed -i -e "s/&YMDS.nc/$adate.nc/" -e "s/&adjust_aice/adjust_aice/g" ./ice_in
+  sed -i -e "s/&YMDS.nc/$startdate.nc/" -e "s/&adjust_aice/adjust_aice/g" ./ice_in
 done
 
 for pfile in data_table datm_in datm.streams diag_table fd_ufs.yaml input.nml noahmptable.tbl ufs.configure
@@ -90,7 +91,7 @@ do
 done
 
 # forcing (for this time period)  (change datm.streams when changing)
-ln -s $COMIN/../forcing/$PDY/gfs.2025121400-2025122218_positive.nc INPUT/gfs.forcing.files.nc
+ln -s $COMIN/../forcing/$PDY/zg.forcing.files INPUT/gfs.forcing.files.nc
 
 # incremental update files
 
@@ -130,15 +131,15 @@ fi
 # combine files (one restart and two archives) and copy to COMOUT
 rm -f cmdfile.cpout
 mkdir -p $COMOUT/RESTART $COMOUT/history $COMOUT/MOM6_OUTPUT
-insertedsleepcommands=15
+insertedsleepcommands=5
 
 #Restarts
 echo "${USHrtofs}/rtofs_combine_nc.sh False $DATA/RESTART ${PDYm1}.000000.MOM.res.nc ${COMOUT}/RESTART/${PDYm1}.000000.MOM.res.nc > cmb.restart.${PDYm1}.000000.res.out" >> cmdfile.cpout
-for i in $(seq $insertedsleepcommands};do echo "sleep 10" >> cmdfile.cpout;done
+for i in $(seq $insertedsleepcommands);do echo "sleep 5" >> cmdfile.cpout;done
 for res in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 do
    echo "${USHrtofs}/rtofs_combine_nc.sh False $DATA/RESTART ${PDYm1}.000000.MOM.res_${res}.nc ${COMOUT}/RESTART/${PDYm1}.000000.MOM.res_${res}.nc > cmb.restart.${PDYm1}.000000.res_${res}.out" >> cmdfile.cpout
-   for i in $(seq $insertedsleepcommands};do echo "sleep 10" >> cmdfile.cpout;done
+   for i in $(seq $insertedsleepcommands);do echo "sleep 5" >> cmdfile.cpout;done
 done
 
 #Diagnostics (can do better than this)
@@ -146,13 +147,27 @@ for dfile in $(ls ocnp*0000)
 do
    dfil=$(echo $dfile | cut -d. -f1-2)
    echo "${USHrtofs}/rtofs_combine_nc.sh $DATA $dfil ${COMOUT}/$dfil > cmb.$dfil.out" >> cmdfile.cpout
-   for i in $(seq $insertedsleepcommands};do echo "sleep 10" >> cmdfile.cpout;done
+   for i in $(seq $insertedsleepcommands);do echo "sleep 5" >> cmdfile.cpout;done
 done
 
 # copy singular files
 for ifile in $(ls history/iceh*.nc*)
 do
-   echo "cp -p -f $ifile $COMOUT/history" >> cmdfile.cpout
+   # modify ice history file (iceh_01h.2025-12-22-32400.nc) to newname (rtofs_glo_2ds_f056_ice.nc)
+   icedat=$(echo $ifile | cut -d. -f2 | cut -d- -f1-3 | tr -d "-")
+   icesec=$(echo $ifile | cut -d. -f2 | cut -d- -f4 | tr -d "-")
+   let icehr=$icesec*24/86400
+   icehr=$(printf "%02d\n" $icehr)
+   if [ $icedat -gt $PDY ]     
+   then
+      marker=f
+      ihour=$($NHOUR $icedat$icehr ${PDY}00)
+   else
+      marker=tm
+      ihour=$($NHOUR ${PDY}00 $icedat$icehr)
+   fi
+   ihour=$(printf "%03d\n" $ihour)
+   echo "cp -p -f $ifile $COMOUT/rtofs_glo_2ds.${marker}${ihour}.ice.nc" >> cmdfile.cpout
 done
 adate=$(echo $PDYm1 | cut -c1-4)-$(echo $PDYm1 | cut -c5-6)-$(echo $PDYm1 | cut -c7-8)-00000
 echo "cp -p -f RESTART/iced.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
@@ -179,51 +194,3 @@ msg="THE RTOFS_GLO_INCUP JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
 postmsg "$msg"
 
 exit
-
-#### below is copying each file to COMOUT
-
-# copy archive and history files to COMOUT
-rm -f cmdfile.cpout
-
-# ocean archives
-for ofile in $(ls ocn*.nc*)
-do
-   echo "cp -p -f $ofile $COMOUT" >> cmdfile.cpout
-done
-# ice history
-mkdir -p $COMOUT/history
-for ifile in $(ls history/iceh*.nc*)
-do
-   echo "cp -p -f $ifile $COMOUT/history" >> cmdfile.cpout
-done
-# restart
-mkdir -p $COMOUT/RESTART
-for rfile in $(ls RESTART/${PDYm1}.000000.MOM*)
-do
-  echo "cp -p -f $rfile $COMOUT/RESTART" >> cmdfile.cpout
-done
-adate=$(echo $PDYm1 | cut -c1-4)-$(echo $PDYm1 | cut -c5-6)-$(echo $PDYm1 | cut -c7-8)-00000
-echo "cp -p -f RESTART/iced.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
-echo "cp -p -f RESTART/datm.gfs.cpl.r.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
-
-# datm file
-echo "cp -p -f datm.gfs.datm.r.${adate}.nc $COMOUT" >> cmdfile.cpout
-
-# diagnostics and log files
-mkdir $COMOUT/MOM6_OUTPUT
-for logfile in ice_diag.d mediator.log atm.log
-do
-  echo "cp -p -f $logfile $COMOUT/incup.$logfile" >> cmdfile.cpout
-done
-for momoutputfile in $(ls MOM6_OUTPUT)
-do
-   echo "cp -p -f MOM6_OUTPUT/$momoutputfile $COMOUT/MOM6_OUTPUT/incup.$momoutputfile" >> cmdfile.cpout
-done
-
-chmod +x cmdfile.cpout
-mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout
-err=$? ; export err ; err_chk
-date
-
-msg="THE RTOFS_GLO_INCUP JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
-postmsg "$msg"

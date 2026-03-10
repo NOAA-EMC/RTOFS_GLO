@@ -48,6 +48,9 @@ CMD = rtofs_ncodaz_inc2mom6nc_glb_lyr
 # Default target
 all:	$(CMD)
 
+debug:	FFLAGS = $(DEBUG)
+debug:	all
+
 # Link object files to create executable
 $(CMD):	$(OBJECTS)
 	$(FC) $(FFLAGS) -o $@ $^ $(LDFLAGS)

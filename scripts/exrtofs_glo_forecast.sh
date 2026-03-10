@@ -142,14 +142,13 @@ fi # wearerunningv2=1
 # --------------------------------------------------------------------------- #
 # 1. copy in files from parm to top level
 
-#get number of days to run, 
-#source $PARMrtofs/rtofs_glo.navy_0.08.config
-#fcst=fcst1
-#  fcstdays=1
-#  PD1=$PDY
-  NH=96
+NH=$(expr $fcstdays \* 24)
+enddate=$($NDATE $NH ${startdate})
+# if start from beginning then minutes is 00000
+# however if a restart then minutes could be different (probably hour of restart * 60 * 60 = 43200)
+rminutes=00000
 
-adate=${PDY:0:4}-${PDY:4:2}-${PDY:6:2}-00000
+adate=${startdate:0:4}-${startdate:4:2}-${startdate:6:2}-$rminutes
 for pfile in ice_in.forecast; do
 cp $PARMrtofs/$pfile ./ice_in
   sed -i -e "s/&YMDS.nc/$adate.nc/" -e "s/&adjust_aice/none/" ./ice_in
@@ -166,7 +165,7 @@ mv ./ufs.configure.forecast ./ufs.configure
 for pfile in model_configure
 do
   cp $PARMrtofs/$pfile .
-  sed -i -e  "s/&YYYY/${PDY:0:4}/g" -e "s/&MM/${PDY:4:2}/g" -e "s/&DD/${PDY:6:2}/g" -e "s/&HH/00/g" -e "s/&NH/$NH/g" ./model_configure
+  sed -i -e  "s/&YYYY/${startdate:0:4}/g" -e "s/&MM/${startdate:4:2}/g" -e "s/&DD/${startdate:6:2}/g" -e "s/&HH/00/g" -e "s/&NH/$NH/g" ./model_configure
 done
 
 # --------------------------------------------------------------------------- #
@@ -205,19 +204,19 @@ done
 # 3. Populate INPUT directory with pdym1 restart and forcing
 
 # check that MOM.res files exist
-for momres in $(ls $COMIN/RESTART/${PDY}.000000.MOM.res*nc*)
+ymd=$(echo $startdate | cut -c1-8)
+hms=$(echo $startdate | cut -c9-10)0000
+for momres in $(ls $COMIN/RESTART/$ymd.$hms.MOM.res*nc*)
 do
    fn=$(basename $momres | cut -d. -f3-)
    ln -s $momres INPUT/$fn
 done
 
 # forcing (for this time period)  (change datm.streams when changing)
-#ln -s $COMIN/../forcing/$PDY/gfs.2025121400-2025123118_positive.nc INPUT/gfs.forcing.files.nc
-# faking that it is the 12/22 file
-ln -s $COMIN/../forcing/$PDY/gfs.2025121400-2025122218_positive.nc INPUT/gfs.forcing.files.nc
+ln -s $COMIN/../forcing/$PDY/zg.forcing.files INPUT/gfs.forcing.files.nc
 
 # iced with right date
-icedate=$(echo $PDY | cut -c1-4)-$(echo $PDY | cut -c5-6)-$(echo $PDY | cut -c7-8)-00000
+icedate=$(echo $startdate | cut -c1-4)-$(echo $startdate | cut -c5-6)-$(echo $startdate | cut -c7-8)-$rminutes
 ln -s $COMIN/RESTART/iced.${icedate}.nc INPUT/iced.${icedate}.nc
 echo INPUT/iced.${icedate}.nc > ice.restart_file
 
@@ -261,33 +260,51 @@ fi
 #    nprocs - icehistory (96) - otherfiles (13) = 109
 # sleep commands = max((nprocs - total cmds) / combine commands -1,16)
 
-insertedsleepcommands=15
+insertedsleepcommands=5
 rm -f cmdfile.cpout
 mkdir -p $COMOUT/RESTART $COMOUT/history $COMOUT/MOM6_OUTPUT
 
-#Restarts
-echo "${USHrtofs}/rtofs_combine_nc.sh False $DATA/RESTART ${PDYp4}.000000.MOM.res.nc ${COMOUT}/RESTART/${PDYp4}.000000.MOM.res.nc > cmb.restart.${PDYp4}.000000.res.out"  >> cmdfile.cpout
-for i in $(seq $insertedsleepcommands};do echo "sleep 10" >> cmdfile.cpout;done
+#Restarts (for both forecasts?)
+#if [ $stepnum -eq 1 ]
+#then
+endymd=$(echo $enddate | cut -c1-8)
+endhms=$(echo $enddate | cut -c9-10)0000
+echo "${USHrtofs}/rtofs_combine_nc.sh False $DATA/RESTART ${endymd}.${endhms}.MOM.res.nc ${COMOUT}/RESTART/${endymd}.${endhms}.MOM.res.nc > cmb.restart.${endymd}.${endhms}.res.out"  >> cmdfile.cpout
+for i in $(seq $insertedsleepcommands);do echo "sleep 5" >> cmdfile.cpout;done
 for res in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 do
-   echo "${USHrtofs}/rtofs_combine_nc.sh False $DATA/RESTART ${PDYp4}.000000.MOM.res_${res}.nc ${COMOUT}/RESTART/${PDYp4}.000000.MOM.res_${res}.nc > cmb.restart.${PDYp4}.000000.res_${res}.out" >> cmdfile.cpout
-   for i in $(seq $insertedsleepcommands};do echo "sleep 10" >> cmdfile.cpout;done
+   echo "${USHrtofs}/rtofs_combine_nc.sh False $DATA/RESTART ${endymd}.${endhms}.MOM.res_${res}.nc ${COMOUT}/RESTART/${endymd}.${endhms}.MOM.res_${res}.nc > cmb.restart.${endymd}.${endhms}.res_${res}.out" >> cmdfile.cpout
+   for i in $(seq $insertedsleepcommands);do echo "sleep 5" >> cmdfile.cpout;done
 done
+#fi
 
 #Diagnostics (can do better than this)
 for dfile in $(ls ocn*0000)
 do
    dfil=$(echo $dfile | cut -d. -f1-2)
    echo "${USHrtofs}/rtofs_combine_nc.sh $DATA $dfil ${COMOUT}/$dfil > cmb.$dfil.out" >> cmdfile.cpout
-   for i in $(seq $insertedsleepcommands};do echo "sleep 10" >> cmdfile.cpout;done
+   for i in $(seq $insertedsleepcommands);do echo "sleep 5" >> cmdfile.cpout;done
 done
 
 # copy singular files
 for ifile in $(ls history/iceh*.nc*)
 do
-   echo "cp -p -f $ifile $COMOUT/history" >> cmdfile.cpout
+   icedat=$(echo $ifile | cut -d. -f2 | cut -d- -f1-3 | tr -d "-")
+   icesec=$(echo $ifile | cut -d. -f2 | cut -d- -f4 | tr -d "-")
+   let icehr=$icesec*24/86400
+   icehr=$(printf "%02d\n" $icehr)
+   if [ $icedat -ge $PDY ]
+   then
+      marker=f
+      ihour=$($NHOUR $icedat$icehr ${PDY}00)
+   else
+      marker=tm
+      ihour=$($NHOUR ${PDY}00 $icedat$icehr)
+   fi
+   ihour=$(printf "%03d\n" $ihour)
+   echo "cp -p -f $ifile $COMOUT/rtofs_glo_2ds.${marker}${ihour}.ice.nc" >> cmdfile.cpout
 done
-fdate=$(echo $PDYp4 | cut -c1-4)-$(echo $PDYp4 | cut -c5-6)-$(echo $PDYp4 | cut -c7-8)-00000
+fdate=$(echo $endymd | cut -c1-4)-$(echo $endymd | cut -c5-6)-$(echo $endymd | cut -c7-8)-00000
 echo "cp -p -f RESTART/iced.${fdate}.nc $COMOUT/RESTART" >> cmdfile.cpout
 echo "cp -p -f RESTART/datm.gfs.cpl.r.${fdate}.nc $COMOUT/RESTART" >> cmdfile.cpout
 
@@ -312,53 +329,4 @@ postmsg "$msg"
 
 ################## END OF SCRIPT #######################
 
-
 exit
-
-# copy archive and history files to COMOUT
-rm -f cmdfile.cpout
-
-# ocean archives
-for ofile in $(ls ocn*.nc*)
-do
-   echo "cp -p -f $ofile $COMOUT" >> cmdfile.cpout
-done
-# ice history
-mkdir -p $COMOUT/history
-for ifile in $(ls history/iceh*.nc*)
-do
-   echo "cp -p -f $ifile $COMOUT/history" >> cmdfile.cpout
-done
-# restart
-mkdir -p $COMOUT/RESTART
-for rfile in $(ls RESTART/${PDYp4}.000000.MOM.res*.nc*)
-do
-  echo "cp -p -f $rfile $COMOUT/RESTART" >> cmdfile.cpout
-done
-fdate=$(echo $PDYp4 | cut -c1-4)-$(echo $PDYp4 | cut -c5-6)-$(echo $PDYp4 | cut -c7-8)-00000
-echo "cp -p -f RESTART/iced.${fdate}.nc $COMOUT/RESTART" >> cmdfile.cpout
-echo "cp -p -f RESTART/datm.gfs.cpl.r.${fdate}.nc $COMOUT/RESTART" >> cmdfile.cpout 
-
-echo "cp -p -f datm.gfs.datm.r.${fdate}.nc $COMOUT" >> cmdfile.cpout
-
-# diagnostics and log files
-mkdir -p $COMOUT/MOM6_OUTPUT
-for logfile in ice_diag.d mediator.log atm.log
-do
-  echo "cp -p -f $logfile $COMOUT/analysis.$logfile" >> cmdfile.cpout
-done
-for momoutputfile in $(ls MOM6_OUTPUT)
-do
-   echo "cp -p -f MOM6_OUTPUT/$momoutputfile $COMOUT/MOM6_OUTPUT/analysis.$momoutputfile" >> cmdfile.cpout
-done
-
-chmod +x cmdfile.cpout
-mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.cpout
-err=$? ; export err ; err_chk
-date
-
-#################################################
-msg="THE RTOFS_GLO_FORECAST JOB HAS ENDED NORMALLY on $(hostname) at $(date)."
-postmsg "$msg"
-
-################## END OF SCRIPT #######################

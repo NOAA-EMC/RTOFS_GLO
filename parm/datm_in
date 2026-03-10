@@ -11,4 +11,5 @@
   nx_global = 3072
   ny_global = 1536
   restfilm = "null"
+  skip_restart_read = .true.
 /
