@@ -167,7 +167,9 @@ do
       ihour=$($NHOUR ${PDY}00 $icedat$icehr)
    fi
    ihour=$(printf "%03d\n" $ihour)
-   echo "cp -p -f $ifile $COMOUT/rtofs_glo_2ds.${marker}${ihour}.ice.nc" >> cmdfile.cpout
+#   echo "cp -p -f $ifile $COMOUT/rtofs_glo_2ds.${marker}${ihour}.ice.nc" >> cmdfile.cpout
+# keep the native names until libsrc/setup/mom_fgat.f is updated with new names
+   echo "cp -p -f $ifile $COMOUT/history" >> cmdfile.cpout
 done
 adate=$(echo $PDYm1 | cut -c1-4)-$(echo $PDYm1 | cut -c5-6)-$(echo $PDYm1 | cut -c7-8)-00000
 echo "cp -p -f RESTART/iced.${adate}.nc $COMOUT/RESTART" >> cmdfile.cpout
