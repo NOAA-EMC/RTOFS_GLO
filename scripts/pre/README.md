@@ -11,4 +11,5 @@
 # Example usage:
 
 - `./compile_ufs.sh`
+
   Note: No arguments are needed.
