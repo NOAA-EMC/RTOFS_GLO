@@ -5,13 +5,27 @@
 set -eux
 
 cwd=$(pwd)
-UFSsrc=$cwd/../../sorc/ufs_model.fd/
+# Resolve to absolute path to avoid relative path 'wandering'
+UFSsrc=$(readlink -f "$cwd/../../sorc/ufs_model.fd")
 APP="NG-GODAS"
 
+# --- Check for the UFS source code ---
+
+# 1. Check if directory exists
 if [[ ! -d "${UFSsrc}" ]]; then
-  echo "Error: Source code path: '${UFSsrc}' does not exist."
-  echo "Fix your clone and try again."
+  echo "ERROR: Directory ${UFSsrc} does not exist."
   exit 2
+fi
+
+# 2. Check if directory is empty (Submodule check)
+# We look for 'CMakeLists.txt' which is the heart of the UFS build system
+if [[ ! -f "${UFSsrc}/CMakeLists.txt" ]]; then
+  echo "-----------------------------------------------------------------------"
+  echo "ERROR: UFS Source directory is empty or incomplete!"
+  echo "It looks like the submodules were not cloned."
+  echo "Try running: git submodule update --init --recursive"
+  echo "-----------------------------------------------------------------------"
+  exit 3
 fi
 
 echo " "
