@@ -14,21 +14,19 @@
 
 # Example usage:
 
-- `00 00 * * * /path/to/obs_stat.sh`
-   Note: Automated via Crontab (requires `SHELL=/bin/bash -l`).
-
 - `./obs_stat.sh`
-   Note: Main entry point. Uses `current_date` (internal) to trigger the full pipeline.
-
-- `./audit_ncoda_obs.sh 20260321 /path/to/oPath`
-   Note: Can be run standalone to re-generate statistics for an existing directory.
+   - Notes: Main entry point. Uses `current_date` (internal) to trigger the full pipeline.
+     - `00 00 * * * /path/to/obs_stat.sh`
+     - Automated via Crontab (requires `SHELL=/bin/bash -l`).
 
 - `./convert_ncoda_binary_qc_obs.sh 20260321 /path/to/output/20260321`  
-   Note: Arguments are `<rtofs_date>` and `<oPath>`.
-   It iterates through obs types (SST, SSS, etc.) and calls the Python converter for each binary found in the COM directory.
+   - Notes: Arguments are `<rtofs_date>` and `<oPath>`.
+     - It iterates through obs types (SST, SSS, etc.) and calls the Python converter for each binary found in the COM directory.
+     - Can be run standalone.
 
 - `./audit_ncoda_obs.sh 20260321 /path/to/output/20260321`  
-   Note: Arguments are `<rtofs_date>` and `<oPath>`. Generates the `obs_counts_YYYYMMDD.csv` summary.
+   - Notes: Arguments are `<rtofs_date>` and `<oPath>`. Generates the `obs_counts_YYYYMMDD.csv` summary.
+     - Can be run standalone to re-generate statistics for an existing directory.
 
 # Housekeeping:
 - The `obs_stat.sh` script automatically removes archive directories older than 30 days 
