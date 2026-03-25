@@ -1,36 +1,17 @@
 #!/bin/bash
 
-# 1. Environment Detection Setup
-if [[ -z "${MACHINE_ID:-}" || -z "${host_env:-}" ]]; then
-    SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
-    UTILS_DIR=$(readlink -f "${SCRIPT_DIR}/..")
-    UTILS_PATH="${UTILS_DIR}/get_machine_dev_prod.sh"
+# 1. Machine and environment & Safety Check
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
+CHECK_ENV_PATH="$(readlink -f "${SCRIPT_DIR}/../check_machine_env.sh")"
 
-    if [[ -f "${UTILS_PATH}" ]]; then
-        pushd "${UTILS_DIR}" > /dev/null
-            source "./get_machine_dev_prod.sh"
-        popd > /dev/null
-    else
-        echo "ERROR: Cannot find environment utility at: ${UTILS_PATH}"
-        exit 2
-    fi
+if [[ -f "${CHECK_ENV_PATH}" ]]; then
+    source "${CHECK_ENV_PATH}" || exit 3
+else
+    echo "ERROR: Machine and environment check missing at ${CHECK_ENV_PATH}"
+    exit 2
 fi
 
-# 2. WCOSS2 Safety Check
-if [[ "${MACHINE_ID}" == "wcoss2" ]]; then
-    if [[ "${host_env}" == "dev" ]]; then
-        echo ">>> [WCOSS2] Confirmed: Running on Development node (${host_name})."
-    else
-        echo "-----------------------------------------------------------------------"
-        echo "CRITICAL ERROR: SCRIPT NOT ALLOWED TO RUN"
-        echo "Machine   : ${host_name}"
-        echo "Env Type  : ${host_env}"
-        echo "Status    : RESTRICTED (Production Node)"
-        exit 3
-    fi
-fi
-
-# 3. Binary obs converter Executable Check and Build Logic
+# 2. Binary obs converter Executable Check and Build Logic
 # Path to the source directory and the expected executable
 RTOFS_DA_DIR=$(readlink -f "${SCRIPT_DIR}/../../../sorc/rtofs_da.fd")
 EXEC_PATH="${RTOFS_DA_DIR}/exec/read_binary_qc_obs.x"
@@ -62,7 +43,7 @@ else
     echo ">>> Found Executable: ${EXEC_PATH}"
 fi
 
-# 4. Convert NCODA Quality- Controlled observations format: binary to netcdf
+# 3. Convert NCODA Quality- Controlled observations format: binary to netcdf
 CONV_SCRIPT="${SCRIPT_DIR}/convert_ncoda_binary_qc_obs.sh"
 
 # RTOFS operational version
@@ -94,7 +75,7 @@ else
     exit 7
 fi
 
-# 5. Create a csv file that logs all observation counts
+# 4. Create a csv file that logs all observation counts
 AUDIT_SCRIPT="${SCRIPT_DIR}/audit_ncoda_obs.sh"
 
 if [[ -f "${AUDIT_SCRIPT}" ]]; then
