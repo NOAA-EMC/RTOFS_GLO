@@ -144,11 +144,4 @@ echo "------------------------------------------------"
 log_msg "FINISHED: Processing Complete. Starting Data Audit..."
 echo "------------------------------------------------"
 
-# A. Setup CSV file
-csv_out="${oPath}/obs_counts_${rtofs_date}.csv"
-echo "Date,File_Name,Obs_Type,Obs_Count" > "${csv_out}"
-
-# B. Ensure NetCDF operators are available (WCOSS2 standard)
-module load intel netcdf >/dev/null 2>&1
-
 
