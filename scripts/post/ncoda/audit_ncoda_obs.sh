@@ -52,7 +52,6 @@ for nc_file in $(ls "${oPath}"/*.nc 2>/dev/null | sort); do
     fi
 done
 
-
 echo "------------------------------------------------"
 echo ">>> STARTING DATA AUDIT FOR: ${rtofs_date}"
 echo ">>> SCANNING: ${oPath}"
@@ -110,3 +109,5 @@ done
 echo "------------------------------------------------"
 echo ">>> AUDIT COMPLETE. CSV: ${csv_out}"
 echo "------------------------------------------------"
+
+exit 0
