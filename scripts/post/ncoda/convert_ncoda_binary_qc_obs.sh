@@ -17,7 +17,7 @@ if [[ -f "${BASE_DA}/load_modules.sh" ]]; then
 else
     echo "ERROR: Cannot find ${BASE_DA}/load_modules.sh"
     echo "Attempting manual fallback for WCOSS2..."
-    module load intel/19.1.3.304 PrgEnv-intel/8.3.3 netcdf/4.7.4
+    module load intel PrgEnv-intel netcdf
 fi
 
 # Verify environment
