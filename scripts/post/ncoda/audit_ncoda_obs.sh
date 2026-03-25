@@ -28,6 +28,31 @@ csv_out="${oPath}/obs_counts_${rtofs_date}.csv"
 # Load modules (silent)
 module load intel netcdf >/dev/null 2>&1
 
+# GARBAGE CHECK: Ensure sanity of nc files.
+for nc_file in $(ls "${oPath}"/*.nc 2>/dev/null | sort); do
+    if [[ -f "$nc_file" ]]; then
+        fname=$(basename "$nc_file")
+        if [[ ! -s "$nc_file" ]]; then
+            echo "################################################"
+            echo "FATAL ERROR: Empty file detected: ${fname}"
+            echo "DROP DEAD: Conversion likely failed at binary-to-nc stage."
+            echo "################################################"
+            exit 1
+        fi
+
+        # DIMENSION CHECK: Ensure 'nobs' exists via ncdump
+        nobs_line=$(ncdump -h "$nc_file" | grep -i "nobs =" | head -1)
+        if [[ -z "$nobs_line" ]]; then
+            echo "################################################"
+            echo "FATAL ERROR: Missing 'nobs' dimension in: ${fname}"
+            echo "DROP DEAD: File is corrupt or invalid NCODA NetCDF."
+            echo "################################################"
+            exit 1
+        fi
+    fi
+done
+
+
 echo "------------------------------------------------"
 echo ">>> STARTING DATA AUDIT FOR: ${rtofs_date}"
 echo ">>> SCANNING: ${oPath}"
