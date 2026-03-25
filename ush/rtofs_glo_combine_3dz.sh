@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# 1. Environment Setup
-module load intel/19.1.3.304 udunits/2.2.28 nco/5.2.4
-
 # 2. Input Arguments
 IN_PATH=$1
 OUT_PATH=$2
