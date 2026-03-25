@@ -12,7 +12,7 @@ if [[ -z "${MACHINE_ID:-}" || -z "${host_env:-}" ]]; then
         popd > /dev/null
     else
         echo "ERROR: Cannot find environment utility at: ${UTILS_PATH}"
-        exit 1
+        exit 2
     fi
 fi
 
@@ -26,7 +26,7 @@ if [[ "${MACHINE_ID}" == "wcoss2" ]]; then
         echo "Machine   : ${host_name}"
         echo "Env Type  : ${host_env}"
         echo "Status    : RESTRICTED (Production Node)"
-        exit 1
+        exit 3
     fi
 fi
 
@@ -52,11 +52,11 @@ if [[ ! -f "${EXEC_PATH}" ]]; then
             echo "ERROR: Build failed. ${EXEC_PATH} still does not exist."
             echo "Check the build logs in ${RTOFS_DA_DIR}"
             echo "-----------------------------------------------------------------------"
-            exit 1
+            exit 4
         fi
     else
         echo "ERROR: build_all.sh not found in ${RTOFS_DA_DIR}. Cannot compile."
-        exit 1
+        exit 5
     fi
 else
     echo ">>> Found Executable: ${EXEC_PATH}"
@@ -88,10 +88,10 @@ if [[ -f "${CONV_SCRIPT}" ]]; then
     echo ">>> Launching NCODA Binary-to-NetCDF conversion for ${current_date}..."
 
     # Example Usage: ./convert_ncoda_binary_qc_obs.sh "v2.5" "20260321" "${oPath}"
-    "${CONV_SCRIPT}" "${rtofs_version}" "${rtofs_date}" "${oPath}"
+    "${CONV_SCRIPT}" "${rtofs_version}" "${rtofs_date}" "${oPath}" || exit 6
 else
     echo "ERROR: Conversion script ${CONV_SCRIPT} not found."
-    exit 1
+    exit 7
 fi
 
 # 5. Create a csv file that logs all observation counts
@@ -101,10 +101,10 @@ if [[ -f "${AUDIT_SCRIPT}" ]]; then
     echo ">>> Starting NCODA Observation Audit and CSV Generation..."
 
     # Execute: pass the RTOFS run date and the full output path
-    "${AUDIT_SCRIPT}" "${rtofs_date}" "${oPath}"
+    "${AUDIT_SCRIPT}" "${rtofs_date}" "${oPath}" || exit 8
 else
     echo "ERROR: Audit script not found at ${AUDIT_SCRIPT}"
-    exit 1
+    exit 9
 fi
 
 # --- Housekeeping: Remove folders older than 30 days ---
@@ -122,9 +122,12 @@ if [[ -d "${archive_base}" ]]; then
 
     echo ">>> Housekeeping complete."
 else
-    echo "WARNING: Archive base ${archive_base} not found. Skipping cleanup."
+    echo "FATAL ERROR: Archive base ${archive_base} not found. Skipping cleanup."
+    exit 10
 fi
 
 echo "------------------------------------------------"
 echo ">>> obs_stat.sh completed for ${current_date}."
 echo "------------------------------------------------"
+
+exit 0
