@@ -17,23 +17,29 @@ if [[ -f "${BASE_DA}/load_modules.sh" ]]; then
 else
     echo "ERROR: Cannot find ${BASE_DA}/load_modules.sh"
     echo "Attempting manual fallback for WCOSS2..."
-    module load intel PrgEnv-intel netcdf
+    module load intel PrgEnv-intel netcdf || exit 1
 fi
 
 # Verify environment
 module list
 
+# 1. If no arguments are provided, show usage and exit
+if [[ $# -eq 0 ]]; then
+    echo "Usage: $0 [rtofs_version] [rtofs_date] [oPath]"
+    echo "Defaults: version=v2.5, date=today(UTC), oPath=/lfs/h2/emc/stmp/${USER}/qc_decode/YYYYMMDD"
+    exit 1
+fi
+
 # --- 2. Configuration (Date and Path Logic) ---
 # $1: rtofs_version is passed from obs_stat.sh (RTOFS production version: vx.x)
-# $2: current_date is passed from obs_stat.sh (current_date in YYYYMMDD)
-# $3: oPath is passed from obs_stat.sh (where output will be saved)
-
 # If no argument is provided, default to v2.5
 rtofs_version=${1:-"v2.5"}
 
+# $2: current_date is passed from obs_stat.sh (current_date in YYYYMMDD)
 # If no argument is provided, default to current UTC date
 rtofs_date=${2:-$(date -u +%Y%m%d)}
 
+# $3: oPath is passed from obs_stat.sh (where output will be saved)
 # oPath: Where the converted NetCDF files will be saved
 oPath=${3:-"/lfs/h2/emc/stmp/${USER}/qc_decode/${rtofs_date}"}
 
@@ -48,12 +54,12 @@ inBase="/lfs/h1/ops/prod/com/rtofs/${rtofs_version}/rtofs.${rtofs_date}/ncoda/oc
 exec="${BASE_DA}/exec/read_binary_qc_obs.x"
 
 # Ensure output directory exists
-mkdir -p "$oPath"
+mkdir -p "$oPath" || { echo "ERROR: Could not create output directory $oPath"; exit 1; }
 
 echo "------------------------------------------------"
 echo "RTOFS Cycle Date : ${rtofs_date}"
 echo "Observation Date : ${o_date}"
-echo "Input Base Path  : ${inBase}"
+echo "Input Path       : ${inBase}"
 echo "Output Path      : ${oPath}"
 echo "Executable       : ${exec}"
 echo "------------------------------------------------"
@@ -96,7 +102,8 @@ run_conv() {
             ((count_pass++))
         else
             log_msg "ERROR: Executable failed for ${in_f}"
-            ((count_fail++))
+            exit 2
+            #((count_fail++))
         fi
     else
         log_msg "MISSING: ${in_f} (Skipping)"
@@ -141,7 +148,7 @@ run_conv "sss" "${o_date}00.mdb" "${o_date}.mdb.sss.nc" "mdb"
 
 # --- Final Summary & CSV Generation ---
 echo "------------------------------------------------"
-log_msg "FINISHED: Processing Complete. Starting Data Audit..."
+log_msg "FINISHED: Processing Complete. Pass: ${count_pass}, Fail: ${count_fail}"
 echo "------------------------------------------------"
 
-
+exit 0
