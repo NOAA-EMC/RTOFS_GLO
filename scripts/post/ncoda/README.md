@@ -21,7 +21,7 @@
 
 - `./convert_ncoda_binary_qc_obs.sh 20260321 /path/to/output/20260321`  
    - Notes: Arguments are `<rtofs_date>` and `<oPath>`.
-     - It iterates through obs types (SST, SSS, etc.) and calls the Python converter for each binary found in the COM directory.
+     - It iterates through obs types (SST, SSS, etc.) and uses `read_binary_qc_obs.x` converter for each binary found in the COM directory.
      - Can be run standalone.
 
 - `./audit_ncoda_obs.sh 20260321 /path/to/output/20260321`  
