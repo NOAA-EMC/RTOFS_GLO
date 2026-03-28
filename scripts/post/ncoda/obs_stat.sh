@@ -109,6 +109,31 @@ else
     exit 10
 fi
 
+# --- 5. Generate Time Series Plots ---
+PLOT_SCRIPT="${SCRIPT_DIR}/plot_obs_stat.py"
+
+if [[ -f "${PLOT_SCRIPT}" ]]; then
+    echo "------------------------------------------------"
+    echo ">>> Loading Python environment for plotting..."
+    # Ensure clean state and load required WCOSS2 modules
+    module purge
+    module load intel ve/hafs || echo "WARNING: Failed to load ve/hafs modules."
+
+    echo ">>> Generating Time Series Plots..."
+    # Add or remove platforms here as needed (case-insensitive)
+    for plat in sfc profile viirs.npp goes metop; do
+        "${PLOT_SCRIPT}" "${archive_base}" "$plat" || echo "WARNING: Plot generation failed for $plat."
+    done
+else
+    echo "FATAL ERROR: Plotting script not found at ${PLOT_SCRIPT}. Skipping plots."
+    exit 11
+fi
+
+echo "------------------------------------------------"
+echo ">>> obs_stat.sh completed for ${current_date}."
+echo "------------------------------------------------"
+
+exit 0
 echo "------------------------------------------------"
 echo ">>> obs_stat.sh completed for ${current_date}."
 echo "------------------------------------------------"
