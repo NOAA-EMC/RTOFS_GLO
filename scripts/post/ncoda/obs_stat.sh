@@ -88,7 +88,7 @@ else
     exit 9
 fi
 
-# --- Housekeeping: Remove folders older than 30 days ---
+# --- Housekeeping: Remove non-CSV files from folders older than 30 days ---
 # Use $(dirname "$oPath") to target the parent directory containing all date folders
 archive_base=$(dirname "${oPath}")
 
@@ -99,7 +99,9 @@ if [[ -d "${archive_base}" ]]; then
     # -name "20[0-9]*": target only YYYYMMDD folders
     # -type d: only directories
     # -ctime +30: older than 30 days
-    find "${archive_base}" -maxdepth 1 -name "20[0-9][0-9][0-9][0-9][0-9][0-9]" -type d -ctime +30 -exec rm -rf {} +
+    # Execute a sub-find to delete everything EXCEPT .csv files within those folders
+    find "${archive_base}" -maxdepth 1 -name "20[0-9][0-9][0-9][0-9][0-9][0-9]" -type d -ctime +30 \
+       -exec find {} -type f ! -name "*.csv" -delete \;
 
     echo ">>> Housekeeping complete."
 else
