@@ -116,7 +116,7 @@ if [[ -f "${PLOT_SCRIPT}" ]]; then
     echo "------------------------------------------------"
     echo ">>> Loading Python environment for plotting..."
     # Ensure clean state and load required WCOSS2 modules
-    module purge
+    module reset
     module load intel ve/hafs || echo "WARNING: Failed to load ve/hafs modules."
 
     echo ">>> Generating Time Series Plots..."
