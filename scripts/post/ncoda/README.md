@@ -1,6 +1,8 @@
 # What's here?
   - Scripts that process NCODA output used in RTOFS.
-
+  - NCODA Observation Statistics Dashboard
+    - Automates the extraction and visualization of cost function minimums (`Jmin`) and observation counts (`N`).
+    - From NCODA `hycom_var` log files. It generates a multi-panel time-series dashboard for a specified date range.
 
 # Brief Description:
 
@@ -12,6 +14,10 @@
 | `bin2nc_inc_fld.sh` | Low-level binary conversion utility | Used by the conversion driver to interface with NCODA binaries. |
 | `convert_bin_inc_to_nc.py` | Python back-end for NetCDF generation | Handles the mapping of NCODA binary structures to NetCDF4; called by the `bin2nc_inc_fld.sh`. |
 | `plot_obs_stat.py` | Generates time-series plots from observation count CSV files | Plots counts over time for a specified platform (e.g., PROFILE) and outputs a PNG image. Requires Python, pandas, and matplotlib. |
+| `driver_jmin_stats.sh` | Top-level execution script. Iterates through the requested date range, calls the extraction script, loads the WCOSS2 Python environment, and triggers the plotter. | |
+| `jmin_stats.sh` | Core extraction engine. Parses daily `hycom_var.<YYYYMMDD00>.out` logs, extracts `Jmin` and `N` values, and outputs daily CSV files (`jmin_<YYYYMMDD>.csv`). | |
+| `plot_jmin_comp.py` | Python visualization script. Reads the CSVs and the YAML config to generate `dashboard_jmin_stats.png` with dynamically scaled axes. | |
+| `plot_jmin_config.yaml` | User-defined configuration file. Specifies the exact `Category` and `Metric` combinations to be plotted. | |
 
 # Example usage:
 
@@ -40,6 +46,10 @@
     - The `<obs_plat>` is the specific platform you want to plot (e.g., `GOES`, `METOP`, `PROFILE`) and is case-insensitive.
     - Saves a time-series plot as a PNG image (e.g., `timeseries_goes_sst_count.png`) directly in the `<archive_base_path>`.
     - Must have Python modules loaded before running (e.g., `module load intel ve/hafs`).
+
+- `./driver_jmin_stats.sh <dir> <start_date_YYYYMMDD> <end_date_YYYYMMDD> <output_path>`
+  - Notes: Run the driver script with the base RTOFS directory, start date, end date, and your desired output path for the CSVs and PNG.
+    - Example, filled with values: `./driver_jmin_stats.sh /lfs/h1/ops/prod/com/rtofs/v2.5 20260324 20260330 /lfs/h2/emc/stmp/${USER}/ops`
 
 ---
 
