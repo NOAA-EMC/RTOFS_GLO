@@ -11,6 +11,7 @@
 | `audit_ncoda_obs.sh` | Generates CSV summary of observation counts | Parses filenames for platform (Field 2/3) and extracts `nobs` from NetCDF. |
 | `bin2nc_inc_fld.sh` | Low-level binary conversion utility | Used by the conversion driver to interface with NCODA binaries. |
 | `convert_bin_inc_to_nc.py` | Python back-end for NetCDF generation | Handles the mapping of NCODA binary structures to NetCDF4; called by the `bin2nc_inc_fld.sh`. |
+| `plot_obs_stat.py` | Generates time-series plots from observation count CSV files | Plots counts over time for a specified platform (e.g., PROFILE) and outputs a PNG image. Requires Python, pandas, and matplotlib. |
 
 # Example usage:
 
@@ -30,6 +31,13 @@
 
 - `./convert_bin_inc_to_nc.py -h`: Echoes example usage; must have python modules loaded (use `set_py_modules.sh`)
   - Note that it has some defaults and required fields.
+
+- `./plot_obs_stat.py /path/to/archive_base_path PROFILE`
+  - Notes: Arguments are `<archive_base_path>` and `<obs_plat>`.
+    - The `<archive_base_path>` must be the root directory containing the `YYYYMMDD` subdirectories with the CSVs.
+    - The `<obs_plat>` is the specific platform you want to plot (e.g., `GOES`, `METOP`, `PROFILE`) and is case-insensitive.
+    - Saves a time-series plot as a PNG image (e.g., `timeseries_goes_sst_count.png`) directly in the `<archive_base_path>`.
+    - Must have Python modules loaded before running (e.g., `module load intel ve/hafs`).
 
 ---
 
