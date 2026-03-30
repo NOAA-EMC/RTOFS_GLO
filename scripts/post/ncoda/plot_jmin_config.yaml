@@ -1,0 +1,25 @@
+# Configuration file for Jmin statistics plotting
+# 'category' must match the exact string from the CSV Category column
+# 'metrics' must be a list of exact strings from the CSV Metric column
+
+plots:
+  - category: "Ice Cover"
+    metrics:
+      - "All Data Combined"
+#     - "Sea Ice"
+
+  - category: "Temperature"
+    metrics:
+      - "All Data Combined"
+      - "Argo Float Temp"
+      - "SST"
+
+  - category: "Salinity"
+    metrics:
+      - "All Data Combined"
+      - "Argo Float Salt"
+      - "SSS"
+
+# - category: "Geopotential"
+#   metrics:
+#     - "All Data Combined"
