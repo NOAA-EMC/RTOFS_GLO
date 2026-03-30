@@ -20,7 +20,7 @@
      - `00 00 * * * /path/to/obs_stat.sh`
      - Automated via Crontab (requires `SHELL=/bin/bash -l`).
      - Housekeeping:
-       - Automatically removes archive directories older than 30 days using the `$oPath` parent directory.
+       - Automatically removes archive directories older than 30 days using the `$oPath` parent directory, retains all else but `csv` files.
 
 - `./convert_ncoda_binary_qc_obs.sh 20260321 /path/to/output/20260321`  
    - Notes: Arguments are `<rtofs_date>` and `<oPath>`.
