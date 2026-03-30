@@ -19,6 +19,8 @@
    - Notes: Main entry point. Uses `current_date` (internal) to trigger the full pipeline.
      - `00 00 * * * /path/to/obs_stat.sh`
      - Automated via Crontab (requires `SHELL=/bin/bash -l`).
+     - Housekeeping:
+       - Automatically removes archive directories older than 30 days using the `$oPath` parent directory.
 
 - `./convert_ncoda_binary_qc_obs.sh 20260321 /path/to/output/20260321`  
    - Notes: Arguments are `<rtofs_date>` and `<oPath>`.
@@ -44,6 +46,3 @@
 - `./bin2nc_inc_fld.sh dwood /lfs/h2/emc/couple/noscrub/dan.iredell/COMDIR1/prod/com/rtofs/v2.5/ 20250331 icetmp fld`
 
 
-# Housekeeping:
-- The `obs_stat.sh` script automatically removes archive directories older than 30 days 
-  using the `$oPath` parent directory.
