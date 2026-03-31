@@ -23,3 +23,10 @@ plots:
 # - category: "Geopotential"
 #   metrics:
 #     - "All Data Combined"
+
+comparison:
+  - experiment: "v2p5_prod"
+    path: "/lfs/h2/emc/stmp/santha.akella/v2p5_prod"
+
+  - experiment: "e0"
+    path: "/lfs/h2/emc/stmp/santha.akella/e0"
