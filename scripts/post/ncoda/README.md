@@ -17,7 +17,8 @@
 | `driver_jmin_stats.sh` | Top-level execution script. Iterates through the requested date range, calls the extraction script, loads the WCOSS2 Python environment, and triggers the plotter. | |
 | `jmin_stats.sh` | Core extraction engine. Parses daily `hycom_var.<YYYYMMDD00>.out` logs, extracts `Jmin` and `N` values, and outputs daily CSV files (`jmin_<YYYYMMDD>.csv`). | |
 | `plot_jmin_comp.py` | Python visualization script. Reads the CSVs and the YAML config to generate `dashboard_jmin_stats.png` with dynamically scaled axes. | |
-| `plot_jmin_config.yaml` | User-defined configuration file. Specifies the exact `Category` and `Metric` combinations to be plotted. | |
+| `plot_jmin_config.yaml` | User-defined configuration file. | Specifies the `Category` and `Metric` combinations to be plotted. Also holds the `comparison` block mapping experiment names to data paths for `compare_jmin_stats.py`. |
+| `compare_jmin_stats.py` | Python visualization script for multi-experiment comparisons. | Reads CSVs from multiple experiment paths defined in the YAML and plots them together for R&D evaluation. |
 
 # Example usage:
 
@@ -50,6 +51,11 @@
 - `./driver_jmin_stats.sh <dir> <start_date_YYYYMMDD> <end_date_YYYYMMDD> <output_path>`
   - Notes: Run the driver script with the base RTOFS directory, start date, end date, and your desired output path for the CSVs and PNG.
     - Example, filled with values: `./driver_jmin_stats.sh /lfs/h1/ops/prod/com/rtofs/v2.5 20260324 20260330 /lfs/h2/emc/stmp/${USER}/ops`
+
+- `./compare_jmin_stats.py -c plot_jmin_config.yaml -o /path/to/save/comparisons/`
+  - Notes: Generates multi-experiment overlay plots for development.
+    - Requires the `comparison` block in `plot_jmin_config.yaml` to be populated with `- experiment: <name>` and `  path: <dir_path>`.
+    - Must have Python modules loaded before running (e.g., `module load intel ve/hafs`).
 
 ---
 
