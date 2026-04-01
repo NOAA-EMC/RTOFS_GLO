@@ -1,0 +1,32 @@
+# Configuration file for Jmin statistics plotting
+# 'category' must match the exact string from the CSV Category column
+# 'metrics' must be a list of exact strings from the CSV Metric column
+
+plots:
+  - category: "Ice Cover"
+    metrics:
+      - "All Data Combined"
+#     - "Sea Ice"
+
+  - category: "Temperature"
+    metrics:
+      - "All Data Combined"
+      - "Argo Float Temp"
+      - "SST"
+
+  - category: "Salinity"
+    metrics:
+      - "All Data Combined"
+      - "Argo Float Salt"
+      - "SSS"
+
+# - category: "Geopotential"
+#   metrics:
+#     - "All Data Combined"
+
+comparison:
+  - experiment: "v2p5_prod"
+    path: "/lfs/h2/emc/stmp/santha.akella/v2p5_prod"
+
+  - experiment: "e0"
+    path: "/lfs/h2/emc/stmp/santha.akella/e0"

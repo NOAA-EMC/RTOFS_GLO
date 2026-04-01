@@ -88,9 +88,10 @@ else
     exit 9
 fi
 
-# --- Housekeeping: Remove folders older than 30 days ---
+# --- Housekeeping: Remove non-CSV files from folders older than "retention_days" days ---
 # Use $(dirname "$oPath") to target the parent directory containing all date folders
 archive_base=$(dirname "${oPath}")
+retention_days=61
 
 if [[ -d "${archive_base}" ]]; then
     echo ">>> Running Housekeeping in: ${archive_base}"
@@ -98,13 +99,36 @@ if [[ -d "${archive_base}" ]]; then
     # -maxdepth 1: stay in the archive folder
     # -name "20[0-9]*": target only YYYYMMDD folders
     # -type d: only directories
-    # -ctime +30: older than 30 days
-    find "${archive_base}" -maxdepth 1 -name "20[0-9][0-9][0-9][0-9][0-9][0-9]" -type d -ctime +30 -exec rm -rf {} +
+    # -ctime +${retention_days}: older than specified number of days
+    # Execute a sub-find to delete everything EXCEPT .csv files within those folders
+
+    find "${archive_base}" -maxdepth 1 -name "20[0-9][0-9][0-9][0-9][0-9][0-9]" -type d -ctime "+${retention_days}" \
+       -exec find {} -type f ! -name "*.csv" -delete \;
 
     echo ">>> Housekeeping complete."
 else
     echo "FATAL ERROR: Archive base ${archive_base} not found. Skipping cleanup."
     exit 10
+fi
+
+# --- 5. Generate Time Series Plots ---
+PLOT_SCRIPT="${SCRIPT_DIR}/plot_obs_stat.py"
+
+if [[ -f "${PLOT_SCRIPT}" ]]; then
+    echo "------------------------------------------------"
+    echo ">>> Loading Python environment for plotting..."
+    # Ensure clean state and load required WCOSS2 modules
+    module reset
+    module load intel ve/hafs || echo "WARNING: Failed to load ve/hafs modules."
+
+    echo ">>> Generating Time Series Plots..."
+    # Add or remove platforms here as needed (case-insensitive)
+    for plat in sfc profile viirs.npp goes metop; do
+        "${PLOT_SCRIPT}" "${archive_base}" "$plat" || echo "WARNING: Plot generation failed for $plat."
+    done
+else
+    echo "FATAL ERROR: Plotting script not found at ${PLOT_SCRIPT}. Skipping plots."
+    exit 11
 fi
 
 echo "------------------------------------------------"
