@@ -134,8 +134,3 @@ echo ">>> obs_stat.sh completed for ${current_date}."
 echo "------------------------------------------------"
 
 exit 0
-echo "------------------------------------------------"
-echo ">>> obs_stat.sh completed for ${current_date}."
-echo "------------------------------------------------"
-
-exit 0
