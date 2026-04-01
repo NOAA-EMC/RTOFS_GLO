@@ -88,9 +88,10 @@ else
     exit 9
 fi
 
-# --- Housekeeping: Remove non-CSV files from folders older than 30 days ---
+# --- Housekeeping: Remove non-CSV files from folders older than "retention_days" days ---
 # Use $(dirname "$oPath") to target the parent directory containing all date folders
 archive_base=$(dirname "${oPath}")
+retention_days=61
 
 if [[ -d "${archive_base}" ]]; then
     echo ">>> Running Housekeeping in: ${archive_base}"
@@ -98,9 +99,10 @@ if [[ -d "${archive_base}" ]]; then
     # -maxdepth 1: stay in the archive folder
     # -name "20[0-9]*": target only YYYYMMDD folders
     # -type d: only directories
-    # -ctime +30: older than 30 days
+    # -ctime +${retention_days}: older than specified number of days
     # Execute a sub-find to delete everything EXCEPT .csv files within those folders
-    find "${archive_base}" -maxdepth 1 -name "20[0-9][0-9][0-9][0-9][0-9][0-9]" -type d -ctime +30 \
+
+    find "${archive_base}" -maxdepth 1 -name "20[0-9][0-9][0-9][0-9][0-9][0-9]" -type d -ctime "+${retention_days}" \
        -exec find {} -type f ! -name "*.csv" -delete \;
 
     echo ">>> Housekeeping complete."
