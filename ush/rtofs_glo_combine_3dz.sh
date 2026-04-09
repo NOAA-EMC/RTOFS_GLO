@@ -1,18 +1,33 @@
 #!/bin/bash
 
-# 2. Input Arguments
-IN_PATH=$1
-OUT_PATH=$2
-OUT_FNAME=$3
+# Goal: combine/concatenate 4 netcdf files containing:
+# 1. h: layer thickness
+# 2. t: temperature
+# 3. s: salinity
+# 4. u: u-velocity
+# 5. v: v-velocity
+#  into a single netcdf file
+# ----
 
-if [[ -z "$OUT_FNAME" ]]; then
-    echo "Usage: $0 <input_path> <output_path> <output_filename>"
+# 1. Check if exactly 4 arguments are provided
+if [[ $# -ne 4 ]]; then
+    echo "ERROR: Missing required arguments."
+    echo "Usage: $0 <input_path> <hour_str> <output_path> <output_filename>"
     exit 1
 fi
 
+# 2. Input Arguments
+IN_PATH=$1
+HOUR_STR=$2
+OUT_PATH=$3
+OUT_FNAME=$4
+
 # 3. File Template Configuration
 vars=("h" "s" "t" "u" "v")
-prefix="rtofs_glo_3dz.tm000.daily.3z"
+prefix1="rtofs_glo_3dz."
+prefix2=".daily.3z"
+# Concatenate
+prefix="${prefix1}${HOUR_STR}${prefix2}"
 suffix="io.nc"
 
 # 4. Verification Step
