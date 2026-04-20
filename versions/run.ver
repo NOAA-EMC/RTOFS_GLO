@@ -26,5 +26,7 @@ export wgrib2_ver=2.0.8
 
 export evs_ver=2.0_py312
 
+export nco_ver=5.2.4
+
 module use /apps/dev/modulefiles/
 
