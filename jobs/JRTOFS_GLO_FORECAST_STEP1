@@ -30,10 +30,10 @@ export cycle=t${mycyc}z
 ##########################################################
 jobname=${PBS_JOBNAME}
 export DATA=${DATA:-${DATAROOT}/${jobname}_${model_ver}_${envir}/${jobid}}
-export DATArestart=${DATAROOT}/${jobname}_${model_ver}_${envir}/restart
-export DATAarchive=${DATAROOT}/${jobname}_${model_ver}_${envir}/archive
+#export DATArestart=${DATAROOT}/${jobname}_${model_ver}_${envir}/restart
+#export DATAarchive=${DATAROOT}/${jobname}_${model_ver}_${envir}/archive
+#mkdir -p $DATArestart $DATAarchive
 mkdir -p $DATA
-mkdir -p $DATArestart $DATAarchive
 cd $DATA
 
 ####################################
@@ -73,16 +73,10 @@ export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT
 
-###################
-# Define model grid
-###################
-export inputgrid=navy_0.08
-export useslp=NO # YES or NO, use sea level pressure
-
 ##################################################################
 # Run the config file to set up specific model variables if needed
 ##################################################################
-. $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
+. $PARMrtofs/${RUN}_${modID}.config
 export DBL_THKDF=NO # YES or NO
 
 #################################
@@ -107,6 +101,9 @@ export stepnum
 export SAVE_RESTART
 export CONTINUE_FORECAST
 
+wearerunningv2=0
+if [ $wearerunningv2 -eq 1 ]
+then
 ##############################################
 # Check for viable restart files - remove any files that are not part of a complete set
 ##############################################
@@ -157,6 +154,7 @@ then
 else
     export RESTART=NO
 fi
+fi # wearerunningv2=1
 
 #################################################################
 #  Send a message indicating the start of the job

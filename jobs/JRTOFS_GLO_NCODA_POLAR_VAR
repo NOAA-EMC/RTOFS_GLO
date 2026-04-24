@@ -64,16 +64,6 @@ export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT
 
-###################
-# Define model grid
-###################
-export inputgrid=navy_0.08
-
-##################################################################
-# Run the config file to set up specific model variables if needed
-##################################################################
-. $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
-
 #################################################################
 #  Send a message indicating the start of the job
 #################################################################

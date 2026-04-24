@@ -58,7 +58,6 @@ dhr=024
 # Here hours of ouput are hardwired. For the forecast,
 # output is hourly for 0-72 hrs and 3-hourly afterwards.
 
-
 if [ ${fcstdays_before_thisstep} -ge 3 ]
 then
    intvl_hrly=${intvl_3hrly}
@@ -75,13 +74,12 @@ export mycyc=${mycyc:-00}
 export month=$(echo $PDY | cut -c5-6)
 export day=$(echo $PDY | cut -c7-8)
 
-if [ ${mode} = 'n' ]; then
+if [ ${mode} = 'tm' ]; then
 export gen_pro=14
 fi
 if [ ${mode} = 'f' ]; then
 export gen_pro=2
 fi
-
 
 cd $regdir
 
@@ -96,77 +94,75 @@ y0=$(grep -i "yfirst" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" )
 xinc=$(grep -i "xinc" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" )
 yinc=$(grep -i "yinc" ${FIXrtofs}/${RUN}_grid_${region}.des | cut -f2 -d "=" )
 
-# create infiles for each region below:
+# generate weights file for this region
+$cdo_r genbil,${FIXrtofs}/${RUN}_grid_${region}.des $DATA/${RUN}_${modID}_2ds.${mode}${fhr}.nc ${RUN}_${region}_weights.nc
+if [ ${region} = 'alaska'  -o  ${region} = 'bering'  -o  ${region} = 'arctic' ]
+then
+  $cdo_r genbil,${FIXrtofs}/${RUN}_grid_${region}.des $DATA/${RUN}_${modID}_2ds.${mode}${fhr}.ice.nc ${RUN}_${region}_icthknss_weights.nc
+fi
 
+# loop over forecast hours
 while [ $fhr -le $nhr ]
 do
-
+  ahr=$fhr
+  # if we go in reverse order for tm files, then parm file needs to do the same
+  if [ ${mode} = 'tm' ];then let ahr=24-fhr;fi
+  ahr=$(printf "%03d\n" $ahr)
+  if [[ ${mode} = 'f' || $ahr -ne 0 ]] # skip last tm file
+  then
   #echo xx yy day year month fcsthr cyc param# category# x0 y0 xinc yinc
-  echo $xx $yy  $day $year $month $fhr $mycyc 0 3 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_sst_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 3 4 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_sss_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 2 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_u_velocity_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 3 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_v_velocity_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 195 3 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ssh_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 194 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ubaro_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc 195 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_vbaro_${region}
-
+  # create infiles for each region below:
+  echo $xx $yy  $day $year $month $ahr $mycyc 0 3 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_sst_${region}
+  echo $xx $yy  $day $year $month $ahr $mycyc 3 4 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_sss_${region}
+  echo $xx $yy  $day $year $month $ahr $mycyc 2 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_u_velocity_${region}
+  echo $xx $yy  $day $year $month $ahr $mycyc 3 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_v_velocity_${region}
+  echo $xx $yy  $day $year $month $ahr $mycyc 195 3 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ssh_${region}
+  echo $xx $yy  $day $year $month $ahr $mycyc 194 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ubaro_${region}
+  echo $xx $yy  $day $year $month $ahr $mycyc 195 1 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_vbaro_${region}
 
   # Split the netCDF file into components
-    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_diag.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_
-    $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_prog.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_
+  $cdo_r splitname $DATA/${RUN}_${modID}_2ds.${mode}${ahr}.nc ${RUN}_${modID}_2ds.${mode}${ahr}.
 #### Added for ice
-    if [ ${region} = 'alaska'  -o  ${region} = 'bering'  -o  ${region} = 'arctic' ]; then
-  echo $xx $yy  $day $year $month $fhr $mycyc  0 2 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ice_coverage_${region}
-  echo $xx $yy  $day $year $month $fhr $mycyc  1 2 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ice_thickness_${region}
-      $cdo_r splitname $DATA/${RUN}_${modID}_2ds_${mode}${fhr}_ice.nc ${RUN}_${modID}_2ds_${mode}${fhr}_ice_
-    fi
+  if [ ${region} = 'alaska'  -o  ${region} = 'bering'  -o  ${region} = 'arctic' ]; then
+    echo $xx $yy  $day $year $month $ahr $mycyc  0 2 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ice_coverage_${region}
+    echo $xx $yy  $day $year $month $ahr $mycyc  1 2 $x0 $y0 $xinc $yinc 0 $gen_pro > infile_ice_thickness_${region}
+    $cdo_r splitname $DATA/${RUN}_${modID}_2ds.${mode}${ahr}.ice.nc ${RUN}_${modID}_2ds.${mode}${ahr}.ice_
+  fi
 
   # Some housekeeping
   touch ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
 
   # Interpolate the global grid netCDF to latlon grid asc file
 
-
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc sst_std_${region}.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds.${mode}${ahr}.sst.nc sst_std_${region}.nc
   $cdo_r outputf,%8.4f,1 sst_std_${region}.nc > sst_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc sss_std_${region}.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds.${mode}${ahr}.sss.nc sss_std_${region}.nc
   $cdo_r outputf,%8.4f,1 sss_std_${region}.nc > sss_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc u_velocity_std_${region}.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds.${mode}${ahr}.u_velocity.nc u_velocity_std_${region}.nc
   $cdo_r outputf,%8.4f,1 u_velocity_std_${region}.nc > u_velocity_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc v_velocity_std_${region}.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds.${mode}${ahr}.v_velocity.nc v_velocity_std_${region}.nc
   $cdo_r outputf,%8.4f,1 v_velocity_std_${region}.nc > v_velocity_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc ssh_std_${region}.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds.${mode}${ahr}.ssh.nc ssh_std_${region}.nc
   $cdo_r outputf,%8.4f,1 ssh_std_${region}.nc > ssh_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic_velocity.nc ubaro_std_${region}.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds.${mode}${ahr}.u_barotropic_velocity.nc ubaro_std_${region}.nc
   $cdo_r outputf,%8.4f,1 ubaro_std_${region}.nc > ubaro_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic_velocity.nc
 
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic_velocity.nc vbaro_std_${region}.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds.${mode}${ahr}.v_barotropic_velocity.nc vbaro_std_${region}.nc
   $cdo_r outputf,%8.4f,1 vbaro_std_${region}.nc > vbaro_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic_velocity.nc
 ####
 ### Added for ice
 if [ ${region} = 'alaska'  -o  ${region} = 'bering'  -o  ${region} = 'arctic' ]; then
-  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_coverage.nc ice_coverage_std_${region}.nc
+  $cdo_r -remap,${FIXrtofs}/${RUN}_grid_${region}.des,${RUN}_${region}_weights.nc ${RUN}_${modID}_2ds.${mode}${ahr}.ice_ice_coverage.nc ice_coverage_std_${region}.nc
   $cdo_r outputf,%8.4f,1 ice_coverage_std_${region}.nc > ice_coverage_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_coverage.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_coverage.nc
 
 ## Using different mask file for thickness as the source mask has too many missing values
-## Create the weights file using:
-##cdo_r -R genbil,rtofs_grid_arctic.des -setmisstoc,0 rtofs_glo*ice_thickness.nc rtofs_arctic_icthknss_weights.nc
-  $cdo_r -L -R remap,${FIXrtofs}/${RUN}_grid_${region}.des,${FIXrtofs}/${RUN}_${region}_icthknss_weights.nc -setmisstoc,0 ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_thickness.nc ice_thickness_std_${region}.nc
+  $cdo_r -L -R remap,${FIXrtofs}/${RUN}_grid_${region}.des,${RUN}_${region}_icthknss_weights.nc -setmisstoc,0 ${RUN}_${modID}_2ds.${mode}${ahr}.ice_ice_thickness.nc ice_thickness_std_${region}.nc
   $cdo_r outputf,%8.4f,1 ice_thickness_std_${region}.nc > ice_thickness_std_${region}.asc
-  test -f ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_thickness.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_thickness.nc
 fi
   #************
   # Pack the variables in GRIB 
@@ -186,52 +182,21 @@ fi
     echo ${var} > var_name
     ln -s var_name fort.30
 
-    export XLFUNIT_50=${regdir}/${var}_${fhr}_std_${region}.grb2
+    export XLFUNIT_50=${regdir}/${var}_${ahr}_std_${region}.grb2
 
     $EXECrtofs/${RUN}_nc2grb2 < ${regdir}/infile_${var}_${region}  > nc2grb.ft06_${region} 2>> nc2grb.err_${region}
     # export err=$?; err_chk
-    cat ${regdir}/${var}_${fhr}_std_${region}.grb2 >> ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
-    test -f ${regdir}/${var}_${fhr}_std_${region}.grb2 && rm ${regdir}/${var}_${fhr}_std_${region}.grb2
-
-    if [ ${var} = 'vbaro' ]; then
-
-      if [ ${fhr} -eq ${dhr} ]; then
-        if [ ${RUN_MODE} = 'analysis' ]; then
-        cp ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 ${RUN}_${modID}.t${mycyc}z.${mode}${dhr}_${region}_std.grb2
-        test -f ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 && rm ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
-        echo $dhr from dhr loop >> ${region}.out
-      fi
-     fi
-
-      if [ ${fhr} -eq ${nhr} ]; then
-       if [ ${RUN_MODE} = 'forecast' ]; then
-        cp ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 ${RUN}_${modID}.t${mycyc}z.${mode}${fhr}_${region}_std.grb2
-        test -f ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 && rm ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
-      echo $nhr from nhr loop >> ${region}.out
-      fi
-     fi
-    fi
-  done
+    cat ${regdir}/${var}_${ahr}_std_${region}.grb2 >> ${RUN}_${modID}_${mode}_temp_${region}_std.grb2
+  done # var
+  fi
   fhr=$(expr $fhr + $intvl_hrly)
-done
+done # fhr
 
-# More cleaning up and housekeeping 
-
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sst.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_sss.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ssh.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_u_velocity.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_v_velocity.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_u_barotropic.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_v_barotropic.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_prog_layer_density.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_prog_layer_density.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_coverage.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_coverage.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_thickness.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_ice_thickness.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_mixed_layer_thickness.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_mixed_layer_thickness.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_diag_surface_boundary_layer_thickness.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_diag_surface_boundary_layer_thickness.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_coverage.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_coverage.nc
-test -f ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_thickness.nc && rm ${RUN}_${modID}_2ds_${mode}${fhr}_ice_ice_thickness.nc
-
-#done
+fhr=$(expr $fhr - $intvl_hrly)
+ahr=$fhr
+# keep fhr for tm (results in file being tm024)
+#if [ ${mode} = 'tm' ];then let ahr=24-fhr;fi
+ahr=$(printf "%03d\n" $ahr)
+cp ${RUN}_${modID}_${mode}_temp_${region}_std.grb2 ${RUN}_${modID}.t${mycyc}z.${mode}${ahr}.${region}_std.grib2
 
 echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)

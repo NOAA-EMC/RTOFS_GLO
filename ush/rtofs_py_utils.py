@@ -20,6 +20,14 @@ FILL_VALUE = -9.99e+33
 NCODA_SPVAL_THRESHOLD = -100.0
 PLOT_DPI = 60  # Low DPI for faster diagnostic previews
 
+def var_mapper(vName):
+    if vName == "icecov":
+        lookup_name = "sic"
+    else:
+        lookup_name = vName
+
+    return lookup_name
+
 def var_atts(vName):
     """
     Returns (scale_factor, units, long_name, cmap) based on variable name.
@@ -78,13 +86,11 @@ def plot_var(nc_file, vName, outPath):
     if not os.path.exists(nc_file):
         return
 
-    ds = xr.open_dataset(nc_file)
-    plot_data = ds[vName].squeeze()
-    plot_data = plot_data.where(plot_data != FILL_VALUE)
+    _, _, _, v_cmap = var_atts(vName)
 
-    # Map back to original name if needed for cmap lookup
-    lookup_name = "icecov" if vName == "sic" else vName
-    _, _, _, v_cmap = var_atts(lookup_name)
+    ds = xr.open_dataset(nc_file)
+    plot_data = ds[var_mapper(vName)].squeeze()
+    plot_data = plot_data.where(plot_data != FILL_VALUE)
 
     plt.figure(figsize=(10, 6))
     plot_data.plot(cmap=v_cmap, robust=True)

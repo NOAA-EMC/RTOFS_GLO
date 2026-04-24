@@ -74,8 +74,28 @@ then
     "in $COMINm1" 15
 fi
 
-# 2. build namelists
+# 1.d combine RTOFS 3z output into 1 file
+rm -f cmdfile.combine
+mkdir rtofs.$PDYm1
+for df in $(seq -w 024 24 192)
+do
+  if [ -f $COMINm1/rtofs_glo_3dz.f$df.daily.3ztio.nc ]
+  then
+    echo "$USHrtofs/rtofs_glo_combine_3dz.sh $COMINm1 f$df rtofs.$PDYm1 ocnp.f$df.nc > combine.f$df.out" >> cmdfile.combine
+  fi
+done
+if [ -f cmdfile.combine ]
+then
+  chmod +x cmdfile.combine
+  mpiexec -np $NPROCS --cpu-bind verbose,core cfp ./cmdfile.combine
+  err=$? ; export err ; err_chk
+  date
+else
+  echo probably should fail here because there are no model fields
+  exit -5
+fi
 
+# 2. build namelists
 rm -f odsetnl
 rm -f ogridnl
 rm -f oanl

@@ -37,7 +37,14 @@ postmsg "$msg"
 
 # --------------------------------------------------------------------------- #
 # 1 Do staging
-  $USHrtofs/${RUN}_prestaging.sh 
+#  $USHrtofs/${RUN}_prestaging.sh
+
+# use pre-built forcings
+# may be present from analysis run
+if [ ! -f $COMOUT/gfs.forcing.files.nc ]
+then
+   ln -s $COMIN/../forcing/$PDY/zg.forcing.files $COMOUT/gfs.forcing.files.nc
+fi
 
 #################################################
 msg="THE RTOFS_GLO_FORECAST_PRE JOB HAS ENDED NORMALLY on $(hostname) at $(date)"

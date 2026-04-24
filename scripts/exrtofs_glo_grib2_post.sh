@@ -33,7 +33,6 @@
 #                    PDY                                                      #  
 #                    mycyc                                                    #
 #                    fcstdays                                                 #
-#                    inputgrid                                                #
 #                                                                             #
 #                                                                             #
 # Script history log:                                                         #
@@ -121,25 +120,10 @@ echo $surface_1hrly $surface_3hrly
 # Waiting time (in 10 sec)
 icnt_max=180
 
-# Define the Input files:
-export DEPTHFILEa=${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.a
-export DEPTHFILEb=${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.depth.b
-export GRIDFILEa=${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.a
-export GRIDFILEb=${FIXrtofs}/${RUN}_${modID}.${inputgrid}.regional.grid.b
-                          
-# Copy in the Fix files:
-cp -f -p $GRIDFILEa  ${DATA}/regional.grid.a
-cp -f -p $GRIDFILEb  ${DATA}/regional.grid.b
-cp -f -p $DEPTHFILEa ${DATA}/regional.depth.a
-cp -f -p $DEPTHFILEb ${DATA}/regional.depth.b
-
-# Copy in the Parm Files:
-cp -f -p ${PARMrtofs}/${RUN}_${modID}.${inputgrid}.archv2ncdf2d.in ${DATA}/archv2ncdf2d.in
-
 fhr=$(expr ${fcstdays_before_thisstep} \* 24)
 if [ ${RUN_MODE} = 'analysis' ]
 then
-  export mode=n
+  export mode=tm
   analhrs=$(expr $analdays \* 24) 
 fi
 if [ ${RUN_MODE} = 'forecast' ]
@@ -151,12 +135,15 @@ export hr_daily=$fhr0
 export hr_2d_3hrly=$fhr0
 export hr_2d_1hrly=$fhr0
 
-
 echo fhr $fhr ENDHOUR $ENDHOUR
 # Output NC header information for surface AND volume files
 
-export CDF_TITLE='HYCOM ATLb2.00'
-export CDF_INST="National Centers for Environmental Prediction"
+export CDF_TITLE='RTOFS GLOv3'
+export CDF_INST="Office of Model Development"
+
+dov2stuff=0
+if [ $dov2stuff -eq 1 ]
+then
 
 while [ $fhr -le $ENDHOUR ]
 do
@@ -391,20 +378,47 @@ done
     fi ## for_opc
     fi ## forecast
 
+fi # dov2stuff
 
+echo $fcstdays
+echo $ENDHOUR
+echo $fcstdays_before_thisstep
 
-# If you want to pack to grib then
-    if [ $grib_1hrly = 'YES' ]
-    then
+####### if [ ${RUN_MODE} = 'forecast' ] && [ ${fcstdays_before_thisstep} -ge 3 ]
+# the netcdf files that would have been created above
+if [ ${mode} = 'tm' ]
+then
+   ln -s $COMIN/rtofs_glo_2ds.tm???.nc .
+   ln -s $COMIN/rtofs_glo_2ds.tm???.ice.nc .
+else
+   if [ ${fcstdays_before_thisstep} -lt 3 ]
+   then
+      let starthour=ENDHOUR-23
+      for dd in $(seq -f '%03G' $starthour $ENDHOUR)
+      do
+         ln -s $COMIN/rtofs_glo_2ds.f${dd}.nc .
+         ln -s $COMIN/rtofs_glo_2ds.f${dd}.ice.nc .
+      done
+   else
+      let starthour=72
+      for dd in $(seq -f '%03G' $starthour 3 $ENDHOUR)
+      do
+         ln -s $COMIN/rtofs_glo_2ds.f${dd}.nc .
+         ln -s $COMIN/rtofs_glo_2ds.f${dd}.ice.nc .
+      done
+   fi
+fi
+# if [ $grib_1hrly = 'YES' ]
+#    then
       ksh ${USHrtofs}/${RUN}_create_regions_mpmd_weights.sh
-    fi
+#    fi
 if [ $SENDCOM = 'YES' ]
         then
 # Copy them to grib output dir
 ## Adds the GRIB Header file to the GRIB2 files
     for ftype in alaska arctic bering guam gulf_alaska honolulu hudson_baffin samoa trop_paci_lowres west_atl west_conus
     do
-      for cfile in $(ls -C1 $DATA/$ftype/${RUN}_${modID}.t${mycyc}z.${mode}*_${ftype}_std.grb2)
+      for cfile in $(ls -C1 $DATA/$ftype/${RUN}_${modID}.t${mycyc}z.${mode}*.${ftype}_std.grib2)
       do
           cname=$(basename $cfile)
           if [ -x cpfs ]   # rc=1 means cpfs not found
@@ -413,8 +427,9 @@ if [ $SENDCOM = 'YES' ]
           else
             cpfs $cfile  ${COMOUT}/.
           fi
-          file=$(echo $cfile |awk -F/ '{print $5}')
-          fhour=$(echo $cname | cut -c17-19)
+          spos=3
+          if [ $mode == 'f' ];then spos=2; fi
+          fhour=$(echo $cname | cut -d. -f3 | cut -c${spos}-)
 
           ####################################
           # Processing GRIB2 RTOFS for AWIPS
@@ -423,7 +438,7 @@ if [ $SENDCOM = 'YES' ]
           export pgm;. prep_step
           startmsg
 
-          export FORT11=$ftype/${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std.grb2
+          export FORT11=$ftype/${RUN}_${modID}.t${mycyc}z.${mode}${fhour}.${ftype}_std.grib2
           export FORT31=" "
           export FORT51=grib2_${RUN}_${modID}.t${mycyc}z.${mode}${fhour}_${ftype}_std
           $TOCGRIB2 < $PARMrtofs/grib2_rtofs_glo_${mode}${fhour}_${ftype}_std
@@ -458,8 +473,8 @@ if [ $SENDCOM = 'YES' ]
             msg="File $COMOUT/$cname not posted to db_net."
             postmsg "$msg"
           fi
-       done
-     done
+      done
+    done
 fi
 
 echo "done" >$COMOUT/${RUN}_${modID}.t${mycyc}z.nav.log

@@ -14,12 +14,12 @@
 # 3dz daily 4 vars (sio, tio, uio, vio)                 rtofs_glo_3dz.f024.daily.3ztio.nc
 ############ DIAG TABLE UPDATES ##############
 
-# Ocean diagnostics files
-"ocn3zsio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
-"ocn3ztio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
-"ocn3zuio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
-"ocn3zvio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
-"ocn3zhio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+# Ocean diagnostics files (ocn3 cadence matches restart file cadence)
+"ocn3zsio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
+"ocn3ztio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
+"ocn3zuio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
+"ocn3zvio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
+"ocn3zhio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
 "ocnp%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
 "ocns%4yr_%3dy_%2hr", 1,"hours", 1, "days","Time", 1,"hours"
 

@@ -37,8 +37,8 @@ elif [[ $# -eq 4 ]]; then
   output_file_name=$4
 fi
 
-set -ux
-export PS4='$SECONDS + '
+set -x
+#export PS4='$SECONDS + '
 
 echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
