@@ -1,5 +1,5 @@
 #export model=rtofs
-export rtofs_glo_ver=v2.5.2
+export rtofs_glo_ver=v2.5.4
 export model_ver=${rtofs_glo_ver}
 export version=${rtofs_glo_ver}
 export envvar_ver=1.0
@@ -23,4 +23,3 @@ export hdf5_ver=1.10.6
 export netcdf3_ver=3.6.3
 export netcdf4_ver=4.7.4
 export wgrib2_ver=2.0.8
-
