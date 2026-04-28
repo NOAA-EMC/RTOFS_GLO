@@ -31,5 +31,8 @@ export nco_ver_rtofs=4.7.9
 export ve_hafs_ver=2.1
 export ve_rtofs_ver=3.0
 
+export nco_ver=5.2.4
+export udunits_ver=2.2.28
+
 module use /apps/dev/modulefiles/
 
