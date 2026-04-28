@@ -1,0 +1,64 @@
+"RTOFS"
+1980 12	31  0  0  0
+#1st two lines (above) are "title" and "base date" (y m d h m s)
+#days since 1900-12-31 00:00:0 is HYCOM convention for gregorian
+
+#File Section: File lines contain 6 required and 5 optional fields
+#"file_name", output_freq, "output_freq_units", file_format, "time_axis_units", "time_axis_name"
+#[, new_file_freq, "new_file_freq_units"[, "start_time"[, file_duration, "file_duration_units"]]]
+######################
+
+############ DIAG TABLE UPDATES ##############
+# 2ds diag and 2ds prog combined into one 2ds file      rtofs_glo_2ds.f001.nc
+# 3dz 6hrly hvr 3 regions (alaska, US_east, US_west)    rtofs_glo_3dz.f006.6hrly_hvr.alaska.nc
+# 3dz daily 4 vars (sio, tio, uio, vio)                 rtofs_glo_3dz.f024.daily.3ztio.nc
+############ DIAG TABLE UPDATES ##############
+
+# Ocean diagnostics files (ocn3 cadence matches restart file cadence)
+"ocn3zsio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
+"ocn3ztio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
+"ocn3zuio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
+"ocn3zvio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
+"ocn3zhio%4yr_%3dy_%2hr", 12,"hours",  1, "days","Time", 12,"hours"
+"ocnp%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+"ocns%4yr_%3dy_%2hr", 1,"hours", 1, "days","Time", 1,"hours"
+
+#Field Section: Field lines contain 8 fields.
+#"module_name", "field_name", "output_name", "file_name", "time_sampling", "reduction_method", "regional_section", packing
+#"time_sampling" is always "all"
+#"reduction_method" is mean (.TRUE.,average,avg); none (.FALSE.); min; max; diurnal;
+#"regional_section" is none; lat_min,lat_max,lon_min,lon_max,vert_min,vert_max;
+#"packing" is 1 (for r*8), 2 (for r*4), 3 (for i*2), 4 (for i*1)
+
+# Prognostic Ocean fields:  (should be ocean_model_z and some other changes needed)
+#=========================
+"ocean_model","u",   "u",   "ocnp%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","v",   "v",   "ocnp%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","h",   "h",   "ocnp%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","temp","potT","ocnp%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","salt","salt","ocnp%4yr_%3dy_%2hr","all","none","none",2
+
+# Global fields  (should be ocean_model_z and some other changes needed)
+#==============
+"ocean_model","so",     "salt",     "ocn3zsio%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","thetao", "potT",     "ocn3ztio%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","uo",     "u",        "ocn3zuio%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","vo",     "v",        "ocn3zvio%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","h",      "h",        "ocn3zhio%4yr_%3dy_%2hr","all","none","none",2
+
+# Surface Ocean fields:
+#======================
+"ocean_model","SSU",        "u_velocity",                        "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","SSV",        "v_velocity",                        "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","SSH",        "ssh",                               "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","SST",        "sst",                               "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","SSS",        "sss",                               "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","MLD_0125",   "mixed_layer_thickness",             "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","ubtav",      "u_barotropic_velocity",             "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","vbtav",      "v_barotropic_velocity",             "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","ePBL_h_ML",  "surface_boundary_layer_thickness",  "ocns%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model","col_mass",   "layer_density",                     "ocns%4yr_%3dy_%2hr","all","none","none",2
+
+## NOTE -- surface_boundary_layer_thickness needs to be confirmed
+## NOTE -- layer_density needs to be confirmed
+

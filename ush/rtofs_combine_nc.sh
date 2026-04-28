@@ -37,11 +37,10 @@ elif [[ $# -eq 4 ]]; then
   output_file_name=$4
 fi
 
-set -ux
-export PS4='$SECONDS + '
+set -x
+#export PS4='$SECONDS + '
 
-msg="RTOFS_COMBINE_NC JOB has begun on $(hostname) at $(date)"
-postmsg "$msg"
+echo "*** Started script $0 on hostname "$(hostname)' at time '$(date)
 
 # --------------------------------------------------------------------------- #
 
@@ -99,10 +98,9 @@ elif [ ! -s "${output_file_name}" ]; then
 else
   echo "SUCCESS: Created ${output_file_name}"
   ls -lh "${output_file_name}"
-  exit 0
 fi
 
 # --------------------------------------------------------------------------- #
 
-msg="RTOFS_COMBINE_NC JOB HAS ENDED NORMALLY on $(hostname) at $(date)"
-postmsg "$msg"
+echo "*** Finished script $0 on hostname "$(hostname)' at time '$(date)
+exit 0

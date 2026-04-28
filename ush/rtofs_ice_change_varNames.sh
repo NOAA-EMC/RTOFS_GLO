@@ -17,22 +17,23 @@ declare -A var_map=(
     ["vvel_h"]="ice_vvelocity"
 )
 
-# 1. Check if exactly 2 arguments are provided
-if [[ $# -ne 2 ]]; then
+# 1. Check if exactly 1 arguments are provided
+if [[ $# -ne 1 ]]; then
     echo "ERROR: Missing required arguments."
-    echo "Usage: $0 <input_path> <hour_str>"
+    echo "Usage: $0 <input_name>"
     exit 1
 fi
 
 # 2. Input Arguments
-IN_PATH=$1
-HOUR_STR=$2
+#IN_PATH=$1
+#HOUR_STR=$2
+full_inpath=$1
 
 # 3. File Template Configuration
-prefix="rtofs_glo_2ds."
-suffix=".ice.nc"
-infile="${prefix}${HOUR_STR}${suffix}"
-full_inpath="${IN_PATH}/${infile}"
+#prefix="rtofs_glo_2ds."
+#suffix=".ice.nc"
+#infile="${prefix}${HOUR_STR}${suffix}"
+#full_inpath="${IN_PATH}/${infile}"
 
 # 4. Verification Step
 echo ">>> Verifying input file in $IN_PATH..."

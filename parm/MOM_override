@@ -1,0 +1,6 @@
+! Blank file in which we can put "overrides" for parameters
+#override VERBOSITY = 1
+#override RESTART_CHECKSUMS_REQUIRED = False !   [Boolean] default = True
+#override USE_VARIABLE_MIXING = False
+#override DYNAMIC_SURFACE_PRESSURE = False
+#override ISO_DATE_STAMPED_STDOUT = True

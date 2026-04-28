@@ -292,17 +292,16 @@ c
      &      status='old')
         read(unit=9) arrayncoda
 
+c read and re-stagger u velocity
       do k=1,kncoda
         do j=1,jj
           do i=1,ii
-c           if (i.eq.1) then
-c             ib=ii !periodic
-c           else
-c             ib=i-1
-c           endif
-c            uncoda(i,j,k)=0.5*(arrayncoda(i,j,k)+arrayncoda(ib,j,k))
-c uncoda is re-staggered in ncoda
-            uncoda(i,j,k)=arrayncoda(i,j,k)
+            if (i.eq.ii) then
+              ib=1 !periodic
+            else
+              ib=i+1
+            endif
+            uncoda(i,j,k)=0.5*(arrayncoda(i,j,k)+arrayncoda(ib,j,k))
           enddo !i
         enddo !j
       enddo !k
@@ -321,17 +320,17 @@ c
        open(9,file=flnm_v,form='unformatted',access='stream',
      &      status='old')
         read(unit=9) arrayncoda
-         
+
+c read and re-stagger v velocity
       do k=1,kncoda
         do j=1,jj
-c         jb=max(j-1,1)
+          jb=min(j+1,jj)
           do i=1,ii
-c           vncoda(i,j,k)=0.5*(arrayncoda(i,j,k)+arrayncoda(i,jb,k))
-c vncoda is re-staggered in ncoda
-           vncoda(i,j,k)=arrayncoda(i,j,k)
+            vncoda(i,j,k)=0.5*(arrayncoda(i,j,k)+arrayncoda(i,jb,k))
           enddo !i
         enddo !j
       enddo !k
+
 c***
       do k=1,kncoda
         write(lp,*) 'vvel incr = ',minval(vncoda(:,:,k)),

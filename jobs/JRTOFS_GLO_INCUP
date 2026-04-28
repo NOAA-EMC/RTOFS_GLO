@@ -35,12 +35,13 @@ export DATA=${DATA:-${DATAROOT}/${jobname}_${model_ver}_${envir}/${jobid}}
 export DATArestart=${DATAROOT}/${jobname}_${model_ver}_${envir}/restart
 export DATAarchive=${DATAROOT}/${jobname}_${model_ver}_${envir}/archive
 mkdir -p $DATA
-mkdir -p $DATArestart $DATAarchive
-# remove archives since restart time
-rm -f $DATAarchive/*
-# remove restart directory since incup is too short to have multiple restart instances
-rm -f $DATArestart/*
 cd $DATA
+
+#mkdir -p $DATArestart $DATAarchive
+# remove archives since restart time
+#rm -f $DATAarchive/*
+# remove restart directory since incup is too short to have multiple restart instances
+#rm -f $DATArestart/*
 
 ####################################
 # Determine Job Output Name on System
@@ -79,15 +80,10 @@ export COMOUT=${COMOUT:-$(compath.py -o ${NET}/${rtofs_glo_ver})/${RUN}.${PDY}}
 mkdir -m 775 -p $COMOUT
 test -d $COMOUT || mkdir -p $COMOUT
 
-###################
-# Define model grid
-###################
-export inputgrid=navy_0.08
-
 ##################################################################
 # Run the config file to set up specific model variables if needed
 ##################################################################
-. $PARMrtofs/${RUN}_${modID}.${inputgrid}.config
+. $PARMrtofs/${RUN}_${modID}.config
 
 #################################################################
 #  Send a message indicating the start of the job
