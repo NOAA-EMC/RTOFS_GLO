@@ -1,6 +1,8 @@
 #!/bin/sh
 # top level script to build / install / clean RTOFS binaries
 
+set -e
+
 if [ $# -lt 1 ] 
 then
   whattodo=compile
