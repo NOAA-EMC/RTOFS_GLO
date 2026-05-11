@@ -32,9 +32,14 @@ cd RTOFS_GLO/sorc
      - Allowed `RUN_ENVIR`= nco, emc.
      - `machine_name` = wcoss2, ursa, orion, gaeac6.
      - For all development on WCOSS-2: `./build_forecast.sh emc wcoss2`
+       - Other than WCOSS-2: `./build_forecast.sh emc <machine_name>`
 
 2. Rest of the utilities, including NCODA (**requires access to NCODA repository**), on wcoss2 only:
    - Use `build_ncoda_and_rtofs_utils.sh <machine_name>`
    - Notes:
      - Allowed `machine_name`= wcoss2 (only).
+     - Relies on `sorc/build_rtofs.sh`.
+
+**Remarks**:
+- If building NCODA only, use: `sorc/build_rtofs_ncoda.sh`
 
