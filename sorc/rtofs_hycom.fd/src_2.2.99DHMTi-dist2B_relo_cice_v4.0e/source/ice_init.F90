@@ -625,6 +625,17 @@
          write(nu_diag,1010) ' loose_ferrmax             = ', loose_ferrmax
          if (loose_ferrmax) then
            write(nu_diag,1000) ' high_ferrmax              = ', high_ferrmax
+           print*, ' '
+           print*, ' ******** WARNING      *********** '
+           print*, ' '
+           print*, ' This setting is meant to be used in exceptional situations such as:'
+           print*, ' - Production run (strict delivery time).'
+           print*, ' - When the ice thickness is < 5 cm and no snow and melting rate is high.'
+           print*, ' - The amount of shortwave radiation > 100 W/m^2.'
+           print*, ' - See this issue for more details: https://github.com/NOAA-EMC/RTOFS_GLO/issues/140' 
+           print*, ' '
+           print*, ' ******** WARNING ENDS *********** '
+           print*, ' '
          end if
          if (trim(atm_data_type) /= 'default') then
             write(nu_diag,*)    ' atm_data_dir              = ', &
