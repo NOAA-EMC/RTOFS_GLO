@@ -2028,7 +2028,7 @@
                write(nu_diag,*) (Tin(ij,k),k=1,nilyr)
 
                ! If we are within the loose tolerance, simply ignore the convergence failure
-               if (ferr <= 0.9_dbl_kind * active_ferrmax) then
+               if ((ferr <= 0.9_dbl_kind * active_ferrmax) .and. (loose_ferrmax)) then
                  write(nu_diag,*) 'WARNING: Ignored thermo convergence failure (within loose_ferrmax) at i,j:', i, j
                else
                  l_stop = .true.
