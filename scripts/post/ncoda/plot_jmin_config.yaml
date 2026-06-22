@@ -1,32 +1,27 @@
 # Configuration file for Jmin statistics plotting
-# 'category' must match the exact string from the CSV Category column
-# 'metrics' must be a list of exact strings from the CSV Metric column
+# 'Category' must match the exact string from the CSV Category column
+# 'ObsType' must be a list of exact strings from the CSV Metric column
+
+data_dir: "/lfs/h2/emc/couple/noscrub/santha.akella/RTOFS_OM/v2.5/jmin_stat"
 
 plots:
-  - category: "Ice Cover"
-    metrics:
+  - Category: "Ice Cover"
+    ObsType:
       - "All Data Combined"
 #     - "Sea Ice"
 
-  - category: "Temperature"
-    metrics:
+  - Category: "Temperature"
+    ObsType:
       - "All Data Combined"
       - "Argo Float Temp"
       - "SST"
 
-  - category: "Salinity"
-    metrics:
+  - Category: "Salinity"
+    ObsType:
       - "All Data Combined"
       - "Argo Float Salt"
       - "SSS"
 
-# - category: "Geopotential"
-#   metrics:
+# - Category: "Geopotential"
+#   ObsType:
 #     - "All Data Combined"
-
-comparison:
-  - experiment: "v2p5_prod"
-    path: "/lfs/h2/emc/stmp/santha.akella/v2p5_prod"
-
-  - experiment: "e0"
-    path: "/lfs/h2/emc/stmp/santha.akella/e0"

@@ -1,66 +1,64 @@
 #!/bin/bash
 set -euo pipefail
 
-# 1. Input Validation
-if [[ $# -lt 2 ]]; then
-    echo "Usage: $0 <date_YYYYMMDD> <base_path>" >&2
-    echo "Example: $0 20260326 /lfs/h1/ops/prod/com/rtofs/v2.5" >&2
-    exit 1
-fi
+# 1. Machine and environment & Safety Check
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
+CHECK_ENV_PATH="$(readlink -f "${SCRIPT_DIR}/../check_machine_env.sh")"
 
-RTOFS_DATE=$1
-BASE_PATH="${2%/}"
-
-# 2. Date Math
-PREV_DATE=$(date -d "${RTOFS_DATE} - 1 day" +%Y%m%d)
-
-# 3. Construct File Names
-TARGET_FILE="${BASE_PATH}/rtofs.${RTOFS_DATE}/ncoda/logs/hycom_var/hycom_var.${PREV_DATE}00.out"
-OUT_FILE="jmin_${RTOFS_DATE}.csv"
-
-# 4. Check existence
-if [[ ! -s "${TARGET_FILE}" ]]; then
-    echo "FATAL ERROR: File missing or empty: ${TARGET_FILE}" >&2
+if [[ -f "${CHECK_ENV_PATH}" ]]; then
+    source "${CHECK_ENV_PATH}" || exit 3
+else
+    echo "ERROR: Machine and environment check missing at ${CHECK_ENV_PATH}"
     exit 2
 fi
 
-echo "File found: ${TARGET_FILE}"
-echo "Extracting data to: ${OUT_FILE}"
+# 2. Gather summary of fit-to-observations, i.e., cost functional (jmin)
 
-# 5. Extract Stats using awk
-awk '
-/^Jmin Diagnostic:/ {
-    category = substr($0, 18);
-    sub(/[ \t\r]+$/, "", category); 
-    
-    print "Category,Metric,Jmin,N"
-    
-    in_block = 1;
-    next;
-}
+# RTOFS operational version
+rtofs_version="v2.5"
 
-in_block && NF == 2 && $1 == "Jmin" && $2 == "N" {
-    next;
-}
+# Get Current Date in YYYYMMDD format
+#current_date="20260622"
+current_date=$(date +%Y%m%d)
 
-in_block && NF >= 3 {
-    n = $NF;
-    jmin = $(NF-1);
-    
-    name = $0;
-    sub(/^[ \t]+/, "", name);
-    sub(/[ \t]+[0-9.]+[ \t]+[0-9]+[ \t\r]*$/, "", name);
-    
-    printf "%s,%s,%s,%s\n", category, name, jmin, n;
-    next;
-}
+# Output path (organized by run date)
+oPath="/lfs/h2/emc/couple/noscrub/$USER/RTOFS_OM/${rtofs_version}/jmin_stat/${current_date}"
 
-in_block && NF == 0 {
-    print ""; 
-    in_block = 0;
-    next;
-}
-' "${TARGET_FILE}" > "${OUT_FILE}"
+# Ensure output directory exists before calling the script to gather jmin data
+mkdir -p "$oPath"
 
-echo "Done."
+JMIN_SCRIPT="${SCRIPT_DIR}/get_jmin_stats.sh"
+
+if [[ -f "${JMIN_SCRIPT}" ]]; then
+    echo ">>> Gathering NCODA cost functional (jmin) for ${current_date}..."
+
+    # Example Usage: ./get_jmin_stats.sh "v2.5" "20260622" "${oPath}"
+    "${JMIN_SCRIPT}" "${rtofs_version}" "${current_date}" "${oPath}" || exit 1
+else
+    echo "ERROR: Script to gather NCODA jmin stats: ${JMIN_SCRIPT} not found."
+    exit 2
+fi
+
+# --- 3. Generate Time Series Plots ---
+PLOT_SCRIPT="${SCRIPT_DIR}/plot_jmin.py"
+
+if [[ -f "${PLOT_SCRIPT}" ]]; then
+    echo "------------------------------------------------"
+    echo ">>> Loading Python environment for plotting..."
+    # Ensure clean state and load required WCOSS2 modules
+    module reset
+    module load intel ve/rtofs || echo "WARNING: Failed to load ve/rofs modules."
+
+    echo ">>> Generating Time Series Plots..."
+    # Modify `plot_jmin_config.yaml` as needed
+    "${PLOT_SCRIPT}" plot_jmin_config.yaml || echo "WARNING: Plot generation failed for ${current_date}"
+else
+    echo "FATAL ERROR: Plotting script not found at ${PLOT_SCRIPT}. Skipping plots."
+    exit 3
+fi
+
+echo "------------------------------------------------"
+echo ">>> jmin_stats.sh completed for ${current_date}."
+echo "------------------------------------------------"
+
 exit 0
