@@ -51,7 +51,7 @@ if [[ -f "${PLOT_SCRIPT}" ]]; then
 
     echo ">>> Generating Time Series Plots..."
     # Modify `plot_jmin_config.yaml` as needed
-    "${PLOT_SCRIPT}" plot_jmin_config.yaml || echo "WARNING: Plot generation failed for ${current_date}"
+    "${PLOT_SCRIPT}" "${SCRIPT_DIR}/plot_jmin_config.yaml" || echo "WARNING: Plot generation failed for ${current_date}"
 else
     echo "FATAL ERROR: Plotting script not found at ${PLOT_SCRIPT}. Skipping plots."
     exit 3
