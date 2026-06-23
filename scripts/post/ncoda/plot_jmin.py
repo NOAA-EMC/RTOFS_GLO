@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-plot_jmin_comp.py
-Purpose: Reads Jmin CSV files and a YAML config. Generates a single Figure 
-         with stacked subplots (one subplot per Category).
+plot_jmin.py
+Purpose: Reads Jmin CSV files and a YAML config. Generates an individual
+         time-series plot for each Category defined in the config.
 """
 
 import os
@@ -55,9 +55,8 @@ def main():
 
     plots_config = config.get('plots', [])
     data_dir = config.get('data_dir', '.')
-    num_cats = len(plots_config)
     
-    if num_cats == 0:
+    if not plots_config:
         print("WARNING: No 'plots' section found in YAML config. Exiting.", file=sys.stderr)
         sys.exit(0)
 
@@ -69,19 +68,15 @@ def main():
     df['Jmin'] = pd.to_numeric(df['Jmin'], errors='coerce')
     df['N'] = pd.to_numeric(df['N'], errors='coerce')
 
-    # 3. Setup Figure
-    fig, axes = plt.subplots(nrows=num_cats, ncols=1, figsize=(12, 4 * num_cats), sharex=True)
-    if num_cats == 1:
-        axes = [axes]
-
     color_cycle = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
-    # 4. Generate Subplots
-    for i, p in enumerate(plots_config):
-        ax1 = axes[i]
+    # 3. Generate Individual Plots
+    for p in plots_config:
         category = p.get('Category')  
         obs_types = p.get('ObsType', []) 
         
+        # Initialize a new figure for this specific category
+        fig, ax1 = plt.subplots(figsize=(10, 4))
         ax2 = ax1.twinx()
         
         lines_for_legend = []
@@ -110,28 +105,29 @@ def main():
             ax2.set_yscale('log')
             ax2.yaxis.set_major_formatter(ticker.ScalarFormatter())         
 
-        # Subplot Formatting
-        ax1.set_title(f"{category}", fontweight='bold')
+        # Plot Formatting
+        ax1.set_title(f"NCODA Jmin: {category}", fontweight='bold')
         ax1.set_ylabel("Jmin Value")
         ax2.set_ylabel("Observation Count (N)")
         ax1.grid(True, linestyle='--', alpha=0.7)
+        ax1.set_xlabel("Date", fontweight='bold')
         
         if lines_for_legend:
-            # MOVED INSIDE & REMOVED OUTLINE
             ax1.legend(lines_for_legend, labels_for_legend, loc='best', frameon=False)
 
-    # Format Bottom X-axis dates
-    axes[-1].set_xlabel("Date", fontweight='bold')
-    axes[-1].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    fig.autofmt_xdate()
+        # X-axis dates
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        fig.autofmt_xdate()
 
-    # Save
-    plt.tight_layout()
-    out_filename = "dashboard_jmin_stats.png"
-    out_filepath = os.path.join(data_dir, out_filename)
-    fig.savefig(out_filepath, dpi=120, bbox_inches='tight')
-    plt.close(fig)
-    print(f"  -> SUCCESS: Created dashboard plot: {out_filepath}")
+        # Save and close
+        plt.tight_layout()
+        safe_category_name = category.replace(" ", "_")
+        out_filename = f"jmin_{safe_category_name}.png"
+        out_filepath = os.path.join(data_dir, out_filename)
+        fig.savefig(out_filepath, dpi=120, bbox_inches='tight')
+        plt.close(fig)
+
+        print(f"  -> SUCCESS: Created plot: {out_filepath}")
 
 if __name__ == "__main__":
     main()
