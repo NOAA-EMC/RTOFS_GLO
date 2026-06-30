@@ -17,7 +17,9 @@
 
 ## Methodology
 1. Encode a namelist boolen flag: `loose_ferrmax`, whose default is .false.
-   (**Special instructions**)
+
+   **Special instructions**
+   ---
 2. Whenever the RTOFS jobs (jrtofs_global_analysis, jrtofs_global_forecast_step1, jrtofs_global_forecast_step2) 
    fail with error message that contains both: `Thermo iteration does not converge` **and** `Flux conservation error`:
    - Clean up any restarts (from failed run), follow [item 2 of these instructions.](https://www2.pmb.ncep.noaa.gov/wiki/index.php/Special_Procedures#RTOFS)
