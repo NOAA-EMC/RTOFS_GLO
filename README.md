@@ -13,11 +13,11 @@ RTOFS-GLO current supports the following machines:
 
 ### 1. Check out components
 
-$ git clone git@github.com:NOAA-EMC/RTOFS_GLO.git
+$ git clone -b release/v2.5.5 git@github.com:NOAA-EMC/RTOFS_GLO.git
 
 While in /sorc folder (require access to NCODA repository):
 ```
-$ git clone git@github.com:NOAA-EMC/NCODA.git rtofs_ncoda.fd
+$ git clone -b release/v2.5.0 git@github.com:NOAA-EMC/NCODA.git rtofs_ncoda.fd
 ```
 ### 2. Build components
 
