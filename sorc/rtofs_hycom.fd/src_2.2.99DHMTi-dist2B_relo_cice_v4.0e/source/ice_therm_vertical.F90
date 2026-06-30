@@ -70,6 +70,11 @@
       real (kind=dbl_kind), parameter, private :: &
          ferrmax = 1.0e-3_dbl_kind    ! max allowed energy flux error (W m-2)
                                       ! recommend ferrmax < 0.01 W m-2
+      logical (kind=log_kind), public :: &
+         loose_ferrmax = .false.     ! toggle to bypass strict flux crash
+
+      real (kind=dbl_kind), public :: &
+         high_ferrmax = 1.0e+3_dbl_kind    ! Exceptional (for production) energy flux error (W m-2)
 
       character (char_len) :: stoplabel
 
@@ -1409,6 +1414,8 @@
       logical (kind=log_kind) :: &
          all_converged  ! = true when all cells have converged
 
+      real (kind=dbl_kind) :: active_ferrmax ! which value of ferrmax is used?
+
       !-----------------------------------------------------------------
       ! Initialize
       !-----------------------------------------------------------------
@@ -1989,6 +1996,13 @@
       !-----------------------------------------------------------------
       ! Check for convergence failures.
       !-----------------------------------------------------------------
+            ! Determine active tolerance on ferr
+            if (loose_ferrmax) then
+              active_ferrmax = high_ferrmax
+            else
+              active_ferrmax = ferrmax
+            end if
+
             if (.not.converged(ij)) then
                write(nu_diag,*) 'Thermo iteration does not converge,', &
                                 'istep1, my_task, i, j:', &
@@ -2012,10 +2026,17 @@
                write(nu_diag,*) (Tsn(ij,k),k=1,nslyr)
                write(nu_diag,*) 'Final ice temperatures:'
                write(nu_diag,*) (Tin(ij,k),k=1,nilyr)
-               l_stop = .true.
-               istop = i
-               jstop = j
-               return
+
+               ! If we are within the loose tolerance, simply ignore the convergence failure
+               if ((ferr <= 0.9_dbl_kind * active_ferrmax) .and. (loose_ferrmax)) then
+                 write(nu_diag,*) 'WARNING: Ignored thermo convergence failure (within loose_ferrmax) at i,j:', i, j
+               else
+                 l_stop = .true.
+                 istop = i
+                 jstop = j
+                 return
+               endif
+
             endif
          enddo                  ! ij
       endif                     ! all_converged
@@ -4431,6 +4452,8 @@
          einp        , & ! energy input during timestep (J m-2)
          ferr            ! energy conservation error (W m-2)
 
+      real (kind=dbl_kind) :: active_ferrmax ! which value of ferrmax is used?
+
       !----------------------------------------------------------------
       ! If energy is not conserved, print diagnostics and exit.
       !----------------------------------------------------------------
@@ -4444,7 +4467,15 @@
          einp = (fsurfn(i,j) - flatn(i,j) + fswint(i,j) - fhocnn(i,j) &
                - fsnow(i,j)*Lfresh) * dt
          ferr = abs(efinal(ij)-einit(ij)-einp) / dt
-         if (ferr > ferrmax) then
+
+         ! Determine active tolerance on ferr
+         if (loose_ferrmax) then
+           active_ferrmax = high_ferrmax
+         else
+           active_ferrmax = ferrmax
+         end if
+
+         if (ferr > active_ferrmax) then
             l_stop = .true.
             istop = i
             jstop = j

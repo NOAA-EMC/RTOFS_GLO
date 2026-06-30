@@ -113,7 +113,8 @@
       use ice_transport_driver, only: advection
       use ice_age, only: tr_iage, restart_age
       use ice_meltpond, only: tr_pond, restart_pond
-      use ice_therm_vertical, only: calc_Tsfc, heat_capacity
+      use ice_therm_vertical, only: calc_Tsfc, heat_capacity, &
+                                    loose_ferrmax, high_ferrmax
       use ice_restoring
 !
 ! !INPUT/OUTPUT PARAMETERS:
@@ -168,7 +169,8 @@
 !pgp        ocn_data_dir,   oceanmixed_file, restore_sst,   trestore,       &
         ocn_data_dir,   oceanmixed_file, restore_sst,   atm_netrad,     &
         trestore,       &
-        restore_ice,    insert_ssmi,     insert_sih
+        restore_ice,    insert_ssmi,     insert_sih,                    &
+        loose_ferrmax,  high_ferrmax
 !ajw
 
       namelist /tracer_nml/   &
@@ -273,6 +275,9 @@
 !ajw
       insert_ssmi = .false.       ! if true, update concentration using SSMI
       insert_sih  = .false.       ! if true, update thickness from a file
+
+      loose_ferrmax = .false.     ! if true, use a large tolerance for "Flux conservation error"
+      high_ferrmax  = 1.0e+3_dbl_kind ! a large value of heat flux
 
       latpnt(1) =  90._dbl_kind   ! latitude of diagnostic point 1 (deg)
       lonpnt(1) =   0._dbl_kind   ! longitude of point 1 (deg)
@@ -491,6 +496,8 @@
       call broadcast_array (lonpnt(1:2),        master_task)
       call broadcast_scalar(runid,              master_task)
       call broadcast_scalar(runtype,            master_task)
+      call broadcast_scalar(loose_ferrmax,      master_task)
+      call broadcast_scalar(high_ferrmax,       master_task)
       if (dbug) & ! else only master_task writes to file
       call broadcast_scalar(nu_diag,            master_task)
       ! tracers
@@ -615,6 +622,21 @@
          write(nu_diag,1010) ' insert_ssmi               = ', insert_ssmi
 !ajw
          write(nu_diag,1010) ' insert_sih                = ', insert_sih
+         write(nu_diag,1010) ' loose_ferrmax             = ', loose_ferrmax
+         if (loose_ferrmax) then
+           write(nu_diag,1000) ' high_ferrmax              = ', high_ferrmax
+           print*, ' '
+           print*, ' ******** WARNING      *********** '
+           print*, ' '
+           print*, ' This setting is meant to be used in exceptional situations such as:'
+           print*, ' - Production run (strict delivery time).'
+           print*, ' - When the ice thickness is < 5 cm and no snow and melting rate is high.'
+           print*, ' - The amount of shortwave radiation > 100 W/m^2.'
+           print*, ' - See this issue for more details: https://github.com/NOAA-EMC/RTOFS_GLO/issues/140' 
+           print*, ' '
+           print*, ' ******** WARNING ENDS *********** '
+           print*, ' '
+         end if
          if (trim(atm_data_type) /= 'default') then
             write(nu_diag,*)    ' atm_data_dir              = ', &
                                   trim(atm_data_dir)
