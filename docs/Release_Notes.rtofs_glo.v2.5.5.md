@@ -59,6 +59,7 @@ except the following:
 4. `sorc/rtofs_ncoda.fd/ncoda_decode/libsrc/bufr/ prof_decode.f` 
     - This item (number 4): changes the value of `parameter MX_LVL` from `6000` to `10000`.
     - It address cases when the (subsurface) profile data has > 6000 values.
+    - This change was already made in `v2.5.4`.
 
 
 ## Building RTOFS:
