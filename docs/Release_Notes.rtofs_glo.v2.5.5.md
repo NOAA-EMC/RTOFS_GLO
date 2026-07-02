@@ -71,14 +71,32 @@ While in /sorc folder (require access to NCODA repository):
 ```
 $ git clone -b release/v2.5.0 git@github.com:NOAA-EMC/NCODA.git rtofs_ncoda.fd
 ```
+
+Please see the release notes for [v2.5.0](https://github.com/NOAA-EMC/RTOFS_GLO/blob/release/v2.5.5/docs/Release_Notes.rtofs_glo.v2.5.0.md)
+more details instructions.
+
 ### 2. Build components
 
-While in /libs folder:
+Please see the [v2.5.0 instructions](https://github.com/NOAA-EMC/RTOFS_GLO/blob/release/v2.5.5/docs/Release_Notes.rtofs_glo.v2.5.0.md#implementation-instructions)
+more details instructions.
+
 ```
-$ ./build_libs.sh
+cd libs
+./build_libs.sh
+cd sorc
+./build_rtofs.sh
+./build_rtofs.sh install
 ```
 
-While in /sorc folder:
+
+Copy fix files to their final respective locations by executing:
+
 ```
-$ ./build_rtofs.sh
-$ ./build_rtofs.sh install
+cd /lfs/h2/emc/eib/noscrub/dan.iredell/RTOFSFIX/20241112
+tar cf - ./fix | (cd <topdir>/rtofs.v2.5.0; tar xf -)
+```
+
+## Test plan for the changes
+
+- Test plan is same as in the [v2.5.0 release.](https://github.com/NOAA-EMC/RTOFS_GLO/blob/release/v2.5.5/docs/Release_Notes.rtofs_glo.v2.5.0.md)
+- To test the `loose_ferrmax` boolean flag, please see [above special instructions.](https://github.com/NOAA-EMC/RTOFS_GLO/blob/release/v2.5.5/docs/Release_Notes.rtofs_glo.v2.5.5.md#special-instructions)
