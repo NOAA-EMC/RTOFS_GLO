@@ -56,6 +56,10 @@ except the following:
    (SORC CHANGES)
 2. `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/source/ice_init.F9`
 3. `sorc/rtofs_hycom.fd/src_2.2.99DHMTi-dist2B_relo_cice_v4.0e/source/ice_therm_vertical.F90`
+4. `sorc/rtofs_ncoda.fd/ncoda_decode/libsrc/bufr/ prof_decode.f` 
+    - This item (number 4): changes the value of `parameter MX_LVL` from `6000` to `10000`.
+    - It address cases when the (subsurface) profile data has > 6000 values.
+
 
 ## Building RTOFS:
 
