@@ -1,0 +1,59 @@
+# plot_innov_config.yaml
+# Configuration file for Innov statistics plotting
+# 'prefix' must match the CSV file naming scheme (e.g., ice_cover, temperature, t_z)
+# 'target_column' is either 'ObsType' (standard) or 'Depth' (vertical grids)
+# 'targets' must be a list of exact strings/numbers from the target column
+
+data_dir: "/lfs/h2/emc/couple/noscrub/santha.akella/RTOFS_OM/v2.5/vrfy_stat"
+
+plots:
+  - prefix: "ice_cover"
+    target_column: "ObsType"
+    targets:
+#     - "All Data Combined"
+      - "Sea Ice"
+
+  - prefix: "temperature"
+    target_column: "ObsType"
+    targets:
+      - "All Data Combined"
+      - "Argo Float Temp"
+      - "SST"
+      - "Glider Temp"
+
+  - prefix: "salinity"
+    target_column: "ObsType"
+    targets:
+      - "All Data Combined"
+      - "Argo Float Salt"
+      - "Glider Salt"
+      - "SSS"
+
+# - prefix: "geopotential"
+#   target_column: "ObsType"
+#   targets:
+#     - "All Data Combined"
+
+  - prefix: "t_z"
+    target_column: "Depth"
+    targets:
+      - 0
+      - 10
+      - 50
+      - 100
+      - 250
+      - 500
+      - 1000
+      - 2000
+
+  - prefix: "s_z"
+    target_column: "Depth"
+    targets:
+      - 0
+      - 10
+      - 50
+      - 100
+      - 250
+      - 500
+      - 1000
+      - 2000
