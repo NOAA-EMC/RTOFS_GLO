@@ -3,6 +3,9 @@
   - NCODA Observation Statistics Dashboard
     - Automates the extraction and visualization of cost function minimums (`Jmin`) and observation counts (`N`).
     - From NCODA `hycom_var` log files. It generates a multi-panel time-series dashboard for a specified date range.
+  - NCODA Verification (Innovation) Statistics Dashboard
+    - Automates the extraction and visualization of forecast/analysis RMS Errors and Mean Bias metrics.
+    - Parses "Analysis Verification" blocks from `ncoda_hycom_var.OUTPUT.*` logs to generate time-series and mean vertical profile (`oanl` grid) plots.
 
 # Brief Description:
 
@@ -19,6 +22,10 @@
 | `plot_jmin_comp.py` | Python visualization script. Reads the CSVs and the YAML config to generate `dashboard_jmin_stats.png` with dynamically scaled axes. | |
 | `plot_jmin_config.yaml` | User-defined configuration file. | Specifies the `Category` and `Metric` combinations to be plotted. Also holds the `comparison` block mapping experiment names to data paths for `compare_jmin_stats.py`. |
 | `compare_jmin_stats.py` | Python visualization script for multi-experiment comparisons. | Reads CSVs from multiple experiment paths defined in the YAML and plots them together for R&D evaluation. |
+| `innov_stats.sh` | Top-level execution wrapper for daily NCODA verification stats. | Calls the extraction script for the current date, loads the WCOSS2 Python environment, and triggers the innovation plotter. Designed for crontab. |
+| `get_innov_stats.sh` | Core verification extraction engine. | Uses `awk` to parse "Analysis Verification" blocks from `OUTPUT` files, generating daily CSVs for variables (ice, temp, salt, geo) and depth profiles (`t_z`, `s_z`, `geo_z`). |
+| `plot_innov.py` | Python visualization script for innovation stats. | Reads verification CSVs and the YAML config to generate time-series plots (RMS & Bias) and time-mean vertical depth profiles. |
+| `plot_innov_config.yaml` | User-defined configuration file for verification plots. | Specifies variable prefixes, target columns (`ObsType` vs `Depth`), and specific platform/depth targets to plot. |
 
 # Example usage:
 
@@ -57,8 +64,18 @@
     - Requires the `comparison` block in `plot_jmin_config.yaml` to be populated with `- experiment: <name>` and `  path: <dir_path>`.
     - Must have Python modules loaded before running (e.g., `module load intel ve/hafs`).
 
+- `./innov_stats.sh`
+  - Notes: Main wrapper for verification stats. Pulls today's date automatically and processes everything.
+    - Example: `./innov_stats.sh`
+
+- `./get_innov_stats.sh [rtofs_version] [run_dir_date] [output_path]`
+  - Notes: Can be run standalone to extract CSVs for a specific date/version.
+    - Example: `./get_innov_stats.sh v2.5 20260811 /path/to/output`
+
+- `./plot_innov.py plot_innov_config.yaml`
+  - Notes: Generates individual PNG time-series plots for RMS and Bias based on YAML config targets, plus a time-mean vertical profile plot.
+    - Must have Python modules loaded before running (e.g., `module load intel ve/rtofs`).
+
 ---
 
 - `./bin2nc_inc_fld.sh dwood /lfs/h2/emc/couple/noscrub/dan.iredell/COMDIR1/prod/com/rtofs/v2.5/ 20250331 icetmp fld`
-
-
