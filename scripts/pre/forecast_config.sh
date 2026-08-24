@@ -3,6 +3,7 @@
 # Path to the UFS source code
 cwd=$(pwd)
 UFSsrc=$(readlink -f "$cwd/../../sorc/ufs_model.fd")
+export UFSsrc
 
 # ==========================================
 # 1. Machine Detection
@@ -11,11 +12,9 @@ UFSsrc=$(readlink -f "$cwd/../../sorc/ufs_model.fd")
 source "${UFSsrc}/tests/detect_machine.sh"
 
 # ==========================================
-# 2. Sandbox Paths & Common Parameters
+# 2. Sandbox Paths & Job Parameters
 # ==========================================
-SOURCE_DIR="/lfs/h2/emc/ptmp/santha.akella/FV3_RT/rt_961228/datm_cdeps_mx025_gefs_intel"
 SANDBOX_DIR="$PWD/it1"
-
 JOB_NAME="run_datm_cdeps_mx025"
 WALLTIME="00:30:00"
 NODES=2
@@ -23,7 +22,17 @@ TASKS_PER_NODE=128
 TOTAL_TASKS=$(( NODES * TASKS_PER_NODE ))
 
 # ==========================================
-# 3. Assign Defaults based on MACHINE_ID
+# 3. Component Resolutions & Data Sources
+# ==========================================
+OCNRES="025"
+ICERES="${OCNRES:0:1}.${OCNRES:1}"
+DATM_SRC="GEFS"
+MESH_ATM="mesh.datm.1536x768.nc"
+
+export OCNRES ICERES DATM_SRC MESH_ATM
+
+# ==========================================
+# 4. Assign Defaults based on MACHINE_ID
 # ==========================================
 if [[ "$MACHINE_ID" == "wcoss2" || "$MACHINE_ID" == "acorn" ]]; then
     SCHEDULER="PBS"
