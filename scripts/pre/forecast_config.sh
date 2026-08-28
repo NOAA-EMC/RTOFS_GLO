@@ -2,19 +2,17 @@
 
 # Path to the UFS source code
 cwd=$(pwd)
-UFSsrc=$(readlink -f "$cwd/../../sorc/ufs_model.fd")
-export UFSsrc
+export UFSsrc=$(readlink -f "$cwd/../../sorc/ufs_model.fd")
 
 # ==========================================
 # 1. Machine Detection
 # ==========================================
-# Point to the authoritative UFS detection script
 source "${UFSsrc}/tests/detect_machine.sh"
 
 # ==========================================
 # 2. Sandbox Paths & Job Parameters
 # ==========================================
-SANDBOX_DIR="$PWD/it1"
+SANDBOX_DIR="/lfs/h2/emc/ptmp/santha.akella/it1"
 JOB_NAME="run_datm_cdeps_mx025"
 WALLTIME="00:30:00"
 NODES=2
@@ -29,7 +27,11 @@ ICERES="${OCNRES:0:1}.${OCNRES:1}"
 DATM_SRC="GEFS"
 MESH_ATM="mesh.datm.1536x768.nc"
 
-export OCNRES ICERES DATM_SRC MESH_ATM
+# Authoritative FIX directory versions
+MOM6_FIX_VER="20250128"
+DATM_FIX_VER="20220805"
+
+export OCNRES ICERES DATM_SRC MESH_ATM MOM6_FIX_VER DATM_FIX_VER
 
 # ==========================================
 # 4. Assign Defaults based on MACHINE_ID

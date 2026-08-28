@@ -1,14 +1,16 @@
 #!/bin/bash
 set -e
 
-# Load configuration (handles machine detection, component resolutions, and UFSsrc)
-source ./forecast_config.sh
+# Capture the scripts directory before we move to the sandbox
+SCRIPT_DIR="$PWD"
 
-# Fetch parsed root directory paths (INPUTDATA_ROOT, DISKNM)
-source ./parse_rt_paths.sh
+# Source configurations and path definitions
+source ./forecast_config.sh
+source ./set_path_to_FIX.sh
+source ./get_ic_paths.sh
+source ./get_forcing_paths.sh
 
 echo ">>> Detected Machine: $MACHINE_ID ($SCHEDULER)"
-echo ">>> Sourcing static inputs from: $INPUTDATA_ROOT"
 echo ">>> Building sandbox in: $SANDBOX_DIR"
 
 # Capture the absolute path to the executable before changing directories
@@ -20,31 +22,75 @@ EXEC_FILE=$(readlink -f "../../exec/ufs_model.x")
 mkdir -p "$SANDBOX_DIR"/{MOM6_OUTPUT,RESTART,history,INPUT}
 cd "$SANDBOX_DIR"
 
-echo ">>> Building INPUT directory..."
+echo ">>> Symlinking DATM forcings..."
+ln -sf "${DATM_FORCING_DIR}/${MESH_ATM}" ./INPUT/
+ln -sf "${DATM_FORCING_DIR}/${DATM_SRC}/201110/"*201110*.nc ./INPUT/ 2>/dev/null || true
 
-# DATM fixed input
-ln -sf "${INPUTDATA_ROOT}/DATM_CDEPS/${MESH_ATM}" ./INPUT/
-ln -sf "${INPUTDATA_ROOT}/DATM_CDEPS/${DATM_SRC}/201110/"*201110*.nc ./INPUT/ 2>/dev/null || true
+echo ">>> Symlinking explicit MOM6 fixed inputs for resolution ${OCNRES}..."
+if [[ "$OCNRES" == "025" ]]; then
+    MOM6_FIX_FILES=(
+        "All_edits.nc"
+        "geothermal_davies2013_v1.nc"
+        "hycom1_75_800m.nc"
+        "interpolate_zgrid_30L.nc"
+        "interpolate_zgrid_32L.nc"
+        "interpolate_zgrid_40L.nc"
+        "layer_coord.nc"
+        "MOM_channels_global_025"
+        "ocean_hgrid.nc"
+        "ocean_mask.nc"
+        "ocean_mosaic.nc"
+        "ocean_topog.nc"
+        "oceanda_zgrid_75L.nc"
+        "runoff.daitren.clim.1440x1080.v20180328.nc"
+        "seawifs-clim-1997-2010.1440x1080.v20180328.nc"
+        "tidal_amplitude.v20140616.nc"
+        "topog.nc"
+    )
+    # Link standard MOM6 files
+    for f in "${MOM6_FIX_FILES[@]}"; do
+        ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/
+    done
+    
+    # Grid spec is mysteriously in the DATM fix directory for 0.25
+    ln -sf "${DATM_FIX_DIR}/mom6/025/grid_spec.nc" ./INPUT/
 
-# MOM6 fixed input
-cp "${INPUTDATA_ROOT}/MOM6_FIX/${OCNRES}/"* ./INPUT/
-cp "${INPUTDATA_ROOT}/MOM6_FIX_DATM/${OCNRES}/"* ./INPUT/
+elif [[ "$OCNRES" == "008" ]]; then
+    MOM6_FIX_FILES=(
+        "chl_mom6.nc"
+        "grid_spec.nc"
+        "mom6_vgrid.nc"
+        "ocean_hgrid.nc"
+        "ocean_mask.nc"
+        "ocean_mosaic.nc"
+        "ocean_topog.nc"
+        "runoff.daitren.clim.0.08deg.nc"
+        "sss_mom6.nc"
+        "tidal_amplitude.nc"
+    )
+    # Link standard MOM6 files
+    for f in "${MOM6_FIX_FILES[@]}"; do
+        ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/
+    done
+else
+    echo "ERROR: Unknown OCNRES: $OCNRES. Cannot map MOM6 explicit files."
+    exit 1
+fi
 
-# CICE fixed input
-cp "${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/grid_cice_NEMS_mx${OCNRES}.nc" ./INPUT/
-cp "${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/kmtu_cice_NEMS_mx${OCNRES}.nc" ./INPUT/
-cp "${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/mesh.mx${OCNRES}.nc" ./INPUT/
+echo ">>> Copying Initial Conditions..."
+cp "${MOM6_IC_DIR}/MOM"*.nc ./INPUT/
+cp "${CICE_IC_DIR}/cice_model_${ICERES}.cpc.res_2011100100.nc" ./cice_model.res.nc
 
-# IC / Restarts (Cold start)
-cp "${INPUTDATA_ROOT}/MOM6_IC/${OCNRES}/2011100100/MOM"*.nc ./INPUT/
-cp "${INPUTDATA_ROOT}/CICE_IC/${OCNRES}/cice_model_${ICERES}.cpc.res_2011100100.nc" ./cice_model.res.nc
-
-# Build modulefiles dynamically from UFS source
 echo ">>> Building module environment..."
 mkdir -p ./modulefiles
 cp "${UFSsrc}/tests/module-setup.sh" .
 cp "${UFSsrc}/modulefiles/ufs_${MACHINE_ID}.intel.lua" ./modulefiles/modules.fv3.lua
 cp "${UFSsrc}/modulefiles/ufs_common.lua" ./modulefiles/
+
+echo ">>> Symlinking CICE fixed inputs..."
+ln -sf "${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/grid_cice_NEMS_mx${OCNRES}.nc" ./
+ln -sf "${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/kmtu_cice_NEMS_mx${OCNRES}.nc" ./
+ln -sf "${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/mesh.mx${OCNRES}.nc" ./
 
 # ==========================================
 # 2. Executable & Configurations
@@ -52,53 +98,25 @@ cp "${UFSsrc}/modulefiles/ufs_common.lua" ./modulefiles/
 echo ">>> Symlinking executable..."
 ln -sf "$EXEC_FILE" ./fv3.exe
 
-echo ">>> Generating dynamic configuration files via atparse..."
-source "${UFSsrc}/tests/atparse.bash"
+echo ">>> Copying custom developer configurations for p${OCNRES}..."
+CUSTOM_CONF="${SCRIPT_DIR}/../../parm/configs/p${OCNRES}"
 
-# Export variables required by the parm templates
-export IATM=1536
-export JATM=768
-export ATM_NX_GLB=$IATM
-export ATM_NY_GLB=$JATM
-export ATMRES="${IATM}x${JATM}"
-export DATM_SRC="GEFS_NEW"
-export FILEBASE_DATM="gefs"
-export stream_files="INPUT/${FILEBASE_DATM}.201110.nc"
-export STREAM_OFFSET="-21600"
-export RESTART_N="12"
-export eps_imesh="2.5e-1"
-export MOM6_TOPOEDITS="ufs.topo_edits_011818.nc"
-export MOM6_ALLOW_LANDMASK_CHANGES="True"
+if [[ ! -d "$CUSTOM_CONF" ]]; then
+    echo "ERROR: Custom configuration directory not found: $CUSTOM_CONF"
+    exit 1
+fi
 
-# Variables specifically for input.mom6.nml.IN
-export MOM6_OUTPUT_DIR="MOM6_OUTPUT"
-export MOM6_RESTART_DIR="RESTART"
-export MOM6_RESTART_SETTING="n"  # 'n' = cold start, 'r' = warm start
-export OCN_SPPT=".false."
-export EPBL=".false."
+# UFS and CICE configurations belong in the sandbox root
+cp -r "${CUSTOM_CONF}/UFS/"* ./
+cp -r "${CUSTOM_CONF}/CICE6/"* ./
 
-PARM="${UFSsrc}/tests/parm"
-
-# Disable undefined variable abortion temporarily in case templates have non-critical missing vars
-set +u
-
-# Parse .IN templates and map to their final filenames
-atparse < "$PARM/datm_in.IN" > datm_in
-atparse < "$PARM/datm.streams.IN" > datm.streams
-atparse < "$PARM/ice_in.IN" > ice_in
-atparse < "$PARM/input.mom6.nml.IN" > input.nml
-atparse < "$PARM/datm_cdeps_configure.IN" > model_configure
-atparse < "$PARM/ufs.configure.datm_cdeps.IN" > ufs.configure
-atparse < "$PARM/MOM6_data_table.IN" > data_table
-atparse < "$PARM/MOM_input_025.IN" > INPUT/MOM_input
-atparse < "$PARM/stream.config_mom6.IN" > stream.config_mom6
-
-# Copy un-templated files directly
-cp "$PARM/fd_ufs.yaml" .
-cp "$PARM/diag_table" .
-cp "$PARM/MOM_override" ./INPUT/
-
-set -e # Re-enable error catching
+# MOM6 configurations split between the root and the INPUT/ directory
+cp -r "${CUSTOM_CONF}/MOM6/data_table" ./
+cp -r "${CUSTOM_CONF}/MOM6/diag_table" ./
+cp -r "${CUSTOM_CONF}/MOM6/input.nml" ./
+cp -r "${CUSTOM_CONF}/MOM6/MOM_input" ./INPUT/
+cp -r "${CUSTOM_CONF}/MOM6/MOM_layout" ./INPUT/
+cp -r "${CUSTOM_CONF}/MOM6/MOM_override" ./INPUT/
 
 # ==========================================
 # 3. Generate the Job Card
