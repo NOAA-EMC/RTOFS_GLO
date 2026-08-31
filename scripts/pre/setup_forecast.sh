@@ -80,8 +80,8 @@ else
 fi
 
 echo ">>> Copying Initial Conditions..."
- cp "${MOM6_IC_DIR}/MOM"*.nc ./INPUT/
-+cp "${CICE_IC_FILE}" ./cice_model.res.nc
+cp "${MOM6_IC_DIR}/MOM"*.nc ./INPUT/
+cp "${CICE_IC_FILE}" ./cice_model.res.nc
 
 echo ">>> Building module environment..."
 mkdir -p ./modulefiles
