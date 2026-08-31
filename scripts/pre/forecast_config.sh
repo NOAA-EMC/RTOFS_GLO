@@ -32,6 +32,7 @@ DATM_SRC="GEFS"
 #
 # Coordinate changes to the following with those in
 # datm_in, datm.streams, ufs.configure
+# The file containing forcing values is set via: get_forcing_paths.sh
 #
 if [[ "$OCNRES" == "025" && "$DATM_SRC" == "GEFS" ]]; then
     MESH_ATM="mesh.datm.1536x768.nc"
