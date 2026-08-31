@@ -15,6 +15,10 @@ source "${UFSsrc}/tests/detect_machine.sh"
 SANDBOX_DIR="/lfs/h2/emc/ptmp/santha.akella/it1"
 JOB_NAME="run_datm_cdeps_mx025"
 WALLTIME="00:30:00"
+#
+# Changes to the following should be coordinated with those in
+# ufs.configure
+#
 NODES=2
 TASKS_PER_NODE=128
 TOTAL_TASKS=$(( NODES * TASKS_PER_NODE ))
@@ -25,7 +29,13 @@ TOTAL_TASKS=$(( NODES * TASKS_PER_NODE ))
 OCNRES="025"
 ICERES="${OCNRES:0:1}.${OCNRES:1}"
 DATM_SRC="GEFS"
-MESH_ATM="mesh.datm.1536x768.nc"
+#
+# Coordinate changes to the following with those in
+# datm_in, datm.streams, ufs.configure
+#
+if [[ "$OCNRES" == "025" && "$DATM_SRC" == "GEFS" ]]; then
+    MESH_ATM="mesh.datm.1536x768.nc"
+fi
 
 # Authoritative FIX directory versions
 MOM6_FIX_VER="20250128"
