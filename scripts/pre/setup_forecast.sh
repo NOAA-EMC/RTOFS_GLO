@@ -23,10 +23,17 @@ mkdir -p "$SANDBOX_DIR"/{MOM6_OUTPUT,RESTART,history,INPUT}
 cd "$SANDBOX_DIR"
 
 echo ">>> Symlinking DATM forcings..."
-# Symlink the mesh using the root path
-ln -sf "${INPUTDATA_ROOT}/DATM_CDEPS/${MESH_ATM}" ./INPUT/
-# Symlink the specific forcing file
-ln -sf "${FORCING_FILE}" ./INPUT/
+# Fail-safe check
+if [[ -z "${FORCING_FILE:-}" ]]; then
+    echo "ERROR: FORCING_FILE is empty! Check get_forcing_paths.sh"
+    exit 1
+fi
+
+# Symlink the datm mesh explicitly
+ln -sf "${DATM_FIX_DIR}/${MESH_ATM}" "./INPUT/${MESH_ATM}"
+
+# Symlink the specific forcing file explicitly
+ln -sf "${FORCING_FILE}" "./INPUT/$(basename "${FORCING_FILE}")"
 
 echo ">>> Symlinking explicit MOM6 fixed inputs for resolution ${OCNRES}..."
 if [[ "$OCNRES" == "025" ]]; then

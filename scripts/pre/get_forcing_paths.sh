@@ -13,8 +13,8 @@ case "${machine}" in
         FORCING_FILE="${INPUTDATA_ROOT}/DATM_CDEPS/GEFS_NEW/201110/gefs.201110.nc"
         ;;
     "orion" | "hercules")
-        INPUTDATA_ROOT="/work/noaa/nems/role-nems/RT/NEMSfv3gfs/input-data-20210825"
-        FORCING_FILE="${INPUTDATA_ROOT}/DATM_CDEPS/GEFS/201110/gefs.201110.nc"
+        INPUTDATA_ROOT="/work/noaa/epic/UFS-WM_RT/NEMSfv3gfs/input-data-20251015"
+        FORCING_FILE="${INPUTDATA_ROOT}/DATM_CDEPS/GEFS_NEW/201110/gefs.201110.nc"
         ;;
     *)
         echo "FATAL: Unknown target machine ${machine}"
