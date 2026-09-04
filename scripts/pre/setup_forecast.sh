@@ -183,8 +183,10 @@ source ./module-setup.sh
 module use \$PWD/modulefiles
 module load modules.fv3
 
-if [[ "${MACHINE_ID}" == "wcoss2" || "${MACHINE_ID}" == "acorn" ]]; then
+if [[ "${MACHINE_ID}" == "wcoss2" ]]; then
     module load cray-pals craype-network-ucx cray-mpich-ucx
+elif [[ "${MACHINE_ID}" == "acorn" ]]; then
+    module load cray-pals
 fi
 
 module list
