@@ -8,7 +8,7 @@ fi
 machine=$(echo "${MACHINE_ID}" | cut -d. -f1)
 
 case "${machine}" in
-    "wcoss2")
+    "wcoss2" | "acorn")
         INPUTDATA_ROOT="/lfs/h2/emc/nems/noscrub/emc.nems/RT/NEMSfv3gfs/input-data-20260617"
         MOM6_IC_DIR="${INPUTDATA_ROOT}/MOM6_IC/${OCNRES}/2011100100"
         CICE_IC_FILE="${INPUTDATA_ROOT}/CICE_IC/${OCNRES}/cice_model_${ICERES}.cpc.res_2011100100.nc"

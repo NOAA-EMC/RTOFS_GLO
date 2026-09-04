@@ -12,7 +12,7 @@ machine=$(echo "${MACHINE_ID}" | cut -d. -f1)
 # Reference: https://github.com/NOAA-EMC/global-workflow/blob/develop/sorc/link_workflow.sh
 # ====================================================================
 case "${machine}" in
-    "wcoss2") FIX_DIR="/lfs/h2/emc/global/noscrub/emc.global/FIX/fix" ;;
+    "wcoss2" | "acorn") FIX_DIR="/lfs/h2/emc/global/noscrub/emc.global/FIX/fix" ;;
     "hera" | "ursa") FIX_DIR="/scratch3/NCEPDEV/global/role.glopara/fix" ;;
     "orion" | "hercules") FIX_DIR="/work2/noaa/global/role-global/fix" ;;
     "gaeac6") FIX_DIR="/gpfs/f6/drsa-precip3/world-shared/role.glopara/fix" ;;

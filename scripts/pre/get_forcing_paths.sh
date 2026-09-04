@@ -8,7 +8,7 @@ fi
 machine=$(echo "${MACHINE_ID}" | cut -d. -f1)
 
 case "${machine}" in
-    "wcoss2")
+    "wcoss2" | "acorn")
         INPUTDATA_ROOT="/lfs/h2/emc/nems/noscrub/emc.nems/RT/NEMSfv3gfs/input-data-20260617"
         FORCING_FILE="${INPUTDATA_ROOT}/DATM_CDEPS/GEFS_NEW/201110/gefs.201110.nc"
         ;;
