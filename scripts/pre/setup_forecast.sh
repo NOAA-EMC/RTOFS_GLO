@@ -199,6 +199,14 @@ export ESMF_RUNTIME_PROFILE=ON
 export ESMF_RUNTIME_PROFILE_OUTPUT="SUMMARY"
 EOF
 
+if [[ "${MACHINE_ID}" == "ursa" ]]; then
+cat << EOF >> job_card
+export MPI_TYPE_DEPTH=20
+export PSM_RANKS_PER_CONTEXT=4
+export PSM_SHAREDCONTEXTS=1
+EOF
+fi
+
 # Scheduler-specific Execution Command
 if [[ "$SCHEDULER" == "PBS" ]]; then
 cat << EOF >> job_card

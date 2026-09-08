@@ -16,6 +16,10 @@ case "${machine}" in
         INPUTDATA_ROOT="/work/noaa/epic/UFS-WM_RT/NEMSfv3gfs/input-data-20251015"
         FORCING_FILE="${INPUTDATA_ROOT}/DATM_CDEPS/GEFS_NEW/201110/gefs.201110.nc"
         ;;
+    "ursa")
+        INPUTDATA_ROOT="/scratch4/NAGAPE/epic/role-epic/UFS-WM_RT/NEMSfv3gfs/input-data-20260617"
+        FORCING_FILE="${INPUTDATA_ROOT}/DATM_CDEPS/GEFS_NEW/201110/gefs.201110.nc"
+        ;;
     *)
         echo "FATAL: Unknown target machine ${machine}"
         echo "couldn't set INPUTDATA_ROOT and FORCING_FILE"

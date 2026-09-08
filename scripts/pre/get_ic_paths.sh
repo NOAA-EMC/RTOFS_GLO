@@ -18,6 +18,11 @@ case "${machine}" in
         MOM6_IC_DIR="${INPUTDATA_ROOT}/MOM6_IC/${OCNRES}/2011100100"
         CICE_IC_FILE="${INPUTDATA_ROOT}/CICE_IC/${OCNRES}/cice_model_${ICERES}.cpc.res_2011100100.nc"
         ;;
+    "ursa")
+        INPUTDATA_ROOT="/scratch4/NAGAPE/epic/role-epic/UFS-WM_RT/NEMSfv3gfs/input-data-20260617"
+        MOM6_IC_DIR="${INPUTDATA_ROOT}/MOM6_IC/${OCNRES}/2011100100"
+        CICE_IC_FILE="${INPUTDATA_ROOT}/CICE_IC/${OCNRES}/cice_model_${ICERES}.cpc.res_2011100100.nc"
+        ;;
     *)
         echo "FATAL: Unknown target machine ${machine}"
         echo "couldn't set INPUTDATA_ROOT, MOM6_IC_DIR, and CICE_IC_FILE"

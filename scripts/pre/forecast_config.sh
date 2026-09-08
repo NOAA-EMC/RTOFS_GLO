@@ -14,6 +14,8 @@ source "${UFSsrc}/tests/detect_machine.sh"
 # ==========================================
 SANDBOX_DIR="/lfs/h2/emc/ptmp/santha.akella/it1"
 #SANDBOX_DIR="/work2/noaa/stmp/santa/EXPDIR/it1"
+#SANDBOX_DIR="/scratch4/NCEPDEV/stmp/Santha.Akella/EXPDIR/it1"
+
 JOB_NAME="run_datm_cdeps_mx025"
 WALLTIME="00:30:00"
 
@@ -53,6 +55,12 @@ elif [[ "$MACHINE_ID" == "orion" ]]; then
     QUEUE="batch"
     PARTITION="orion"
     TASKS_PER_NODE=40
+elif [[ "$MACHINE_ID" == "ursa" ]]; then
+    SCHEDULER="SLURM"
+    ACCOUNT="marine-cpu"
+    QUEUE="batch"
+    PARTITION="u1-compute"
+    TASKS_PER_NODE=192
 elif [[ "$MACHINE_ID" == "hercules" ]]; then
     echo "FATAL: Hercules is explicitly disabled for this configuration due to data/node instability."
     exit 1

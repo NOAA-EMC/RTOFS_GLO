@@ -13,7 +13,7 @@ machine=$(echo "${MACHINE_ID}" | cut -d. -f1)
 # ====================================================================
 case "${machine}" in
     "wcoss2" | "acorn") FIX_DIR="/lfs/h2/emc/global/noscrub/emc.global/FIX/fix" ;;
-    "hera" | "ursa") FIX_DIR="/scratch3/NCEPDEV/global/role.glopara/fix" ;;
+    "ursa") FIX_DIR="/scratch3/NCEPDEV/global/role.glopara/fix" ;;
     "orion" | "hercules") FIX_DIR="/work2/noaa/global/role-global/fix" ;;
     "gaeac6") FIX_DIR="/gpfs/f6/drsa-precip3/world-shared/role.glopara/fix" ;;
     "aws-ec2") FIX_DIR="/lustre/global/data/fix" ;;
