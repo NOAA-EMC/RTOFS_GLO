@@ -15,7 +15,7 @@
                               'INPUT/MOM_override' /
 
 
-! Since Phil Pegion confirmed that the following is untested at p025 and finer res, 
+! Since Phil Pegion confirmed that the following is untested at p025 and finer res,
 ! comment it out.
 !
 &nam_stochy
