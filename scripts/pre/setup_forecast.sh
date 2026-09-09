@@ -7,8 +7,8 @@ SCRIPT_DIR="$PWD"
 # Source configurations and path definitions
 source ./forecast_config.sh
 source ./set_path_to_FIX.sh
-source ./get_ic_paths.sh
-source ./get_forcing_paths.sh
+source "./get_ic_paths_${OCNRES}.sh"
+source "./get_forcing_paths_${OCNRES}.sh"
 
 echo ">>> Detected Machine: $MACHINE_ID ($SCHEDULER)"
 echo ">>> Building sandbox in: $SANDBOX_DIR"
@@ -19,76 +19,65 @@ EXEC_FILE=$(readlink -f "../../exec/ufs_model.x")
 # ==========================================
 # 1. Build Sandbox Tree & Static Inputs
 # ==========================================
+
+# DROP DEAD: Ensure sandbox does not already exist
+if [[ -d "$SANDBOX_DIR" ]]; then
+    echo "FATAL: Sandbox directory already exists: $SANDBOX_DIR"
+    echo "Please remove it or change SANDBOX_DIR in forecast_config.sh before running."
+    exit 1
+fi
+
 mkdir -p "$SANDBOX_DIR"/{MOM6_OUTPUT,RESTART,history,INPUT}
 cd "$SANDBOX_DIR"
 
 echo ">>> Symlinking DATM forcings..."
-# Fail-safe check
 if [[ -z "${FORCING_FILE:-}" ]]; then
-    echo "ERROR: FORCING_FILE is empty! Check get_forcing_paths.sh"
+    echo "ERROR: FORCING_FILE is empty! Check get_forcing_paths_${OCNRES}.sh"
     exit 1
 fi
 
-# Symlink the datm mesh explicitly
 ln -sf "${DATM_FIX_DIR}/${MESH_ATM}" "./INPUT/${MESH_ATM}"
-
-# Symlink the specific forcing file explicitly
 ln -sf "${FORCING_FILE}" "./INPUT/$(basename "${FORCING_FILE}")"
 
 echo ">>> Symlinking explicit MOM6 fixed inputs for resolution ${OCNRES}..."
 if [[ "$OCNRES" == "025" ]]; then
     MOM6_FIX_FILES=(
-        "All_edits.nc"
-        "geothermal_davies2013_v1.nc"
-        "hycom1_75_800m.nc"
-        "interpolate_zgrid_30L.nc"
-        "interpolate_zgrid_32L.nc"
-        "interpolate_zgrid_40L.nc"
-        "layer_coord.nc"
-        "MOM_channels_global_025"
-        "ocean_hgrid.nc"
-        "ocean_mask.nc"
-        "ocean_mosaic.nc"
-        "ocean_topog.nc"
-        "oceanda_zgrid_75L.nc"
-        "runoff.daitren.clim.1440x1080.v20180328.nc"
-        "seawifs-clim-1997-2010.1440x1080.v20180328.nc"
-        "tidal_amplitude.v20140616.nc"
-        "topog.nc"
+        "All_edits.nc" "geothermal_davies2013_v1.nc" "hycom1_75_800m.nc"
+        "interpolate_zgrid_30L.nc" "interpolate_zgrid_32L.nc" "interpolate_zgrid_40L.nc"
+        "layer_coord.nc" "MOM_channels_global_025" "ocean_hgrid.nc"
+        "ocean_mask.nc" "ocean_mosaic.nc" "ocean_topog.nc"
+        "oceanda_zgrid_75L.nc" "runoff.daitren.clim.1440x1080.v20180328.nc"
+        "seawifs-clim-1997-2010.1440x1080.v20180328.nc" "tidal_amplitude.v20140616.nc" "topog.nc"
     )
-    # Link standard MOM6 files
-    for f in "${MOM6_FIX_FILES[@]}"; do
-        ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/
-    done
-    
-    # Grid spec is mysteriously in the DATM fix directory for 0.25
+    for f in "${MOM6_FIX_FILES[@]}"; do ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/; done
     ln -sf "${DATM_FIX_DIR}/mom6/025/grid_spec.nc" ./INPUT/
 
 elif [[ "$OCNRES" == "008" ]]; then
     MOM6_FIX_FILES=(
-        "chl_mom6.nc"
-        "grid_spec.nc"
-        "mom6_vgrid.nc"
-        "ocean_hgrid.nc"
-        "ocean_mask.nc"
-        "ocean_mosaic.nc"
-        "ocean_topog.nc"
-        "runoff.daitren.clim.0.08deg.nc"
-        "sss_mom6.nc"
-        "tidal_amplitude.nc"
+        "chl_mom6.nc" "mom6_vgrid.nc" "ocean_hgrid.nc"
+        "ocean_mask.nc" "ocean_mosaic.nc" "depth_GLBb0.08_09m11ob2_mom6.nc"
+        "runoff.daitren.clim.0.08deg.nc" "sss_mom6.nc" "tidal_amplitude.nc"
     )
-    # Link standard MOM6 files
-    for f in "${MOM6_FIX_FILES[@]}"; do
-        ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/
-    done
+    for f in "${MOM6_FIX_FILES[@]}"; do ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/; done
+    ln -sf "${DATM_FIX_DIR}/mom6/008/grid_spec.nc" ./INPUT/
 else
-    echo "ERROR: Unknown OCNRES: $OCNRES. Cannot map MOM6 explicit files."
+    echo "ERROR: Unknown OCNRES: $OCNRES."
     exit 1
 fi
 
 echo ">>> Copying Initial Conditions..."
-cp "${MOM6_IC_DIR}/MOM"*.nc ./INPUT/
-cp "${CICE_IC_FILE}" ./cice_model.res.nc
+# Find all MOM restart files and copy them to INPUT/, stripping any date prefixes
+for ic_file in "${MOM6_IC_DIR}/"*MOM.res*.nc; do
+    if [[ -f "$ic_file" ]]; then
+        base_name=$(basename "$ic_file")
+        # Strips everything up to and including 'MOM.res' to get the suffix, then prepends 'MOM.res'
+        target_name=${base_name#*MOM.res}
+        cp "$ic_file" "./INPUT/MOM.res${target_name}"
+    fi
+done
+
+# Use the dynamically defined target filename from get_ic_paths for CICE
+cp "${CICE_IC_FILE}" "${CICE_IC_TARGET}"
 
 echo ">>> Building module environment..."
 mkdir -p ./modulefiles
@@ -97,9 +86,9 @@ cp "${UFSsrc}/modulefiles/ufs_${MACHINE_ID}.intel.lua" ./modulefiles/modules.fv3
 cp "${UFSsrc}/modulefiles/ufs_common.lua" ./modulefiles/
 
 echo ">>> Symlinking CICE fixed inputs..."
-ln -sf "${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/grid_cice_NEMS_mx${OCNRES}.nc" ./
-ln -sf "${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/kmtu_cice_NEMS_mx${OCNRES}.nc" ./
-ln -sf "${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/mesh.mx${OCNRES}.nc" ./
+ln -sf "${CICE_FIX_DIR}/grid_cice_NEMS_mx${OCNRES}.nc" ./
+ln -sf "${CICE_FIX_DIR}/kmtu_cice_NEMS_mx${OCNRES}.nc" ./
+ln -sf "${CICE_FIX_DIR}/mesh.mx${OCNRES}.nc" ./
 
 # ==========================================
 # 2. Executable & Configurations
@@ -115,11 +104,8 @@ if [[ ! -d "$CUSTOM_CONF" ]]; then
     exit 1
 fi
 
-# UFS and CICE configurations belong in the sandbox root
 cp -r "${CUSTOM_CONF}/UFS/"* ./
 cp -r "${CUSTOM_CONF}/CICE6/"* ./
-
-# MOM6 configurations split between the root and the INPUT/ directory
 cp -r "${CUSTOM_CONF}/MOM6/data_table" ./
 cp -r "${CUSTOM_CONF}/MOM6/diag_table" ./
 cp -r "${CUSTOM_CONF}/MOM6/input.nml" ./
@@ -159,7 +145,8 @@ cat << EOF >> job_card
 #SBATCH --partition=$PARTITION
 #SBATCH --nodes=$NODES
 #SBATCH --ntasks-per-node=$TASKS_PER_NODE
-#SBATCH --time=30
+#SBATCH --mem=0
+#SBATCH --time=$WALLTIME
 #SBATCH --job-name="$JOB_NAME"
 #SBATCH --exclusive
 
@@ -172,7 +159,6 @@ cat << EOF >> job_card
 echo -n " \$( date +%s )," > job_timestamp.txt
 set +x
 
-# Override 'module reset' if it exists in setup scripts to prevent WCOSS2 crash
 module() {
     if [[ "\$1" == "reset" ]]; then command module purge; else command module "\$@"; fi
 }
@@ -185,7 +171,7 @@ module load modules.fv3
 
 if [[ "${MACHINE_ID}" == "wcoss2" ]]; then
     module load cray-pals craype-network-ucx cray-mpich-ucx
-elif [[ "${MACHINE_ID}" == "acorn" ]]; then
+elif [[ "${MACHINE_ID}" == "acorn" || "${MACHINE_ID}" == "ursa" ]]; then
     module load cray-pals
 fi
 
@@ -199,11 +185,18 @@ export ESMF_RUNTIME_PROFILE=ON
 export ESMF_RUNTIME_PROFILE_OUTPUT="SUMMARY"
 EOF
 
+# Ursa (Mellanox InfiniBand) specific environment tuning
 if [[ "${MACHINE_ID}" == "ursa" ]]; then
 cat << EOF >> job_card
+export OMP_STACKSIZE=512M
+export KMP_AFFINITY=scatter
+export PMI2=""
+export ESMF_RUNTIME_COMPLIANCECHECK=OFF:depth=4
 export MPI_TYPE_DEPTH=20
-export PSM_RANKS_PER_CONTEXT=4
-export PSM_SHAREDCONTEXTS=1
+export I_MPI_EXTRA_FILESYSTEM=ON
+export FI_MLX_INJECT_LIMIT=0
+export FI_MR_CACHE_MONITOR=kdreg2
+export MPICH_SMP_SINGLE_COPY_MODE=XPMEM
 EOF
 fi
 
@@ -226,19 +219,12 @@ EOF
 
 elif [[ "$SCHEDULER" == "SLURM" ]]; then
 cat << EOF >> job_card
-export OMP_STACKSIZE=512M
-export KMP_AFFINITY=scatter
-export PMI2=""
-
-export I_MPI_EXTRA_FILESYSTEM=ON
-export FI_MLX_INJECT_LIMIT=0
-
 if [ "\${JOB_SHOULD_FAIL:-NO}" = WHEN_RUNNING ] ; then
     echo "The job should abort now." 1>&2; false
 fi
 
 sync && sleep 1
-srun \${PMI2} --label --distribution=block:block -n $TOTAL_TASKS ./fv3.exe
+srun \${PMI2:-} --label --distribution=block:block -n $TOTAL_TASKS ./fv3.exe
 EOF
 fi
 

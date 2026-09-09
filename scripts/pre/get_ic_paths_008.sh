@@ -8,26 +8,21 @@ fi
 machine=$(echo "${MACHINE_ID}" | cut -d. -f1)
 
 case "${machine}" in
-    "wcoss2" | "acorn")
-        INPUTDATA_ROOT="/lfs/h2/emc/nems/noscrub/emc.nems/RT/NEMSfv3gfs/input-data-20260617"
-        MOM6_IC_DIR="${INPUTDATA_ROOT}/MOM6_IC/${OCNRES}/2011100100"
-        CICE_IC_FILE="${INPUTDATA_ROOT}/CICE_IC/${OCNRES}/cice_model_${ICERES}.cpc.res_2011100100.nc"
-        ;;
-    "orion" | "hercules")
-        INPUTDATA_ROOT="/work/noaa/nems/role-nems/RT/NEMSfv3gfs/input-data-20210825"
-        MOM6_IC_DIR="${INPUTDATA_ROOT}/MOM6_IC/${OCNRES}/2011100100"
-        CICE_IC_FILE="${INPUTDATA_ROOT}/CICE_IC/${OCNRES}/cice_model_${ICERES}.cpc.res_2011100100.nc"
-        ;;
     "ursa")
-        INPUTDATA_ROOT="/scratch4/NAGAPE/epic/role-epic/UFS-WM_RT/NEMSfv3gfs/input-data-20260617"
-        MOM6_IC_DIR="${INPUTDATA_ROOT}/MOM6_IC/${OCNRES}/2011100100"
-        CICE_IC_FILE="${INPUTDATA_ROOT}/CICE_IC/${OCNRES}/cice_model_${ICERES}.cpc.res_2011100100.nc"
+        MOM6_IC_DIR="/scratch5/NCEPDEV/rstprod/Santha.Akella/data/restart/zg"
+        CICE_IC_FILE="/scratch5/NCEPDEV/rstprod/Santha.Akella/data/restart/zg/iced.2025-12-15-00000.nc"
+        ;;
+    "wcoss2" | "acorn" | "orion")
+        echo "FATAL: 0.08 IC paths not yet defined for ${machine}"
+        return 1 2>/dev/null || exit 1
         ;;
     *)
         echo "FATAL: Unknown target machine ${machine}"
-        echo "couldn't set INPUTDATA_ROOT, MOM6_IC_DIR, and CICE_IC_FILE"
         return 1 2>/dev/null || exit 1
         ;;
 esac
 
-export INPUTDATA_ROOT MOM6_IC_DIR CICE_IC_FILE
+export MOM6_IC_DIR CICE_IC_FILE
+
+# Dynamically set the CICE restart target to match the 0.08 ice_in configuration
+export CICE_IC_TARGET="./RESTART/iced.2025-12-15-00000.nc"

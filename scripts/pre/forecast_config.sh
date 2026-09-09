@@ -16,15 +16,22 @@ SANDBOX_DIR="/lfs/h2/emc/ptmp/santha.akella/it1"
 #SANDBOX_DIR="/work2/noaa/stmp/santa/EXPDIR/it1"
 #SANDBOX_DIR="/scratch4/NCEPDEV/stmp/Santha.Akella/EXPDIR/it1"
 
-JOB_NAME="run_datm_cdeps_mx025"
-WALLTIME="00:30:00"
-
 # ==========================================
 # 3. Component Resolutions & Data Sources
 # ==========================================
-OCNRES="025"
+OCNRES="008"
+#OCNRES="025"
 ICERES="${OCNRES:0:1}.${OCNRES:1}"
 DATM_SRC="GEFS"
+
+if [[ "$OCNRES" == "025" ]]; then
+    JOB_NAME="run_datm_cdeps_mx025"
+    WALLTIME="00:30:00"
+elif [[ "$OCNRES" == "008" ]]; then
+    JOB_NAME="run_datm_cdeps_mx008"
+    WALLTIME="01:00:00"
+fi
+
 #
 # Coordinate changes to the following with those in
 # ufs.configure, datm_in, datm.streams
@@ -33,13 +40,17 @@ DATM_SRC="GEFS"
 if [[ "$OCNRES" == "025" && "$DATM_SRC" == "GEFS" ]]; then
     MESH_ATM="mesh.datm.1536x768.nc"
     TOTAL_TASKS=256
+elif [[ "$OCNRES" == "008" && "$DATM_SRC" == "GEFS" ]]; then
+    MESH_ATM="mesh.datm.3072x1536.nc"
+    TOTAL_TASKS=2560
 fi
 
 # Authoritative FIX directory versions
 MOM6_FIX_VER="20250128"
 DATM_FIX_VER="20220805"
+CICE_FIX_VER="20240416"
 
-export OCNRES ICERES DATM_SRC MESH_ATM MOM6_FIX_VER DATM_FIX_VER
+export OCNRES ICERES DATM_SRC MESH_ATM MOM6_FIX_VER DATM_FIX_VER CICE_FIX_VER
 
 # ==========================================
 # 4. Assign Defaults based on MACHINE_ID

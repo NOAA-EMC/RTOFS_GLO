@@ -8,23 +8,17 @@ fi
 machine=$(echo "${MACHINE_ID}" | cut -d. -f1)
 
 case "${machine}" in
-    "wcoss2" | "acorn")
-        INPUTDATA_ROOT="/lfs/h2/emc/nems/noscrub/emc.nems/RT/NEMSfv3gfs/input-data-20260617"
-        FORCING_FILE="${INPUTDATA_ROOT}/DATM_CDEPS/GEFS_NEW/201110/gefs.201110.nc"
-        ;;
-    "orion" | "hercules")
-        INPUTDATA_ROOT="/work/noaa/epic/UFS-WM_RT/NEMSfv3gfs/input-data-20251015"
-        FORCING_FILE="${INPUTDATA_ROOT}/DATM_CDEPS/GEFS_NEW/201110/gefs.201110.nc"
-        ;;
     "ursa")
-        INPUTDATA_ROOT="/scratch4/NAGAPE/epic/role-epic/UFS-WM_RT/NEMSfv3gfs/input-data-20260617"
-        FORCING_FILE="${INPUTDATA_ROOT}/DATM_CDEPS/GEFS_NEW/201110/gefs.201110.nc"
+        FORCING_FILE="/scratch5/NCEPDEV/rstprod/Santha.Akella/data/forcing/zg/gfs.2025121400-2025123118_positive.nc"
+        ;;
+    "wcoss2" | "acorn" | "orion")
+        echo "FATAL: 0.08 forcing paths not yet defined for ${machine}"
+        return 1 2>/dev/null || exit 1
         ;;
     *)
         echo "FATAL: Unknown target machine ${machine}"
-        echo "couldn't set INPUTDATA_ROOT and FORCING_FILE"
         return 1 2>/dev/null || exit 1
         ;;
 esac
 
-export INPUTDATA_ROOT FORCING_FILE
+export FORCING_FILE

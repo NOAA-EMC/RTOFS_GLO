@@ -29,3 +29,6 @@ export MOM6_FIX_DIR="${FIX_DIR}/mom6/${MOM6_FIX_VER}/${OCNRES}"
 
 # Needed for grid_spec.nc at p025
 export DATM_FIX_DIR="${FIX_DIR}/datm/${DATM_FIX_VER}"
+
+# Needed for CICE grid and mesh files
+export CICE_FIX_DIR="${FIX_DIR}/cice/${CICE_FIX_VER}/${OCNRES}"
