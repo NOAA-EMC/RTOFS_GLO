@@ -55,11 +55,12 @@ if [[ "$OCNRES" == "025" ]]; then
 elif [[ "$OCNRES" == "008" ]]; then
     MOM6_FIX_FILES=(
         "chl_mom6.nc" "mom6_vgrid.nc" "ocean_hgrid.nc"
-        "ocean_mask.nc" "ocean_mosaic.nc" "depth_GLBb0.08_09m11ob2_mom6.nc"
+        "ocean_mask.nc" "ocean_mosaic.nc" "ocean_topog.nc"
         "runoff.daitren.clim.0.08deg.nc" "sss_mom6.nc" "tidal_amplitude.nc"
     )
     for f in "${MOM6_FIX_FILES[@]}"; do ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/; done
     ln -sf "${DATM_FIX_DIR}/mom6/008/grid_spec.nc" ./INPUT/
+
 else
     echo "ERROR: Unknown OCNRES: $OCNRES."
     exit 1
@@ -171,7 +172,7 @@ module load modules.fv3
 
 if [[ "${MACHINE_ID}" == "wcoss2" ]]; then
     module load cray-pals craype-network-ucx cray-mpich-ucx
-elif [[ "${MACHINE_ID}" == "acorn" || "${MACHINE_ID}" == "ursa" ]]; then
+elif [[ "${MACHINE_ID}" == "acorn" ]]; then
     module load cray-pals
 fi
 
