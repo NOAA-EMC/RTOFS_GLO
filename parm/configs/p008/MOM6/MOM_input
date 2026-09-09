@@ -64,8 +64,7 @@ DT = 360.0                      !   [s]
                                 ! The (baroclinic) dynamics time step.  The time-step that is actually used will
                                 ! be an integer fraction of the forcing time-step (DT_FORCING in ocean-only mode
                                 ! or the coupling timestep in coupled mode.)
-#DT_THERM = 1200.0               !   [s] default = 300.0
-DT_THERM = 360.0               !   [s] default = 300.0
+DT_THERM = 360.0                !   [s] default = 300.0
                                 ! The thermodynamic and tracer advection time step. Ideally DT_THERM should be
                                 ! an integer multiple of DT and less than the forcing or coupling time-step,
                                 ! unless THERMO_SPANS_COUPLING is true, in which case DT_THERM can be an integer
@@ -223,7 +222,7 @@ GRID_CONFIG = "mosaic"          !
                                 !     cartesian - use a (flat) Cartesian grid.
                                 !     spherical - use a simple spherical grid.
                                 !     mercator - use a Mercator spherical grid.
-GRID_FILE = "regional.mom6.nc"  !
+GRID_FILE = "ocean_hgrid.nc"  !
                                 ! Name of the file from which to read horizontal grid data.
 USE_TRIPOLAR_GEOLONB_BUG = False !   [Boolean] default = False
                                 ! If true, use older code that incorrectly sets the longitude in some points
@@ -257,10 +256,7 @@ TOPO_CONFIG = "file"            !
                                 !     Phillips - ACC-like idealized topography used in the Phillips config.
                                 !     dense - Denmark Strait-like dense water formation and overflow.
                                 !     USER - call a user modified routine.
-TOPO_FILE = "depth_GLBb0.08_09m11ob2_mom6.nc" ! default = "topog.nc"
-!TOPO_FILE = "regional.depth.rtofs.nc" ! default = "topog.nc"
-!TOPO_FILE = "depth_GLBb0.08_RTOFS_mom6.nc" ! default = "topog.nc"
-!TOPO_FILE = "depth_GLBb0.08_09m11ob_mom6.nc" ! default = "topog.nc"
+TOPO_FILE = "ocean_topog.nc" ! default = "topog.nc"
                                 ! The file from which the bathymetry is read.
 TOPO_VARNAME = "depth"          ! default = "depth"
                                 ! The name of the bathymetry variable in TOPO_FILE.
@@ -279,12 +275,12 @@ MASKING_DEPTH = -9999.0         !   [m] default = -9999.0
 MAXIMUM_DEPTH = 8200.0          !   [m]
                                 ! The maximum depth of the ocean.
 
-!hCk === module MOM_state_initialization ===
+! === module MOM_state_initialization ===
 FATAL_INCONSISTENT_RESTART_TIME = False !   [Boolean] default = False
                                 ! If true and a time_in value is provided to MOM_initialize_state, verify that
                                 ! the time read from a restart file is the same as time_in, and issue a fatal
                                 ! error if it is not.  Otherwise, simply set the time to time_in if present.
-ODA_INCUPD = &Value               !   [Boolean] default = False
+ODA_INCUPD = False              !   [Boolean] default = False
 ODA_INCUPD_INC = True           ! default = True
                                 ! INCUPD files are increments and not full fields.
 ODA_INCUPD_FILE = "MOM.inc.TSzh.nc" ! The name of the file with the T,S,h increments.
@@ -307,7 +303,7 @@ ODA_UINC_VAR = "u_inc"          ! default = "u_inc"
 ODA_VINC_VAR = "v_inc"          ! default = "v_inc"
                                 ! The name of the meridional vel. inc. variable in
                                 ! ODA_INCUPD_UV_FILE.
-ODA_INCUPD_NHOURS =6.0         ! default=3.0
+ODA_INCUPD_NHOURS =6.0          ! default=3.0
                                 ! Number of hours for full update (0=direct insertion).
                                 ! If true, oda incremental updates will be applied everywhere in the domain.
 SPONGE = False                  !   [Boolean] default = False
