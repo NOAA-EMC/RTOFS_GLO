@@ -29,7 +29,7 @@ fi
 # 3. Sandbox Paths & Job Parameters
 # ==========================================
 if [[ "$MACHINE_ID" == "wcoss2" ]]; then
-    SANDBOX_DIR="/lfs/h2/emc/ptmp/${USER}/p${OCNRES}"
+    SANDBOX_DIR="/lfs/h2/emc/ptmp/${USER}/EXPDIR/p${OCNRES}"
 elif [[ "$MACHINE_ID" == "acorn" ]]; then
     SANDBOX_DIR="/lfs/h1/emc/stmp/${USER}/EXPDIR/p${OCNRES}"
 elif [[ "$MACHINE_ID" == "orion" ]]; then
