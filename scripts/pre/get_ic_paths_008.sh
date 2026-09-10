@@ -12,7 +12,15 @@ case "${machine}" in
         MOM6_IC_DIR="/scratch5/NCEPDEV/rstprod/Santha.Akella/data/restart/zg"
         CICE_IC_FILE="/scratch5/NCEPDEV/rstprod/Santha.Akella/data/restart/zg/iced.2025-12-15-00000.nc"
         ;;
-    "wcoss2" | "acorn" | "orion")
+    "acorn")
+        MOM6_IC_DIR="/lfs/h1/emc/couple/noscrub/santha.akella/data/restart/zg"
+        CICE_IC_FILE="/lfs/h1/emc/couple/noscrub/santha.akella/data/restart/zg/iced.2025-12-15-00000.nc"
+        ;;
+    "wcoss2")
+        MOM6_IC_DIR="/lfs/h2/emc/couple/noscrub/santha.akella/data/restart/zg"
+        CICE_IC_FILE="/lfs/h2/emc/couple/noscrub/santha.akella/data/restart/zg/iced.2025-12-15-00000.nc"
+        ;;
+    "orion")
         echo "FATAL: 0.08 IC paths not yet defined for ${machine}"
         return 1 2>/dev/null || exit 1
         ;;
