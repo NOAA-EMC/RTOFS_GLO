@@ -10,17 +10,10 @@ export UFSsrc=$(readlink -f "$cwd/../../sorc/ufs_model.fd")
 source "${UFSsrc}/tests/detect_machine.sh"
 
 # ==========================================
-# 2. Sandbox Paths & Job Parameters
+# 2. Component Resolutions & Data Sources
 # ==========================================
-SANDBOX_DIR="/lfs/h2/emc/ptmp/santha.akella/it1"
-#SANDBOX_DIR="/work2/noaa/stmp/santa/EXPDIR/it1"
-#SANDBOX_DIR="/scratch4/NCEPDEV/stmp/Santha.Akella/EXPDIR/p025"
-
-# ==========================================
-# 3. Component Resolutions & Data Sources
-# ==========================================
-#OCNRES="008"
-OCNRES="025"
+OCNRES="008"
+#OCNRES="025"
 ICERES="${OCNRES:0:1}.${OCNRES:1}"
 DATM_SRC="GEFS"
 
@@ -30,6 +23,25 @@ if [[ "$OCNRES" == "025" ]]; then
 elif [[ "$OCNRES" == "008" ]]; then
     JOB_NAME="run_datm_cdeps_mx008"
     WALLTIME="01:00:00"
+fi
+
+# ==========================================
+# 3. Sandbox Paths & Job Parameters
+# ==========================================
+if [[ "$MACHINE_ID" == "wcoss2" ]]; then
+    SANDBOX_DIR="/lfs/h2/emc/ptmp/${USER}/p${OCNRES}"
+elif [[ "$MACHINE_ID" == "acorn" ]]; then
+    SANDBOX_DIR="/lfs/h1/emc/stmp/${USER}/EXPDIR/p${OCNRES}"
+elif [[ "$MACHINE_ID" == "orion" ]]; then
+    SANDBOX_DIR="/work2/noaa/stmp/${USER}/EXPDIR/p${OCNRES}"
+elif [[ "$MACHINE_ID" == "ursa" ]]; then
+    SANDBOX_DIR="/scratch4/NCEPDEV/stmp/${USER}/EXPDIR/p${OCNRES}"
+elif [[ "$MACHINE_ID" == "hercules" ]]; then
+    echo "FATAL: Hercules is explicitly disabled for this configuration due to data/node instability."
+    exit 1
+else
+    echo "ERROR: Unsupported MACHINE_ID detected: $MACHINE_ID"
+    exit 1
 fi
 
 #

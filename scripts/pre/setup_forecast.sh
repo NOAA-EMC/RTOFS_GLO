@@ -59,7 +59,7 @@ elif [[ "$OCNRES" == "008" ]]; then
         "runoff.daitren.clim.0.08deg.nc" "sss_mom6.nc" "tidal_amplitude.nc"
     )
     for f in "${MOM6_FIX_FILES[@]}"; do ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/; done
-    ln -sf "${DATM_FIX_DIR}/mom6/008/grid_spec.nc" ./INPUT/
+    #ln -sf "${DATM_FIX_DIR}/mom6/008/grid_spec.nc" ./INPUT/
 
     # --- Symlink the 0.08 mapping files directly from DATM_FIX_DIR ---
     echo ">>> Symlinking 0.08-degree mediator mapping files..."
