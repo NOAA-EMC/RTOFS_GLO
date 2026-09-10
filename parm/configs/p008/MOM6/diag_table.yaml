@@ -1,0 +1,190 @@
+title: RTOFS
+base_date: 1980 12 31  0  0  0
+diag_files:
+- file_name: ocean_static
+  time_units: days
+  unlimdim: time
+  is_ocean: true
+  freq: -1 months
+  varlist:
+  - var_name: areacello
+  - var_name: deptho
+  - var_name: hfgeou
+  - var_name: sftof
+  - var_name: Coriolis
+  - var_name: geolon
+  - var_name: geolat
+  - var_name: geolon_c
+  - var_name: geolat_c
+  - var_name: geolon_u
+  - var_name: geolat_u
+  - var_name: geolon_v
+  - var_name: geolat_v
+  - var_name: wet
+  - var_name: wet_c
+  - var_name: wet_u
+  - var_name: wet_v
+  - var_name: dxt
+  - var_name: dyt
+  - var_name: dxCu
+  - var_name: dyCu
+  - var_name: dxCv
+  - var_name: dyCv
+  - var_name: areacello_cu
+  - var_name: areacello_cv
+  - var_name: areacello_bu
+  kind: r4
+  reduction: none
+  module: ocean_model
+- file_name: ocn3zsio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: so
+    output_name: salt
+  kind: r4
+  reduction: none
+  module: ocean_model
+- file_name: ocn3ztio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: thetao
+    output_name: potT
+  kind: r4
+  reduction: none
+  module: ocean_model
+- file_name: ocn3zuio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: uo
+    output_name: u
+  kind: r4
+  reduction: none
+  module: ocean_model
+- file_name: ocn3zvio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: vo
+    output_name: v
+  kind: r4
+  reduction: none
+  module: ocean_model
+- file_name: ocn3zhio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: h
+  kind: r4
+  reduction: none
+  module: ocean_model
+- file_name: ocnglo3zsio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: so
+    output_name: salt
+  kind: r4
+  reduction: none
+  module: ocean_model_z33
+- file_name: ocnglo3ztio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: thetao
+    output_name: potT
+  kind: r4
+  reduction: none
+  module: ocean_model_z33
+- file_name: ocnglo3zuio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: uo
+    output_name: u
+  kind: r4
+  reduction: none
+  module: ocean_model_z33
+- file_name: ocnglo3zvio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: vo
+    output_name: v
+  kind: r4
+  reduction: none
+  module: ocean_model_z33
+- file_name: ocnglo3zhio%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: h
+  kind: r4
+  reduction: none
+  module: ocean_model_z33
+- file_name: ocnp%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 6 hours
+  new_file_freq: 6 hours
+  varlist:
+  - var_name: u
+  - var_name: v
+  - var_name: h
+  - var_name: temp
+    output_name: potT
+  - var_name: salt
+  kind: r4
+  reduction: none
+  module: ocean_model
+- file_name: ocns%4yr_%3dy_%2hr
+  time_units: days
+  unlimdim: Time
+  freq: 1 hours
+  new_file_freq: 1 hours
+  varlist:
+  - var_name: SSU
+    output_name: u_velocity
+  - var_name: SSV
+    output_name: v_velocity
+  - var_name: SSH
+    output_name: ssh
+  - var_name: SST
+    output_name: sst
+  - var_name: SSS
+    output_name: sss
+  - var_name: MLD_0125
+    output_name: mixed_layer_thickness
+  - var_name: ubtav
+    output_name: u_barotropic_velocity
+  - var_name: vbtav
+    output_name: v_barotropic_velocity
+  - var_name: ePBL_h_ML
+    output_name: surface_boundary_layer_thickness
+  - var_name: col_mass
+    output_name: layer_density
+  kind: r4
+  reduction: none
+  module: ocean_model
