@@ -61,16 +61,11 @@ elif [[ "$OCNRES" == "008" ]]; then
     for f in "${MOM6_FIX_FILES[@]}"; do ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/; done
     ln -sf "${DATM_FIX_DIR}/mom6/008/grid_spec.nc" ./INPUT/
 
-    # --- Symlink the 0.08 mapping files dynamically ---
-    if [[ -n "${MAP_DIR:-}" ]]; then
-        echo ">>> Symlinking 0.08-degree mediator mapping files..."
-        ln -sf "${MAP_DIR}/map.3072x1536.to.mx008.bilnr.nc" ./
-        ln -sf "${MAP_DIR}/map.3072x1536.to.mx008.consf.nc" ./
-        ln -sf "${MAP_DIR}/map.3072x1536.to.mx008.patch.nc" ./
-    else
-        echo "FATAL: MAP_DIR is not defined for $MACHINE_ID. Check get_forcing_paths_008.sh."
-        exit 1
-    fi
+    # --- Symlink the 0.08 mapping files directly from DATM_FIX_DIR ---
+    echo ">>> Symlinking 0.08-degree mediator mapping files..."
+    ln -sf "${DATM_FIX_DIR}/map.3072x1536.to.mx008.bilnr.nc" ./
+    ln -sf "${DATM_FIX_DIR}/map.3072x1536.to.mx008.consf.nc" ./
+    ln -sf "${DATM_FIX_DIR}/map.3072x1536.to.mx008.patch.nc" ./
 
 else
     echo "ERROR: Unknown OCNRES: $OCNRES."
