@@ -117,6 +117,9 @@ MED_attributes::
       pio_stride = 4
       pio_rearranger = box
       pio_root = -99
+      map_a2oi_bilnr = map.3072x1536.to.mx008.bilnr.nc
+      map_a2oi_patch = map.3072x1536.to.mx008.patch.nc
+      map_a2oi_consf = map.3072x1536.to.mx008.consf.nc
 ::
 
 ALLCOMP_attributes::

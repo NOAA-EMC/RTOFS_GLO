@@ -61,6 +61,17 @@ elif [[ "$OCNRES" == "008" ]]; then
     for f in "${MOM6_FIX_FILES[@]}"; do ln -sf "${MOM6_FIX_DIR}/$f" ./INPUT/; done
     ln -sf "${DATM_FIX_DIR}/mom6/008/grid_spec.nc" ./INPUT/
 
+    # --- Symlink the 0.08 mapping files dynamically ---
+    if [[ -n "${MAP_DIR:-}" ]]; then
+        echo ">>> Symlinking 0.08-degree mediator mapping files..."
+        ln -sf "${MAP_DIR}/map.3072x1536.to.mx008.bilnr.nc" ./
+        ln -sf "${MAP_DIR}/map.3072x1536.to.mx008.consf.nc" ./
+        ln -sf "${MAP_DIR}/map.3072x1536.to.mx008.patch.nc" ./
+    else
+        echo "FATAL: MAP_DIR is not defined for $MACHINE_ID. Check get_forcing_paths_008.sh."
+        exit 1
+    fi
+
 else
     echo "ERROR: Unknown OCNRES: $OCNRES."
     exit 1
@@ -198,6 +209,12 @@ export I_MPI_EXTRA_FILESYSTEM=ON
 export FI_MLX_INJECT_LIMIT=0
 export FI_MR_CACHE_MONITOR=kdreg2
 export MPICH_SMP_SINGLE_COPY_MODE=XPMEM
+
+# --- Added MPI/Fabric buffers for high-res CICE PIO reads ---
+export MPICH_MPIIO_HINTS="*:romio_cb_write=enable"
+export FI_OFI_RXM_RX_SIZE=40000
+export FI_OFI_RXM_TX_SIZE=40000
+export FI_OFI_RXM_SAR_LIMIT=3145728
 EOF
 fi
 

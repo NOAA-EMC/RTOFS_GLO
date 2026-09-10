@@ -14,13 +14,13 @@ source "${UFSsrc}/tests/detect_machine.sh"
 # ==========================================
 SANDBOX_DIR="/lfs/h2/emc/ptmp/santha.akella/it1"
 #SANDBOX_DIR="/work2/noaa/stmp/santa/EXPDIR/it1"
-#SANDBOX_DIR="/scratch4/NCEPDEV/stmp/Santha.Akella/EXPDIR/it1"
+#SANDBOX_DIR="/scratch4/NCEPDEV/stmp/Santha.Akella/EXPDIR/p025"
 
 # ==========================================
 # 3. Component Resolutions & Data Sources
 # ==========================================
-OCNRES="008"
-#OCNRES="025"
+#OCNRES="008"
+OCNRES="025"
 ICERES="${OCNRES:0:1}.${OCNRES:1}"
 DATM_SRC="GEFS"
 
