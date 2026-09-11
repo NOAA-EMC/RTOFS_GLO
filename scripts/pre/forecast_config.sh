@@ -32,13 +32,10 @@ if [[ "$MACHINE_ID" == "wcoss2" ]]; then
     SANDBOX_DIR="/lfs/h2/emc/ptmp/${USER}/EXPDIR/p${OCNRES}"
 elif [[ "$MACHINE_ID" == "acorn" ]]; then
     SANDBOX_DIR="/lfs/h1/emc/stmp/${USER}/EXPDIR/p${OCNRES}"
-elif [[ "$MACHINE_ID" == "orion" ]]; then
-    SANDBOX_DIR="/work2/noaa/stmp/${USER}/EXPDIR/p${OCNRES}"
 elif [[ "$MACHINE_ID" == "ursa" ]]; then
     SANDBOX_DIR="/scratch4/NCEPDEV/stmp/${USER}/EXPDIR/p${OCNRES}"
-elif [[ "$MACHINE_ID" == "hercules" ]]; then
-    echo "FATAL: Hercules is explicitly disabled for this configuration due to data/node instability."
-    exit 1
+elif [[ "$MACHINE_ID" == "orion" || "$MACHINE_ID" == "hercules" ]]; then
+    SANDBOX_DIR="/work2/noaa/stmp/${USER}/EXPDIR/${MACHINE_ID}/p${OCNRES}"
 else
     echo "ERROR: Unsupported MACHINE_ID detected: $MACHINE_ID"
     exit 1
@@ -72,21 +69,26 @@ if [[ "$MACHINE_ID" == "wcoss2" || "$MACHINE_ID" == "acorn" ]]; then
     ACCOUNT="RTOFS-DEV"
     QUEUE="devhigh"
     TASKS_PER_NODE=128
-elif [[ "$MACHINE_ID" == "orion" ]]; then
-    SCHEDULER="SLURM"
-    ACCOUNT="marine-cpu"
-    QUEUE="batch"
-    PARTITION="orion"
-    TASKS_PER_NODE=40
 elif [[ "$MACHINE_ID" == "ursa" ]]; then
     SCHEDULER="SLURM"
     ACCOUNT="marine-cpu"
     QUEUE="batch"
     PARTITION="u1-compute"
     TASKS_PER_NODE=192
+elif [[ "$MACHINE_ID" == "orion" ]]; then
+    SCHEDULER="SLURM"
+    ACCOUNT="marine-cpu"
+    QUEUE="urgent"
+    PARTITION="orion"
+    # Alan's Wisdom: 40 physical cores, run 32 (8 idle) -> 80 nodes total
+    TASKS_PER_NODE=32
 elif [[ "$MACHINE_ID" == "hercules" ]]; then
-    echo "FATAL: Hercules is explicitly disabled for this configuration due to data/node instability."
-    exit 1
+    SCHEDULER="SLURM"
+    ACCOUNT="marine-cpu"
+    QUEUE="urgent"
+    PARTITION="hercules"
+    # Alan's Wisdom: 80 physical cores, run 64 (16 idle) -> 40 nodes total
+    TASKS_PER_NODE=64
 else
     echo "ERROR: Unsupported MACHINE_ID detected: $MACHINE_ID"
     exit 1

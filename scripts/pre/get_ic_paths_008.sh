@@ -20,9 +20,9 @@ case "${machine}" in
         MOM6_IC_DIR="/lfs/h2/emc/couple/noscrub/santha.akella/data/restart/zg"
         CICE_IC_FILE="/lfs/h2/emc/couple/noscrub/santha.akella/data/restart/zg/iced.2025-12-15-00000.nc"
         ;;
-    "orion")
-        echo "FATAL: 0.08 IC paths not yet defined for ${machine}"
-        return 1 2>/dev/null || exit 1
+    "orion" | "hercules")
+        MOM6_IC_DIR="/work/noaa/marine/rdussin/datasets/restarts/zg"
+        CICE_IC_FILE="/work/noaa/marine/rdussin/datasets/restarts/zg/iced.2025-12-15-00000.nc"
         ;;
     *)
         echo "FATAL: Unknown target machine ${machine}"

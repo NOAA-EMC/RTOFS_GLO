@@ -213,6 +213,26 @@ export FI_OFI_RXM_SAR_LIMIT=3145728
 EOF
 fi
 
+# --- I/O AND PERFORMANCE TUNINGS ---
+cat << EOF >> job_card
+# Raf's NetCDF Block Size tuning for high-res arrays
+export NC_BLKSZ=1M
+
+ulimit -s unlimited
+ulimit -l unlimited
+ulimit -c 0
+export I_MPI_SHM_HEAP_VSIZE=8192
+EOF
+
+# Orion/Hercules specific environment tuning
+if [[ "${MACHINE_ID}" == "orion" || "${MACHINE_ID}" == "hercules" ]]; then
+cat << EOF >> job_card
+export UCX_MEM_CACHE=n
+export UCX_MEM_MALLOC_HOOKS=no
+export MPICH_MPIIO_HINTS="*:romio_cb_write=enable:romio_cb_read=enable"
+EOF
+fi
+
 # Scheduler-specific Execution Command
 if [[ "$SCHEDULER" == "PBS" ]]; then
 cat << EOF >> job_card

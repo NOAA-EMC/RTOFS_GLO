@@ -17,9 +17,8 @@ case "${machine}" in
     "wcoss2")
         FORCING_FILE="/lfs/h2/emc/couple/noscrub/santha.akella/data/forcing/zg/gfs.2025121400-2025123118_positive.nc"
         ;;
-    "orion")
-        echo "FATAL: 0.08 forcing paths not yet defined for ${machine}"
-        return 1 2>/dev/null || exit 1
+    "orion" | "hercules")
+        FORCING_FILE="/work/noaa/marine/rdussin/datasets/GFS/gfs.2025121400-2025123118_positive.nc"
         ;;
     *)
         echo "FATAL: Unknown target machine ${machine}"
