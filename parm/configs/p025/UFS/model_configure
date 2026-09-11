@@ -1,0 +1,10 @@
+start_year:              2011
+start_month:             10
+start_day:               01
+start_hour:              00
+start_minute:            0
+start_second:            0
+nhours_fcst:             12
+dt_atmos:                900
+fhrot:                   0
+restart_fh:               
