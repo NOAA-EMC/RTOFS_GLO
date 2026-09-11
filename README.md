@@ -43,7 +43,7 @@ cd RTOFS_GLO/sorc
 ### 3. Experiment set up
 
 1. Forecast only:
-   - After (above) step 1, `cd scripts/pre`
+   - After (above) step 2, `cd scripts/pre`
    - `./setup_forecast.sh` will set up a UFS-DATM p008 test case.
      Works on: wcoss2 (incl acorn), Ursa, Orion, and Hercules.
    - See `README.md` for details
