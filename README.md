@@ -40,12 +40,14 @@ cd RTOFS_GLO/sorc
      - Allowed `machine_name`= wcoss2 (only).
      - Relies on `sorc/build_rtofs.sh`.
 
-3. Experiment set up:
-   - Forecast
-     - After (above) step 1, `cd scripts/pre`
-     - `./setup_forecast.sh` will set up a UFS-DATM p008 test case.
-        Works on: wcoss2 (incl acorn), Ursa, Orion, and Hercules.
-     - See `README.md` for details
+### 3. Experiment set up
+
+1. Forecast only:
+   - After (above) step 1, `cd scripts/pre`
+   - `./setup_forecast.sh` will set up a UFS-DATM p008 test case.
+     Works on: wcoss2 (incl acorn), Ursa, Orion, and Hercules.
+   - See `README.md` for details
+
 **Remarks**:
 - If building NCODA only, use: `sorc/build_rtofs_ncoda.sh`
 
