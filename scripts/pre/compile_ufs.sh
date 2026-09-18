@@ -100,6 +100,9 @@ mv "./tests/fv3_${COMPILE_ID}.exe" "./tests/${EXEC_NAME}"
 if [[ ! -f "./tests/modules.ufs_model.lua" ]]; then mv "./tests/modules.fv3_${COMPILE_ID}.lua" "./tests/modules.ufs_model.lua"; fi
 if [[ ! -f "./tests/ufs_common.lua" ]]; then cp "./modulefiles/ufs_common.lua" ./tests/ufs_common.lua; fi
 
+# move exec to RTOFS_GLO/exec for setup_forecast.sh script
+cd $cwd ; mkdir -p ../../exec ; cp ${UFSsrc}/tests/${EXEC_NAME} ../../exec/.
+
 echo " "
 echo " "
 echo "Find ${EXEC_NAME} at ${UFSsrc}/tests/"
