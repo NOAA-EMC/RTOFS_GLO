@@ -1,0 +1,10 @@
+start_year:              2025
+start_month:             12
+start_day:               15
+start_hour:              00
+start_minute:            0
+start_second:            0
+nhours_fcst:             12
+dt_atmos:                360
+fhrot:                   0
+restart_fh:

@@ -1,0 +1,15 @@
+&datm_nml
+  datamode = "GEFS"
+  factorfn_data = "null"
+  factorfn_mesh = "null"
+  flds_co2 = .false.
+  flds_presaero = .false.
+  flds_wiso = .false.
+  iradsw = 1
+  model_maskfile = "INPUT/mesh.datm.1536x768.nc"
+  model_meshfile = "INPUT/mesh.datm.1536x768.nc"
+  nx_global = 1536
+  ny_global = 768
+  restfilm = "null"
+  export_all = .false.
+/
