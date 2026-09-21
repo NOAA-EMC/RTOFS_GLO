@@ -37,6 +37,7 @@ cd ..
 # Sanity check: verify mppnccombine was built and is executable
 if [[ ! -x "exec/mppnccombine" ]]; then
     echo "ERROR: exec/mppnccombine was not generated or is not executable."
+    echo "Check sorc/ufs_utils.fd/"
     exit 1
 fi
 cp exec/mppnccombine "$TOP_EXEC/"
@@ -47,18 +48,18 @@ echo ">>> Building UFS..."
 cd scripts/pre/
 ./compile_ufs.sh 
 
-# Return to top-level BEFORE checking the sorc/ relative path
-cd ../..
-
 # Sanity check: verify ufs_model.x was built and is executable
-if [[ ! -x "sorc/ufs_model.fd/tests/ufs_model.x" ]]; then
-    echo "ERROR: sorc/ufs_model.fd/tests/ufs_model.x was not generated or is not executable."
+if [[ ! -x "$TOP_EXEC/ufs_model.x" ]]; then
+    echo "ERROR: exec/ufs_model.x was not generated or is not executable."
+    echo "Check scripts/pre/compile_ufs.sh"
     exit 2
 fi
-cp sorc/ufs_model.fd/tests/ufs_model.x "$TOP_EXEC/"
 
 # 4. Final verification
 echo ">>> Verifying final executables..."
+
+# Return to top-level BEFORE checking the sorc/ relative path
+cd ../..
 if [[ ! -x "exec/mppnccombine" || ! -x "exec/ufs_model.x" ]]; then
     echo "ERROR: Executables failed to copy to the top-level exec/ directory."
     exit 3
