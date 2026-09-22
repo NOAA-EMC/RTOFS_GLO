@@ -28,6 +28,10 @@ cd RTOFS_GLO/sorc
 
 1. Forecast model:
    - Use `./build_forecast.sh` <RUN_ENVIR> <machine_name>
+   - This will create two executables:
+     a. `exec/mppnccombine`, uses `sorc/ufs_utils.fd/build_all.sh`; [UFS_UTILS](https://github.com/ufs-community/UFS_UTILS/tree/develop) is a submodule.
+     b. `exec/ufs_model.x`, using [scripts/pre/compile_ufs.sh](https://github.com/NOAA-EMC/RTOFS_GLO/blob/develop/scripts/pre/compile_ufs.sh)
+
    - Notes:
      - Allowed `RUN_ENVIR`= nco, emc.
      - `machine_name` = wcoss2, ursa, orion, gaeac6.
