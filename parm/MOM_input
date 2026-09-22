@@ -664,15 +664,21 @@ REMAP_VEL_MASK_BBL_THICK = -0.001 !   [m] default = -0.001
 
 
 ! === module MOM_diag_mediator ===
-NUM_DIAG_COORDS = 1             ! default = 1
+NUM_DIAG_COORDS = 2             ! default = 1
                                 ! The number of diagnostic vertical coordinates to use. For each coordinate, an
                                 ! entry in DIAG_COORDS must be provided.
 !USE_GRID_SPACE_DIAGNOSTIC_AXES = False !   [Boolean] default = False
                                 ! If true, use a grid index coordinate convention for diagnostic axes.
-DIAG_COORDS = "z Z ZSTAR"       ! default = "z Z ZSTAR"
+DIAG_COORDS = "z33 ZL ZSTAR, z40 ZM ZSTAR"       ! default = "z Z ZSTAR"
                                 ! A list of string tuples associating diag_table modules to a coordinate
                                 ! definition used for diagnostics. Each string is of the form "MODULE_SUFFIX
                                 ! PARAMETER_SUFFIX COORDINATE_NAME".
+DIAG_COORD_DEF_ZL = "PARAM"
+DIAG_COORD_RES_ZL = 5.,10.,10.,15.,22.5,25.,25.,25.,37.5,50.,50.,75.,100.,100.,100.,100.,100.,100.,100.,100.,100.,100.,100.,175.,250.,375.,500.,500.,500.,500.,500.,500.,750.
+DIAG_COORD_DEF_ZM = "PARAM"
+DIAG_COORD_RES_ZM = 1.,2.,2.,2.,2.,2.,2.5,4.,5.,5.,5.,5.,5.,5.,7.5,10.,10.,10.,10.,17.5,25.,37.5,50.,50.,50.,50.,75.,100.,100.,100.,100.,100.,175.,250.,375.,500.,500.,750.,1000.,1500.
+
+
 DIAG_MISVAL = 1.0E+20           !   [various] default = 1.0E+20
                                 ! Set the default missing value to use for diagnostics.
 DIAG_AS_CHKSUM = False          !   [Boolean] default = False

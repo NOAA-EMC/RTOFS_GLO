@@ -20,6 +20,19 @@
 "ocn3zuio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
 "ocn3zvio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
 "ocn3zhio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+
+"ocnglo3zsio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+"ocnglo3ztio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+"ocnglo3zuio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+"ocnglo3zvio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+"ocnglo3zhio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+
+#"ocnUSe3zsio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+#"ocnUSe3ztio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+#"ocnUSe3zuio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+#"ocnUSe3zvio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+#"ocnUSe3zhio%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
+
 "ocnp%4yr_%3dy_%2hr", 6,"hours",  1, "days","Time", 6,"hours"
 "ocns%4yr_%3dy_%2hr", 1,"hours", 1, "days","Time", 1,"hours"
 
@@ -45,6 +58,23 @@
 "ocean_model","uo",     "u",        "ocn3zuio%4yr_%3dy_%2hr","all","none","none",2
 "ocean_model","vo",     "v",        "ocn3zvio%4yr_%3dy_%2hr","all","none","none",2
 "ocean_model","h",      "h",        "ocn3zhio%4yr_%3dy_%2hr","all","none","none",2
+
+# Global fields  (output on 33 z* levels)
+#==============
+"ocean_model_z33","so",     "salt",     "ocnglo3zsio%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model_z33","thetao", "potT",     "ocnglo3ztio%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model_z33","uo",     "u",        "ocnglo3zuio%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model_z33","vo",     "v",        "ocnglo3zvio%4yr_%3dy_%2hr","all","none","none",2
+"ocean_model_z33","h",      "h",        "ocnglo3zhio%4yr_%3dy_%2hr","all","none","none",2
+
+# Regional fields  (output on 40 z* levels)
+#================
+#"ocean_model_z40","so",     "salt",     "ocnUSe3zsio%4yr_%3dy_%2hr","all","none","-105.19 -40.72  0.0 79.75 -1 -1",2
+#"ocean_model_z40","thetao", "potT",     "ocnUSe3ztio%4yr_%3dy_%2hr","all","none","-105.19 -40.72  0.0 79.75 -1 -1",2
+#"ocean_model_z40","uo",     "u",        "ocnUSe3zuio%4yr_%3dy_%2hr","all","none","-105.19 -40.72  0.0 79.75 -1 -1",2
+#"ocean_model_z40","vo",     "v",        "ocnUSe3zvio%4yr_%3dy_%2hr","all","none","-105.19 -40.72  0.0 79.75 -1 -1",2
+#"ocean_model_z40","h",      "h",        "ocnUSe3zhio%4yr_%3dy_%2hr","all","none","-105.19 -40.72  0.0 79.75 -1 -1",2
+
 
 # Surface Ocean fields:
 #======================
