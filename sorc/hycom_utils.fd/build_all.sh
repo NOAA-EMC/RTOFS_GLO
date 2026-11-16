@@ -26,10 +26,12 @@ cmake ..
 # 5. Compile using 4 parallel jobs
 make -j 4
 
-# 6. Copy the executable to the top-level exec directory manually
-echo "Moving executable to top-level exec directory..."
+# 6. Copy the executables to the top-level exec directory manually
+echo "Copying executables to top-level exec directory..."
+
 mkdir -p ../../../exec
 cp rtofs_archv2ncdf3z_2023 ../../../exec/
+cp check_hycom_archive_bathymetry ../../../exec/
 
 echo "================================================="
 echo " Build and Install Completed Successfully!"

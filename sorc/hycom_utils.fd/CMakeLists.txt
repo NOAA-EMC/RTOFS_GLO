@@ -10,8 +10,10 @@ link_directories($ENV{NETCDF_LIBRARIES})
 
 # 2. Critical Intel Fortran flags for reading HYCOM .a binary files
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -O3 -traceback -convert big_endian -fp-model precise -assume byterecl")
+  set(HYCOM_INTEL_FLAGS "-traceback -xHost -O3 -fp-model precise -ftz -align array64byte -convert big_endian -assume byterecl -warn nogeneral -diag-disable 10212")
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${HYCOM_INTEL_FLAGS}")
 endif()
+
 
 # 3. Define all the common HYCOM utility sources (Removed obsolete files)
 set(HYCOM_COMMON_SRCS
@@ -27,13 +29,20 @@ add_library(hycom_core STATIC ${HYCOM_COMMON_SRCS})
 # Link the standard NetCDF Fortran and C libraries found in $NETCDF_LIBRARIES
 target_link_libraries(hycom_core PUBLIC netcdff netcdf)
 
-# 5. Add our updated executable target 
-add_executable(rtofs_archv2ncdf3z_2023 
-    mod_ppsw.F 
+# 5. Add executable targets
+add_executable(check_hycom_archive_bathymetry
+    hycom_io_utils.F90
+    check_hycom_archive_bathymetry.F90
+)
+
+add_executable(rtofs_archv2ncdf3z_2023
+    mod_ppsw.F
     archv2data3z_2023.f
 )
 
 # 6. Link the executable to the core library and the WCOSS2 NCEP libraries
+target_link_libraries(check_hycom_archive_bathymetry PRIVATE netcdff netcdf)
+
 target_link_libraries(rtofs_archv2ncdf3z_2023 
     PRIVATE 
     hycom_core
