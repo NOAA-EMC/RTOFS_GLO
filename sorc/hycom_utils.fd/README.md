@@ -1,7 +1,7 @@
-# `hycom_utils.fd` — HYCOM Archive Diagnostics & MOM6 Initial Condition Utilities
-
-- Standalone utilities for verifying RTOFS/HYCOM archive files against static bathymetry
-- Generate z-level files (possibly for initializing MOM6).
+# `hycom_utils.fd`
+  - HYCOM Archive Diagnostics.
+    - Standalone utilities for verifying RTOFS/HYCOM archive files against static bathymetry.
+  - Generation of z-spaced fields (for MOM6 initialization).
 
 ## Background & Provenance
 
@@ -12,15 +12,16 @@
 
 ### Features:
 1. **Eliminate full-archive sequential I/O:**
-   - Read only the requested variable, layer thicknesses (`thknss`), and `srfhgt`
+   - Read only the requested variable, layer thicknesses (`thknss`), and `srfhgt`, etc,
      via direct access rather than scanning every 2D/3D record in `archv.a`.
 2. **Accelerate NetCDF output:**
    - Write 64-bit offset NetCDF files with `NF90_NOFILL`.
    - Single-call array writes on native MOM6 symmetric tripole coordinates (`xh`, `xq`, `yh`, `yq`, `z_l`, `Time`).
 3. **Consolidate preprocessing:**
    - Fold bathymetry consistency checks adapted from [hycom_archive_sea_ok.F](https://github.com/HYCOM/HYCOM-tools/blob/master/bin/hycom_archive_sea_ok.F)
-   - Z-level remapping (`layer2z.f`), MOM6 grid mapping (`archv2mom6res.f`), and z* layer thickness generation (adapted from `build_thickness.py`)
-     into a single library module without dependencies on `bacio`, `w3nco`, or C (as in [HYCOM-tools](https://github.com/HYCOM/HYCOM-tools/)).
+   - Z-level remapping (`layer2z.f`), MOM6 grid mapping (`archv2mom6res.f`),
+     - Z* layer thickness generation (adapted from [build_thickness.py](https://github.com/NOAA-EMC/rtofs-tools/issues/21#issue-6357718250)
+     - Into a single library module without dependencies on `bacio`, `w3nco`, or C (as in [HYCOM-tools.](https://github.com/HYCOM/HYCOM-tools/))
 
 ## Directory Contents
 
