@@ -69,4 +69,4 @@ Supported `<var>` arguments:
 * `vvl` (or `v`) — Total un-rotated meridional velocity on `v`-grid (`nx=4500, nyp=3298, z_l=50`, coords `xh, yq, z_l`)
 * `tem` (or `temp`) — Potential temperature on `h`-grid (`nx=4500, ny=3297, z_l=50`, coords `xh, yh, z_l`)
 * `sal` (or `saln`) — Salinity on `h`-grid (`nx=4500, ny=3297, z_l=50`, coords `xh, yh, z_l`)
-* Any 8-character 2D field name present in `<archv.b>` (e.g., `bl_dpth`, `mix_dpth`, `steric`)
+* Any 8-character 2D field name present in `<archv.b>` (e.g., `bl_dpth`, `mix_dpth`, `steric`); but only the above have been tested.
