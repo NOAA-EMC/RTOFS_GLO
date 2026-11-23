@@ -53,7 +53,7 @@
     - The `<archive_base_path>` must be the root directory containing the `YYYYMMDD` subdirectories with the CSVs.
     - The `<obs_plat>` is the specific platform you want to plot (e.g., `GOES`, `METOP`, `PROFILE`) and is case-insensitive.
     - Saves a time-series plot as a PNG image (e.g., `timeseries_goes_sst_count.png`) directly in the `<archive_base_path>`.
-    - Must have Python modules loaded before running (e.g., `module load intel ve/hafs`).
+    - Must have Python modules loaded before running (e.g., `module load intel ve/rtofs`).
 
 - `./driver_jmin_stats.sh <dir> <start_date_YYYYMMDD> <end_date_YYYYMMDD> <output_path>`
   - Notes: Run the driver script with the base RTOFS directory, start date, end date, and your desired output path for the CSVs and PNG.
@@ -62,7 +62,7 @@
 - `./compare_jmin_stats.py -c plot_jmin_config.yaml -o /path/to/save/comparisons/`
   - Notes: Generates multi-experiment overlay plots for development.
     - Requires the `comparison` block in `plot_jmin_config.yaml` to be populated with `- experiment: <name>` and `  path: <dir_path>`.
-    - Must have Python modules loaded before running (e.g., `module load intel ve/hafs`).
+    - Must have Python modules loaded before running (e.g., `module load intel ve/rtofs`).
 
 - `./innov_stats.sh`
   - Notes: Main wrapper for verification stats. Pulls today's date automatically and processes everything.

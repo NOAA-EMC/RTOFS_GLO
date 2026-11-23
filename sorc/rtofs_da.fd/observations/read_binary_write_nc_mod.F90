@@ -3,6 +3,8 @@
 module read_binary_write_nc_mod
 
 use netcdf
+use obs_tables_mod, only : MX_TYPES, len_type_lbl, get_obs_type_table, &
+                           num_qc_codes, len_qc_lbl, get_qc_code_table
 
 implicit none
 
@@ -14,6 +16,10 @@ private :: sst_write_to_netcdf, &
            velocity_write_to_netcdf, &
            sfc_write_to_netcdf, &
            profile_write_to_netcdf, &
+           def_lookup_tables, &
+           put_lookup_tables, &
+           add_type_var_attrs, &
+           add_flag_var_attrs, &
            check
 
 public :: getInputs, &
@@ -26,13 +32,18 @@ public :: getInputs, &
           sfc_converter, &
           profile_converter
 
+type :: lookup_varids_t
+  integer :: tid, tname, terr, tscl
+  integer :: qcid, qcname
+end type lookup_varids_t
+
 logical, parameter :: verbose = .true.     !< Write (true) diagnostic info to STDOUT
 
 real, parameter :: missing_value = -999.0  !< Missing value
 integer, parameter :: unit = 10            !< File unit number
 integer, parameter :: len_sst_date_str = 12    !< Length of dtg character, it is a DATE!
 integer, parameter :: len_ssh_date_str = 14    !< Length of dtg character, it is a DATE!
-integer, parameter :: len_sgn = 7              !< Length of sgn character.
+integer, parameter :: len_sgn = 7              !< Length of sgn character (WMO ID).
 
 integer :: n_read !< Number of "observations"
 integer :: n_chn  !< Number of satellite channels; in binary file, but not used.
@@ -40,6 +51,91 @@ integer :: n_lvl  !< Number of "levels", =1, unless profile observations
 integer :: vrsn   !< Version number of writer/reader
 
 contains
+
+!> Defines observation data type and QC code lookup tables
+subroutine def_lookup_tables(ncid, tbl)
+  integer, intent(in) :: ncid
+  type(lookup_varids_t), intent(out) :: tbl
+
+  integer :: dimid_ntypes, dimid_lbl_len
+  integer :: dimid_nqcs, dimid_qc_len
+  integer, parameter :: num_data_types = MX_TYPES + 1
+
+  ! 1. Observation Data Types
+  call check( nf90_def_dim(ncid, "data_types", num_data_types, dimid_ntypes))
+  call check( nf90_def_dim(ncid, "type_string_length", len_type_lbl, dimid_lbl_len))
+
+  call check( nf90_def_var(ncid, "data_type_id", NF90_INT, dimid_ntypes, tbl%tid))
+  call check( nf90_put_att(ncid, tbl%tid, "long_name", "Observation data type ID"))
+
+  call check( nf90_def_var(ncid, "data_type_name", NF90_CHAR, (/dimid_lbl_len, dimid_ntypes/), tbl%tname))
+  call check( nf90_put_att(ncid, tbl%tname, "long_name", "Observation data type label"))
+
+  call check( nf90_def_var(ncid, "inst_err", NF90_FLOAT, dimid_ntypes, tbl%terr))
+  call check( nf90_put_att(ncid, tbl%terr, "long_name", "Observation instrumentation error"))
+
+  call check( nf90_def_var(ncid, "rerr_scl", NF90_FLOAT, dimid_ntypes, tbl%tscl))
+  call check( nf90_put_att(ncid, tbl%tscl, "long_name", "Observation representative scale"))
+  call check( nf90_put_att(ncid, tbl%tscl, "units", "km"))
+
+  ! 2. Quality Control Flag Codes
+  call check( nf90_def_dim(ncid, "qc_codes", num_qc_codes, dimid_nqcs))
+  call check( nf90_def_dim(ncid, "qc_string_length", len_qc_lbl, dimid_qc_len))
+
+  call check( nf90_def_var(ncid, "qc_code_id", NF90_INT, dimid_nqcs, tbl%qcid))
+  call check( nf90_put_att(ncid, tbl%qcid, "long_name", "QC flag code ID"))
+
+  call check( nf90_def_var(ncid, "qc_code_name", NF90_CHAR, (/dimid_qc_len, dimid_nqcs/), tbl%qcname))
+  call check( nf90_put_att(ncid, tbl%qcname, "long_name", "QC flag code label"))
+end subroutine def_lookup_tables
+
+
+!> Writes observation data type and QC code lookup table values
+subroutine put_lookup_tables(ncid, tbl)
+  integer, intent(in) :: ncid
+  type(lookup_varids_t), intent(in) :: tbl
+
+  integer, dimension(0:MX_TYPES) :: type_ids
+  character(len=len_type_lbl), dimension(0:MX_TYPES) :: type_names
+  real, dimension(0:MX_TYPES) :: type_inst_err, type_rerr_scl
+
+  integer, dimension(num_qc_codes) :: qc_ids
+  character(len=len_qc_lbl), dimension(num_qc_codes) :: qc_names
+
+  call get_obs_type_table(type_ids, type_names, type_inst_err, type_rerr_scl)
+  call check( nf90_put_var(ncid, tbl%tid,   type_ids))
+  call check( nf90_put_var(ncid, tbl%tname, type_names))
+  call check( nf90_put_var(ncid, tbl%terr,  type_inst_err))
+  call check( nf90_put_var(ncid, tbl%tscl,  type_rerr_scl))
+
+  call get_qc_code_table(qc_ids, qc_names)
+  call check( nf90_put_var(ncid, tbl%qcid,   qc_ids))
+  call check( nf90_put_var(ncid, tbl%qcname, qc_names))
+end subroutine put_lookup_tables
+
+
+!> Attaches standard lookup-table metadata to integer obs-type variables
+subroutine add_type_var_attrs(ncid, varid, desc)
+  integer, intent(in) :: ncid, varid
+  character(len=*), intent(in) :: desc
+
+  call check( nf90_put_att(ncid, varid, "long_name", trim(desc)))
+  call check( nf90_put_att(ncid, varid, "lookup_table", "data_type_name"))
+  call check( nf90_put_att(ncid, varid, "lookup_index", "data_type_id"))
+end subroutine add_type_var_attrs
+
+
+!> Attaches standard lookup-table metadata to integer QC flag variables
+subroutine add_flag_var_attrs(ncid, varid)
+  integer, intent(in) :: ncid, varid
+
+  call check( nf90_put_att(ncid, varid, "long_name", "Quality control flag"))
+  call check( nf90_put_att(ncid, varid, "lookup_table", "qc_code_name"))
+  call check( nf90_put_att(ncid, varid, "lookup_index", "qc_code_id"))
+  call check( nf90_put_att(ncid, varid, "severity_rules", &
+    "0: good; 2-99: informational; 101-999: suspect; >1000: fatal (may be composite sum)"))
+end subroutine add_flag_var_attrs
+
 
 !> This subroutine reads inputs set in: read_bin_qc_obs
 subroutine getInputs(num_inputs, &
@@ -312,7 +408,7 @@ subroutine mdb_converter(input_file, observation_type, output_path, output_file)
   open(unit, file=trim(input_file), status='old', &
     access='sequential', form='unformatted')
 
-read (unit) n_read, n_lvl, vrsn
+  read (unit) n_read, n_lvl, vrsn
   if (n_read > 0) then
     allocate( argo_clm(n_read), argo_lat(n_read), argo_lon(n_read), argo_lvl(n_read), &
               argo_sss(n_read), argo_sst(n_read), mdb_dist(n_read), mdb_err(n_read), &
@@ -401,7 +497,7 @@ subroutine velocity_converter(input_file, observation_type, output_path, output_
 
     ! write to netcdf file
     call velocity_write_to_netcdf(output_path, output_file, n_read, &
-     dtg, lat, lon, u, v, u_qc, v_qc, u_type, v_type)
+     dtg, sgn, lat, lon, u, v, u_qc, v_qc, u_type, v_type)
 
     deallocate( age, btm, lat, lon, lvl, ndx, u, u_err, u_qc, u_type, &
                 v, v_err, v_qc, v_type, dtg, rcpt, sgn)
@@ -460,7 +556,7 @@ subroutine sfc_converter(input_file, observation_type, output_path, output_file)
 
     ! write to netcdf file
     call sfc_write_to_netcdf(output_path, output_file, n_read, &
-     flg, dtg, lat, lon, lvl, sss, sst, sss_qc, sst_qc, &
+     flg, dtg, sgn, lat, lon, lvl, sss, sst, sss_qc, sst_qc, &
      sss_type, sst_type, wm)
 
     deallocate( age, drg, flg, lat, lon, lvl, &
@@ -544,7 +640,7 @@ subroutine profile_converter(input_file, observation_type, output_path, output_f
 
     ! write to netcdf file
     call profile_write_to_netcdf(output_path, output_file, n_read, n_lvl, &
-     dtg, lat, lon, btm, sal_type, temp_type, sal_qc, temp_qc, &
+     dtg, sgn, lat, lon, btm, sal_type, temp_type, sal_qc, temp_qc, &
      flg, lvl, sal, temp, sal_err, temp_err, sal_prb, temp_prb, &
      clim_sal, clim_temp, clim_sal_std, clim_temp_std)
 
@@ -573,6 +669,7 @@ subroutine ssh_write_to_netcdf(path, output_file, n_read, &
   integer :: ncid, dimid_n, dimid_len_str
   integer :: varid_sat, varid_cyc, varid_trck, varid_date, &
              varid_lat, varid_lon, varid_ssh, varid_sla, varid_qc
+  type(lookup_varids_t) :: tbl
   character(len=512) :: file_path
   character(len=*), parameter :: title = &
     "Quality controlled sea surface height from NCEP RTOFS"
@@ -592,6 +689,7 @@ subroutine ssh_write_to_netcdf(path, output_file, n_read, &
 
   ! Define variables
   call check( nf90_def_var(ncid, "sat",   NF90_INT,   dimid_n, varid_sat))
+  call add_type_var_attrs(ncid, varid_sat, "Satellite altimeter observation type ID")
   call check( nf90_def_var(ncid, "cyc",   NF90_INT,   dimid_n, varid_cyc))
   call check( nf90_def_var(ncid, "track", NF90_INT,   dimid_n, varid_trck))
   call check( nf90_def_var(ncid, "lat",   NF90_FLOAT, dimid_n, varid_lat))
@@ -602,6 +700,8 @@ subroutine ssh_write_to_netcdf(path, output_file, n_read, &
 
   ! Note: Order of dimensions (strings need to be handled with care!)
   call check( nf90_def_var(ncid, "date",  NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
+
+  call def_lookup_tables(ncid, tbl)
 
   call check( nf90_enddef(ncid)) ! End define mode
 
@@ -615,6 +715,8 @@ subroutine ssh_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_put_var(ncid, varid_ssh, ssh))
   call check( nf90_put_var(ncid, varid_sla, sla))
   call check( nf90_put_var(ncid, varid_qc, qc))
+
+  call put_lookup_tables(ncid, tbl)
 
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine ssh_write_to_netcdf
@@ -634,6 +736,7 @@ subroutine sst_write_to_netcdf(path, fname, n_read, &
   integer :: ncid, dimid_n, dimid_len_str
   integer :: varid_bias, varid_date, varid_err, varid_flg, &
              varid_lat, varid_lon, varid_qc, varid_sst, varid_sat, varid_wmid
+  type(lookup_varids_t) :: tbl
   character(len=512) :: file_path
   character(len=*), parameter :: title = &
     "Quality controlled sea surface temperature from NCEP RTOFS"
@@ -656,12 +759,16 @@ subroutine sst_write_to_netcdf(path, fname, n_read, &
   call check( nf90_def_var(ncid, "date", NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
   call check( nf90_def_var(ncid, "err",  NF90_FLOAT, dimid_n, varid_err))
   call check( nf90_def_var(ncid, "flag", NF90_INT,   dimid_n, varid_flg))
+  call add_flag_var_attrs(ncid, varid_flg)
   call check( nf90_def_var(ncid, "lat",  NF90_FLOAT, dimid_n, varid_lat))
   call check( nf90_def_var(ncid, "lon",  NF90_FLOAT, dimid_n, varid_lon))
   call check( nf90_def_var(ncid, "qc",   NF90_FLOAT, dimid_n, varid_qc))
   call check( nf90_def_var(ncid, "sst",  NF90_FLOAT, dimid_n, varid_sst))
   call check( nf90_def_var(ncid, "sat_id",        NF90_INT,   dimid_n, varid_sat))  ! Satellite ID
+  call add_type_var_attrs(ncid, varid_sat, "Satellite SST observation type ID")
   call check( nf90_def_var(ncid, "water_mass_id", NF90_INT,   dimid_n, varid_wmid)) !Water Mass Index
+
+  call def_lookup_tables(ncid, tbl)
 
   call check( nf90_enddef(ncid)) ! End define mode
 
@@ -676,6 +783,8 @@ subroutine sst_write_to_netcdf(path, fname, n_read, &
   call check( nf90_put_var(ncid, varid_sst,  sst))
   call check( nf90_put_var(ncid, varid_sat,  sat))
   call check( nf90_put_var(ncid, varid_wmid, wmid))
+
+  call put_lookup_tables(ncid, tbl)
 
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine sst_write_to_netcdf
@@ -695,6 +804,7 @@ subroutine ice_write_to_netcdf(path, output_file, n_read, &
   integer :: ncid, dimid_n, dimid_len_str
   integer :: varid_date, varid_flg, varid_lat, varid_lon, &
              varid_qc, varid_ice, varid_sat
+  type(lookup_varids_t) :: tbl
   character(len=512) :: file_path
   character(len=*), parameter :: title = &
     "Quality controlled ice concentration from NCEP RTOFS"
@@ -715,14 +825,18 @@ subroutine ice_write_to_netcdf(path, output_file, n_read, &
   ! Define variables
   call check( nf90_def_var(ncid, "date",  NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
   call check( nf90_def_var(ncid, "flag",  NF90_INT,   dimid_n, varid_flg))
+  call add_flag_var_attrs(ncid, varid_flg)
   call check( nf90_def_var(ncid, "lat",   NF90_FLOAT, dimid_n, varid_lat))
   call check( nf90_def_var(ncid, "lon",   NF90_FLOAT, dimid_n, varid_lon))
   call check( nf90_def_var(ncid, "qc",    NF90_FLOAT, dimid_n, varid_qc))
   call check( nf90_def_var(ncid, "aice",  NF90_FLOAT, dimid_n, varid_ice))
   call check( nf90_def_var(ncid, "sat",   NF90_INT,   dimid_n, varid_sat))
+  call add_type_var_attrs(ncid, varid_sat, "Sea ice observation type ID")
 
   ! Attributes for ice concentration (aice)
   call check( nf90_put_att(ncid, varid_ice, "units", "percent"))
+
+  call def_lookup_tables(ncid, tbl)
 
   call check( nf90_enddef(ncid)) ! End define mode
 
@@ -734,6 +848,8 @@ subroutine ice_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_put_var(ncid, varid_qc,   qc))
   call check( nf90_put_var(ncid, varid_ice,  ice))
   call check( nf90_put_var(ncid, varid_sat,  sat))
+
+  call put_lookup_tables(ncid, tbl)
 
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine ice_write_to_netcdf
@@ -754,6 +870,7 @@ subroutine sss_write_to_netcdf(path, output_file, n_read, &
   integer :: varid_date, varid_lat, varid_lon, &
              varid_sat, varid_sss, varid_sst, &
              varid_err, varid_flg, varid_qc
+  type(lookup_varids_t) :: tbl
   character(len=512) :: file_path
   character(len=*), parameter :: title = &
     "Quality controlled sea surface salinity from NCEP RTOFS"
@@ -776,11 +893,15 @@ subroutine sss_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_def_var(ncid, "lat",  NF90_FLOAT, dimid_n, varid_lat))
   call check( nf90_def_var(ncid, "lon",  NF90_FLOAT, dimid_n, varid_lon))
   call check( nf90_def_var(ncid, "sat",  NF90_INT,   dimid_n, varid_sat))
+  call add_type_var_attrs(ncid, varid_sat, "Satellite SSS observation type ID")
   call check( nf90_def_var(ncid, "sss",  NF90_FLOAT, dimid_n, varid_sss))
   call check( nf90_def_var(ncid, "sst",  NF90_FLOAT, dimid_n, varid_sst))
   call check( nf90_def_var(ncid, "err",  NF90_FLOAT, dimid_n, varid_err))
   call check( nf90_def_var(ncid, "flag", NF90_INT,   dimid_n, varid_flg))
+  call add_flag_var_attrs(ncid, varid_flg)
   call check( nf90_def_var(ncid, "qc",   NF90_FLOAT, dimid_n, varid_qc))
+
+  call def_lookup_tables(ncid, tbl)
 
   call check( nf90_enddef(ncid)) ! End define mode
 
@@ -794,6 +915,8 @@ subroutine sss_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_put_var(ncid, varid_err,  err))
   call check( nf90_put_var(ncid, varid_flg,  flg))
   call check( nf90_put_var(ncid, varid_qc,   qc))
+
+  call put_lookup_tables(ncid, tbl)
 
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine sss_write_to_netcdf
@@ -817,6 +940,7 @@ subroutine mdb_write_to_netcdf(path, output_file, n_read, &
              varid_argo_sss, varid_argo_sst, varid_dist, varid_err, &
              varid_mdb_lat, varid_mdb_lon, varid_mdb_sss, varid_mdb_sst, &
              varid_time, varid_type
+  type(lookup_varids_t) :: tbl
   character(len=512) :: file_path
   character(len=*), parameter :: title = &
     "Argo-satellite sea surface salinity match database from NCEP RTOFS"
@@ -847,9 +971,12 @@ subroutine mdb_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_def_var(ncid, "mdb_sss",    NF90_FLOAT, dimid_n, varid_mdb_sss))
   call check( nf90_def_var(ncid, "mdb_sst",    NF90_FLOAT, dimid_n, varid_mdb_sst))
   call check( nf90_def_var(ncid, "obs_type",   NF90_INT,   dimid_n, varid_type))
+  call add_type_var_attrs(ncid, varid_type, "MDB observation type ID")
 
   ! Attributes for dist
   call check( nf90_put_att(ncid, varid_dist, "units", "km"))
+
+  call def_lookup_tables(ncid, tbl)
 
   call check( nf90_enddef(ncid)) ! End define mode
 
@@ -868,25 +995,29 @@ subroutine mdb_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_put_var(ncid, varid_mdb_sst,    mdb_sst))
   call check( nf90_put_var(ncid, varid_type,       type))
 
+  call put_lookup_tables(ncid, tbl)
+
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine mdb_write_to_netcdf
 
 
 !> Writes velocity obsertations to a netCDF file
 subroutine velocity_write_to_netcdf(path, output_file, n_read, &
-     date_str, lat, lon, u, v, u_qc, v_qc, u_type, v_type)
+     date_str, wmo_id, lat, lon, u, v, u_qc, v_qc, u_type, v_type)
 
   character(len=*), intent(in) :: path, output_file
   integer, intent(in) :: n_read
   integer, dimension(n_read), intent(in) :: u_type, v_type
   real, dimension(n_read), intent(in) :: lat, lon, u, v, u_qc, v_qc
   character(len=len_sst_date_str), dimension(n_read), intent(in) :: date_str
+  character(len=len_sgn), dimension(n_read), intent(in) :: wmo_id
 
   ! Local variables
-  integer :: ncid, dimid_n, dimid_len_str
-  integer :: varid_date, varid_lat, varid_lon, &
+  integer :: ncid, dimid_n, dimid_len_str, dimid_len_wmo
+  integer :: varid_date, varid_wmo, varid_lat, varid_lon, &
              varid_u, varid_v, varid_u_qc, varid_v_qc, &
              varid_u_type, varid_v_type
+  type(lookup_varids_t) :: tbl
   character(len=512) :: file_path
   character(len=*), parameter :: title = &
     "Quality controlled velocity from NCEP RTOFS"
@@ -900,12 +1031,15 @@ subroutine velocity_write_to_netcdf(path, output_file, n_read, &
   ! Define dimensions
   call check( nf90_def_dim(ncid, "nobs", n_read, dimid_n))
   call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
+  call check( nf90_def_dim(ncid, "wmo_string_length", len_sgn, dimid_len_wmo))
 
   ! Define global attribute
   call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
 
   ! Define variables
   call check( nf90_def_var(ncid, "date",   NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
+  call check( nf90_def_var(ncid, "wmo_id", NF90_CHAR,  (/dimid_len_wmo, dimid_n/), varid_wmo))
+  call check( nf90_put_att(ncid, varid_wmo, "long_name", "Platform call sign / WMO ID"))
   call check( nf90_def_var(ncid, "lat",    NF90_FLOAT, dimid_n, varid_lat))
   call check( nf90_def_var(ncid, "lon",    NF90_FLOAT, dimid_n, varid_lon))
   call check( nf90_def_var(ncid, "u",      NF90_FLOAT, dimid_n, varid_u))
@@ -913,12 +1047,17 @@ subroutine velocity_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_def_var(ncid, "u_qc",   NF90_FLOAT, dimid_n, varid_u_qc))
   call check( nf90_def_var(ncid, "v_qc",   NF90_FLOAT, dimid_n, varid_v_qc))
   call check( nf90_def_var(ncid, "u_type", NF90_INT,   dimid_n, varid_u_type))
+  call add_type_var_attrs(ncid, varid_u_type, "U-velocity observation type ID")
   call check( nf90_def_var(ncid, "v_type", NF90_INT,   dimid_n, varid_v_type))
+  call add_type_var_attrs(ncid, varid_v_type, "V-velocity observation type ID")
+
+  call def_lookup_tables(ncid, tbl)
 
   call check( nf90_enddef(ncid)) ! End define mode
 
   ! Write data to variables
   call check( nf90_put_var(ncid, varid_date,  date_str))
+  call check( nf90_put_var(ncid, varid_wmo,   wmo_id))
   call check( nf90_put_var(ncid, varid_lat,   lat))
   call check( nf90_put_var(ncid, varid_lon,   lon))
   call check( nf90_put_var(ncid, varid_u,     u))
@@ -928,13 +1067,15 @@ subroutine velocity_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_put_var(ncid, varid_u_type,u_type))
   call check( nf90_put_var(ncid, varid_v_type,v_type))
 
+  call put_lookup_tables(ncid, tbl)
+
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine velocity_write_to_netcdf
 
 
 !> Writes surface obsertations to a netCDF file
 subroutine sfc_write_to_netcdf(path, output_file, n_read, &
-     flg, date_str, lat, lon, depth, sss, sst, &
+     flg, date_str, wmo_id, lat, lon, depth, sss, sst, &
      sss_qc, sst_qc, sss_type, sst_type, wmid)
 
   character(len=*), intent(in) :: path, output_file
@@ -943,13 +1084,15 @@ subroutine sfc_write_to_netcdf(path, output_file, n_read, &
   real, dimension(n_read), intent(in) :: lat, lon, depth, sss, sst, &
                                          sss_qc, sst_qc
   character(len=len_sst_date_str), dimension(n_read), intent(in) :: date_str
+  character(len=len_sgn), dimension(n_read), intent(in) :: wmo_id
 
   ! Local variables
-  integer :: ncid, dimid_n, dimid_len_str
-  integer :: varid_date, varid_lat, varid_lon, varid_depth, &
+  integer :: ncid, dimid_n, dimid_len_str, dimid_len_wmo
+  integer :: varid_date, varid_wmo, varid_lat, varid_lon, varid_depth, &
              varid_sss, varid_sst, varid_sss_qc, varid_sst_qc, &
              varid_sss_type, varid_sst_type, &
              varid_flg, varid_wmid
+  type(lookup_varids_t) :: tbl
   character(len=512) :: file_path
   character(len=*), parameter :: title = &
     "Quality controlled surface observations from NCEP RTOFS"
@@ -963,12 +1106,15 @@ subroutine sfc_write_to_netcdf(path, output_file, n_read, &
   ! Define dimensions
   call check( nf90_def_dim(ncid, "nobs", n_read, dimid_n))
   call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
+  call check( nf90_def_dim(ncid, "wmo_string_length", len_sgn, dimid_len_wmo))
 
   ! Define global attribute
   call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
 
   ! Define variables
   call check( nf90_def_var(ncid, "date",     NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
+  call check( nf90_def_var(ncid, "wmo_id",   NF90_CHAR,  (/dimid_len_wmo, dimid_n/), varid_wmo))
+  call check( nf90_put_att(ncid, varid_wmo, "long_name", "Platform call sign / WMO ID"))
   call check( nf90_def_var(ncid, "lat",      NF90_FLOAT, dimid_n, varid_lat))
   call check( nf90_def_var(ncid, "lon",      NF90_FLOAT, dimid_n, varid_lon))
   call check( nf90_def_var(ncid, "depth",    NF90_FLOAT, dimid_n, varid_depth))
@@ -977,14 +1123,20 @@ subroutine sfc_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_def_var(ncid, "sss_qc",   NF90_FLOAT, dimid_n, varid_sss_qc))
   call check( nf90_def_var(ncid, "sst_qc",   NF90_FLOAT, dimid_n, varid_sst_qc))
   call check( nf90_def_var(ncid, "sss_type", NF90_INT,   dimid_n, varid_sss_type))
+  call add_type_var_attrs(ncid, varid_sss_type, "Surface salinity observation type ID")
   call check( nf90_def_var(ncid, "sst_type", NF90_INT,   dimid_n, varid_sst_type))
+  call add_type_var_attrs(ncid, varid_sst_type, "Surface temperature observation type ID")
   call check( nf90_def_var(ncid, "flag",     NF90_INT,   dimid_n, varid_flg))
+  call add_flag_var_attrs(ncid, varid_flg)
   call check( nf90_def_var(ncid, "water_mass_id", NF90_INT,   dimid_n, varid_wmid)) !Water Mass Index
+
+  call def_lookup_tables(ncid, tbl)
 
   call check( nf90_enddef(ncid)) ! End define mode
 
   ! Write data to variables
   call check( nf90_put_var(ncid, varid_date,    date_str))
+  call check( nf90_put_var(ncid, varid_wmo,     wmo_id))
   call check( nf90_put_var(ncid, varid_lat,     lat))
   call check( nf90_put_var(ncid, varid_lon,     lon))
   call check( nf90_put_var(ncid, varid_depth,   depth))
@@ -997,13 +1149,15 @@ subroutine sfc_write_to_netcdf(path, output_file, n_read, &
   call check( nf90_put_var(ncid, varid_flg,     flg))
   call check( nf90_put_var(ncid, varid_wmid,    wmid))
 
+  call put_lookup_tables(ncid, tbl)
+
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine sfc_write_to_netcdf
 
 
 !> Writes profile obsertations to a netCDF file
 subroutine profile_write_to_netcdf(path, output_file, n_read, n_depth, &
-     date_str, lat, lon, bot_depth, sal_type, temp_type, &
+     date_str, wmo_id, lat, lon, bot_depth, sal_type, temp_type, &
      sal_qc, temp_qc, flg, depth, sal, temp, sal_err, temp_err, &
      sal_prob, temp_prob, clim_sal, clim_temp, clim_sal_std, clim_temp_std)
 
@@ -1017,15 +1171,17 @@ subroutine profile_write_to_netcdf(path, output_file, n_read, n_depth, &
     clim_sal_std, clim_temp_std
 
   character(len=len_sst_date_str), dimension(n_read), intent(in) :: date_str
+  character(len=len_sgn), dimension(n_read), intent(in) :: wmo_id
 
   ! Local variables
-  integer :: ncid, dimid_n, dimid_n_depth, dimid_len_str
-  integer :: varid_date, varid_lat, varid_lon, varid_bot_depth, &
+  integer :: ncid, dimid_n, dimid_n_depth, dimid_len_str, dimid_len_wmo
+  integer :: varid_date, varid_wmo, varid_lat, varid_lon, varid_bot_depth, &
              varid_sal_type, varid_temp_type, varid_sal_qc, varid_temp_qc, &
              varid_depth, varid_sal, varid_temp, &
              varid_sal_err, varid_temp_err, varid_sal_prob, varid_temp_prob, &
              varid_clim_sal, varid_clim_temp, varid_clim_sal_std, varid_clim_temp_std, &
              varid_flg
+  type(lookup_varids_t) :: tbl
   character(len=512) :: file_path
   character(len=*), parameter :: title = &
     "Quality controlled profile observations from NCEP RTOFS"
@@ -1040,21 +1196,27 @@ subroutine profile_write_to_netcdf(path, output_file, n_read, n_depth, &
   call check( nf90_def_dim(ncid, "nobs",  n_read,  dimid_n))
   call check( nf90_def_dim(ncid, "num_z", n_depth, dimid_n_depth))
   call check( nf90_def_dim(ncid, "string_length", len_sst_date_str, dimid_len_str))
+  call check( nf90_def_dim(ncid, "wmo_string_length", len_sgn, dimid_len_wmo))
 
   ! Define global attribute
   call check( nf90_put_att(ncid, NF90_GLOBAL, "title", trim(title)))
 
   ! Define variables
   call check( nf90_def_var(ncid, "date",     NF90_CHAR,  (/dimid_len_str, dimid_n/), varid_date))
+  call check( nf90_def_var(ncid, "wmo_id",   NF90_CHAR,  (/dimid_len_wmo, dimid_n/), varid_wmo))
+  call check( nf90_put_att(ncid, varid_wmo, "long_name", "Platform call sign / WMO ID"))
   call check( nf90_def_var(ncid, "lat",      NF90_FLOAT, dimid_n, varid_lat))
   call check( nf90_def_var(ncid, "lon",      NF90_FLOAT, dimid_n, varid_lon))
   call check( nf90_def_var(ncid, "bot_depth",NF90_FLOAT, dimid_n, varid_bot_depth))
   call check( nf90_def_var(ncid, "sal_type", NF90_INT,   dimid_n, varid_sal_type))
+  call add_type_var_attrs(ncid, varid_sal_type, "Profile salinity observation type ID")
   call check( nf90_def_var(ncid, "temp_type",NF90_INT,   dimid_n, varid_temp_type))
+  call add_type_var_attrs(ncid, varid_temp_type, "Profile temperature observation type ID")
   call check( nf90_def_var(ncid, "sal_qc",   NF90_FLOAT, dimid_n, varid_sal_qc))
   call check( nf90_def_var(ncid, "temp_qc",  NF90_FLOAT, dimid_n, varid_temp_qc))
 
   call check( nf90_def_var(ncid, "flag",        NF90_INT,   (/dimid_n_depth, dimid_n/), varid_flg))
+  call add_flag_var_attrs(ncid, varid_flg)
   call check( nf90_def_var(ncid, "depth",       NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_depth))
   call check( nf90_def_var(ncid, "salinity",    NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_sal))
   call check( nf90_def_var(ncid, "temperature", NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_temp))
@@ -1067,10 +1229,13 @@ subroutine profile_write_to_netcdf(path, output_file, n_read, n_depth, &
   call check( nf90_def_var(ncid, "clim_s_std",  NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_clim_sal_std))
   call check( nf90_def_var(ncid, "clim_t_std",  NF90_FLOAT, (/dimid_n_depth, dimid_n/), varid_clim_temp_std))
 
+  call def_lookup_tables(ncid, tbl)
+
   call check( nf90_enddef(ncid)) ! End define mode
 
   ! Write data to variables
   call check( nf90_put_var(ncid, varid_date,         date_str))
+  call check( nf90_put_var(ncid, varid_wmo,          wmo_id))
   call check( nf90_put_var(ncid, varid_lat,          lat))
   call check( nf90_put_var(ncid, varid_lon,          lon))
   call check( nf90_put_var(ncid, varid_bot_depth,    bot_depth))
@@ -1091,6 +1256,8 @@ subroutine profile_write_to_netcdf(path, output_file, n_read, n_depth, &
   call check( nf90_put_var(ncid, varid_clim_sal_std, clim_sal_std))
   call check( nf90_put_var(ncid, varid_clim_temp_std,clim_temp_std))
 
+  call put_lookup_tables(ncid, tbl)
+
   call check( nf90_close(ncid)) ! Close the netCDF file
 end subroutine profile_write_to_netcdf
 
@@ -1100,8 +1267,7 @@ subroutine check(istatus)
   integer, intent (in) :: istatus
   if (istatus /= nf90_noerr) then
     print*, trim(adjustl(nf90_strerror(istatus)))
-  end iF
+  end if
 end subroutine check
-
 
 end module read_binary_write_nc_mod

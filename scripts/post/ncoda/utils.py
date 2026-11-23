@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 
 """
-Helper utilities to process RTOFS analysis increments.
+Helper utilities to process RTOFS analysis increments and QC observation files.
 
 Questions:
-  1. In each day's analysis, past 18 days of increments are saved.
+1. In each day's analysis, past 18 days of increments are saved.
      Much of the date (if not all?) is same and is being repeated over and over!
      Why are we duplicating files and seemingly wasting disk space?
 """
 
 import os
 import glob as glob
+from itertools import combinations_with_replacement
+from pathlib import Path
 import xarray as xr
 import numpy as np
 
@@ -56,8 +58,8 @@ def land_sea_mask(topo_fName, save_forLater=False):
 
   """
   Create a land-sea mask from bathymetry:
-  - land: 0
-  - sea: 1
+- land: 0
+- sea: 1
   """
 
   ds_topo = xr.open_dataset(topo_fName, decode_times=False)
@@ -105,3 +107,87 @@ def bin_to_nc_2d_incr(data_path, fName, outPath, topo_fName):
 
   ds_inc.to_netcdf(outPath+'/'+fName_bin+'.nc')
   return ds_inc
+
+
+def build_composite_qc_map(qc_map: dict[int, str]) -> dict[int, str]:
+    """Precompute exact + additive composite QC flag combinations from qc_codes."""
+    resolved = dict(qc_map)
+    nonzero_codes = sorted(k for k in qc_map if k > 0)
+
+    # Profile & SSS flags can sum up to 4 check codes (including repeated codes like DERIVED_SAL=12)
+    for r in range(2, 5):
+        for combo in combinations_with_replacement(nonzero_codes, r):
+            total = sum(combo)
+            if total not in resolved:
+                resolved[total] = "+".join(qc_map[c] for c in combo)
+
+    return resolved
+
+
+def decode_qc_flag(flag_val: int, resolved_qc_map: dict[int, str]) -> str:
+    """Decode a single or composite QC flag integer."""
+    val = int(flag_val)
+    if val in resolved_qc_map:
+        return resolved_qc_map[val]
+    return f"UNKNOWN({val})"
+
+
+def load_obs_dataset(nc_path: str | Path) -> tuple[xr.Dataset, dict[int, str]]:
+    """Open an observation NetCDF file and attach decoded type, WMO ID, and date strings."""
+    ds = xr.open_dataset(nc_path)
+
+    # 1. Decode data type lookup table (0..209)
+    decoded_type_vars = []
+    if "data_type_name" in ds.data_vars:
+        type_labels = ds["data_type_name"].str.decode("utf-8").str.strip()
+        for var_name in list(ds.data_vars):
+            if ds[var_name].attrs.get("lookup_table") == "data_type_name":
+                out_name = f"{var_name}_name"
+                ds[out_name] = type_labels.isel(data_types=ds[var_name])
+                decoded_type_vars.append(out_name)
+
+    ds.attrs["_decoded_type_vars"] = decoded_type_vars
+
+    # 2. Build QC code lookup dictionary (including composite sums)
+    qc_map: dict[int, str] = {}
+    if "qc_code_id" in ds.data_vars and "qc_code_name" in ds.data_vars:
+        base_qc_map = dict(
+            zip(
+                ds["qc_code_id"].values.astype(int),
+                ds["qc_code_name"].str.decode("utf-8").str.strip().values,
+            )
+        )
+        qc_map = build_composite_qc_map(base_qc_map)
+
+    # 3. Decode WMO ID and date strings if present
+    if "wmo_id" in ds.data_vars:
+        ds["wmo_id_str"] = ds["wmo_id"].str.decode("utf-8").str.strip()
+
+    if "date" in ds.data_vars and ds["date"].dtype.kind == "S":
+        ds["date_str"] = ds["date"].str.decode("utf-8").str.strip()
+
+    return ds, qc_map
+
+
+def summarize_obs_nc(nc_path: str | Path) -> tuple[int, int, str]:
+    """Return (nobs, good_count, semicolon-separated data_type_names) for audit CSVs."""
+    ds, _ = load_obs_dataset(nc_path)
+    nobs = int(ds.sizes.get("nobs", 0))
+
+    if "flag" in ds.data_vars:
+        flg = ds["flag"].values
+        if flg.ndim == 2:
+            # Profile: count profiles that have at least one GOOD (flag == 0) level
+            good_count = int((flg == 0).any(axis=1).sum())
+        else:
+            good_count = int((flg == 0).sum())
+    else:
+        good_count = nobs
+
+    labels = []
+    for var_name in ds.attrs.get("_decoded_type_vars", []):
+        labels.extend(sorted(set(ds[var_name].values.tolist())))
+    unique_labels = ";".join(dict.fromkeys(labels))
+
+    ds.close()
+    return nobs, good_count, unique_labels
