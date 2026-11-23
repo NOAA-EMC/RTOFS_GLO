@@ -131,6 +131,12 @@ else
     exit 11
 fi
 
+ARCHIVE_SCRIPT="${SCRIPT_DIR}/archive_obs_stat_hpss.sh"
+if [[ -f "${ARCHIVE_SCRIPT}" ]]; then
+    echo ">>> Submitting HPSS archival job for ${rtofs_date}..."
+    "${ARCHIVE_SCRIPT}" "${rtofs_date}" || echo "WARNING: HPSS archive submission failed."
+fi
+
 echo "------------------------------------------------"
 echo ">>> obs_stat.sh completed for ${current_date}."
 echo "------------------------------------------------"
