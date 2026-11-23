@@ -119,7 +119,7 @@ if [[ -f "${PLOT_SCRIPT}" ]]; then
     echo ">>> Loading Python environment for plotting..."
     # Ensure clean state and load required WCOSS2 modules
     module reset
-    module load intel ve/hafs || echo "WARNING: Failed to load ve/hafs modules."
+    module load intel ve/rtofs || echo "WARNING: Failed to load ve/rtofs modules."
 
     echo ">>> Generating Time Series Plots..."
     # Add or remove platforms here as needed (case-insensitive)

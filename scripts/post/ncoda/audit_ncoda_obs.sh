@@ -26,7 +26,7 @@ fi
 csv_out="${oPath}/obs_counts_${rtofs_date}.csv"
 
 # Load modules (silent)
-module load intel netcdf ve/hafs >/dev/null 2>&1
+module load intel ve/rtofs >/dev/null 2>&1
 
 # GARBAGE CHECK: Ensure sanity of nc files.
 for nc_file in $(ls "${oPath}"/*.nc 2>/dev/null | sort); do
