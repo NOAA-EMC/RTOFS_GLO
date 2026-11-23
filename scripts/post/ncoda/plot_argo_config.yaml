@@ -1,0 +1,18 @@
+# Configuration for plotting platform locations from RTOFS profile NetCDF files
+
+platform_group: "Argo"
+
+# Matches any profile where sal_type_name OR temp_type_name is in this list
+data_type_names:
+  - "Argo Float Salt"
+  - "Argo Float Temp"
+
+plot:
+  figsize: [12, 6]
+  dpi: 150
+  good_color: "tab:blue"
+  good_marker: "o"
+  good_size: 14
+  flagged_color: "tab:red"
+  flagged_marker: "x"
+  flagged_size: 18
