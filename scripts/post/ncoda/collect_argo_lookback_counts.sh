@@ -11,6 +11,8 @@ set -u
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 CHECK_ENV_PATH="/lfs/h2/emc/couple/noscrub/${USER}/RTOFS_GLO/scripts/post/check_machine_env.sh"
+OUT_DIR="/lfs/h2/emc/couple/noscrub/${USER}/RTOFS_OM/v2.5/obs_counts/Argo"
+mkdir -p "${OUT_DIR}"
 
 # Exit cleanly if running on backup WCOSS2 machine
 if [[ -f "${CHECK_ENV_PATH}" ]]; then
@@ -68,7 +70,7 @@ last_cyc="${cycles_to_run[-1]}"
 if [[ -n "${3:-}" ]]; then
     out_csv="$3"
 else
-    out_csv="${SCRIPT_DIR}/argo_counts_${first_cyc}_${last_cyc}.csv"
+    out_csv="${OUT_DIR}/argo_counts_${first_cyc}_${last_cyc}.csv"
 fi
 
 exec_bin="/lfs/h2/emc/couple/noscrub/${USER}/RTOFS_GLO/sorc/rtofs_da.fd/exec/read_binary_qc_obs.x"
@@ -166,6 +168,6 @@ echo ">>> Complete. Saved CSV to: ${out_csv}"
 module reset >/dev/null 2>&1
 module load intel ve/rtofs >/dev/null 2>&1
 echo ">>> Plotting... "
-"${SCRIPT_DIR}/plot_argo_lookback.py" "${SCRIPT_DIR}" || echo "WARNING: Plot generation failed."
+"${SCRIPT_DIR}/plot_argo_lookback.py" "${OUT_DIR}" || echo "WARNING: Plot generation failed."
 
 exit 0
