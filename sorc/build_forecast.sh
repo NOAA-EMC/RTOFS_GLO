@@ -23,6 +23,13 @@ cd ..
 # 1. Clone UFS-weather-model (and update submodules) and UFS_UTILS (for mppnccombine)
 git submodule update --init --recursive
 
+
+# Patch detect_machine.sh when building for wcoss2 on an alogin node so it resolves to wcoss2
+DETECT_MACHINE="sorc/ufs_model.fd/tests/detect_machine.sh"
+if [[ "$MACHINE" == "wcoss2" && "$(uname -a)" == *alogin* && -x "$HOME/patch_detect_machine_wcoss2.sh" && -f "$DETECT_MACHINE" ]]; then
+    "$HOME/patch_detect_machine_wcoss2.sh" "$(pwd)/$DETECT_MACHINE"
+fi
+
 # Ensure top-level exec directory exists
 mkdir -p exec
 TOP_EXEC="$(pwd)/exec"
